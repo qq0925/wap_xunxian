@@ -1,0 +1,2 @@
+DirectoryIndex index.html index.php index.htm
+ErrorDocument 404.html
