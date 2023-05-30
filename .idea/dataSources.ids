@@ -1,0 +1,1345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="MySQL - game@127.0.0.1" uuid="b2e75da6-4348-491b-b186-a6c97fcb889b">
+    <database-info product="MySQL" version="5.5.47" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower"/>
+    <database-model serializer="dbm" rdbms="MYSQL" format-version="2.5">
+      <schema id="1" name="game"/>
+      <table id="2" parent="1" name="boss"/>
+      <table id="3" parent="1" name="daoju"/>
+      <table id="4" parent="1" name="exp"/>
+      <table id="5" parent="1" name="fangshi_dj"/>
+      <table id="6" parent="1" name="fb"/>
+      <table id="7" parent="1" name="fbmid"/>
+      <table id="8" parent="1" name="game1"/>
+      <table id="9" parent="1" name="gameconfig"/>
+      <table id="10" parent="1" name="ggliaotian"/>
+      <table id="11" parent="1" name="guaiwu"/>
+      <table id="12" parent="1" name="jineng"/>
+      <table id="13" parent="1" name="mid"/>
+      <table id="14" parent="1" name="midguaiwu"/>
+      <table id="15" parent="1" name="npc"/>
+      <table id="16" parent="1" name="playerchongwu"/>
+      <table id="17" parent="1" name="playerdaoju"/>
+      <table id="18" parent="1" name="playerjineng"/>
+      <table id="19" parent="1" name="playerrenwu"/>
+      <table id="20" parent="1" name="playeryaopin"/>
+      <table id="21" parent="1" name="playerzhuangbei"/>
+      <table id="22" parent="1" name="qy"/>
+      <table id="23" parent="1" name="renwu"/>
+      <table id="24" parent="1" name="userinfo"/>
+      <table id="25" parent="1" name="yaopin"/>
+      <table id="26" parent="1" name="zhuangbei"/>
+      <table id="27" parent="1" name="zhurenwu"/>
+      <table id="28" parent="1" name="club"/>
+      <table id="29" parent="1" name="clubplayer"/>
+      <table id="30" parent="1" name="fangshi_zb"/>
+      <table id="31" parent="1" name="duihuan"/>
+      <table id="32" parent="1" name="im"/>
+      <column id="33" parent="2" name="bossname">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="34" parent="2" name="bossinfo">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="35" parent="2" name="bosslv">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="36" parent="2" name="bosshp">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="37" parent="2" name="bossmaxhp">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="38" parent="2" name="bossgj">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="39" parent="2" name="bossfy">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="40" parent="2" name="bossbj">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="41" parent="2" name="bossxx">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="42" parent="2" name="bosszb">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="43" parent="2" name="bossdj">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="44" parent="2" name="bossid">
+        <mandatory>1</mandatory>
+        <data-type>int(10) unsigned</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="45" parent="2" name="bs">
+        <mandatory>1</mandatory>
+        <data-type>int(255)</data-type>
+      </column>
+      <column id="46" parent="2" name="bosstime">
+        <mandatory>1</mandatory>
+        <data-type>datetime</data-type>
+      </column>
+      <key id="47" parent="2" name="PRIMARY">
+        <columns>bossid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="48" parent="3" name="djname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="49" parent="3" name="djzl">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="50" parent="3" name="djinfo">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="51" parent="3" name="djid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="52" parent="3" name="djyxb">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="53" parent="3" name="PRIMARY">
+        <columns>djid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="54" parent="4" name="ulv">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="55" parent="4" name="uexp">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="56" parent="5" name="djid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="57" parent="5" name="djcount">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="58" parent="5" name="uid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="59" parent="5" name="pay">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="60" parent="5" name="payid">
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="61" parent="5" name="djname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <key id="62" parent="5" name="PRIMARY">
+        <columns>payid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="63" parent="6" name="fbname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="64" parent="6" name="fbid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="65" parent="6" name="fbinfo">
+        <data-type>varchar(255)</data-type>
+      </column>
+      <key id="66" parent="6" name="PRIMARY">
+        <columns>fbid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="67" parent="7" name="fmname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="68" parent="7" name="fmid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="69" parent="7" name="fminfo">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="70" parent="7" name="fmnpc">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="71" parent="7" name="fmgw">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="72" parent="8" name="uid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="73" parent="8" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="74" parent="8" name="token">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="75" parent="8" name="uname">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="76" parent="8" name="ulv">
+        <mandatory>1</mandatory>
+        <data-type>int(10) unsigned</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="77" parent="8" name="uyxb">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;2000&apos;</default-expression>
+      </column>
+      <column id="78" parent="8" name="uczb">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;100&apos;</default-expression>
+      </column>
+      <column id="79" parent="8" name="uexp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="80" parent="8" name="vip">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="81" parent="8" name="uhp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;35&apos;</default-expression>
+      </column>
+      <column id="82" parent="8" name="umaxhp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;35&apos;</default-expression>
+      </column>
+      <column id="83" parent="8" name="ugj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;12&apos;</default-expression>
+      </column>
+      <column id="84" parent="8" name="ufy">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;5&apos;</default-expression>
+      </column>
+      <column id="85" parent="8" name="usex">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="86" parent="8" name="endtime">
+        <mandatory>1</mandatory>
+        <data-type>datetime</data-type>
+      </column>
+      <column id="87" parent="8" name="nowmid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;225&apos;</default-expression>
+      </column>
+      <column id="88" parent="8" name="uwx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="89" parent="8" name="nowguaiwu">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="90" parent="8" name="tool1">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="91" parent="8" name="tool2">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="92" parent="8" name="tool3">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="93" parent="8" name="tool4">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="94" parent="8" name="tool5">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="95" parent="8" name="tool6">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="96" parent="8" name="ubj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="97" parent="8" name="uxx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="98" parent="8" name="sfzx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="99" parent="8" name="qandaotime">
+        <mandatory>1</mandatory>
+        <data-type>datetime</data-type>
+      </column>
+      <column id="100" parent="8" name="xiuliantime">
+        <mandatory>1</mandatory>
+        <data-type>datetime</data-type>
+      </column>
+      <column id="101" parent="8" name="sfxl">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="102" parent="8" name="yp1">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="103" parent="8" name="yp2">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="104" parent="8" name="yp3">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="105" parent="8" name="cw">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="106" parent="8" name="jn1">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="107" parent="8" name="jn2">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="108" parent="8" name="jn3">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="109" parent="8" name="ispvp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <key id="110" parent="8" name="PRIMARY">
+        <columns>uid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="111" parent="9" name="firstmid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="112" parent="10" name="name">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="113" parent="10" name="msg">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="114" parent="10" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(255)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="115" parent="10" name="uid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="116" parent="10" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="117" parent="11" name="gname">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="118" parent="11" name="glv">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="119" parent="11" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="120" parent="11" name="ginfo">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="121" parent="11" name="gsex">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="122" parent="11" name="ghp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="123" parent="11" name="ggj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="124" parent="11" name="gfy">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="125" parent="11" name="gbj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="126" parent="11" name="gxx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="127" parent="11" name="gzb">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="128" parent="11" name="dljv">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="129" parent="11" name="gdj">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="130" parent="11" name="djjv">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="131" parent="11" name="gyp">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="132" parent="11" name="ypjv">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="133" parent="11" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="134" parent="12" name="jnname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="135" parent="12" name="jnid">
+        <mandatory>1</mandatory>
+        <data-type>int(10) unsigned</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="136" parent="12" name="jngj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="137" parent="12" name="jnfy">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="138" parent="12" name="jnbj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="139" parent="12" name="jnxx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="140" parent="12" name="jndj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="141" parent="12" name="djcount">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="142" parent="12" name="xiaohao">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="143" parent="12" name="PRIMARY">
+        <columns>jnid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="144" parent="13" name="mname">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="145" parent="13" name="mid">
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="146" parent="13" name="mgid">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="147" parent="13" name="mnpc">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="148" parent="13" name="mgtime">
+        <mandatory>1</mandatory>
+        <data-type>datetime</data-type>
+      </column>
+      <column id="149" parent="13" name="ms">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="150" parent="13" name="midinfo">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="151" parent="13" name="midboss">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="152" parent="13" name="mup">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="153" parent="13" name="mdown">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="154" parent="13" name="mleft">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="155" parent="13" name="mright">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="156" parent="13" name="mqy">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="157" parent="13" name="playerinfo">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="158" parent="13" name="ispvp">
+        <mandatory>1</mandatory>
+        <data-type>int(255)</data-type>
+      </column>
+      <key id="159" parent="13" name="PRIMARY">
+        <columns>mid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="160" parent="14" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(10) unsigned</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="161" parent="14" name="gname">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="162" parent="14" name="ghp">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="163" parent="14" name="ggj">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="164" parent="14" name="gfy">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="165" parent="14" name="glv">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="166" parent="14" name="mid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="167" parent="14" name="gyid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="168" parent="14" name="gexp">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="169" parent="14" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="170" parent="14" name="gmaxhp">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="171" parent="14" name="gbj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="172" parent="14" name="gxx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="173" parent="14" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="174" parent="15" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="175" parent="15" name="nname">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="176" parent="15" name="nsex">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="177" parent="15" name="ninfo">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="178" parent="15" name="muban">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="179" parent="15" name="taskid">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <key id="180" parent="15" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="181" parent="16" name="cwid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="182" parent="16" name="cwname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="183" parent="16" name="cwhp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="184" parent="16" name="cwmaxhp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="185" parent="16" name="cwgj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="186" parent="16" name="cwfy">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="187" parent="16" name="cwbj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="188" parent="16" name="cwxx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="189" parent="16" name="cwlv">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="190" parent="16" name="cwexp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="191" parent="16" name="tool1">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="192" parent="16" name="tool2">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="193" parent="16" name="tool3">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="194" parent="16" name="tool4">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="195" parent="16" name="tool5">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="196" parent="16" name="tool6">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="197" parent="16" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="198" parent="16" name="uphp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="199" parent="16" name="upgj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="200" parent="16" name="upfy">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="201" parent="16" name="cwpz">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="202" parent="16" name="PRIMARY">
+        <columns>cwid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="203" parent="17" name="djname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="204" parent="17" name="djzl">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="205" parent="17" name="djinfo">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="206" parent="17" name="uid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="207" parent="17" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="208" parent="17" name="djsum">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="209" parent="17" name="djid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="210" parent="18" name="jnname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="211" parent="18" name="jnid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="212" parent="18" name="jngj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="213" parent="18" name="jnfy">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="214" parent="18" name="jnbj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="215" parent="18" name="jnxx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="216" parent="18" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="217" parent="18" name="jncount">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="218" parent="19" name="rwname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="219" parent="19" name="rwzl">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="220" parent="19" name="rwdj">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="221" parent="19" name="rwzb">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="222" parent="19" name="rwexp">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="223" parent="19" name="rwyxb">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="224" parent="19" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="225" parent="19" name="rwzt">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="226" parent="19" name="rwid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="227" parent="19" name="rwyq">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="228" parent="19" name="rwcount">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="229" parent="19" name="rwnowcount">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="230" parent="19" name="rwlx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="231" parent="19" name="rwyp">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="232" parent="19" name="data">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="233" parent="19" name="rwjineng">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="234" parent="20" name="ypname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="235" parent="20" name="ypid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="236" parent="20" name="yphp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="237" parent="20" name="ypgj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="238" parent="20" name="ypfy">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="239" parent="20" name="ypxx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="240" parent="20" name="ypbj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="241" parent="20" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="242" parent="20" name="ypsum">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="243" parent="20" name="ypjg">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="244" parent="21" name="zbname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="245" parent="21" name="zbinfo">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="246" parent="21" name="zbgj">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="247" parent="21" name="zbfy">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="248" parent="21" name="zbbj">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="249" parent="21" name="zbxx">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="250" parent="21" name="zbid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="251" parent="21" name="uid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="252" parent="21" name="zbnowid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="253" parent="21" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="254" parent="21" name="zbhp">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="255" parent="21" name="qianghua">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="256" parent="21" name="zblv">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="257" parent="21" name="zbtool">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="258" parent="21" name="PRIMARY">
+        <columns>zbnowid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="259" parent="22" name="qyid">
+        <mandatory>1</mandatory>
+        <data-type>int(10) unsigned</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="260" parent="22" name="qyname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="261" parent="22" name="mid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="262" parent="22" name="PRIMARY">
+        <columns>qyid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="263" parent="23" name="rwname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="264" parent="23" name="rwzl">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="265" parent="23" name="rwdj">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="266" parent="23" name="rwzb">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="267" parent="23" name="rwexp">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="268" parent="23" name="rwyxb">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="269" parent="23" name="rwid">
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="270" parent="23" name="rwyq">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="271" parent="23" name="rwinfo">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="272" parent="23" name="rwcount">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="273" parent="23" name="rwlx">
+        <mandatory>1</mandatory>
+        <data-type>int(255)</data-type>
+      </column>
+      <column id="274" parent="23" name="rwyp">
+        <mandatory>1</mandatory>
+        <data-type>text</data-type>
+      </column>
+      <column id="275" parent="23" name="lastrwid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="276" parent="23" name="rwjineng">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <key id="277" parent="23" name="PRIMARY">
+        <columns>rwid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="278" parent="24" name="username">
+        <data-type>text</data-type>
+      </column>
+      <column id="279" parent="24" name="userpass">
+        <data-type>text</data-type>
+      </column>
+      <column id="280" parent="24" name="token">
+        <data-type>text</data-type>
+      </column>
+      <column id="281" parent="25" name="ypname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="282" parent="25" name="ypid">
+        <mandatory>1</mandatory>
+        <data-type>int(11) unsigned</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="283" parent="25" name="yphp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="284" parent="25" name="ypgj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="285" parent="25" name="ypfy">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="286" parent="25" name="ypxx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="287" parent="25" name="ypbj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="288" parent="25" name="ypjg">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="289" parent="25" name="PRIMARY">
+        <columns>ypid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="290" parent="26" name="zbname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="291" parent="26" name="zbinfo">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="292" parent="26" name="zbgj">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="293" parent="26" name="zbfy">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="294" parent="26" name="zbbj">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="295" parent="26" name="zbxx">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="296" parent="26" name="zbid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="297" parent="26" name="zbhp">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="298" parent="26" name="zblv">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="299" parent="26" name="zbtool">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="300" parent="26" name="PRIMARY">
+        <columns>zbid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="301" parent="27" name="zrwname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="302" parent="27" name="zrwid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="303" parent="27" name="zrwyq">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="304" parent="27" name="yqcount">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="305" parent="27" name="zrwjldj">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="306" parent="27" name="zrwjlzb">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="307" parent="27" name="zrwjlyp">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="308" parent="27" name="zrwjljn">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="309" parent="27" name="lastid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="310" parent="27" name="zrwexp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="311" parent="27" name="zrwyxb">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="312" parent="27" name="PRIMARY">
+        <columns>zrwid</columns>
+        <primary>1</primary>
+      </key>
+      <column id="313" parent="28" name="clubname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="314" parent="28" name="clubinfo">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="315" parent="28" name="clublv">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="316" parent="28" name="clubid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="317" parent="28" name="clubno1">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="318" parent="28" name="clubexp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="319" parent="28" name="clubyxb">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="320" parent="28" name="clubczb">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="321" parent="29" name="clubid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="322" parent="29" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="323" parent="29" name="uid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="324" parent="29" name="uclv">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="325" parent="30" name="zbnowid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="326" parent="30" name="zbname">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="327" parent="30" name="qianghua">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="328" parent="30" name="pay">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="329" parent="30" name="payid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="330" parent="30" name="zbinfo">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="331" parent="30" name="zbgj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="332" parent="30" name="zbfy">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="333" parent="30" name="zbbj">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="334" parent="30" name="zbxx">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="335" parent="30" name="zbid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="336" parent="30" name="uid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="337" parent="30" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="338" parent="30" name="zbhp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="339" parent="30" name="zblv">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="340" parent="31" name="dhm">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="341" parent="31" name="dhzb">
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="342" parent="31" name="dhdj">
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="343" parent="31" name="dhyp">
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="344" parent="31" name="dhyxb">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="345" parent="31" name="dhczb">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="346" parent="31" name="dhname">
+        <data-type>varchar(255)</data-type>
+      </column>
+      <column id="347" parent="31" name="dhexp">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="348" parent="31" name="PRIMARY">
+        <columns>dhm</columns>
+        <primary>1</primary>
+      </key>
+      <column id="349" parent="32" name="imuid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <column id="350" parent="32" name="sid">
+        <mandatory>1</mandatory>
+        <data-type>int(11)</data-type>
+      </column>
+      <key id="351" parent="32" name="PRIMARY">
+        <columns>imuid</columns>
+        <primary>1</primary>
+      </key>
+    </database-model>
+  </data-source>
+</component>

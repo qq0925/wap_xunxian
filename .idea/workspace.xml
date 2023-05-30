@@ -1,0 +1,1463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/game/task.php" line="126" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9964bb87-4a49-49af-92df-2cd0b05efdf1" name="Default" comment="" />
+    <ignored path="web.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path=".idea/dataSources.local.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DatabaseView">
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <PATH>
+      <PATH_ELEMENT>
+        <option name="myItemId" />
+        <option name="myItemType" value="com.intellij.database.view.DatabaseStructure$Root" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="MySQL - game@127.0.0.1" />
+        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
+      </PATH_ELEMENT>
+    </PATH>
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="web" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="xiulian.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game/xiulian.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="342">
+              <caret line="18" column="26" selection-start-line="18" selection-start-column="26" selection-end-line="18" selection-end-column="26" />
+              <folding>
+                <marker date="1483521089899" expanded="true" signature="1855:2165" ph="..." />
+                <marker date="1483521089899" expanded="true" signature="2109:2142" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="boss.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game/boss.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="bossinfo.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game/bossinfo.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="19">
+              <caret line="1" column="31" selection-start-line="1" selection-start-column="31" selection-end-line="1" selection-end-column="31" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="nowmid.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/game/nowmid.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="722">
+              <caret line="164" column="65" selection-start-line="164" selection-start-column="65" selection-end-line="164" selection-end-column="65" />
+              <folding>
+                <marker date="1483856697403" expanded="true" signature="326:386" ph="update mid s... " />
+                <marker date="1483856697403" expanded="true" signature="1054:1118" ph="update game1... " />
+                <marker date="1483856697403" expanded="true" signature="3065:3129" ph="select * fro... midguaiwu" />
+                <marker date="1483856697403" expanded="true" signature="3401:3461" ph="update mid s... " />
+                <marker date="1483856697403" expanded="true" signature="3844:4328" ph="insert into midguaiwu... " />
+                <marker date="1483856697403" expanded="true" signature="4397:4461" ph="select * fro... midguaiwu" />
+                <marker date="1483856697403" expanded="true" signature="4838:4901" ph="select * fro... game1" />
+                <marker date="1483856697403" expanded="true" signature="5534:5576" ph="update game1... " />
+                <marker date="1483856697403" expanded="true" signature="6269:6324" ph="select * fro... playerrenwu" />
+                <marker date="1483856697403" expanded="true" signature="6520:6575" ph="delete from " />
+                <marker date="1483856697403" expanded="true" signature="6622:6676" ph="select * fro... playerrenwu" />
+                <marker date="1483856697403" expanded="true" signature="6816:6860" ph="select * fro... npc" />
+                <marker date="1483856697403" expanded="true" signature="10226:10275" ph="SELECT * FRO... ggliaotian" />
+                <marker date="1483856697403" expanded="true" signature="10815:10830" ph="..." />
+                <marker date="1483856697403" expanded="true" signature="11324:12173" ph="..." />
+                <marker date="1483856697403" expanded="true" signature="11597:11612" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="门派管理员.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/npc/muban/门派管理员.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1083">
+              <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+              <folding>
+                <marker date="1483522207691" expanded="true" signature="652:986" ph="..." />
+                <marker date="1483522207691" expanded="false" signature="915:927" ph="..." />
+                <marker date="1483522207691" expanded="true" signature="1423:1504" ph="insert into club... " />
+                <marker date="1483522207691" expanded="true" signature="1688:1751" ph="insert into clubplayer... " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tupo.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game/tupo.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="779">
+              <caret line="41" column="25" selection-start-line="41" selection-start-column="25" selection-end-line="41" selection-end-column="25" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fangshi.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game/fangshi.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2850">
+              <caret line="150" column="60" selection-start-line="150" selection-start-column="60" selection-end-line="150" selection-end-column="60" />
+              <folding>
+                <marker date="1483506075752" expanded="true" signature="1156:1231" ph="update `game... " />
+                <marker date="1483506075752" expanded="true" signature="1440:1533" ph="update `fang... " />
+                <marker date="1483506075752" expanded="true" signature="1742:1775" ph="update `game... " />
+                <marker date="1483506075752" expanded="true" signature="1742:1795" ph="update `game... " />
+                <marker date="1483506075752" expanded="true" signature="1742:1796" ph="update `game... " />
+                <marker date="1483506075752" expanded="true" signature="2065:2208" ph="replace into... playerdaoju" />
+                <marker date="1483506075752" expanded="true" signature="2703:2745" ph="delete from " />
+                <marker date="1483506075752" expanded="true" signature="4648:4719" ph="update `game... " />
+                <marker date="1483506075752" expanded="true" signature="5030:5067" ph="delete from " />
+                <marker date="1483506075752" expanded="true" signature="5376:5423" ph="update `game... " />
+                <marker date="1483506075752" expanded="true" signature="5753:5826" ph="update `play... " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="im.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game/im.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="171">
+              <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+              <folding>
+                <marker date="1472699416005" expanded="true" signature="162:210" ph="delete from " />
+                <marker date="1472699416005" expanded="true" signature="255:288" ph="select * fro... im" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="otherzhuangtai.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game/otherzhuangtai.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="114">
+              <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
+              <folding>
+                <marker date="1483523110353" expanded="true" signature="1168:1425" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="zbinfo.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/game/zbinfo.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="684">
+              <caret line="36" column="57" selection-start-line="36" selection-start-column="57" selection-end-line="36" selection-end-column="57" />
+              <folding>
+                <marker date="1483507089976" expanded="true" signature="875:1238" ph="insert into `fangshi_zb`... " />
+                <marker date="1483507089976" expanded="true" signature="1420:1478" ph="UPDATE `play... " />
+                <marker date="1483507089976" expanded="true" signature="4922:5253" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="XHTML File" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="GradleLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/game/dis/nowmid.php" />
+        <option value="$PROJECT_DIR$/npc/muban/2.php" />
+        <option value="$PROJECT_DIR$/pay/index.php" />
+        <option value="$PROJECT_DIR$/game/bagjn.php" />
+        <option value="$PROJECT_DIR$/game/bagzb.php" />
+        <option value="$PROJECT_DIR$/game/chongwu.php" />
+        <option value="$PROJECT_DIR$/game/pvb.php" />
+        <option value="$PROJECT_DIR$/game/allmap.php" />
+        <option value="$PROJECT_DIR$/npc/npc.php" />
+        <option value="$PROJECT_DIR$/game/zbinfo_sys.php" />
+        <option value="$PROJECT_DIR$/game/playertask.php" />
+        <option value="$PROJECT_DIR$/npc/muban/治疗_级别1.php" />
+        <option value="$PROJECT_DIR$/npc/muban/治疗.php" />
+        <option value="$PROJECT_DIR$/game/ypinfo.php" />
+        <option value="$PROJECT_DIR$/game/ginfo.php" />
+        <option value="$PROJECT_DIR$/game/task.php" />
+        <option value="$PROJECT_DIR$/game/playertaskinfo.php" />
+        <option value="$PROJECT_DIR$/npc/muban/技能兑换.php" />
+        <option value="$PROJECT_DIR$/game/jninfo.php" />
+        <option value="$PROJECT_DIR$/game/pvp.php" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/9908d2a9-11bb-4e25-995e-d545ff7742e8/console.sql" />
+        <option value="$PROJECT_DIR$/game/bagyp.php" />
+        <option value="$PROJECT_DIR$/game/cj.php" />
+        <option value="$PROJECT_DIR$/npc/muban/帮派管理员.php" />
+        <option value="$PROJECT_DIR$/game/paihang.php" />
+        <option value="$PROJECT_DIR$/game/clublist.php" />
+        <option value="$PROJECT_DIR$/../bmob/test.php" />
+        <option value="dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.duihuan" />
+        <option value="$PROJECT_DIR$/game/bagdj.php" />
+        <option value="$PROJECT_DIR$/css/gamecss.css" />
+        <option value="$PROJECT_DIR$/game/duihuan.php" />
+        <option value="$PROJECT_DIR$/game/club.php" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/b2e75da6-4348-491b-b186-a6c97fcb889b/console.sql" />
+        <option value="$PROJECT_DIR$/game/liaotian.php" />
+        <option value="$PROJECT_DIR$/game/im.php" />
+        <option value="$PROJECT_DIR$/game/zhuangtai.php" />
+        <option value="$PROJECT_DIR$/game/djinfo.php" />
+        <option value="$PROJECT_DIR$/game/ltmsg.php" />
+        <option value="$PROJECT_DIR$/pdo.php" />
+        <option value="$PROJECT_DIR$/index.php" />
+        <option value="$PROJECT_DIR$/reguser.php" />
+        <option value="$PROJECT_DIR$/game.php" />
+        <option value="$PROJECT_DIR$/game/pve.php" />
+        <option value="$PROJECT_DIR$/game/tupo.php" />
+        <option value="$PROJECT_DIR$/game/fangshi.php" />
+        <option value="$PROJECT_DIR$/game/zbinfo.php" />
+        <option value="$PROJECT_DIR$/npc/muban/门派管理员.php" />
+        <option value="$PROJECT_DIR$/class/player.php" />
+        <option value="$PROJECT_DIR$/game/otherzhuangtai.php" />
+        <option value="$PROJECT_DIR$/game/xiulian.php" />
+        <option value="$PROJECT_DIR$/game/nowmid.php" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="PhpServers">
+    <servers>
+      <server host="127.0.0.1" id="6ad16749-6178-41ab-994b-eb099431779b" name="Unnamed" use_path_mappings="true" />
+    </servers>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" interpreter_name="PHP" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="150" />
+    <option name="y" value="112" />
+    <option name="width" value="1329" />
+    <option name="height" value="894" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>GeneralPHP</id>
+          </State>
+          <State>
+            <id>PHP</id>
+          </State>
+          <State>
+            <id>SQL</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>SqlResolveInspection</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="npc" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="npc" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="muban" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="class" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../bmob" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Font" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="SearchEverywhereHistoryKey" value="jineng&#9;null&#9;null&#10;jncount&#9;null&#9;null" />
+    <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$3/SQL Dialects" value="MySQL" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\xampp\htdocs\web\npc\muban" />
+      <recent name="D:\xampp\htdocs\web\game" />
+      <recent name="E:\dult\源码\web\js" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\xampp\htdocs\web\npc\muban" />
+      <recent name="D:\xampp\htdocs\web\images" />
+      <recent name="D:\xampp\htdocs\web\game" />
+      <recent name="D:\xampp\htdocs\web" />
+      <recent name="E:\dult\源码\web\css" />
+    </key>
+  </component>
+  <component name="RunManager" selected="PHP Web Application.Unnamed">
+    <configuration default="true" type="AppEnginePhpConfigurationType" factoryName="App Engine for PHP">
+      <method />
+    </configuration>
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="" />
+      <working_directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <method />
+    </configuration>
+    <configuration default="true" type="GoRunFileConfiguration" factoryName="Go Single File">
+      <module name="" />
+      <working_directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method />
+    </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="" />
+      <working_directory value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <kind value="DIRECTORY" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpBehatConfigurationType" factoryName="Behat">
+      <BehatRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpBuiltInWebServerConfigurationType" factoryName="PHP Built-in Web Server">
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpHttpRequestRunConfigurationType" factoryName="PHP HTTP Request">
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpRemoteDebugRunConfigurationType" factoryName="PHP Remote Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpWebAppRunConfigurationType" factoryName="PHP Web Application" editBeforeRun="true" server_name="Unnamed">
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run-script" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="Unnamed" type="PhpWebAppRunConfigurationType" factoryName="PHP Web Application" browser="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" server_name="Unnamed" start_url="/web/">
+      <method />
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="PHP Web Application.Unnamed" />
+    </list>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9964bb87-4a49-49af-92df-2cd0b05efdf1" name="Default" comment="" />
+      <created>1465296118069</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1465296118069</updated>
+      <workItem from="1465296119648" duration="12739000" />
+      <workItem from="1465360803862" duration="637000" />
+      <workItem from="1465362019817" duration="690000" />
+      <workItem from="1465362723339" duration="65000" />
+      <workItem from="1465362799178" duration="238000" />
+      <workItem from="1465363046444" duration="349000" />
+      <workItem from="1465363453289" duration="1089000" />
+      <workItem from="1465364684183" duration="309000" />
+      <workItem from="1465366276187" duration="2842000" />
+      <workItem from="1465378019863" duration="7005000" />
+      <workItem from="1465397618420" duration="2715000" />
+      <workItem from="1465428592584" duration="4545000" />
+      <workItem from="1465485874332" duration="1569000" />
+      <workItem from="1465487456380" duration="5524000" />
+      <workItem from="1465538015705" duration="13183000" />
+      <workItem from="1465561324266" duration="17161000" />
+      <workItem from="1465581781050" duration="4472000" />
+      <workItem from="1465586417292" duration="358000" />
+      <workItem from="1465610148108" duration="3351000" />
+      <workItem from="1465613765513" duration="1714000" />
+      <workItem from="1465618074580" duration="713000" />
+      <workItem from="1465658644988" duration="5716000" />
+      <workItem from="1465709020480" duration="8175000" />
+      <workItem from="1465736809566" duration="9075000" />
+      <workItem from="1465783715214" duration="2956000" />
+      <workItem from="1465788988659" duration="713000" />
+      <workItem from="1465805212335" duration="15691000" />
+      <workItem from="1465823353780" duration="8445000" />
+      <workItem from="1465861892886" duration="456000" />
+      <workItem from="1465870938755" duration="8216000" />
+      <workItem from="1465882872416" duration="5847000" />
+      <workItem from="1465890047920" duration="4785000" />
+      <workItem from="1465895277766" duration="1261000" />
+      <workItem from="1465896699666" duration="160000" />
+      <workItem from="1465896893673" duration="565000" />
+      <workItem from="1465897609870" duration="3245000" />
+      <workItem from="1465907259790" duration="6978000" />
+      <workItem from="1465914264401" duration="2683000" />
+      <workItem from="1465917200915" duration="453000" />
+      <workItem from="1465918986530" duration="685000" />
+      <workItem from="1465964147969" duration="10895000" />
+      <workItem from="1465985819623" duration="2439000" />
+      <workItem from="1465988323030" duration="51000" />
+      <workItem from="1465988493005" duration="454000" />
+      <workItem from="1465993969984" duration="7236000" />
+      <workItem from="1466005516709" duration="1844000" />
+      <workItem from="1466038737084" duration="4271000" />
+      <workItem from="1466051719454" duration="29084000" />
+      <workItem from="1466098678292" duration="267000" />
+      <workItem from="1466099514472" duration="723000" />
+      <workItem from="1466127989137" duration="5412000" />
+      <workItem from="1466133884505" duration="482000" />
+      <workItem from="1466134414406" duration="1100000" />
+      <workItem from="1466135694657" duration="77000" />
+      <workItem from="1466135813441" duration="669000" />
+      <workItem from="1466136515414" duration="880000" />
+      <workItem from="1466137439405" duration="505000" />
+      <workItem from="1466140095400" duration="1395000" />
+      <workItem from="1466141982373" duration="52000" />
+      <workItem from="1466142081100" duration="61000" />
+      <workItem from="1466149811171" duration="12813000" />
+      <workItem from="1466164172248" duration="9712000" />
+      <workItem from="1466216926957" duration="3760000" />
+      <workItem from="1466221372814" duration="1886000" />
+      <workItem from="1466225103301" duration="1587000" />
+      <workItem from="1466232131915" duration="1350000" />
+      <workItem from="1466244392199" duration="428000" />
+      <workItem from="1466254079790" duration="10136000" />
+      <workItem from="1466273448890" duration="6808000" />
+      <workItem from="1466309640088" duration="619000" />
+      <workItem from="1466312519248" duration="12681000" />
+      <workItem from="1466337785613" duration="21532000" />
+      <workItem from="1466388909429" duration="6841000" />
+      <workItem from="1466408052939" duration="12285000" />
+      <workItem from="1466430111997" duration="985000" />
+      <workItem from="1466431630309" duration="2163000" />
+      <workItem from="1466435132427" duration="1467000" />
+      <workItem from="1466483833381" duration="6556000" />
+      <workItem from="1466493375833" duration="4271000" />
+      <workItem from="1466594898908" duration="1164000" />
+      <workItem from="1466602209059" duration="41000" />
+      <workItem from="1466757121549" duration="6349000" />
+      <workItem from="1466781508078" duration="665000" />
+      <workItem from="1466825276827" duration="309000" />
+      <workItem from="1466850220203" duration="4267000" />
+      <workItem from="1466868130617" duration="373000" />
+      <workItem from="1466925797044" duration="3776000" />
+      <workItem from="1466993739113" duration="2157000" />
+      <workItem from="1466996531450" duration="7103000" />
+      <workItem from="1467026702577" duration="2166000" />
+      <workItem from="1467035007792" duration="1229000" />
+      <workItem from="1467036926592" duration="67000" />
+      <workItem from="1467040605727" duration="423000" />
+      <workItem from="1467087187277" duration="1598000" />
+      <workItem from="1467089318101" duration="1241000" />
+      <workItem from="1467092972885" duration="6642000" />
+      <workItem from="1467099831842" duration="5524000" />
+      <workItem from="1467105467349" duration="127000" />
+      <workItem from="1467105804213" duration="903000" />
+      <workItem from="1467120833247" duration="1513000" />
+      <workItem from="1467122752635" duration="3578000" />
+      <workItem from="1467126877435" duration="216000" />
+      <workItem from="1467208796797" duration="150000" />
+      <workItem from="1467209163252" duration="31000" />
+      <workItem from="1467431706912" duration="4674000" />
+      <workItem from="1467436704140" duration="314000" />
+      <workItem from="1467442232022" duration="5592000" />
+      <workItem from="1467507722282" duration="2179000" />
+      <workItem from="1467510024828" duration="930000" />
+      <workItem from="1467511384798" duration="1959000" />
+      <workItem from="1467519634944" duration="2055000" />
+      <workItem from="1467554419015" duration="4771000" />
+      <workItem from="1467599485094" duration="6435000" />
+      <workItem from="1467706724809" duration="73000" />
+      <workItem from="1467859639118" duration="432000" />
+      <workItem from="1467978226192" duration="1581000" />
+      <workItem from="1468212320084" duration="40000" />
+      <workItem from="1468236932028" duration="618000" />
+      <workItem from="1468631591700" duration="400000" />
+      <workItem from="1468639864151" duration="995000" />
+      <workItem from="1468658974419" duration="1499000" />
+      <workItem from="1468663555411" duration="358000" />
+      <workItem from="1468684698499" duration="9000" />
+      <workItem from="1468991354954" duration="318000" />
+      <workItem from="1468993493604" duration="1456000" />
+      <workItem from="1468995053627" duration="2358000" />
+      <workItem from="1469025624211" duration="1138000" />
+      <workItem from="1469027297247" duration="613000" />
+      <workItem from="1469764651336" duration="2396000" />
+      <workItem from="1469801209192" duration="1427000" />
+      <workItem from="1469804545906" duration="12000" />
+      <workItem from="1469805011134" duration="27000" />
+      <workItem from="1469859880916" duration="609000" />
+      <workItem from="1469861133775" duration="631000" />
+      <workItem from="1470241365860" duration="2968000" />
+      <workItem from="1470270824543" duration="2142000" />
+      <workItem from="1470290300293" duration="862000" />
+      <workItem from="1470313819583" duration="96000" />
+      <workItem from="1470360559823" duration="1068000" />
+      <workItem from="1470370696608" duration="296000" />
+      <workItem from="1470375078049" duration="149000" />
+      <workItem from="1470375278650" duration="656000" />
+      <workItem from="1470405117023" duration="106000" />
+      <workItem from="1470474188228" duration="93000" />
+      <workItem from="1470474985626" duration="31000" />
+      <workItem from="1470475412772" duration="830000" />
+      <workItem from="1470499302823" duration="11000" />
+      <workItem from="1470539858316" duration="7529000" />
+      <workItem from="1470572864175" duration="1470000" />
+      <workItem from="1470574563712" duration="18000" />
+      <workItem from="1470574669809" duration="3919000" />
+      <workItem from="1470583553324" duration="1395000" />
+      <workItem from="1470584969202" duration="1122000" />
+      <workItem from="1470586148099" duration="1123000" />
+      <workItem from="1470590228569" duration="1424000" />
+      <workItem from="1470629330110" duration="609000" />
+      <workItem from="1470650539341" duration="2394000" />
+      <workItem from="1470707967726" duration="57000" />
+      <workItem from="1470816899184" duration="5300000" />
+      <workItem from="1470826584175" duration="7982000" />
+      <workItem from="1470839689039" duration="139000" />
+      <workItem from="1470840165426" duration="314000" />
+      <workItem from="1470881822697" duration="1745000" />
+      <workItem from="1470902263491" duration="1317000" />
+      <workItem from="1470908325201" duration="3878000" />
+      <workItem from="1470921350283" duration="2132000" />
+      <workItem from="1470964471654" duration="15921000" />
+      <workItem from="1470997689329" duration="3212000" />
+      <workItem from="1471057478170" duration="99000" />
+      <workItem from="1471059014736" duration="143000" />
+      <workItem from="1471060441552" duration="651000" />
+      <workItem from="1471061192903" duration="10781000" />
+      <workItem from="1471086156598" duration="10840000" />
+      <workItem from="1471126210172" duration="3602000" />
+      <workItem from="1471144069534" duration="15139000" />
+      <workItem from="1471161582859" duration="3792000" />
+      <workItem from="1471166383686" duration="282000" />
+      <workItem from="1471167552997" duration="304000" />
+      <workItem from="1471178391476" duration="11375000" />
+      <workItem from="1471229663964" duration="2114000" />
+      <workItem from="1471233384843" duration="1921000" />
+      <workItem from="1471237464122" duration="8825000" />
+      <workItem from="1471246414629" duration="3411000" />
+      <workItem from="1471250281570" duration="7416000" />
+      <workItem from="1471261819021" duration="797000" />
+      <workItem from="1471275449443" duration="2086000" />
+      <workItem from="1471277586938" duration="1213000" />
+      <workItem from="1471311531881" duration="14388000" />
+      <workItem from="1471341021406" duration="4764000" />
+      <workItem from="1471362599863" duration="1038000" />
+      <workItem from="1471507741097" duration="3228000" />
+      <workItem from="1471524769156" duration="4000" />
+      <workItem from="1471609934282" duration="3361000" />
+      <workItem from="1471670231901" duration="3478000" />
+      <workItem from="1471676226511" duration="122000" />
+      <workItem from="1471676526323" duration="3924000" />
+      <workItem from="1471688963396" duration="341000" />
+      <workItem from="1471689523475" duration="5358000" />
+      <workItem from="1471699053080" duration="618000" />
+      <workItem from="1471757898523" duration="2944000" />
+      <workItem from="1471826338835" duration="419000" />
+      <workItem from="1471828339412" duration="735000" />
+      <workItem from="1471834670453" duration="6000" />
+      <workItem from="1471844061534" duration="2691000" />
+      <workItem from="1471850916551" duration="644000" />
+      <workItem from="1471867079466" duration="7727000" />
+      <workItem from="1471877708562" duration="1577000" />
+      <workItem from="1471924469730" duration="1163000" />
+      <workItem from="1471927335715" duration="5255000" />
+      <workItem from="1471934288882" duration="2433000" />
+      <workItem from="1471940450109" duration="55000" />
+      <workItem from="1471940680145" duration="393000" />
+      <workItem from="1471950177601" duration="28000" />
+      <workItem from="1472008126781" duration="845000" />
+      <workItem from="1472011509291" duration="17490000" />
+      <workItem from="1472092613677" duration="1485000" />
+      <workItem from="1472096814458" duration="583000" />
+      <workItem from="1472111292262" duration="5512000" />
+      <workItem from="1472131438366" duration="484000" />
+      <workItem from="1472140117318" duration="2329000" />
+      <workItem from="1472142772661" duration="359000" />
+      <workItem from="1472143267187" duration="1001000" />
+      <workItem from="1472177394638" duration="26000" />
+      <workItem from="1472188166937" duration="5871000" />
+      <workItem from="1472196055603" duration="4055000" />
+      <workItem from="1472205231471" duration="1420000" />
+      <workItem from="1472207820112" duration="136000" />
+      <workItem from="1472209542203" duration="1211000" />
+      <workItem from="1472222049066" duration="3377000" />
+      <workItem from="1472228256594" duration="2960000" />
+      <workItem from="1472233816775" duration="109000" />
+      <workItem from="1472268169699" duration="11588000" />
+      <workItem from="1472288148863" duration="6211000" />
+      <workItem from="1472304537958" duration="1678000" />
+      <workItem from="1472309577587" duration="2033000" />
+      <workItem from="1472359948793" duration="1073000" />
+      <workItem from="1472364300719" duration="2061000" />
+      <workItem from="1472367408179" duration="6700000" />
+      <workItem from="1472375815045" duration="1850000" />
+      <workItem from="1472381068202" duration="2595000" />
+      <workItem from="1472403351133" duration="497000" />
+      <workItem from="1472440681848" duration="3635000" />
+      <workItem from="1472446057612" duration="3090000" />
+      <workItem from="1472457740255" duration="5291000" />
+      <workItem from="1472463137051" duration="3854000" />
+      <workItem from="1472528787810" duration="3733000" />
+      <workItem from="1472544188468" duration="981000" />
+      <workItem from="1472554992387" duration="4007000" />
+      <workItem from="1472614358004" duration="3210000" />
+      <workItem from="1472619910726" duration="2805000" />
+      <workItem from="1472629719530" duration="1424000" />
+      <workItem from="1472698858256" duration="1219000" />
+      <workItem from="1473220346538" duration="24000" />
+      <workItem from="1475741562289" duration="1038000" />
+      <workItem from="1476541866783" duration="351000" />
+      <workItem from="1479704186739" duration="4451000" />
+      <workItem from="1479716350152" duration="4016000" />
+      <workItem from="1480413493786" duration="680000" />
+      <workItem from="1480485561748" duration="2153000" />
+      <workItem from="1480515277622" duration="2468000" />
+      <workItem from="1480661792365" duration="3004000" />
+      <workItem from="1482720238965" duration="1572000" />
+      <workItem from="1482890526392" duration="1512000" />
+      <workItem from="1483497775778" duration="4648000" />
+      <workItem from="1483520704591" duration="3093000" />
+      <workItem from="1483854399999" duration="737000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="822989000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="150" y="112" width="1329" height="894" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26162332" sideWeight="0.54155123" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32831" sideWeight="0.4914163" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32959402" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5545335" sideWeight="0.7178881" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33963752" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5545335" sideWeight="0.2821119" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30760986" sideWeight="0.48081023" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31449893" sideWeight="0.45844877" order="5" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="PHP-CGI Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" x="92" y="92" width="1736" height="896" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21698113" sideWeight="0.48951435" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32723358" sideWeight="0.49570817" order="2" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="12" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.fangshi_zb">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/paihang.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="703">
+          <caret line="37" column="4" selection-start-line="37" selection-start-column="4" selection-end-line="37" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/clublist.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="26" column="6" selection-start-line="26" selection-start-column="6" selection-end-line="26" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../bmob/test.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="21" column="43" selection-start-line="21" selection-start-column="43" selection-end-line="21" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.game1">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.duihuan">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.playerrenwu">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.clubplayer">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/lib/phpstorm.jar!/resources/html5-schema/html5/block.rnc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1061">
+          <caret line="84" column="16" selection-start-line="84" selection-start-column="16" selection-end-line="84" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/css/gamecss.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1368">
+          <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/b2e75da6-4348-491b-b186-a6c97fcb889b/console.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="51" selection-start-line="0" selection-start-column="51" selection-end-line="0" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.playerzhuangbei">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/ginfo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-99">
+          <caret line="59" column="9" selection-start-line="59" selection-start-column="9" selection-end-line="59" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/pvp.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="108" column="20" selection-start-line="108" selection-start-column="20" selection-end-line="108" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/playertaskinfo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="18" column="65" selection-start-line="18" selection-start-column="65" selection-end-line="18" selection-end-column="65" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/ApkIDE/Work/com.youdong.guaji_wx_wllg.lhh/assets/config.json" />
+    <entry file="file://$PROJECT_DIR$/game/imliaotian.php" />
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.userinfo">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.im">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/ltmsg.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="22" column="14" selection-start-line="22" selection-start-column="14" selection-end-line="22" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/liaotian.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="532">
+          <caret line="28" column="30" selection-start-line="28" selection-start-column="27" selection-end-line="28" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/bagdj.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="431">
+          <caret line="31" column="39" selection-start-line="31" selection-start-column="39" selection-end-line="31" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pdo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="2" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/djinfo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-437">
+          <caret line="16" column="6" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/duihuan.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-633">
+          <caret line="34" column="61" selection-start-line="34" selection-start-column="61" selection-end-line="34" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/jninfo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/bagzb.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="26" column="64" selection-start-line="26" selection-start-column="64" selection-end-line="26" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/bagjn.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="608">
+          <caret line="32" column="16" selection-start-line="32" selection-start-column="16" selection-end-line="32" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/allmap.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="22" column="14" selection-start-line="22" selection-start-column="14" selection-end-line="22" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/club.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="26" column="23" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reguser.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="779">
+          <caret line="41" column="22" selection-start-line="41" selection-start-column="22" selection-end-line="41" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/zbinfo_sys.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" column="5" selection-start-line="11" selection-start-column="21" selection-end-line="12" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="43" column="15" selection-start-line="43" selection-start-column="15" selection-end-line="43" selection-end-column="15" />
+          <folding>
+            <marker date="1483498055545" expanded="true" signature="2427:2486" ph="update game1... " />
+            <marker date="1483498055545" expanded="true" signature="3120:3160" ph="select * fro... game1" />
+            <marker date="1483498055545" expanded="true" signature="3552:3699" ph="insert into game1... " />
+            <marker date="1483498055545" expanded="true" signature="4180:4230" ph="insert into ggliaotian... " />
+            <marker date="1483498055545" expanded="true" signature="5229:5279" ph="insert into ggliaotian... " />
+            <marker date="1483498055545" expanded="true" signature="5788:5877" ph="insert into imliaotian... " />
+            <marker date="1483498055545" expanded="true" signature="5788:5886" ph="insert into imliaotian... " />
+            <marker date="1483498055545" expanded="true" signature="9077:9115" ph="delete from " />
+            <marker date="1483498055545" expanded="true" signature="10192:10251" ph="update game1... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="24" column="54" selection-start-line="24" selection-start-column="54" selection-end-line="24" selection-end-column="54" />
+          <folding>
+            <marker date="1480515389532" expanded="true" signature="370:428" ph="select * fro... userinfo" />
+            <marker date="1480515389532" expanded="true" signature="883:925" ph="select * fro... game1" />
+            <marker date="1480515389532" expanded="true" signature="1233:1289" ph="update game1... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/pve.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2470">
+          <caret line="130" column="6" selection-start-line="130" selection-start-column="6" selection-end-line="130" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.daoju">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/zhuangtai.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="45" column="12" selection-start-line="45" selection-start-column="12" selection-end-line="45" selection-end-column="12" />
+          <folding>
+            <marker date="1479705368774" expanded="true" signature="529:578" ph="update game1... " />
+            <marker date="1479705368774" expanded="true" signature="1258:1316" ph="update game1... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/zbinfo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="36" column="57" selection-start-line="36" selection-start-column="57" selection-end-line="36" selection-end-column="57" />
+          <folding>
+            <marker date="1483507089976" expanded="true" signature="875:1238" ph="insert into `fangshi_zb`... " />
+            <marker date="1483507089976" expanded="true" signature="1420:1478" ph="UPDATE `play... " />
+            <marker date="1483507089976" expanded="true" signature="4922:5253" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.club">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/im.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding>
+            <marker date="1472699416005" expanded="true" signature="162:210" ph="delete from " />
+            <marker date="1472699416005" expanded="true" signature="255:288" ph="select * fro... im" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/otherzhuangtai.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
+          <folding>
+            <marker date="1483523110353" expanded="true" signature="1168:1425" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/class/player.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="1323" column="36" selection-start-line="1323" selection-start-column="28" selection-end-line="1323" selection-end-column="36" />
+          <folding>
+            <marker date="1483522983415" expanded="true" signature="769:805" ph="select * fro... game1" />
+            <marker date="1483522983415" expanded="true" signature="5610:5646" ph="select * fro... game1" />
+            <marker date="1483522983415" expanded="true" signature="6295:6330" ph="select * fro... midguaiwu" />
+            <marker date="1483522983415" expanded="true" signature="7636:7666" ph="select * fro... guaiwu" />
+            <marker date="1483522983415" expanded="true" signature="8854:8888" ph="select * fro... mid" />
+            <marker date="1483522983415" expanded="true" signature="10741:10793" ph="update game1... " />
+            <marker date="1483522983415" expanded="true" signature="11031:11095" ph="update game1... " />
+            <marker date="1483522983415" expanded="true" signature="11613:11989" ph="update game1... " />
+            <marker date="1483522983415" expanded="true" signature="12246:12275" ph="select * fro... npc" />
+            <marker date="1483522983415" expanded="true" signature="12931:12977" ph="select * fro... playerzhuangbei" />
+            <marker date="1483522983415" expanded="true" signature="13799:13836" ph="select * fro... zhuangbei" />
+            <marker date="1483522983415" expanded="true" signature="14426:14654" ph="insert into playerzhuangbei... " />
+            <marker date="1483522983415" expanded="true" signature="14949:15003" ph="select * fro... playerdaoju" />
+            <marker date="1483522983415" expanded="true" signature="15118:15192" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15319:15483" ph="insert into playerdaoju... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15746" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15757" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15759" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15760" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15780" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15790" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15794" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15802" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15803" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15820" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15724:15838" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15914:16020" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="15914:16038" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="16093:16162" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="16093:16166" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="16093:16167" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="16093:16173" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="16093:16174" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="16093:16197" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="16093:16218" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="16330:16389" ph="select * fro... playerdaoju" />
+            <marker date="1483522983415" expanded="true" signature="16960:17034" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="17261:17294" ph="select * fro... daoju" />
+            <marker date="1483522983415" expanded="true" signature="17753:17820" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="17945:18012" ph="select * fro... playerzhuangbei" />
+            <marker date="1483522983415" expanded="true" signature="18921:18941" ph="select * fro... yaopin" />
+            <marker date="1483522983415" expanded="true" signature="19458:19490" ph="select * fro... yaopin" />
+            <marker date="1483522983415" expanded="true" signature="19993:20051" ph="select * fro... playeryaopin" />
+            <marker date="1483522983415" expanded="true" signature="20630:20673" ph="select * fro... playeryaopin" />
+            <marker date="1483522983415" expanded="true" signature="20967:21045" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="21148:21369" ph="insert into playeryaopin... " />
+            <marker date="1483522983415" expanded="true" signature="21585:21663" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="21877:21927" ph="update game1... " />
+            <marker date="1483522983415" expanded="true" signature="22029:22089" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="22192:22248" ph="update game1... " />
+            <marker date="1483522983415" expanded="true" signature="22347:22413" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="22578:22634" ph="update game1... " />
+            <marker date="1483522983415" expanded="true" signature="22770:22826" ph="update game1... " />
+            <marker date="1483522983415" expanded="true" signature="23066:23122" ph="update game1... " />
+            <marker date="1483522983415" expanded="true" signature="23258:23314" ph="update game1... " />
+            <marker date="1483522983415" expanded="true" signature="23759:23801" ph="select * fro... playerrenwu" />
+            <marker date="1483522983415" expanded="true" signature="24484:24522" ph="select * fro... renwu" />
+            <marker date="1483522983415" expanded="true" signature="25285:25337" ph="select * fro... playerrenwu" />
+            <marker date="1483522983415" expanded="true" signature="26397:26429" ph="select * fro... boss" />
+            <marker date="1483522983415" expanded="true" signature="28584:28625" ph="select * fro... playerchongwu" />
+            <marker date="1483522983415" expanded="true" signature="32300:32346" ph="select * fro... playerchongwu" />
+            <marker date="1483522983415" expanded="true" signature="33240:33429" ph="insert into playerchongwu... " />
+            <marker date="1483522983415" expanded="true" signature="33518:33577" ph="delete from " />
+            <marker date="1483522983415" expanded="true" signature="33658:33722" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="33844:33917" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="34579:34883" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="35187:35207" ph="select * fro... jineng" />
+            <marker date="1483522983415" expanded="true" signature="35366:35409" ph="select * fro... playerjineng" />
+            <marker date="1483522983415" expanded="true" signature="35592:35624" ph="select * fro... jineng" />
+            <marker date="1483522983415" expanded="true" signature="36178:36236" ph="select * fro... playerjineng" />
+            <marker date="1483522983415" expanded="true" signature="36874:36961" ph="update `play... " />
+            <marker date="1483522983415" expanded="true" signature="36991:37187" ph="insert into `playerjineng`... " />
+            <marker date="1483522983415" expanded="true" signature="37416:37495" ph="update playe... " />
+            <marker date="1483522983415" expanded="true" signature="37773:37803" ph="select * fro... qy" />
+            <marker date="1483522983415" expanded="true" signature="38062:38080" ph="select * fro... qy" />
+            <marker date="1483522983415" expanded="true" signature="38299:38325" ph="select * fro... gameconfig" />
+            <marker date="1483522983415" expanded="true" signature="38871:38912" ph="select * fro... fangshi_dj" />
+            <marker date="1483522983415" expanded="true" signature="39555:39596" ph="select * fro... fangshi_zb" />
+            <marker date="1483522983415" expanded="true" signature="40156:40182" ph="select * fro... fangshi_dj" />
+            <marker date="1483522983415" expanded="true" signature="40349:40375" ph="select * fro... fangshi_zb" />
+            <marker date="1483522983415" expanded="true" signature="40733:40753" ph="select * fro... fangshi_dj" />
+            <marker date="1483522983415" expanded="true" signature="40733:40759" ph="select * fro... club" />
+            <marker date="1483522983415" expanded="true" signature="40733:40766" ph="select * fro... club" />
+            <marker date="1483522983415" expanded="true" signature="40733:40769" ph="select * fro... club" />
+            <marker date="1483522983415" expanded="true" signature="41303:41323" ph="select * fro... clubplayer" />
+            <marker date="1483522983415" expanded="true" signature="41659:41704" ph="select * fro... clubplayer" />
+            <marker date="1483522983415" expanded="true" signature="42281:42321" ph="select * fro... duihuan" />
+            <marker date="1483522983415" expanded="true" signature="42974:43000" ph="select imuid... im" />
+            <marker date="1483522983415" expanded="true" signature="42974:43008" ph="select imuid... im" />
+            <marker date="1483522983415" expanded="true" signature="42974:43009" ph="select imuid... im" />
+            <marker date="1483522983415" expanded="true" signature="42974:43013" ph="select imuid... im" />
+            <marker date="1483522983415" expanded="true" signature="42974:43024" ph="select imuid... im" />
+            <marker date="1483522983415" expanded="true" signature="42974:43025" ph="select imuid... im" />
+            <marker date="1483522983415" expanded="true" signature="42974:43030" ph="select imuid... im" />
+            <marker date="1483522983415" expanded="true" signature="43197:43214" ph="insert into `im`... " />
+            <marker date="1483522983415" expanded="true" signature="43197:43230" ph="insert into `im`... " />
+            <marker date="1483522983415" expanded="true" signature="43197:43266" ph="insert into `im`... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/f499f11d/b2e75da6-4348-491b-b186-a6c97fcb889b/game.fangshi_dj">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/fangshi.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2850">
+          <caret line="150" column="60" selection-start-line="150" selection-start-column="60" selection-end-line="150" selection-end-column="60" />
+          <folding>
+            <marker date="1483506075752" expanded="true" signature="1156:1231" ph="update `game... " />
+            <marker date="1483506075752" expanded="true" signature="1440:1533" ph="update `fang... " />
+            <marker date="1483506075752" expanded="true" signature="1742:1775" ph="update `game... " />
+            <marker date="1483506075752" expanded="true" signature="1742:1795" ph="update `game... " />
+            <marker date="1483506075752" expanded="true" signature="1742:1796" ph="update `game... " />
+            <marker date="1483506075752" expanded="true" signature="2065:2208" ph="replace into... playerdaoju" />
+            <marker date="1483506075752" expanded="true" signature="2703:2745" ph="delete from " />
+            <marker date="1483506075752" expanded="true" signature="4648:4719" ph="update `game... " />
+            <marker date="1483506075752" expanded="true" signature="5030:5067" ph="delete from " />
+            <marker date="1483506075752" expanded="true" signature="5376:5423" ph="update `game... " />
+            <marker date="1483506075752" expanded="true" signature="5753:5826" ph="update `play... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/tupo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="779">
+          <caret line="41" column="25" selection-start-line="41" selection-start-column="25" selection-end-line="41" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/npc/muban/门派管理员.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1083">
+          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+          <folding>
+            <marker date="1483522207691" expanded="true" signature="652:986" ph="..." />
+            <marker date="1483522207691" expanded="false" signature="915:927" ph="..." />
+            <marker date="1483522207691" expanded="true" signature="1423:1504" ph="insert into club... " />
+            <marker date="1483522207691" expanded="true" signature="1688:1751" ph="insert into clubplayer... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/cj.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/xiulian.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="18" column="26" selection-start-line="18" selection-start-column="26" selection-end-line="18" selection-end-column="26" />
+          <folding>
+            <marker date="1483521089899" expanded="true" signature="1855:2165" ph="..." />
+            <marker date="1483521089899" expanded="true" signature="2109:2142" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/boss.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/bossinfo.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="1" column="31" selection-start-line="1" selection-start-column="31" selection-end-line="1" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game/nowmid.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="722">
+          <caret line="164" column="65" selection-start-line="164" selection-start-column="65" selection-end-line="164" selection-end-column="65" />
+          <folding>
+            <marker date="1483856697403" expanded="true" signature="326:386" ph="update mid s... " />
+            <marker date="1483856697403" expanded="true" signature="1054:1118" ph="update game1... " />
+            <marker date="1483856697403" expanded="true" signature="3065:3129" ph="select * fro... midguaiwu" />
+            <marker date="1483856697403" expanded="true" signature="3401:3461" ph="update mid s... " />
+            <marker date="1483856697403" expanded="true" signature="3844:4328" ph="insert into midguaiwu... " />
+            <marker date="1483856697403" expanded="true" signature="4397:4461" ph="select * fro... midguaiwu" />
+            <marker date="1483856697403" expanded="true" signature="4838:4901" ph="select * fro... game1" />
+            <marker date="1483856697403" expanded="true" signature="5534:5576" ph="update game1... " />
+            <marker date="1483856697403" expanded="true" signature="6269:6324" ph="select * fro... playerrenwu" />
+            <marker date="1483856697403" expanded="true" signature="6520:6575" ph="delete from " />
+            <marker date="1483856697403" expanded="true" signature="6622:6676" ph="select * fro... playerrenwu" />
+            <marker date="1483856697403" expanded="true" signature="6816:6860" ph="select * fro... npc" />
+            <marker date="1483856697403" expanded="true" signature="10226:10275" ph="SELECT * FRO... ggliaotian" />
+            <marker date="1483856697403" expanded="true" signature="10815:10830" ph="..." />
+            <marker date="1483856697403" expanded="true" signature="11324:12173" ph="..." />
+            <marker date="1483856697403" expanded="true" signature="11597:11612" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

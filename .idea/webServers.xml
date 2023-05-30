@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="854615e9-9851-4c67-b9ed-498c80bc22b3" name="139" url="http://139.196.47.199">
+        <fileTransfer host="139.196.47.199" port="21" password="dfd0dfd0dfdbdf98df98df93" username="abc837932126">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" />
+          </advancedOptions>
+          <option name="port" value="21" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="eacd5bdc-19d5-41dd-adec-a505be4baf59" name="121.42.197.43" url="http://121.42.197.43">
+        <fileTransfer host="121.42.197.43" port="21" password="dfd0dfd0dfdbdf98df98df93" username="abc837932126">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" />
+          </advancedOptions>
+          <option name="port" value="21" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

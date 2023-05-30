@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/class" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/css" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/game" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/game.php" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/images" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/index.php" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/js" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/npc" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/pay" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/pdo.php" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/reguser.php" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/renwu" dialect="MySQL" />
+  </component>
+</project>
