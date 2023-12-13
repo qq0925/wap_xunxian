@@ -5,3 +5,4 @@ something added.
 yes
 fight_system added.
 yes,something added.
+yes/
