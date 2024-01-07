@@ -6,3 +6,4 @@ yes
 fight_system added.
 yes,something added.
 yes/
+update  for sth.
