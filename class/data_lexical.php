@@ -77,10 +77,10 @@ $keyValuePairs = explode(",", $input);
 foreach ($keyValuePairs as $pair) {
     // 使用等号分割键值对
     $split = explode("=", $pair);
-
+    $firstEqualsPos = strpos($pair, '=');
     if (count($split) >= 2) {
-        $ele_1 = $split[0];
-        $ele_2 = $split[1];
+        $ele_1 = substr($input, 0, $firstEqualsPos);
+        $ele_2 = substr($input, $firstEqualsPos + 1);
         $parts = explode(".", $ele_1);
         if (count($parts) >= 2) {
             $ele_1_1 = $parts[0]; // 小数点左边的内容
@@ -247,10 +247,11 @@ $keyValuePairs = explode(",", $input);
 foreach ($keyValuePairs as $pair) {
     // 使用等号分割键值对
     $split = explode("=", $pair);
-
+    // 找到第一个等号的位置
+    $firstEqualsPos = strpos($pair, '=');
     if (count($split) >= 2) {
-        $ele_1 = $split[0];
-        $ele_2 = $split[1];
+        $ele_1 = substr($input, 0, $firstEqualsPos);
+        $ele_2 = substr($input, $firstEqualsPos + 1);
         $parts = explode(".", $ele_1);
         if (count($parts) >= 2) {
             $ele_1_1 = $parts[0]; // 小数点左边的内容
@@ -340,9 +341,10 @@ foreach ($keyValuePairs as $pair) {
     // 使用|分割键值对
     $item_true_id = '';
     $split = explode("|", $pair);
+    $firstEqualsPos = strpos($pair, '|');
     if (count($split) >= 2) {
-        $ele_1 = $split[0];
-        $ele_2 = $split[1];
+        $ele_1 = substr($input, 0, $firstEqualsPos);
+        $ele_2 = substr($input, $firstEqualsPos + 1);
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         $sql = "select iid,iname,itype,iweight from system_item_module where iid = '$ele_1'";
