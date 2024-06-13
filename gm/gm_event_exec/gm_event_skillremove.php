@@ -1,0 +1,97 @@
+<?php
+
+
+if($skill_remove_id){
+// 检查 r_skills 字段是否为空
+$query = "SELECT r_skills FROM system_event_evs where belong = '$step_belong_id' and id = '$step_id'";
+$stmt = $dblj->prepare($query);
+$stmt->execute();
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (empty($result['r_skills'])) {
+    // r_skills 字段为空，直接赋值为 $string_new
+    $query = "UPDATE system_event_evs SET r_skills = :new_value where belong = '$step_belong_id' and id = '$step_id'";
+    $stmt = $dblj->prepare($query);
+    $stmt->bindValue(':new_value', $skill_remove_id);
+    $stmt->execute();
+} elseif(!in_array($skill_remove_id, explode(',',$result['r_skills']))) {
+    // r_skills 字段不为空，在原有值后面加上逗号和 $string_new
+    $query = "UPDATE system_event_evs SET r_skills = CONCAT(r_skills, ',', :new_value) where belong = '$step_belong_id' and id = '$step_id'";
+    $stmt = $dblj->prepare($query);
+    $stmt->bindValue(':new_value', $skill_remove_id);
+    $stmt->execute();
+}
+}
+if($remove_id){
+// 准备 SQL 查询语句
+$query = "SELECT r_skills FROM system_event_evs WHERE belong = '$step_belong_id' and id = '$step_id'";
+
+// 执行查询
+$result = $dblj->query($query);
+
+// 获取结果
+if ($result) {
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $r_skills = $row['r_skills'];
+} else {
+    echo "查询失败";
+}
+$string_old = $remove_id;
+$elements = explode(",", $r_skills);
+$index = array_search($string_old, $elements);
+if ($index !== false) {
+    unset($elements[$index]);
+}
+$newString = implode(",", $elements);
+
+            // 准备 SQL 更新语句，使用占位符代替变量
+$query = "UPDATE system_event_evs SET r_skills = :newstring WHERE belong = '$step_belong_id' and id = '$step_id'";
+
+// 准备并执行预处理语句
+$stmt = $dblj->prepare($query);
+
+// 绑定参数值
+$stmt->bindParam(':newstring', $newString);
+
+// 执行更新
+if ($stmt->execute()) {
+    echo "更新成功";
+} else {
+    echo "更新失败";
+}
+}
+
+
+// 查询 system_event_evs 表获取 r_skills 字段的值
+$query = "SELECT r_skills FROM system_event_evs where belong = '$step_belong_id' and id = '$step_id'";
+$stmt = $dblj->query($query);
+$rows = $stmt->fetch(\PDO::FETCH_ASSOC);
+$gm_game_globaleventdefine_skill_last = $encode->encode("cmd=gm_game_globaleventdefine_steps&step_belong_id=$step_belong_id&step_id=$step_id&sid=$sid");
+// 输出 HTML 锚点链接
+$index_skill_add = $encode->encode("cmd=game_event_skillremove&add=1&step_belong_id=$step_belong_id&step_id=$step_id&sid=$sid");
+if($rows){
+$row = explode(',',$rows['r_skills']);
+foreach ($row as $row_para){
+$i++;
+if($row_para!=''){
+$skill_id = $row_para;
+$sql = "SELECT * from system_skill where jid = '$skill_id'";
+$stmt = $dblj->query($sql);
+$skill_rows = $stmt->fetch(\PDO::FETCH_ASSOC);
+$skill_name = $skill_rows['jname'];
+$skill_remove = $encode->encode("cmd=game_event_skillremove&change=1&remove_id=$skill_id&step_belong_id=$step_belong_id&step_id=$step_id&sid=$sid");
+$skill_list .=<<<HTML
+{$i}.{$skill_name}<a href="?cmd=$skill_remove">移除</a><br/>
+HTML;
+}
+    }
+}
+$skill_html =<<<HTML
+<p>定义事件步骤的废除技能<br/>
+$skill_list
+<a href="?cmd=$index_skill_add">增加技能</a><br/>
+<a href="?cmd=$gm_game_globaleventdefine_skill_last">返回上级</a><br/>
+</p>
+HTML;
+echo $skill_html;
+?>
