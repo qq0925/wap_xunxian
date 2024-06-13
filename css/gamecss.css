@@ -1,0 +1,85 @@
+@charset "UTF-8";
+
+/* 此处是 CSS 样式规则 */
+
+#btn,#login,#register{
+    display:inline-block;
+    background: #ff7a01;
+    color:#fff;
+    text-align: center;
+    width: 75px;
+    font-size: 0.8em;
+    line-height: 23px;
+    height:23px;
+    max-width: 98%;
+    text-decoration: none; /* 去除链接的下划线 */
+    border-radius: 5px; /* 设置圆角 */
+    border: none; /* 去除边框 */
+    padding: 0; /* 去除内边距 */
+    outline: none; /* 去除轮廓 */
+}
+
+.txt-fade {
+    color: #999999;
+    font-size: 13px;
+}
+
+body {
+    padding: 4px;
+    margin: 8px;
+    font-size: 18px;
+    /*background-color: #e3e3e3;*/
+    background-color: #FAF9F6;
+    line-height:22px;
+    display: block;
+    max-width: 30%; /* 设置文本的最大宽度为屏幕宽度的一半 */
+}
+
+@media screen and (max-width: 768px) {
+/* 手机端样式 */
+
+body {
+    padding: 4px;
+    margin: 8px;
+    font-size: 18px;
+    /*background-color: #e3e3e3;*/
+    background-color: #FAF9F6;
+    line-height:22px;
+    display: block;
+    max-width: 100%; /* 使用全宽度 */
+}
+
+}
+
+a{
+    font-size: 18px;
+    /*outline: none;*/
+    border: none;
+    /*text-decoration: none;*/
+}
+
+a:link {
+    color: #0000ff;
+    font-weight: bold;
+    /*display: inline-block;#0000ff*/
+    margin: 4px 3px 2px 4px;
+}
+
+ul{
+    position: absolute;
+    list-style-type:none;
+    margin:0;
+    margin-left: 160px;;
+    margin-top: -110px;;
+    float:right;
+
+}
+
+a:visited {
+    color: #0000ff;
+}
+
+a:hover,a:active,a:focus {
+    color: #0000ff;
+    background: #14bbff;
+}
