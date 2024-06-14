@@ -880,6 +880,9 @@ THEMAINTASK:
                 case '9':
                     $ym = 'gm/gm_other_setting/gm_auc_def.php';
                     break;
+                case '10':
+                    $ym = 'gm/gm_other_setting/reboot_all.php';
+                    break;
                 case 'other':
                     echo "更新成功！<br/>";
                     $ym = 'gm/gm_other_setting/gm_other_def.php';
