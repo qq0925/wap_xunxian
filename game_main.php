@@ -10,6 +10,7 @@ $parents_page = $currentFilePath;
 // $encode = new \encode\encode();
 // $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
+$uis_designer = $player->uis_designer;
 $game_main = '';
 $get_main_page = \gm\get_main_page($dblj);
 $br = 0;
@@ -100,6 +101,14 @@ $all = <<<HTML
     <link rel="stylesheet" href="css/gamecss.css">
 </head>
 $game_main<br/>
+HTML;
+if($uis_designer ==1){
+$gm_main = $encode->encode("cmd=gm&sid=$sid");
+$all .=<<<HTML
+<a href="?cmd=$gm_main">设计游戏</a><br/>
+HTML;
+}
+$all .=<<<HTML
 <a href="?cmd=$logout">退出游戏</a><br/>
 HTML;
 echo $all;

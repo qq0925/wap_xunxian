@@ -335,11 +335,23 @@ THEMAINTASK:
                     $firstmid = $gameconfig->entrance_id;
                     
                     $gofirst = $encode->encode("cmd=gm_game_firstpage&ucmd=1&sid=$sid");
-                    $sql = "insert into game1(uis_designer,token,sid,uname,usex,nowmid,endtime,sfzx) values(?,?,?,?,?,?,?,?)";
+                    $sql = "insert into game1(token,sid,uname,usex,nowmid,endtime,sfzx) values(?,?,?,?,?,?,?)";
                     //默认用户表技能更新
                     
                     $stmt = $dblj->prepare($sql);
-                    $stmt->execute(array(0,$token,$sid,$username,$sex,$firstmid,$nowdate,1));
+                    $stmt->execute(array($token,$sid,$username,$sex,$firstmid,$nowdate,1));
+                    
+                    $sql = "select designer from userinfo where token='$token'";
+                    $cxjg = $dblj->query($sql);
+                    $cxjg->bindColumn('designer',$designer);
+                    $cxjg->fetch(PDO::FETCH_ASSOC);
+                    
+                    if($designer ==1){
+                    $sql = "update game1 set uis_designer = '1' WHERE sid=?";
+                    $stmt = $dblj->prepare($sql);
+                    $stmt->execute(array($sid));
+                    }
+                    
                     $userAgent = $_SERVER['HTTP_USER_AGENT'];
                     $dblj->exec("insert into game4 (device_agent,sid)values($userAgent,$sid)");
                     //注册事件逻辑
@@ -412,6 +424,10 @@ THEMAINTASK:
                     $dblj->exec($sql);
                     header("refresh:1;url=?cmd=$gofirst");
                 }
+            }else{
+                echo "非法操作：疑似重复注册，请文明游戏！<br/>";
+                header("refresh:3;url=index.php");
+                exit();
             }
             }
             break;
