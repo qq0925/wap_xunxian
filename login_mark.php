@@ -15,16 +15,26 @@ parse_str($Dcmd, $result);
 $token = $result['token'];
 try{
 if(isset($token)){
+
     $sql = "select uid,sid,uis_designer from game1 where token='$token'";
     $cxjg = $dblj->query($sql);
-    $cxjg->bindColumn('sid',$sid);
-    $cxjg->bindColumn('uid',$uid);
-    $cxjg->bindColumn('uis_designer',$uis_designer);
-    $cxjg->fetch(PDO::FETCH_ASSOC);
+if($cxjg){
+    $cxjg->bindParam(':token', $token);
+    $cxjg->execute();
+
+// 获取结果
+$result = $cxjg->fetch(PDO::FETCH_ASSOC);
+}
+if ($result) {
+    $uid = $result['uid'];
+    $sid = $result['sid'];
+    $uis_designer = $result['uis_designer'];
+}
+
     $wjid = $uid;
+
     include './ini/xuser_ini.php';
     $a10 = ($iniFile->getItem('验证信息', 'xcmid值'));
-
     // 检查表是否存在 designer 字段
     $sql = "SHOW COLUMNS FROM userinfo LIKE 'designer'";
     $stmt = $dblj->prepare($sql);
@@ -38,12 +48,20 @@ if(isset($token)){
         $stmt->execute();
     }
 
-    $sql = "select username,designer from userinfo where token='$token'";
-    $cxjg = $dblj->query($sql);
-    $cxjg->bindColumn('username',$username);
-    $cxjg->bindColumn('designer',$designer);
-    $cxjg->fetch(PDO::FETCH_ASSOC);
 
+$sql = "SELECT username, designer FROM userinfo WHERE token = :token";
+$stmt = $dblj->prepare($sql);
+$stmt->bindParam(':token', $token);
+$stmt->execute();
+
+
+// 获取结果
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($result) {
+    $username = $result['username'];
+    $designer = $result['designer'];
+}
     if ($sid==null){
         $cmd = "cmd=cj&token=$token";
     }else{
@@ -88,7 +106,7 @@ HTML;
 }
 }
 catch (Exception $e){
-        header("Location: https://index.php", true, 302);
+        header("Location: index.php", true, 302);
         exit;
 }
 echo $login_html;

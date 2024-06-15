@@ -139,13 +139,8 @@ if($if_online ==1){
 // 设置文件路径，使用相对路径
 $file = sprintf("./ache/%s/user.ini", $wjid);
 
-// 检查$wjid是否存在以及文件是否存在
-if ($wjid && file_exists($file)) {
-    include("./ini/user_ini.php"); // 包含用户配置文件的逻辑
-} else {
-    // 文件不存在或$wjid未定义时的处理逻辑
-    error_log("配置文件不存在或$wjid未定义");
-}
+include("./ini/user_ini.php"); // 包含用户配置文件的逻辑
+
 
 
 
