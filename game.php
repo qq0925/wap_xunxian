@@ -61,6 +61,7 @@ if (isset($Dcmd)) {
 $cmd = $variables['cmd'];
 if (isset($cmd)&&!isset($sid)){
     $Dcmd = $encode->decode($cmd);
+
     @parse_str($Dcmd,$variables);
     extract($variables);
     if (!empty($_POST)) {
@@ -113,6 +114,7 @@ $dblj->exec($sql);
 header("refresh:1;url=index.php");
 exit();
 }
+
  if((!isset($sid)||!$sid) &&$cmd !='cj' &&$cmd !='cjplayer'){
     header("refresh:0;url=index.php");
     exit();
@@ -129,8 +131,8 @@ $ucmd = (int)$ucmd;
 $wjid = $player->uid;
 $is_Designer = $player->uis_designer;
 if($is_Designer !=1){
-error_reporting(0);
-ini_set('display_errors', '0');
+//error_reporting(0);
+//ini_set('display_errors', '0');
 }
 $if_online = $player->sfzx;
 if($if_online ==1){
@@ -140,8 +142,6 @@ if($if_online ==1){
 $file = sprintf("./ache/%s/user.ini", $wjid);
 
 include("./ini/user_ini.php"); // 包含用户配置文件的逻辑
-
-
 
 
 //来源页面信息
@@ -987,8 +987,22 @@ THEMAINTASK:
             }
             $cxjg =$dblj->exec($sql);
             }elseif ($gm_post_canshu == 8) {
+                
+                
+                
+            // 检查数据是否存在
+            $check_column_sql = "SELECT id FROM `gm_game_attr` WHERE value_type = :gm_post_canshu_2 and id = :gm_id";
+            $stmt = $dblj->prepare($check_column_sql);
+            $stmt->bindParam(':gm_post_canshu_2', $gm_post_canshu_2, PDO::PARAM_STR);
+            $stmt->bindParam(':gm_id', $gm_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $column_exists = $stmt->rowCount() > 0;
+            if ($column_exists) {
+                // 字段存在，报错
+            echo "不能添加重复的属性标识！<br/>";
+            } else {
                 //var_dump($gm_default_value);
-                switch($gm_attr_type){
+            switch($gm_attr_type){
                     case '0':
                         $add_type = "INT DEFAULT '{$gm_default_value}'";
                         break;
@@ -1006,7 +1020,7 @@ THEMAINTASK:
                         $add_type = "TINYINT(1) DEFAULT '{$gm_default_value}'";
                         break;
                 }
-                
+
             switch($gm_post_canshu_2){
                 case '1':
                     $update_column = "u".$gm_id;
@@ -1035,9 +1049,10 @@ THEMAINTASK:
             }
             $cxjg =$dblj->exec($sql);
             $sql = "INSERT INTO gm_game_attr(id, name, value_type, default_value, if_show, attr_type) VALUES ('$gm_id', '$gm_name', '$gm_post_canshu_2', '$gm_default_value', '$gm_attr_hidden', '$gm_attr_type')";
-            $gm_post_canshu=$gm_post_canshu_2;
             $cxjg =$dblj->exec($sql);
             }
+            }
+            $gm_post_canshu=$gm_post_canshu_2;
             $ym = 'gm/gameattr_define.php';
             break;
         case 'game_page_2'://模板事件
