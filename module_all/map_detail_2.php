@@ -1,7 +1,7 @@
 <?php
 $sqlname='xunxian';
-$sqlpass='123456';
-$dbhost='127.0.0.1';
+$sqlpass='lwd54088';
+$dbhost='localhost';
 $dbname='xunxian';
 $dsn="mysql:host=$dbhost;dbname=$dbname;";
 $dblj = new PDO($dsn,$sqlname,$sqlpass,array(PDO::ATTR_PERSISTENT=>true));
@@ -242,7 +242,7 @@ imageline($image, $lineStartX, $lineStartY, $lineEndX, $lineEndY, $black);
 }
 
 
-$imagePath = '/www/wwwroot/xunxian.txsj.ink/images/map_detail/image.png';
+$imagePath = '/images/map_detail/image.png';
 imagepng($image, $imagePath);
 
 // 释放图像资源
@@ -251,7 +251,7 @@ imagedestroy($image);
 
 $randomValue = mt_rand(); // 使用 mt_rand() 函数生成随机数
 // 图像URL
-$imageUrl = 'http://xunxian.txsj.ink/images/map_detail/image.png?random=' . $randomValue;
+$imageUrl = '/images/map_detail/image.png?random=' . $randomValue;
 
 
 draw_map($draw_center_mid,$dblj,320,220);

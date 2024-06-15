@@ -1,6 +1,6 @@
 <?php
 // 替换为你的音乐链接
-$musicURL = 'https://xunxian.txsj.ink/周杰伦-晴天.flac';
+$musicURL = '周杰伦-晴天.flac';
 ?>
 
 <!DOCTYPE html>

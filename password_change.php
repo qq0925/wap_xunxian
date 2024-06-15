@@ -65,16 +65,16 @@ $change_html = <<<HTML
 <input name="password_2" placeholder="确认密码"><br/>
 <input name="submit" type="submit" title="修改密码" value="修改密码" class="btn"><br/>
 ----------------<br/>
-<a href="login_mark.php?uid=$uid&token=$token">书签页</a>|<a href="http://xunxian.txsj.ink">登录界面</a>
+<a href="login_mark.php?uid=$uid&token=$token">书签页</a>|<a href="index.php">登录界面</a>
 </form>
 HTML;
 echo $change_html;
 }
 else{
-    header("Location: http://xunxian.txsj.ink", true, 302);
+    header("Location: index.php", true, 302);
 }
 }catch (Exception $e){
-        header("Location: http://xunxian.txsj.ink", true, 302);
+        header("Location: index.php", true, 302);
         exit;
 }
 ?>
