@@ -16,7 +16,7 @@ if($_POST&&$reboot == 1){
     $cxjg = $dblj->query($sql);
     $ret2 = $cxjg->fetch(PDO::FETCH_ASSOC);
     if ($ret2['userpass']){
-    echo"身份验证通过，正在清空游戏数据！";
+    echo"身份验证通过，正在清空游戏数据！<br/>";
 
     try {
         
@@ -93,6 +93,15 @@ if($_POST&&$reboot == 1){
             echo "表 $table 已成功删除。<br>";
         }
     
+        $sql = "UPDATE system_event SET cond = NULL, cmmt = NULL, link_evs = NULL";
+
+        // 准备语句
+        $stmt = $dblj->prepare($sql);
+
+        // 执行语句
+        $stmt->execute();
+
+        echo " system_event表中的数据已成功置为 NULL。<br/>";
     
         // 清空并插入数据到 gm_game_basic 表
         $sql = "TRUNCATE TABLE gm_game_basic";
@@ -115,80 +124,81 @@ if($_POST&&$reboot == 1){
         // 插入初始属性值到 gm_game_attr 表
 
         // 准备插入语句
-        $stmt = $dblj->prepare("INSERT INTO gm_game_attr (pos, id, name, value_type, default_value, if_item_user_attr, if_basic, if_show, attr_type) VALUES 
+        $stmt = $dblj->prepare("INSERT INTO gm_game_attr (pos, id, name, value_type, default_value, if_item_use_attr, if_basic, if_show, attr_type) VALUES 
             (?, ?, ?, ?, ?, ?, ?, ?, ?)");
     
         // 要插入的默认值
-        $data = [
-            [1, 1, '标识', 5, 1, 0, 1, 1, 0],
-            [2, 1, '区域名称', 5, 0, 0, 1, 1, 1],
-            [3, 1, '区域id', 5, 0, 0, 1, 0, 0],
-            [4, 1, '场景名称', 5, 0, 0, 1, 0, 1],
-            [5, 1, '图片', 5, 0, 0, 1, 1, 1],
-            [6, 1, '描述', 5, 0, 0, 1, 1, 1],
-            [7, 1, '名称', 1, '', 0, 1, 0, 1],
-            [8, 1, '标识', 1, '', 0, 1, 1, 0],
-            [9, 1, '称号', 1, '', 0, 1, 0, 1],
-            [10, 1, '性别', 1, '', 0, 1, 0, 1],
-            [11, 1, '图片', 1, '', 0, 1, 0, 1],
-            [12, 1, '最大负载', 1, '', 0, 1, 0, 0],
-            [13, 1, '经验', 1, 0, 1, 1, 0, 0],
-            [14, 1, '等级', 1, 1, 0, 1, 0, 0],
-            [15, 1, '信用币', 1, 0, 1, 0, 0],
-            [16, 1, '生命', 1, 0, 1, 0, 0],
-            [17, 1, '最大生命', 1, 0, 1, 0, 0],
-            [18, 3, '标识', 0, '', 0, 1, 0, 0],
-            [19, 3, '区域', 0, '', 0, 1, 0, 0],
-            [20, 3, '名称', 0, '', 0, 1, 0, 1],
-            [21, 3, '绰号', 0, '', 0, 1, 0, 1],
-            [22, 3, '图片', 0, '', 0, 1, 0, 1],
-            [23, 3, '描述', 0, '', 0, 1, 0, 1],
-            [24, 3, '经验', 0, '', 0, 1, 0, 0],
-            [25, 3, '等级', 0, '', 0, 1, 0, 0],
-            [26, 3, '是否可杀', 0, '', 0, 1, 0, 2],
-            [27, 3, '是否杀不死', 0, '', 0, 1, 0, 2],
-            [28, 3, '是否可赶走', 0, '', 0, 1, 0, 2],
-            [29, 3, '刷新间隔', 0, '', 0, 1, 0, 0],
-            [30, 3, '是否贩货', 0, '', 0, 1, 0, 2],
-            [31, 3, '是否收购', 0, '', 0, 1, 0, 2],
-            [32, 3, '生命', 0, '', 0, 1, 0, 0],
-            [33, 3, '最大生命', 100, '', 0, 1, 1, 0],
-            [34, 3, '攻击力', 0, '', 0, 1, 0, 0],
-            [35, 3, '防御力', 0, '', 0, 1, 0, 0],
-            [36, 1, '是否可pk', 0, '', 0, 1, 0, 2],
-            [37, 4, '标识', 1, '', 0, 1, 0, 0],
-            [38, 4, '区域', 0, '', 0, 1, 0, 0],
-            [39, 4, '名称', 0, '', 0, 1, 0, 1],
-            [40, 4, '图片', 0, '', 0, 1, 0, 1],
-            [41, 4, '描述', 0, '', 0, 1, 0, 1],
-            [42, 4, '类别', 0, '', 0, 1, 0, 0],
-            [43, 4, '子类别', 0, '', 0, 1, 0, 0],
-            [44, 4, '重量', 0, '', 0, 1, 0, 0],
-            [45, 4, '价格', 0, '', 0, 1, 0, 0],
-            [46, 4, '是否不可赠送', 0, '', 0, 1, 0, 2],
-            [47, 4, '是否不可丢弃', 0, '', 0, 1, 0, 2],
-            [48, 5, '刷新间隔', 1, '', 0, 1, 1, 0],
-            [49, 6, '标识', 1, '', 0, 1, 1, 0],
-            [50, 6, '名称', 0, '', 0, 1, 1, 1],
-            [51, 6, '描述', 0, '', 0, 1, 1, 1],
-            [52, 6, '攻击描述', 0, '', 0, 1, 1, 1],
-            [53, 6, '等级', 1, '', 0, 1, 1, 0],
-            [54, 6, '当前熟练度', 0, '', 0, 1, 0, 0],
-            [55, 6, '攻击范围', 1, '', 0, 1, 1, 0],
-            [56, 5, '是否商店', 0, '', 0, 1, 1, 2],
-            [57, 5, '是否当铺', 0, '', 0, 1, 1, 2],
-            [58, 5, '是否仓库', 0, '', 0, 1, 1, 2],
-            [59, 5, '是否允许pk', 1, '', 0, 1, 1, 2],
-            [60, 5, '是否资源点', 0, '', 0, 1, 1, 2],
-            [62, 5, '资源点名称', 0, '', 0, 1, 0, 0],
-            [63, 5, '是否中转点', 0, '', 0, 1, 1, 2],
-            [64, 3, '是否接受物品', 0, '', 0, 1, 0, 2],
-            [65, 5, '中转点类型', 0, '', 0, 1, 1, 0],
-            [66, 5, '坐标', 0, '0,0,0', 0, 1, 1, 1],
-            [67, 5, '天气', 0, '晴天', 0, 1, 0, 1],
-            [68, 5, '是否屏蔽其他玩家', 0, '', 0, 1, 1, 2],
-            [69, 5, '是否信号闭塞', 0, '', 0, 1, 1, 2]
-        ];
+$data = [
+    [1, 'id', '标识', 5, 1, 0, 1, 1, 0],
+    [2, 'area_name', '区域名称', 5, 0, 0, 1, 1, 1],
+    [3, 'area_id', '区域id', 5, 0, 0, 1, 0, 0],
+    [4, 'name', '场景名称', 5, 0, 0, 1, 0, 1],
+    [5, 'photo', '图片', 5, 0, 0, 1, 1, 1],
+    [6, 'desc', '描述', 5, 0, 0, 1, 1, 1],
+    [7, 'name', '名称', 1, '', 0, 1, 0, 1],
+    [8, 'id', '标识', 1, '', 0, 1, 1, 0],
+    [9, 'nick_name', '称号', 1, '', 0, 1, 0, 1],
+    [10, 'sex', '性别', 1, '', 0, 1, 0, 1],
+    [11, 'image', '图片', 1, '', 0, 1, 0, 1],
+    [12, 'max_burthen', '最大负载', 1, '', 0, 1, 0, 0],
+    [13, 'exp', '经验', 1, '', 1, 1, 0, 0],
+    [14, 'lvl', '等级', 1, 1, 0, 1, 0, 0],
+    [15, 'money', '信用币', 1, '', 1, 1, 0, 0],
+    [16, 'hp', '生命', 1, '', 1, 1, 0, 0],
+    [17, 'maxhp', '最大生命', 1, '', 1, 1, 0, 0],
+    [18, 'id', '标识', 3, '', 0, 1, 0, 0],
+    [19, 'area_id', '区域', 3, '', 0, 1, 0, 0],
+    [20, 'name', '名称', 3, '', 0, 1, 0, 1],
+    [21, 'nick_name', '绰号', 3, '', 0, 1, 0, 1],
+    [22, 'image', '图片', 3, '', 0, 1, 0, 1],
+    [23, 'desc', '描述', 3, '', 0, 1, 0, 1],
+    [24, 'exp', '经验', 3, '', 0, 1, 0, 0],
+    [25, 'lvl', '等级', 3, '', 0, 1, 0, 0],
+    [26, 'kill', '是否可杀', 3, '', 0, 1, 0, 2],
+    [27, 'not_dead', '是否杀不死', 3, '', 0, 1, 0, 2],
+    [28, 'chuck', '是否可赶走', 3, '', 0, 1, 0, 2],
+    [29, 'refresh_time', '刷新间隔', 3, '', 0, 1, 0, 0],
+    [30, 'shop', '是否贩货', 3, '', 0, 1, 0, 2],
+    [31, 'hock_shop', '是否收购', 3, '', 0, 1, 0, 2],
+    [32, 'hp', '生命', 3, '', 0, 1, 0, 0],
+    [33, 'maxhp', '最大生命', 3, 100, '', 1, 1, 0],
+    [34, 'gj', '攻击力', 3, '', 0, 1, 0, 0],
+    [35, 'fy', '防御力', 3, '', 0, 1, 0, 0],
+    [36, 'kill', '是否可pk', 1, '', 0, 1, 0, 2],
+    [37, 'id', '标识', 4, 1, '', 1, 0, 0],
+    [38, 'area_id', '区域', 4, '', 0, 1, 0, 0],
+    [39, 'name', '名称', 4, '', 0, 1, 0, 1],
+    [40, 'image', '图片', 4, '', 0, 1, 0, 1],
+    [41, 'desc', '描述', 4, '', 0, 1, 0, 1],
+    [42, 'type', '类别', 4, '', 0, 1, 0, 0],
+    [43, 'subtype', '子类别', 4, '', 0, 1, 0, 0],
+    [44, 'weight', '重量', 4, '', 0, 1, 0, 0],
+    [45, 'price', '价格', 4, '', 0, 1, 0, 0],
+    [46, 'no_give', '是否不可赠送', 4, '', 0, 1, 0, 2],
+    [47, 'no_out', '是否不可丢弃', 4, '', 0, 1, 0, 2],
+    [48, 'refresh_time', '刷新间隔', 5, 1, '', 1, 1, 0],
+    [49, 'id', '标识', 6, 1, '', 1, 1, 0],
+    [50, 'name', '名称', 6, '', 0, 1, 1, 1],
+    [51, 'desc', '描述', 6, '', 0, 1, 1, 1],
+    [52, 'effect_cmmt', '攻击描述', 6, '', 0, 1, 1, 1],
+    [53, 'lvl', '等级', 6, 1, '', 1, 1, 0],
+    [54, 'point', '当前熟练度', 6, '', 0, 1, 0, 0],
+    [55, 'group_attack', '攻击范围', 6, 1, '', 1, 1, 0],
+    [56, 'shop', '是否商店', 5, '', 0, 1, 1, 2],
+    [57, 'hockshop', '是否当铺', 5, '', 0, 1, 1, 2],
+    [58, 'storage', '是否仓库', 5, '', 0, 1, 1, 2],
+    [59, 'kill', '是否允许pk', 5, 1, '', 1, 1, 2],
+    [60, 'is_rp', '是否资源点', 5, '', 0, 1, 1, 2],
+    [62, 'rp_id', '资源点名称', 5, '', 0, 1, 0, 0],
+    [63, 'is_tp', '是否中转点', 5, '', 0, 1, 1, 2],
+    [64, 'accept_give', '是否接受物品', 3, '', 0, 1, 0, 2],
+    [65, 'tp_type', '中转点类型', 5, '', 0, 1, 1, 0],
+    [66, 'dire', '坐标', 5, '0,0,0', 0, 1, 1, 1],
+    [67, 'tianqi', '天气', 5, '晴天', 0, 1, 0, 1],
+    [68, 'is_shield', '是否屏蔽其他玩家', 5, '', 0, 1, 1, 2],
+    [69, 'is_signal_block', '是否信号闭塞', 5, '', 0, 1, 1, 2]
+];
+
 
         // 插入每一条记录
         foreach ($data as $row) {
@@ -203,7 +213,7 @@ if($_POST&&$reboot == 1){
         $stmt->execute();
         echo "表 system_area 已成功清空。<br>";
     
-        $sql = "INSERT INTO system_area (area_id, area_name) VALUES (0, '未分区')";
+        $sql = "INSERT INTO system_area (belong,pos,id, name) VALUES (0,-1,0, '未分区')";
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
         echo "表 system_area 已插入未分区初始值。<br>";
@@ -214,31 +224,8 @@ if($_POST&&$reboot == 1){
         $stmt->execute();
         echo "表 system_equip 已成功清空。<br>";
     
-        // 从 system_equip_default 表中获取所有数据
-        $sql = "SELECT * FROM system_equip_default";
-        $stmt = $dblj->prepare($sql);
-        $stmt->execute();
-        $defaultData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        // 将数据插入到 system_equip 表
-        if (!empty($defaultData)) {
-            // 获取列名
-            $columns = array_keys($defaultData[0]);
-            $columnsList = implode(", ", $columns);
-            $placeholders = implode(", ", array_fill(0, count($columns), '?'));
-    
-            $sql = "INSERT INTO system_equip_def ($columnsList) VALUES ($placeholders)";
-            $stmt = $dblj->prepare($sql);
-    
-            foreach ($defaultData as $row) {
-                $stmt->execute(array_values($row));
-            }
-    
-            echo "表 system_equip_def 已使用 system_equip_default 的数据覆盖。<br>";
-        } else {
-            echo "system_equip_default 表中没有数据。<br>";
-        }
-
+        //将 system_equip_default 表的内容插入到 system_equip_def 表中
+        $dblj->exec("INSERT INTO system_equip_def SELECT * FROM system_equip_default");
 
         // 保留的字段
         $keepFields = ['item_true_id', 'sid', 'uid', 'iid', 'icount', 'ibind', 'iequiped', 'isale_state', 'isale_price', 'icreate_sale_time', 'iexpire_sale_time', 'isale_time', 'iroot'];
@@ -261,9 +248,6 @@ if($_POST&&$reboot == 1){
         } else {
             echo "没有需要删除的字段。<br>";
         }
-        echo "所有不必要的字段已删除。";
-
-
         // 保留的字段
         $keepFields = ['iid', 'iarea_name', 'iarea_id', 'iname', 'iimage', 'idesc', 'idetail_desc', 'itype', 'isubtype', 'iweight', 'iprice', 'ino_give', 'ino_out', 'iop_target', 'itask_target', 'icreat_event_id', 'ilook_event_id', 'iuse_event_id', 'iminute_event_id', 'iuse_attr', 'iuse_value', 'iattack_value', 'irecovery_value', 'iuse_attr', 'iembed_count', 'iequip_cond'];
     
@@ -285,7 +269,6 @@ if($_POST&&$reboot == 1){
         } else {
             echo "没有需要删除的字段。<br>";
         }
-        echo "所有不必要的字段已删除。";
 
         // 保留的字段
         $keepFields = [
@@ -315,7 +298,6 @@ if($_POST&&$reboot == 1){
         } else {
             echo "没有需要删除的字段。<br>";
         }
-        echo "所有不必要的字段已删除。";
 
         // 保留的字段
         $keepFields = [
@@ -347,7 +329,6 @@ if($_POST&&$reboot == 1){
         } else {
             echo "没有需要删除的字段。<br>";
         }
-        echo "所有不必要的字段已删除。";
 
         // 保留的字段
         $keepFields = [
@@ -379,16 +360,11 @@ if($_POST&&$reboot == 1){
         } else {
             echo "没有需要删除的字段。<br>";
         }
-        echo "所有不必要的字段已删除。";
-        header("refresh:1;url=index.php");
-        exit();
-        
+        echo "<a href='index.php'>重新登录<br/></a>";
+        $finished = 1;
     // 提交事务
     $dblj->commit();
 
-
-        // 提交事务
-        //$dblj->commit();
     } catch (PDOException $e) {
         // 如果发生错误则回滚事务
         $dblj->rollBack();
@@ -403,7 +379,7 @@ if($_POST&&$reboot == 1){
     
 }
 
-
+if($finished !=1){
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $last_page = $encode->encode("cmd=gm_game_othersetting&sid=$sid");
 $sure_reboot = $encode->encode("cmd=gm_game_othersetting&canshu=10&reboot=1&&sid=$sid");
@@ -418,5 +394,5 @@ $reboot_html = <<<HTML
 </p>
 HTML;
 echo $reboot_html;
-
+}
 ?>
