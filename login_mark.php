@@ -24,6 +24,20 @@ if(isset($token)){
     $wjid = $uid;
     include './ini/xuser_ini.php';
     $a10 = ($iniFile->getItem('验证信息', 'xcmid值'));
+
+    // 检查表是否存在 designer 字段
+    $sql = "SHOW COLUMNS FROM userinfo LIKE 'designer'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$column) {
+        // 如果 designer 字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE userinfo ADD COLUMN designer INT DEFAULT 0";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
     $sql = "select username,designer from userinfo where token='$token'";
     $cxjg = $dblj->query($sql);
     $cxjg->bindColumn('username',$username);
