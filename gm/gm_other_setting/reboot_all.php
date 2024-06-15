@@ -57,7 +57,11 @@ if($_POST&&$reboot == 1){
     
     // 删除 images 目录中的所有文件夹
     deleteAllFoldersInDirectory($imagesDir);
-        
+    // 定义 ache 目录路径
+    $imagesDir = __DIR__ . DIRECTORY_SEPARATOR . 'ache';
+    // 删除 ache 目录中的所有文件夹
+    deleteAllFoldersInDirectory($imagesDir);
+    
         // 查询以game_为前缀的所有表名
         $sql = "SHOW TABLES LIKE 'game_%'";
         $stmt = $dblj->query($sql);

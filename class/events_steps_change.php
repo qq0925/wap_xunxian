@@ -87,7 +87,7 @@ HTML;
                             echo $step_cmmt2."<br/>";
                             $cmid = $cmid + 1;
                             $cdid[] = $cmid;
-                            if($parents_cmd!="iteminfo_new"){
+                            if($parents_cmd!="iteminfo_new"||$step_not_return_link ==0){
                             $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
                              $page_url =<<<HTML
                     <a href="?cmd=$just_page">返回游戏</a><br/>
