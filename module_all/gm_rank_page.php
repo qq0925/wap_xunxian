@@ -62,11 +62,11 @@ usort($userData, function ($a, $b) {
     return $b['user_exp'] - $a['user_exp'];
 });
 
-for($j = 1; $j < @count($userData) + 1; $j++) {
-    $rank_user_html .= "[{$j}].{$userData[$j - 1]['user_name']}[{$userData[$j - 1]['user_exp']}]<br/>";
+for($j = 0; $j < min($show_count, count($userData)); $j++) {
+    $rank_user_html .= "[" . ($j + 1) . "]." . $userData[$j]['user_name'] . "[" . $userData[$j]['user_exp'] . "]<br/>";
     // 判断当前用户是否为访问者
-    if ($userData[$j - 1]['user_sid'] == $sid) {
-        $visitorPosition = $j;
+    if ($userData[$j]['user_sid'] == $sid) {
+        $visitorPosition = $j + 1;
     }
 }
 // 如果找到了与访问者相对应的数据，输出其在榜单中的位数
