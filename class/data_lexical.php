@@ -80,13 +80,27 @@ foreach ($keyValuePairs as $pair) {
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
-        $parts = explode(".", $ele_1);
-        if (count($parts) >= 2) {
-            $ele_1_1 = $parts[0]; // 小数点左边的内容
-            $ele_1_2 = $parts[1]; // 小数点右边的内容
-            } else {
-            echo "无法匹配到小数点 '.'<br/>";
-            }
+        //$parts = explode(".", $ele_1);
+        $SecondEqualsPos = strpos($ele_1, '.');
+        if ($SecondEqualsPos !== false){
+        $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
+        $ele_1_2 = substr($ele_1, $SecondEqualsPos + 1);
+        $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
+        @$ele_1_2 = eval("return $ele_1_2;");
+        $ele_1_2 = str_replace('.', '', $ele_1_2);
+        }else{
+            echo "错误语法警告！<br/>";
+        }
+        
+        
+        // if (count($parts) >= 2) {
+        //     $ele_1_1 = $parts[0]; // 小数点左边的内容
+        //     $ele_1_2 = $parts[1]; // 小数点右边的内容
+        //     } else {
+        //     echo "无法匹配到小数点 '.'<br/>";
+        //     }
+            
+            
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         switch ($ele_1_1) {
@@ -249,13 +263,23 @@ foreach ($keyValuePairs as $pair) {
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
-        $parts = explode(".", $ele_1);
-        if (count($parts) >= 2) {
-            $ele_1_1 = $parts[0]; // 小数点左边的内容
-            $ele_1_2 = $parts[1];// 小数点右边的内容
-            } else {
-            echo "无法匹配到小数点 '.'<br/>";
-            }
+        //$parts = explode(".", $ele_1);
+        $SecondEqualsPos = strpos($ele_1, '.');
+        if ($SecondEqualsPos !== false){
+        $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
+        $ele_1_2 = substr($ele_1, $SecondEqualsPos + 1);
+        $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
+        @$ele_1_2 = eval("return $ele_1_2;");
+        $ele_1_2 = str_replace('.', '', $ele_1_2);
+        }else{
+            echo "错误语法警告！<br/>";
+        }
+        // if (count($parts) >= 2) {
+        //     $ele_1_1 = $parts[0]; // 小数点左边的内容
+        //     $ele_1_2 = $parts[1];// 小数点右边的内容
+        //     } else {
+        //     echo "无法匹配到小数点 '.'<br/>";
+        //     }
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         switch ($ele_1_1) {

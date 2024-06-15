@@ -33,6 +33,7 @@ function events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$c
                     $event_cmmt = \lexical_analysis\process_string($event_cmmt,$sid,$oid,$mid);
                     $event_cmmt = \lexical_analysis\color_string(nl2br($event_cmmt));
                     echo $event_cmmt."<br/>";//不满足触发条件则输出cmmt
+                    
                     $cmid = $cmid + 1;
                     $cdid[] = $cmid;
                     
@@ -56,8 +57,7 @@ HTML;
                         
                         $step_cond = $event['cond'];
                         $step_exec_cond = $event['exec_cond'];
-                        $step_cmmt = $event['cmmt'];
-                        $step_cmmt2 = $event['cmmt2'];
+
                         $step_s_attrs = $event['s_attrs'];
                         $step_m_attrs = $event['m_attrs'];
                         $step_items = $event['items'];
@@ -72,6 +72,8 @@ HTML;
                         $step_dests = $event['dests'];
                         $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,$oid,$mid);
                         $step_exec_triggle = checkTriggerCondition($step_exec_cond,$dblj,$sid,$oid,$mid);
+                        $step_cmmt = $event['cmmt'];
+                        $step_cmmt2 = $event['cmmt2'];
                         if(is_null($step_triggle)){
                         $step_triggle =1;
                     }
@@ -96,18 +98,18 @@ HTML;
                             }
                             }elseif($step_triggle){
                             if($step_exec_triggle){
-                            $step_cmmt = html_entity_decode($step_cmmt);
-                            $step_cmmt = \lexical_analysis\process_string($step_cmmt,$sid,$oid,$mid);
-                            $step_cmmt = \lexical_analysis\color_string(nl2br($step_cmmt));
-                            if($step_cmmt){
-                            echo $step_cmmt."<br/>";
-                            }
                             $ret = attrsetting($step_s_attrs,$sid);
                             $ret_2 = attrchanging($step_m_attrs,$sid);
                             $ret_3 = itemchanging($step_items,$sid);
                             $ret_4 = skillschanging($step_a_skills,$sid,1);
                             $ret_6 = skillschanging($step_r_skills,$sid,2);
                             $ret_7 = taskschanging($step_r_tasks,$sid,2);
+                            $step_cmmt = html_entity_decode($step_cmmt);
+                            $step_cmmt = \lexical_analysis\process_string($step_cmmt,$sid,$oid,$mid);
+                            $step_cmmt = \lexical_analysis\color_string(nl2br($step_cmmt));
+                            if($step_cmmt){
+                            echo $step_cmmt."<br/>";
+                            }
                             if($step_fight_npcs !=''){
                                 $not_ret_canshu = 1;
                                 $retgw = explode(",",$step_fight_npcs);
