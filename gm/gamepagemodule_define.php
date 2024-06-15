@@ -66,7 +66,7 @@ if (!empty($text)){
         default:
             break;
     }
-            $sql = "INSERT INTO `$module_type` (position, type, show_cond, value, target_func,link_value) VALUES (:position, :main_type, :cond, :text, 1,:link_value)";
+            $sql = "INSERT INTO `$module_type` (position, type, show_cond, value, target_func,link_value) VALUES (:position, :main_type, :cond, :text, 12,:link_value)";
             $stmt = $dblj->prepare($sql);
             $stmt->bindParam(':position', $position);
             $stmt->bindParam(':main_type', $main_type);
