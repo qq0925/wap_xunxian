@@ -146,6 +146,7 @@ HTML;
     }
                                $cmd = "pve_fight";
                                 \player\changeplayersx('ucmd',$cmd,$sid,$dblj);
+                                \player\changeplayersx('uis_pve',1,$sid,$dblj);
                                 $ym = 'module_all/scene_fight.php';
                                 include $ym;
                             }
