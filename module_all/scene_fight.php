@@ -64,16 +64,20 @@ if($cmd=='pve_fight'){
     }else{
     $add_point = 1;
     }
-    $sql = "select jpromotion,jname from system_skill where jid = '$qtype_id'";
+    $sql = "select jpromotion,jname,jpromotion_cond from system_skill where jid = '$qtype_id'";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
     $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
     $jpromotion = $ret['jpromotion'];
     $jname = $ret['jname'];
+    $jpromotion_cond = $ret['jpromotion_cond'];
     $jpromotion = ceil(\lexical_analysis\process_string($jpromotion,$sid,'skill',$qtype_id,$qtype_id));
+    $jpromotion_cond = \lexical_analysis\process_string($jpromotion_cond,$sid,'skill',$qtype_id,$qtype_id);
+    $jpromotion_cond = @eval("return $jpromotion_cond;");
     }else{
     $jpromotion = 1;
     }
+    if($jpromotion_cond){
     $sql = "update system_skill_user set jpoint = jpoint + '$add_point' where jsid = '$sid' and jid = '$qtype_id'";
     $dblj->exec($sql);
     $sql = "select jpoint,jlvl from system_skill_user where jid = '$qtype_id' and jsid = '$sid'";
@@ -89,8 +93,9 @@ if($cmd=='pve_fight'){
         $sql = "update system_skill_user set jpoint = jpoint - '$diff',jlvl = jlvl + 1 where jsid = '$sid' and jid = '$qtype_id'";
         $cxjg = $dblj->exec($sql);
     }
-    \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }
+    }
+    \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }elseif($qtype ==2){
     $sql = "select iuse_value,iuse_attr,iname,iweight from system_item_module where iid = '$qtype_id'";
     $cxjg = $dblj->query($sql);
