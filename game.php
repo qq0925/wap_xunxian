@@ -951,6 +951,11 @@ THEMAINTASK:
                     break;
             }
             $cxjg =$dblj->exec($sql);
+            if($cxjg){
+            echo "已删除“{$gm_game_attr_id}”属性<br/>";
+            }else{
+            echo "没有“{$gm_game_attr_id}”属性！<br/>";
+            }
             $ym = 'gm/gameattr_define.php';
             }
             break;
@@ -1012,7 +1017,6 @@ THEMAINTASK:
                 // 字段存在，报错
             echo "不能添加重复的属性标识！<br/>";
             } else {
-                //var_dump($gm_default_value);
             switch($gm_attr_type){
                     case '0':
                         $add_type = "INT DEFAULT '{$gm_default_value}'";
@@ -1061,6 +1065,8 @@ THEMAINTASK:
             $cxjg =$dblj->exec($sql);
             $sql = "INSERT INTO gm_game_attr(id, name, value_type, default_value, if_show, attr_type) VALUES ('$gm_id', '$gm_name', '$gm_post_canshu_2', '$gm_default_value', '$gm_attr_hidden', '$gm_attr_type')";
             $cxjg =$dblj->exec($sql);
+            $gm_post_canshu = $gm_post_canshu_2;
+            echo "新增属性“{$gm_id}”成功！<br/>";
             }
             }
             $ym = 'gm/gameattr_define.php';
