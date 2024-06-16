@@ -954,11 +954,24 @@ THEMAINTASK:
             $ym = 'gm/gameattr_define.php';
             }
             break;
-        case 'gm_post_2'://属性更新过程实现
+        case 'gm_post_2':
+            $gm_default_value = $gm_default_value ?: 0;
             if(isset($gm_post_canshu_2) && $gm_post_canshu !=8){
-            $sql = "UPDATE gm_game_attr SET name = '$gm_name',
-            default_value = '$gm_default_value',if_show = '$gm_attr_hidden' where id = '$gm_id' AND value_type = '$gm_post_type_2';";
-            $cxjg =$dblj->exec($sql);
+            //属性更新过程实现
+
+            $sql = "UPDATE gm_game_attr SET name = :gm_name, 
+                    default_value = :gm_default_value, if_show = :gm_attr_hidden 
+                    WHERE id = :gm_id AND value_type = :gm_post_type_2";
+            $stmt = $dblj->prepare($sql);
+            
+            $stmt->bindParam(':gm_name', $gm_name);
+            $stmt->bindParam(':gm_default_value', $gm_default_value);
+            $stmt->bindParam(':gm_attr_hidden', $gm_attr_hidden);
+            $stmt->bindParam(':gm_id', $gm_id);
+            $stmt->bindParam(':gm_post_type_2', $gm_post_type_2);
+            
+            $cxjg = $stmt->execute();
+            
             switch($gm_post_type_2){
                 case '1':
                     $update_column = "u".$gm_id;
@@ -987,9 +1000,7 @@ THEMAINTASK:
             }
             $cxjg =$dblj->exec($sql);
             }elseif ($gm_post_canshu == 8) {
-                
-                
-                
+            
             // 检查数据是否存在
             $check_column_sql = "SELECT id FROM `gm_game_attr` WHERE value_type = :gm_post_canshu_2 and id = :gm_id";
             $stmt = $dblj->prepare($check_column_sql);
@@ -1052,7 +1063,6 @@ THEMAINTASK:
             $cxjg =$dblj->exec($sql);
             }
             }
-            $gm_post_canshu=$gm_post_canshu_2;
             $ym = 'gm/gameattr_define.php';
             break;
         case 'game_page_2'://模板事件
