@@ -1459,6 +1459,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $attr_pos = $attr_para[1];
                     $attr_attr = $attr_para[2];
                     // 提取获取排名数据的函数
+                    if (!function_exists('lexical_analysis\getRankData')){
                     function getRankData($db) {
                         $sql = "SELECT * FROM system_rank";
                         $stmt = $db->prepare($sql);
@@ -1476,8 +1477,10 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     
                         return $rankData;
                     }
+                    }
                     
                     // 提取获取用户数据的函数
+                    if (!function_exists('lexical_analysis\getUserData')){
                     function getUserData($db, $rankExp, $showCond) {
                         $sql = "SELECT uname, sid,uid FROM game1";
                         $cxjg = $db->query($sql);
@@ -1509,7 +1512,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     
                         return $userData;
                     }
-                    
+                    }
                     // 获取排名数据
                     $rankData = getRankData($db);
                     
@@ -1535,7 +1538,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $attr_pos = $attr_para[1];
                     $attr_attr = $attr_para[2];
                     // 提取获取排名数据的函数
-                    function getRankData($db) {
+                    if (!function_exists('lexical_analysis\getRankData2')){
+                    function getRankData2($db) {
                         $sql = "SELECT * FROM system_rank";
                         $stmt = $db->prepare($sql);
                         $stmt->execute();
@@ -1552,9 +1556,11 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     
                         return $rankData;
                     }
+                    }
                     
                     // 提取获取用户数据的函数
-                    function getUserData($db, $rankExp, $showCond) {
+                    if (!function_exists('lexical_analysis\getUserData2')){
+                    function getUserData2($db, $rankExp, $showCond) {
                         $sql = "SELECT uname, sid,uid FROM game1";
                         $cxjg = $db->query($sql);
                     
@@ -1585,15 +1591,16 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     
                         return $userData;
                     }
+                    }
                     
                     // 获取排名数据
-                    $rankData = getRankData($db);
+                    $rankData = getRankData2($db);
                     
                     foreach ($rankData as $row) {
                         $rank_name = $row['rank_name'];
                         $rankExp = $row['rank_exp'];
                         $show_cond = $row['show_cond'];
-                        $userData = getUserData($db, $rankExp, $show_cond);
+                        $userData = getUserData2($db, $rankExp, $show_cond);
                         usort($userData, function ($a, $b) {
                             return $b['score'] - $a['score'];
                         });
