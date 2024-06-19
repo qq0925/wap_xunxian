@@ -301,7 +301,7 @@ THEMAINTASK:
             $gofirst = $encode->encode("cmd=gm_game_firstpage&ucmd=1&sid=$sid");
             $dblj->exec("DELETE from system_npc_midguaiwu where nsid = '$sid'");
             $nowdate = date('Y-m-d H:i:s');
-            $sql = "update game1 set endtime='$nowdate',minutetime = '$nowdate',sfzx=1 WHERE sid='$sid'";
+            $sql = "update game1 set endtime='$nowdate',minutetime = '$nowdate',sfzx=1,uis_pve = 0 WHERE sid='$sid'";
             $cxjg = $dblj->exec($sql);
             $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
             $dblj->exec($sql);
