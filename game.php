@@ -17,15 +17,26 @@ include 'class/global_event_step_change.php';
 // header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 // header("Cache-Control: no-cache, must-revalidate");
 // header("Pragma: no-cache");
-
+if(!$encode){
 $encode = new \encode\encode();
+}
+if(!$player){
 $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
+}
+if(!$gm_post){
 $gm_post = new \gm\gm();
 $gm_post = \gm\gm_post($dblj);
+}
+if(!$guaiwu){
 $guaiwu = new \player\guaiwu();
+}
+if(!$clmid){
 $clmid = new \player\clmid();
+}
+if(!$npc){
 $npc = new \player\npc();
+}
 
 $Dcmd = $_SERVER['QUERY_STRING'];
 
@@ -36,7 +47,6 @@ function getMillisecond() {
 }
 if (isset($_SESSION["post_sep"]))
 {
-
     if (getMillisecond() - $_SESSION["post_sep"] < $allow_sep)
     {
         $msg = '<meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">你点击太快了^_^!<br/><a href="?'.$Dcmd.'">继续</a>';
@@ -62,7 +72,7 @@ $cmd = $variables['cmd'];
 if (isset($cmd)&&!isset($sid)){
     $Dcmd = $encode->decode($cmd);
 
-    @parse_str($Dcmd,$variables);
+    parse_str($Dcmd,$variables);
     extract($variables);
     if (!empty($_POST)) {
         extract($_POST);
@@ -105,11 +115,10 @@ if($cmd =='logout'){
 //logout($sid);
 $nowdate = date('Y-m-d H:i:s');
 echo $player->uname."已成功退出登陆！";
-$sql = "update game1 set endtime='$nowdate',sfzx=0 WHERE sid='$sid'";
+$sql = "update game1 set endtime='$nowdate',sfzx=0,uis_pve=0 WHERE sid='$sid'";
 $dblj->exec($sql);
 $sql = "update game4 set device_agent='' WHERE sid='$sid'";
 $dblj->exec($sql);
-
 
 header("refresh:1;url=index.php");
 exit();
@@ -127,17 +136,15 @@ exit();
 // \player\changeplayersx('ucmd',$ucmd,$sid,$dblj);
 // }
 // \player\changeplayersx('ulast_cmd',$ucmd,$sid,$dblj);
-$ucmd = (int)$ucmd;
+
+//$ucmd = (int)$ucmd;
 $wjid = $player->uid;
 $is_Designer = $player->uis_designer;
-if($is_Designer !=1){
-//error_reporting(0);
-//ini_set('display_errors', '0');
-}
-$if_online = $player->sfzx;
-if($if_online ==1){
+
+// $if_online = $player->sfzx;
+// if($if_online ==1){
     
-}
+// }
 // 设置文件路径，使用相对路径
 $file = sprintf("./ache/%s/user.ini", $wjid);
 
@@ -248,17 +255,19 @@ THEMAINTASK:
         case 'login'://登录
             $player = \player\getplayer($sid,$dblj);
             // 用户登录成功后生成并存储会话标识
-            $ret = check_if_logged($sid);
-            $deviceInfo = $_SERVER['HTTP_USER_AGENT'];// 使用设备信息作为标识
-            if(!$ret || $ret !=$_SESSION['sessionID']){
-            session_start();
-            $sessionID = uniqid();
-            $_SESSION['sessionID'] = $sessionID;
-            //logout($sid);
-            //login($sid,$_SESSION['sessionID'],$deviceInfo);
-            }else{
-            //login($sid,$_SESSION['sessionID'],$deviceInfo);
-            }
+            // $ret = check_if_logged($sid);
+            // $deviceInfo = $_SERVER['HTTP_USER_AGENT'];// 使用设备信息作为标识
+            // if(!$ret || $ret !=$_SESSION['sessionID']){
+            // session_start();
+            // $sessionID = uniqid();
+            // $_SESSION['sessionID'] = $sessionID;
+            // //logout($sid);
+            // //login($sid,$_SESSION['sessionID'],$deviceInfo);
+            // }else{
+            // //login($sid,$_SESSION['sessionID'],$deviceInfo);
+            // }
+            
+            
             $event_data = global_event_data_get(2,$dblj);
             $event_cond = $event_data['system_event']['cond'];
             $event_cmmt = $event_data['system_event']['cmmt'];
@@ -2206,12 +2215,88 @@ THEMAINTASK:
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$equip_true_id' and sid = '$sid'");
                             $canshu = '装备';
                             echo "你装备了{$iname}<br/>";
+                            $event_data = global_event_data_get(40,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$equip_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$equip_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    echo $step_cmmt."<br/>";
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$equip_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$equip_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$equip_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$equip_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$equip_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                             break;
                         case '防具':
                             \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,1);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$equip_true_id' and sid = '$sid'");
                             $canshu = '装备';
                             echo "你装备了{$iname}<br/>";
+                            $event_data = global_event_data_get(40,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$equip_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$equip_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    echo $step_cmmt."<br/>";
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$equip_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$equip_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$equip_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$equip_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$equip_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                             break;
                         default:
                             echo "{$iname}不能直接使用<br/>";
@@ -2226,11 +2311,87 @@ THEMAINTASK:
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
                         $canshu = '装备';
                         echo "你卸下了{$iname}<br/>";
+                            $event_data = global_event_data_get(41,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$equip_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$equip_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    echo $step_cmmt."<br/>";
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$equip_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$equip_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$equip_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$equip_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$equip_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                         break;
                     case '防具':
                         \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
                         echo "你卸下了{$iname}<br/>";
+                            $event_data = global_event_data_get(41,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$equip_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$equip_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    echo $step_cmmt."<br/>";
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$equip_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$equip_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$equip_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$equip_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$equip_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                         break;
                     }
                     $ym = "module_all/player_equip_list.php";
