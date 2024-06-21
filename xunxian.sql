@@ -1431,7 +1431,7 @@ CREATE TABLE `system_equip_user` (
 INSERT INTO `system_equip_user` (`eqsid`, `eqid`, `eq_true_id`, `eq_type`, `equiped_pos_id`) VALUES
 ('959c9277a3e15eacff9e5f117e51f5bb', 26, 114, 1, '1'),
 ('959c9277a3e15eacff9e5f117e51f5bb', 2, 115, 2, '4'),
-('959c9277a3e15eacff9e5f117e51f5bb', 3, 116, 2, '杂物'),
+('959c9277a3e15eacff9e5f117e51f5bb', 3, 116, 2, '6'),
 ('959c9277a3e15eacff9e5f117e51f5bb', 25, 117, 2, '5'),
 ('f55913444ef985484baf7580c60f15ce', 7, 209, 1, '1'),
 ('f55913444ef985484baf7580c60f15ce', 8, 210, 2, '4'),
