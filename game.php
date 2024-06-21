@@ -2242,7 +2242,9 @@ THEMAINTASK:
                                 if(!$step_triggle){
                                     echo $step_cmmt2."<br/>";
                                     }elseif($step_triggle){
+                                    if($step_cmmt){
                                     echo $step_cmmt."<br/>";
+                                    }
                                     $ret = attrsetting($step_s_attrs,$sid,'item',$equip_true_id);
                                     $ret = attrchanging($step_m_attrs,$sid,'item',$equip_true_id);
                                     $ret = itemchanging($step_items,$sid,'item',$equip_true_id);
