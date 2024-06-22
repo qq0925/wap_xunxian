@@ -16,7 +16,7 @@ $fight_arr = player\getfightpara($sid,$dblj);
 $ngid = "";
 
 //此变量用于获取你所战斗的仍然活着的怪物基本属性
-$fight_arr_count = count($fight_arr);
+$fight_arr_count = @count($fight_arr);
 for($i=0;$i<$fight_arr_count;$i++){
     $fight_gid = $fight_arr[$i]['ngid'];
     $ngid .=$fight_gid.",";
@@ -58,6 +58,9 @@ if($cmd=='pve_fight'){
     //技能攻击
     if($qtype ==1){
     $parents_cmd = 'gm_scene_new';
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
     global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
     \lexical_analysis\hurt_calc($qtype_id,$sid,$ngid,1,$dblj);//你对怪的伤害
     
@@ -145,7 +148,13 @@ if($cmd=='pve_fight'){
     $alive_monster = player\getnpcguaiwu_attr($monster_id,$dblj);
     
     if ($alive_monster->nhp<=0){//怪物死亡
+        $cmid = $cmid + 1;
+        $cdid[] = $cmid;
+        $clj[] = $cmd;
         global_events_steps_change(7,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
+        $cmid = $cmid + 1;
+        $cdid[] = $cmid;
+        $clj[] = $cmd;
         global_events_steps_change(31,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
         // $sql = "delete from system_npc_midguaiwu where ngid = '{$monster_id}' AND nsid='$sid'";
         // $dblj->exec($sql);
@@ -224,6 +233,9 @@ $player =  player\getplayer($sid,$dblj);
 if ($player->uhp <= 0){
     $zdjg = 0;
 }
+
+
+
 
 if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     switch ($zdjg){
@@ -314,14 +326,14 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_value =\lexical_analysis\color_string($main_value);
     }
     if($main_target_event !=0){
-        $main_target_event = $encode->encode("cmd=main_target_event&target_event=$main_target_event&parents_cmd=$cmd&parents_page=$parents_page&last_page_id=$main_id&sid=$sid");
+        $main_target_event = $encode->encode("cmd=main_target_event&ucmd=$cmid&target_event=$main_target_event&parents_cmd=$cmd&parents_page=$parents_page&last_page_id=$main_id&sid=$sid");
     }elseif ($main_target_event ==0) {
-        $main_target_event = $encode->encode("cmd=event_no_define&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
+        $main_target_event = $encode->encode("cmd=event_no_define&ucmd=$cmid&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
     }
     if($main_target_func !=0){
-        $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,10);
+        $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,10,$cmid);
     }elseif ($main_target_func ==0) {
-        $main_target_func = $encode->encode("cmd=func_no_define&parents_page=$parents_cmd=$cmd&parents_page&sid=$sid");
+        $main_target_func = $encode->encode("cmd=func_no_define&ucmd=$cmid&parents_page=$parents_cmd=$cmd&parents_page&sid=$sid");
     }
     try{
         $matches = array();
