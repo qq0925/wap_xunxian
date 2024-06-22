@@ -982,7 +982,7 @@ function getplayertask($sid,$dblj,$taskid=null){
 function update_task($sid,$dblj,$drop_id=null,$monster_id=null,$monster_name=null){
 
 $taskarr = getplayertask($sid,$dblj);//任务相关
-$taskarr_count = count($taskarr);
+$taskarr_count = @count($taskarr);
 if($drop_id){
 for ($l=0;$l<$taskarr_count;$l++){
     $rwtype = $taskarr[$l]['ttype'];
