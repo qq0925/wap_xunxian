@@ -51,6 +51,15 @@ class midguai{}
 
 class guaiwu{}
 
+class npcguaiwu{
+    var $nid;
+    var $nhp;
+    var $nname;
+    var $ndrop_exp;
+    var $ndrop_money;
+    var $ndrop_item;
+}
+
 class skill{}
 
 class item{}
@@ -404,6 +413,25 @@ function getnpcguaiwu($nid,$dblj){
     }
     return $npcguaiwu;
 }
+
+function getnpcguaiwu_attr($nid,$dblj){
+    $npcguaiwu = new npcguaiwu();
+    $sql = "select nid,nname,nhp,ndrop_exp,ndrop_money,ndrop_item from system_npc_midguaiwu where ngid = '$nid'";
+    $cxjg = $dblj->query($sql);
+    $cxjg->bindColumn('nid',$npcguaiwu->nid);
+    $cxjg->bindColumn('nname',$npcguaiwu->nname);
+    $cxjg->bindColumn('nhp',$npcguaiwu->nhp);
+    $cxjg->bindColumn('ndrop_exp',$npcguaiwu->ndrop_exp);
+    $cxjg->bindColumn('ndrop_money',$npcguaiwu->ndrop_money);
+    $cxjg->bindColumn('ndrop_item',$npcguaiwu->ndrop_item);
+    $data = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    // 循环遍历数组，动态生成类的属性并赋值
+    if(is_bool($data)){
+        return;
+    }
+    return $npcguaiwu;
+}
+
 
 function getnowequiptrueid($eq_true_id,$sid,$dblj){ 
     $sql = "select eq_true_id,equiped_pos_id from system_equip_user where eqsid = '$sid' and eq_true_id = '$eq_true_id'";
@@ -938,7 +966,8 @@ function getplayertask($sid,$dblj,$taskid=null){
     }
     $cxjg = $dblj->query($sql);
     $task = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
-    for($i=0;$i<count($task);$i++){
+    $task_count = count($task);
+    for($i=0;$i<$task_count;$i++){
         $tid = $task[$i]['tid'];
         $tstate = $task[$i]['tstate'];
         $tnowcount = $task[$i]['tnowcount'];
@@ -949,6 +978,63 @@ function getplayertask($sid,$dblj,$taskid=null){
     }
     return $allTasks;
 }
+
+function update_task($sid,$dblj,$drop_id=null,$monster_id=null,$monster_name=null){
+
+$taskarr = getplayertask($sid,$dblj);//任务相关
+$taskarr_count = count($taskarr);
+if($drop_id){
+for ($l=0;$l<$taskarr_count;$l++){
+    $rwtype = $taskarr[$l]['ttype'];
+    $rw_paras = explode(',',$taskarr[$l]['ttarget_obj']);
+    $rw_check_count = @count($rw_paras);
+    $rw_check_done = 0;
+    for($i=0;$i<$rw_check_count;$i++){
+    $rw_para = explode('|',$rw_paras[$i]);
+    $rwtarget_id = $rw_para[0];
+    $rwcount = $rw_para[1];
+    //$rwid = $taskarr[$l]['tid'];
+    $rwzt = $taskarr[$l]['tstate'];
+    if ($rwtarget_id==$drop_id && $rwtype==2 && $rwzt!=2){
+        $rw_obj_name = getitem($rwtarget_id,$dblj)->iname;
+        $rw_obj_name = \lexical_analysis\color_string($rw_obj_name);
+        $rwnowcount = getitem_count($rwtarget_id,$sid,$dblj)['icount'];
+        $rwts .= "任务：".$taskarr[$l]['tname']."<br/>{$rw_obj_name}".'('.$rwnowcount."/".$rwcount.')<br/>';
+        break;
+    }
+    }
+}
+}
+if($monster_id){
+for ($k=0;$k<$taskarr_count;$k++){
+    $rwnpc_id = $taskarr[$k]['tnpc_id'];
+    $rwtype = $taskarr[$k]['ttype'];
+    $rwid = $taskarr[$k]['tid'];
+    $rwret = getplayertaskonce($sid,$rwid,$dblj);
+    $rwstate = $rwret[0]['tstate'];
+    $rwzt = $taskarr[$k]['tstate'];
+    
+    $rw_paras = explode(',',$taskarr[$k]['ttarget_obj']);
+    for($i=0;$i<@count($rw_paras);$i++){
+    $rw_para = explode('|',$rw_paras[$i]);
+    $rwtarget_id = $rw_para[0];
+    $rwcount = $rw_para[1];
+    
+    
+    if ($rwtarget_id==$monster_id && $rwtype==1 && $rwstate!=2){
+        \player\changetask1($rwtype,$rwid,$rwtarget_id,1,$sid,$dblj);
+        $rwnowparas = explode(',',$taskarr[$k]['tnowcount']);
+        $rwnowcount = explode('|',$rwnowparas[$i])[1] + 1;
+        $rwts .= "任务：".$taskarr[$k]['tname']."<br/>{$monster_name}".'('.$rwnowcount."/".$rwcount.')<br/>';
+        break;
+    }
+    }
+}
+}
+
+return $rwts;
+}
+
 
 function gettask($tid,$dblj){
     $task = new task();
@@ -1107,7 +1193,7 @@ function getgameconfig($dblj){
 }
 
 function getfightpara($sid,$dblj){
-    $sql = "SELECT * from system_npc_midguaiwu where nsid = '$sid' and nhp >0";
+    $sql = "SELECT ngid,nname,nlvl,nhp,ndesc from system_npc_midguaiwu where nsid = '$sid' and nhp >0";
     $result = $dblj->query($sql);
     $row = $result->fetchAll(\PDO::FETCH_ASSOC);
     return $row;
