@@ -9,8 +9,8 @@ include_once 'class/global_event_step_change.php';
 include_once 'class/events_steps_change.php';
 
 $parents_page = $currentFilePath;
-$encode = new \encode\encode();
-$player = new \player\player();
+// $encode = new \encode\encode();
+// $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
 $gm_html = '';
 $game_main = '';
@@ -26,10 +26,12 @@ $cdid[] = $cmid;
 $clj[] = $cmd;
 $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&newmid=$player->nowmid&sid=$sid");
 
-if($player->uis_sailing ==1){
+$u_sailing = $player->uis_sailing;
+$u_pve = $player->uis_pve;
+if($u_sailing ==1){
     $cmd = 'sailing_html';
     include 'module_all/sailing.php';
-}elseif($player->uis_pve==1 &&$player->uhp >0){
+}elseif($u_pve ==1 &&$player->uhp >0){
     $cmd = 'pve_fighting';
     include 'module_all/scene_fight.php';
 }else{

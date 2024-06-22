@@ -101,7 +101,7 @@ $parents_cmd = 'gm_scene_new';
 global_events_steps_change(22,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
 }
 
-if($cmd !='main_target_event'){
+if($cmd !='main_target_event'||!$para){
 $sql = "delete from system_player_inputs where sid = '$sid'";
 $dblj->exec($sql);
 }
