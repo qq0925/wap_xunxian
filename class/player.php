@@ -494,7 +494,7 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sql = "select iattack_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
-                $sub_value = -$sub_result['iattack_value'];
+                $sub_value = -intval($sub_result['iattack_value']);
                 \player\addplayersx('ugj',$sub_value,$sid,$dblj);
                 \player\addplayersx('ugj',$equip_add_canshu,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
@@ -567,7 +567,7 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sql = "select iattack_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
-                $sub_value = -$sub_result['iattack_value'];
+                $sub_value = -intval($sub_result['iattack_value']);
                 \player\addplayersx('ugj',$sub_value,$sid,$dblj);
                 $dblj->exec("delete from system_equip_user where eqsid = '$sid' AND eq_type = 1");
             } else {
@@ -587,7 +587,7 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sql = "select irecovery_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
-                $sub_value = -$sub_result['irecovery_value'];
+                $sub_value = -intval($sub_result['irecovery_value']);
                 \player\addplayersx('ufy',$sub_value,$sid,$dblj);
                 \player\addplayersx('ufy',$equip_add_canshu,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
@@ -658,7 +658,7 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sql = "select irecovery_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
-                $sub_value = -$sub_result['irecovery_value'];
+                $sub_value = -intval($sub_result['irecovery_value']);
                 \player\addplayersx('ufy',$sub_value,$sid,$dblj);
                 $dblj->exec("delete from system_equip_user where eqsid = '$sid' AND eq_type = 2 and equiped_pos_id = '$equip_pos_id'");
             } else {
