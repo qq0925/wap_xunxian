@@ -51,6 +51,9 @@ $attack_gid_root = \player\getguaiwu_alive($attack_gid,$dblj)->nid;
 if($attack_gid_root){
 $attack_gid_para = $attack_gid_root."|".$attack_gid;
 global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+
+global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+
 $hurt_cut = process_string($j_hurt_exp,$sid,'npc',$attack_gid_para,$jid,'fight');
 $hurt_cut = @eval("return $hurt_cut;"); // 计算 eval 表达式的结果
 $hurt_cut = (int)floor($hurt_cut);
@@ -72,6 +75,8 @@ $attack_gid_root = \player\getguaiwu_alive($attack_gid,$dblj)->nid;
 $attack_gid_para = $attack_gid_root."|".$attack_gid;
 if($attack_gid_root){
 global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+
+global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
 $hurt_cut = process_string($j_hurt_exp,$sid,'npc',$attack_gid_para,$jid,'fight');
 $hurt_cut = @eval("return $hurt_cut;"); // 计算 eval 表达式的结果
 $hurt_cut = (int)floor($hurt_cut);

@@ -61,7 +61,7 @@ if($cmd=='pve_fight'){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $clj[] = $cmd;
-    global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
+    //global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
     \lexical_analysis\hurt_calc($qtype_id,$sid,$ngid,1,$dblj);//你对怪的伤害
     
     //这种加技能熟练度的方式是和出招次数挂钩而不是怪物数量。
