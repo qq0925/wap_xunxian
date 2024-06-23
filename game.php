@@ -1206,9 +1206,19 @@ THEMAINTASK:
             $cxjg = $dblj->exec($sql);
             $self_id = $page_id;
             $newTable = "game_self_page_".$page_id;
-            // 复制表结构
-            $sourceTable = "game_self_page_test";
-            $stmt = $dblj->prepare("CREATE TABLE $newTable LIKE $sourceTable");
+
+            $sql = "CREATE TABLE `$newTable` (
+              `position` int(4) NOT NULL,
+              `id` int(255) NOT NULL,
+              `type` varchar(255) DEFAULT '1',
+              `show_cond` varchar(255) DEFAULT NULL,
+              `value` varchar(255) DEFAULT '未命名',
+              `target_tasks` varchar(255) DEFAULT NULL,
+              `target_event` varchar(255) DEFAULT '0',
+              `target_func` varchar(255) DEFAULT '0',
+              `link_value` varchar(255) DEFAULT '0'
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+            $stmt = $dblj->prepare($sql);
             $stmt->execute();
             $ym = 'module_all/self_module/self_module_page.php';
             }
