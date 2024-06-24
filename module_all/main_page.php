@@ -1,12 +1,12 @@
 <?php
-require_once 'class/player.php';
-require_once 'class/encode.php';
-require_once 'class/gm.php';
-include_once 'pdo.php';
-// require_once 'class/lexical_analysis.php';
-require_once 'class/basic_function_todo.php';
-include_once 'class/global_event_step_change.php';
-include_once 'class/events_steps_change.php';
+require 'class/basic_function_todo.php';
+// require_once 'class/player.php';
+// require_once 'class/encode.php';
+// require_once 'class/gm.php';
+// include_once 'pdo.php';
+// // require_once 'class/lexical_analysis.php';
+// include_once 'class/global_event_step_change.php';
+// include_once 'class/events_steps_change.php';
 
 $parents_page = $currentFilePath;
 // $encode = new \encode\encode();
@@ -14,7 +14,30 @@ $parents_page = $currentFilePath;
 $player = \player\getplayer($sid,$dblj);
 $gm_html = '';
 $game_main = '';
-$get_main_page = \gm\get_scene_page($dblj);
+
+
+// 定义缓存文件路径
+$cacheDir = 'cache';
+$cacheFile = $cacheDir . '/get_main_page.cache';
+$cacheTime = 3600; // 缓存时间，单位为秒（这里设置为1小时）
+
+// 检查缓存目录是否存在，如果不存在则创建
+if (!is_dir($cacheDir)) {
+    mkdir($cacheDir, 0777, true); // 0777 表示目录权限，true 表示递归创建目录
+}
+
+// 检查缓存文件是否存在且未过期
+if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTime) {
+    // 从缓存文件中读取数据
+    $get_main_page = unserialize(file_get_contents($cacheFile));
+} else {
+    // 从数据源获取数据
+    $get_main_page = \gm\get_scene_page($dblj);
+
+    // 将数据写入缓存文件
+    file_put_contents($cacheFile, serialize($get_main_page));
+}
+
 $br = 0;
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $change_scenemodule = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=1&sid=$sid");
