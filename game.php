@@ -2211,7 +2211,7 @@ THEMAINTASK:
                 if ($row) {
                     $iid = $row['iid'];
                     $itype = $row['itype'];
-                    $iname = $row['iname'];
+                    $iname = \lexical_analysis\color_string($row['iname']);
                 }
             }
             switch($target_event){
