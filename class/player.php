@@ -123,6 +123,33 @@ function getplayer($sid,$dblj,$uid=null){
     return $player;
 }
 
+function update_item_burthen($sid,$dblj){
+    $query = "SELECT iid, icount FROM system_item WHERE sid = :sid";
+    $stmt = $dblj->prepare($query);
+    $stmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
+    $stmt->execute();
+    
+    $value = 0;
+    
+    while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        $iid = $row['iid'];
+        $icount = $row['icount'];
+        
+        // 获取system_item_module表中等于iid的iweight值
+        $subQuery = "SELECT iweight FROM system_item_module WHERE iid = :iid";
+        $subStmt = $dblj->prepare($subQuery);
+        $subStmt->bindParam(':iid', $iid, \PDO::PARAM_INT);
+        $subStmt->execute();
+        
+        if ($subRow = $subStmt->fetch(\PDO::FETCH_ASSOC)) {
+            $iweight = $subRow['iweight'];
+            $value += $iweight * $icount;
+        }
+    }
+    return $value;
+}
+
+
 function getsystem($dblj){
 $system = new gamesystem();
 $sql="select * from gm_game_basic where game_id='19980925'";

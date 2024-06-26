@@ -41,10 +41,13 @@ $npc = new \player\npc();
 $Dcmd = $_SERVER['QUERY_STRING'];
 
 $allow_sep = "300";//间隔时间，单位毫秒。
+
 function getMillisecond() {
     list($t1, $t2) = explode(' ', microtime());
     return (float)sprintf('%.0f',(floatval($t1) + floatval($t2)) * 1000);
 }
+
+
 if (isset($_SESSION["post_sep"]))
 {
     if (getMillisecond() - $_SESSION["post_sep"] < $allow_sep)
@@ -94,6 +97,8 @@ if (isset($cmd)&&!isset($sid)){
         $is_designer_parse_str .= "{$name}={$value}<br/>";
     }
     $designer_para_cmd = $cmd;
+    
+    
 $player = \player\getplayer($sid,$dblj);
 $up_ret = \player\upplayerlvl($sid,$dblj);
 if($up_ret ==1){
@@ -138,6 +143,8 @@ exit();
 // \player\changeplayersx('ulast_cmd',$ucmd,$sid,$dblj);
 
 //$ucmd = (int)$ucmd;
+
+
 $wjid = $player->uid;
 $is_Designer = $player->uis_designer;
 
@@ -309,8 +316,9 @@ THEMAINTASK:
             }
             $gofirst = $encode->encode("cmd=gm_game_firstpage&ucmd=1&sid=$sid");
             $dblj->exec("DELETE from system_npc_midguaiwu where nsid = '$sid'");
+            $item_burthen = \player\update_item_burthen($sid,$dblj);
             $nowdate = date('Y-m-d H:i:s');
-            $sql = "update game1 set endtime='$nowdate',minutetime = '$nowdate',sfzx=1,uis_pve = 0 WHERE sid='$sid'";
+            $sql = "update game1 set endtime='$nowdate',minutetime = '$nowdate',sfzx=1,uis_pve = 0,uburthen = '$item_burthen' WHERE sid='$sid'";
             $cxjg = $dblj->exec($sql);
             $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
             $dblj->exec($sql);
