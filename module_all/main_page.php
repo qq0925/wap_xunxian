@@ -6,7 +6,7 @@ require 'class/basic_function_todo.php';
 // include_once 'pdo.php';
 // // require_once 'class/lexical_analysis.php';
 // include_once 'class/global_event_step_change.php';
-// include_once 'class/events_steps_change.php';
+include 'class/events_steps_change.php';
 
 $parents_page = $currentFilePath;
 // $encode = new \encode\encode();
@@ -73,7 +73,7 @@ if (isset($newmid)){
         $clmid = player\getmid($newmid,$dblj); //获取即将走的地图信息
         if($clmid->minto_event_id !=0){
         $parents_cmd = 'gm_scene_new';
-        events_steps_change($clmid->minto_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php',null,null,$para);
+        events_steps_change($clmid->minto_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','scene',$clmid->mid,$para);
         $player = player\getplayer($sid,$dblj);//获取玩家信息
         $tpsmid = $player->tpsmid;
         }
@@ -104,7 +104,7 @@ else{
 $clmid = player\getmid($player->nowmid,$dblj);
 if($clmid->mlook_event_id !=0){
 $parents_cmd = 'gm_scene_new';
-events_steps_change($clmid->mlook_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php',null,null,$para);
+events_steps_change($clmid->mlook_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','scene',$clmid->mid,$para);
 }
 $sql = "select uname,sid,endtime,uis_designer from game1 where nowmid='$player->nowmid' AND sfzx = 1 AND sid !='$sid' and uis_sailing =0";//获取当前地图玩家
 $cxjg = $dblj->query($sql);
