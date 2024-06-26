@@ -6,7 +6,7 @@ require 'class/basic_function_todo.php';
 // include_once 'pdo.php';
 // // require_once 'class/lexical_analysis.php';
 // include_once 'class/global_event_step_change.php';
-include 'class/events_steps_change.php';
+include_once 'class/events_steps_change.php';
 
 $parents_page = $currentFilePath;
 // $encode = new \encode\encode();
