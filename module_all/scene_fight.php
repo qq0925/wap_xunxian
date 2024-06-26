@@ -303,10 +303,12 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_show_cond = $get_main_page[$i]['show_cond'];
     if($main_show_cond!=''){
     $show_ret = \lexical_analysis\process_string($main_show_cond,$sid);
+    $show_ret = \lexical_analysis\color_string($show_ret);
+    
     }else{
     $show_ret = 1;
     }
-    //$show_ret = strip_tags($show_ret);
+    $show_ret = strip_tags($show_ret);
     @$ret = eval("return $show_ret;");
     if($ngid){
     $mid = $ngid;
@@ -332,6 +334,9 @@ for ($i=0;$i<count($get_main_page);$i++){
     }
     if($main_target_func !=0){
         $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,10,$cmid);
+        if(!filter_var($main_target_func, FILTER_VALIDATE_URL,FILTER_FLAG_QUERY_REQUIRED)){
+        $main_target_func = \lexical_analysis\color_string($main_target_func);
+        }
     }elseif ($main_target_func ==0) {
         $main_target_func = $encode->encode("cmd=func_no_define&ucmd=$cmid&parents_page=$parents_cmd=$cmd&parents_page&sid=$sid");
     }
