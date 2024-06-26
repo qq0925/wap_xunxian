@@ -58,7 +58,8 @@ function calculateDistance($point1, $point2) {
     // 使用大圆距离公式计算距离
     $dlon = $y2 - $y1;
     $dlat = $x2 - $x1;
-    $a = sin($dlat/2) ** 2 + cos($x1) * cos($x2) * sin($dlon/2) ** 2;
+    $a = pow(sin($dlat/2), 2) + cos($x1) * cos($x2) * pow(sin($dlon/2), 2);
+    // $a = sin($dlat/2) ** 2 + cos($x1) * cos($x2) * sin($dlon/2) ** 2;
     $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
     $distance = $R * $c;
     // 考虑高度差
