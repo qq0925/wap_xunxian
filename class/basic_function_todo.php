@@ -142,6 +142,9 @@ $value = $value?$value:$func_name;
         case '60':
             $enemy_url = enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $enemy_url;
+        case '61':
+            $player_attack_url = player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $player_attack_url;
         case '62':
             $enemy_attack_url = enemy_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $enemy_attack_url;
@@ -1349,6 +1352,32 @@ function enemy_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     }
 }
     return $fight_omsg;
+    
+}
+
+function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
+    $sql = "SELECT * from system_npc_midguaiwu where nsid = '$sid'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $monster_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    for($i=0;$i<@count($monster_list);$i++){
+    $monster_id_root = $monster_list[$i]['nid'];
+    $monster_id = $monster_list[$i]['ngid'];
+    $monster_nowmid = $monster_list[$i]['nmid'];
+
+    if($cmd =="pve_fighting"){
+    $sql = "SELECT * from game2 where sid = :sid and gid = :gid";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
+    $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if($row['fight_umsg']){
+    $fight_umsg .= $row['fight_umsg']."<br/>";
+    }
+    }
+}
+    return $fight_umsg;
     
 }
 

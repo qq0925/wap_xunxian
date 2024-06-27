@@ -1,16 +1,21 @@
 <?php
-require_once 'class/player.php';
-require_once 'class/encode.php';
-require_once 'class/gm.php';
-include_once 'pdo.php';
-// require_once 'class/lexical_analysis.php';
-require_once 'class/basic_function_todo.php';
+// require_once 'class/player.php';
+// require_once 'class/encode.php';
+// require_once 'class/gm.php';
+// include_once 'pdo.php';
+// // require_once 'class/lexical_analysis.php';
+require 'class/basic_function_todo.php';
 
 $sql = "select iid from system_item where sid = '$sid' and item_true_id = '$equip_true_id'";
 $cxjg = $dblj->query($sql);
 $ret = $cxjg ? $cxjg->fetch(PDO::FETCH_ASSOC) : [];
 $equip_id = $ret['iid'];
 $equip_arr = \player\getitem($equip_id,$dblj);
+$equip_name = $equip_arr->iname??0;
+$equip_name = \lexical_analysis\color_string($equip_name);
+$equip_desc = $equip_arr->idesc??0;
+$equip_desc = \lexical_analysis\color_string($equip_desc);
+
 $equip_iattack_value = $equip_arr->iattack_value==''?0:$equip_arr->iattack_value;
 $equip_irecovery_value = $equip_arr->irecovery_value==''?0:$equip_arr->irecovery_value;
 $equip_iembed_count = $equip_arr->iembed_count ==''?0:$equip_arr->iembed_count;
@@ -121,11 +126,11 @@ $all = <<<HTML
     <link rel="stylesheet" href="css/gamecss.css">
 </head>
 {$equip_photo}
-{$equip_arr->iname}<br/>
+{$equip_name}<br/>
 【重量】：{$equip_arr->iweight}<br/>
 {$equip_value}
 【镶嵌孔数】：{$equip_iembed_count}<br/>
-【介绍】：{$equip_arr->idesc}<br/>
+【介绍】：{$equip_desc}<br/>
 $game_main<br/>
 <a href="?cmd=$player_equip_list">返回列表</a><br/>
 <a href="?cmd=$ret_game">返回游戏</a><br/>

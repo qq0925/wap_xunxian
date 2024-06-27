@@ -39,7 +39,7 @@ if (!file_exists($file)) {
         '分' => $ki,
         '秒' => $ks
     ]);
-    $iniFile->addItem('地图坐标', ['x' => '0', 'y' => '0']);
+    $iniFile->addItem('地图坐标', ['p' => '0']);
     $iniFile->addItem('最后页面id', ['页面id' => '0']);
     $iniFile->addItem('超链接值', ['初始' => 123]);
 } else {

@@ -1,6 +1,12 @@
 <?php
 
-
+if($remove_canshu!=1){
+    
+    if($remove_canshu==2){
+        echo "已清空公共聊天数据！<br/>";
+        $dblj->exec("delete from system_chat_data where chat_type = '0'");
+    }
+    
 $dblj->exec("update system_designer_assist set op_target = '',op_canshu = '' where sid = '$sid'");
 $player = \player\getplayer($sid,$dblj);
 $game_data = \player\getbasicgmdata($dblj);
@@ -75,5 +81,13 @@ $gm_html = <<<HTML
 <a href="?cmd=$gm_design_guide">设计文档</a><br/>
 ---</br>
 HTML;
+}else{
+    $sure_main = $encode->encode("cmd=gm&remove_canshu=2&sid=$sid");
+    $cancel_main = $encode->encode("cmd=gm&sid=$sid");
+    $gm_html =<<<HTML
+    是否清空公聊信息<br/>
+<a href="?cmd=$sure_main">确定</a> | <a href="?cmd=$cancel_main">取消</a><br/>
+HTML;
+}
 echo $gm_html;
 ?>

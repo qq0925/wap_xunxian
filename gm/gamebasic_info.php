@@ -53,7 +53,7 @@ $post_tishi
 <input type="hidden" name="gm_post_canshu" value="1">
 <input type="hidden" name="sid" value="$sid">
 游戏名称:<input name="game_name" type="text" value="$gm_post->game_name" maxlength="25" /><br/>
-游戏简介:<textarea name="game_desc" maxlength="400" rows="4" cols="40">$gm_post->game_desc</textarea><br/>
+游戏简介:<br/><textarea type="text" name="game_desc" id="text" class="text" maxlength="400" rows="4" cols="40">$gm_post->game_desc</textarea><br/>
 游戏状态:<select name="game_status" value="$gm_post->game_status">
 <option value="0" $gm_select_0>开发中</option>
 <option value="1" $gm_select_1>维护中</option>

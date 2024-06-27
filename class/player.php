@@ -51,6 +51,15 @@ class midguai{}
 
 class guaiwu{}
 
+class npcguaiwu{
+    var $nid;
+    var $nhp;
+    var $nname;
+    var $ndrop_exp;
+    var $ndrop_money;
+    var $ndrop_item;
+}
+
 class skill{}
 
 class item{}
@@ -113,6 +122,33 @@ function getplayer($sid,$dblj,$uid=null){
     $cxjg->fetch(\PDO::FETCH_ASSOC);
     return $player;
 }
+
+function update_item_burthen($sid,$dblj){
+    $query = "SELECT iid, icount FROM system_item WHERE sid = :sid";
+    $stmt = $dblj->prepare($query);
+    $stmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
+    $stmt->execute();
+    
+    $value = 0;
+    
+    while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        $iid = $row['iid'];
+        $icount = $row['icount'];
+        
+        // 获取system_item_module表中等于iid的iweight值
+        $subQuery = "SELECT iweight FROM system_item_module WHERE iid = :iid";
+        $subStmt = $dblj->prepare($subQuery);
+        $subStmt->bindParam(':iid', $iid, \PDO::PARAM_INT);
+        $subStmt->execute();
+        
+        if ($subRow = $subStmt->fetch(\PDO::FETCH_ASSOC)) {
+            $iweight = $subRow['iweight'];
+            $value += $iweight * $icount;
+        }
+    }
+    return $value;
+}
+
 
 function getsystem($dblj){
 $system = new gamesystem();
@@ -405,10 +441,34 @@ function getnpcguaiwu($nid,$dblj){
     return $npcguaiwu;
 }
 
+function getnpcguaiwu_attr($nid,$dblj){
+    $npcguaiwu = new npcguaiwu();
+    $sql = "select nid,nname,nhp,ndrop_exp,ndrop_money,ndrop_item from system_npc_midguaiwu where ngid = '$nid'";
+    $cxjg = $dblj->query($sql);
+    $cxjg->bindColumn('nid',$npcguaiwu->nid);
+    $cxjg->bindColumn('nname',$npcguaiwu->nname);
+    $cxjg->bindColumn('nhp',$npcguaiwu->nhp);
+    $cxjg->bindColumn('ndrop_exp',$npcguaiwu->ndrop_exp);
+    $cxjg->bindColumn('ndrop_money',$npcguaiwu->ndrop_money);
+    $cxjg->bindColumn('ndrop_item',$npcguaiwu->ndrop_item);
+    $data = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    // 循环遍历数组，动态生成类的属性并赋值
+    if(is_bool($data)){
+        return;
+    }
+    return $npcguaiwu;
+}
+
+
 function getnowequiptrueid($eq_true_id,$sid,$dblj){ 
-    $sql = "select eq_true_id from system_equip_user where eqsid = '$sid' and eq_true_id = '$eq_true_id'";
+    $sql = "select eq_true_id,equiped_pos_id from system_equip_user where eqsid = '$sid' and eq_true_id = '$eq_true_id'";
     $stmt = $dblj->query($sql);
     $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+    if(!is_numeric($result['equiped_pos_id'])){
+        //装备位置错误文本修正
+    $sql = "UPDATE system_equip_user set equiped_pos_id = (select isubtype from system_item_module where iid = (select iid from system_item where sid = '$sid' and item_true_id = '$eq_true_id')) where eqsid = '$sid' and eq_true_id = '$eq_true_id'";
+    $dblj->exec($sql);
+    }
     if($result['eq_true_id']){
         return 1;
     }else{
@@ -461,10 +521,49 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sql = "select iattack_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
-                $sub_value = -$sub_result['iattack_value'];
+                $sub_value = -intval($sub_result['iattack_value']);
                 \player\addplayersx('ugj',$sub_value,$sid,$dblj);
                 \player\addplayersx('ugj',$equip_add_canshu,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
+                $event_data = global_event_data_get(41,$dblj);
+                $event_cond = $event_data['system_event']['cond'];
+                $event_cmmt = $event_data['system_event']['cmmt'];
+                $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$eq_true_id);
+                if(is_null($register_triggle)){
+                    $register_triggle =1;
+                }
+                if(!$register_triggle){
+                }elseif($register_triggle){
+                if(!empty($event_data['system_event']['link_evs'])){
+                    $system_event_evs = $event_data["system_event_evs"];
+                    foreach ($system_event_evs as $index => $event) {
+                    $step_cond = $event['cond'];
+                    $step_cmmt = $event['cmmt'];
+                    $step_cmmt2 = $event['cmmt2'];
+                    $step_s_attrs = $event['s_attrs'];
+                    $step_m_attrs = $event['m_attrs'];
+                    $step_items = $event['items'];
+                    $step_a_skills = $event['a_skills'];
+                    $step_r_skills = $event['r_skills'];
+                    $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$eq_true_id);
+                    if(is_null($step_triggle)){
+                    $step_triggle =1;
+                        }
+                    if(!$step_triggle){
+                        echo $step_cmmt2."<br/>";
+                        }elseif($step_triggle){
+                        if($step_cmmt){
+                        echo $step_cmmt."<br/>";
+                        }
+                        $ret = attrsetting($step_s_attrs,$sid,'item',$eq_true_id);
+                        $ret = attrchanging($step_m_attrs,$sid,'item',$eq_true_id);
+                        $ret = itemchanging($step_items,$sid,'item',$eq_true_id);
+                        $ret = skillschanging($step_a_skills,$sid,1,'item',$eq_true_id);
+                        $ret = skillschanging($step_r_skills,$sid,2,'item',$eq_true_id);
+                        }
+                    }
+                }
+                }
             } else {
                 // 记录不存在，插入新记录
                 $sql = "INSERT INTO system_equip_user (eqsid, eq_true_id, eq_type, equiped_pos_id) VALUES (?, ?, 1, ?)";
@@ -495,7 +594,7 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sql = "select iattack_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
-                $sub_value = -$sub_result['iattack_value'];
+                $sub_value = -intval($sub_result['iattack_value']);
                 \player\addplayersx('ugj',$sub_value,$sid,$dblj);
                 $dblj->exec("delete from system_equip_user where eqsid = '$sid' AND eq_type = 1");
             } else {
@@ -515,11 +614,47 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sql = "select irecovery_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
-                $sub_value = -$sub_result['irecovery_value'];
+                $sub_value = -intval($sub_result['irecovery_value']);
                 \player\addplayersx('ufy',$sub_value,$sid,$dblj);
                 \player\addplayersx('ufy',$equip_add_canshu,$sid,$dblj);
-                
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
+                $event_data = global_event_data_get(41,$dblj);
+                $event_cond = $event_data['system_event']['cond'];
+                $event_cmmt = $event_data['system_event']['cmmt'];
+                $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$eq_true_id);
+                if(is_null($register_triggle)){
+                    $register_triggle =1;
+                }
+                if(!$register_triggle){
+                }elseif($register_triggle){
+                if(!empty($event_data['system_event']['link_evs'])){
+                    $system_event_evs = $event_data["system_event_evs"];
+                    foreach ($system_event_evs as $index => $event) {
+                    $step_cond = $event['cond'];
+                    $step_cmmt = $event['cmmt'];
+                    $step_cmmt2 = $event['cmmt2'];
+                    $step_s_attrs = $event['s_attrs'];
+                    $step_m_attrs = $event['m_attrs'];
+                    $step_items = $event['items'];
+                    $step_a_skills = $event['a_skills'];
+                    $step_r_skills = $event['r_skills'];
+                    $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$eq_true_id);
+                    if(is_null($step_triggle)){
+                    $step_triggle =1;
+                        }
+                    if(!$step_triggle){
+                        echo $step_cmmt2."<br/>";
+                        }elseif($step_triggle){
+                        echo $step_cmmt."<br/>";
+                        $ret = attrsetting($step_s_attrs,$sid,'item',$eq_true_id);
+                        $ret = attrchanging($step_m_attrs,$sid,'item',$eq_true_id);
+                        $ret = itemchanging($step_items,$sid,'item',$eq_true_id);
+                        $ret = skillschanging($step_a_skills,$sid,1,'item',$eq_true_id);
+                        $ret = skillschanging($step_r_skills,$sid,2,'item',$eq_true_id);
+                        }
+                    }
+                }
+                }
             } else {
                 // 记录不存在，插入新记录
                 $sql = "INSERT INTO system_equip_user (eqsid, eq_true_id, eq_type, equiped_pos_id) VALUES (?, ?, 2, ?)";
@@ -550,7 +685,7 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sql = "select irecovery_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
-                $sub_value = -$sub_result['irecovery_value'];
+                $sub_value = -intval($sub_result['irecovery_value']);
                 \player\addplayersx('ufy',$sub_value,$sid,$dblj);
                 $dblj->exec("delete from system_equip_user where eqsid = '$sid' AND eq_type = 2 and equiped_pos_id = '$equip_pos_id'");
             } else {
@@ -858,7 +993,8 @@ function getplayertask($sid,$dblj,$taskid=null){
     }
     $cxjg = $dblj->query($sql);
     $task = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
-    for($i=0;$i<count($task);$i++){
+    $task_count = count($task);
+    for($i=0;$i<$task_count;$i++){
         $tid = $task[$i]['tid'];
         $tstate = $task[$i]['tstate'];
         $tnowcount = $task[$i]['tnowcount'];
@@ -869,6 +1005,63 @@ function getplayertask($sid,$dblj,$taskid=null){
     }
     return $allTasks;
 }
+
+function update_task($sid,$dblj,$drop_id=null,$monster_id=null,$monster_name=null){
+
+$taskarr = getplayertask($sid,$dblj);//任务相关
+$taskarr_count = @count($taskarr);
+if($drop_id){
+for ($l=0;$l<$taskarr_count;$l++){
+    $rwtype = $taskarr[$l]['ttype'];
+    $rw_paras = explode(',',$taskarr[$l]['ttarget_obj']);
+    $rw_check_count = @count($rw_paras);
+    $rw_check_done = 0;
+    for($i=0;$i<$rw_check_count;$i++){
+    $rw_para = explode('|',$rw_paras[$i]);
+    $rwtarget_id = $rw_para[0];
+    $rwcount = $rw_para[1];
+    //$rwid = $taskarr[$l]['tid'];
+    $rwzt = $taskarr[$l]['tstate'];
+    if ($rwtarget_id==$drop_id && $rwtype==2 && $rwzt!=2){
+        $rw_obj_name = getitem($rwtarget_id,$dblj)->iname;
+        $rw_obj_name = \lexical_analysis\color_string($rw_obj_name);
+        $rwnowcount = getitem_count($rwtarget_id,$sid,$dblj)['icount'];
+        $rwts .= "任务：".$taskarr[$l]['tname']."<br/>{$rw_obj_name}".'('.$rwnowcount."/".$rwcount.')<br/>';
+        break;
+    }
+    }
+}
+}
+if($monster_id){
+for ($k=0;$k<$taskarr_count;$k++){
+    $rwnpc_id = $taskarr[$k]['tnpc_id'];
+    $rwtype = $taskarr[$k]['ttype'];
+    $rwid = $taskarr[$k]['tid'];
+    $rwret = getplayertaskonce($sid,$rwid,$dblj);
+    $rwstate = $rwret[0]['tstate'];
+    $rwzt = $taskarr[$k]['tstate'];
+    
+    $rw_paras = explode(',',$taskarr[$k]['ttarget_obj']);
+    for($i=0;$i<@count($rw_paras);$i++){
+    $rw_para = explode('|',$rw_paras[$i]);
+    $rwtarget_id = $rw_para[0];
+    $rwcount = $rw_para[1];
+    
+    
+    if ($rwtarget_id==$monster_id && $rwtype==1 && $rwstate!=2){
+        \player\changetask1($rwtype,$rwid,$rwtarget_id,1,$sid,$dblj);
+        $rwnowparas = explode(',',$taskarr[$k]['tnowcount']);
+        $rwnowcount = explode('|',$rwnowparas[$i])[1] + 1;
+        $rwts .= "任务：".$taskarr[$k]['tname']."<br/>{$monster_name}".'('.$rwnowcount."/".$rwcount.')<br/>';
+        break;
+    }
+    }
+}
+}
+
+return $rwts;
+}
+
 
 function gettask($tid,$dblj){
     $task = new task();
@@ -1027,7 +1220,7 @@ function getgameconfig($dblj){
 }
 
 function getfightpara($sid,$dblj){
-    $sql = "SELECT * from system_npc_midguaiwu where nsid = '$sid' and nhp >0";
+    $sql = "SELECT ngid,nname,nlvl,nhp,ndesc from system_npc_midguaiwu where nsid = '$sid' and nhp >0";
     $result = $dblj->query($sql);
     $row = $result->fetchAll(\PDO::FETCH_ASSOC);
     return $row;
