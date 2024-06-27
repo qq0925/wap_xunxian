@@ -1,3 +1,0 @@
-game.php-首页
-lexical_analysis.php,player.php,basic_function_todo.php-class文件夹
-main_page.php,scene_fight.php-module_all文件夹

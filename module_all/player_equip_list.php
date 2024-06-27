@@ -29,7 +29,7 @@ if ($equipbid) {
     if ($cxjg) {
         $row = $cxjg->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            $equipbname = $row['iname'];
+            $equipbname = \lexical_analysis\color_string($row['iname']);
             $removeitem = $encode->encode("cmd=equip_op_basic&target_event=remove&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
             $ckequipbinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
             $equipbhtml = "<a href='?cmd=$ckequipbinfo'>{$equipbname}</a><a href='?cmd=$removeitem'>[卸下]</a>";
@@ -57,7 +57,7 @@ foreach ($ret as $row) {
                 if ($cxjg) {
                     $row = $cxjg->fetch(PDO::FETCH_ASSOC);
                     if ($row) {
-                        $equipfname = $row['iname'];
+                        $equipfname = \lexical_analysis\color_string($row['iname']);
                     }
                 }
             }

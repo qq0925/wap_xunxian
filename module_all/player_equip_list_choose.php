@@ -21,7 +21,7 @@ if(!$ret){
 $equipchoosehtml .="没有对应部位的装备。<br/>";
 }
 for($i=1;$i<@count($ret) +1;$i++){
-$equip_name = $ret[$i-1]['iname'];
+$equip_name = \lexical_analysis\color_string($ret[$i-1]['iname']);
 $equip_true_id = $ret[$i-1]['item_true_id'];
 $equipitem = $encode->encode("cmd=equip_op_basic&target_event=use&ucmd=$cmid&equip_true_id=$equip_true_id&sid=$sid");
 $equipchoosehtml .= <<<HTML
