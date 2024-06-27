@@ -10,8 +10,16 @@ if($remove_monster){
 }
 
 if($_POST['change_this_id']){
+    $old = $_POST['change_this_id']."|".$_POST['change_this_count']."|".$_POST['change_this_show_cond'];
+    
+    // 查询mnpc字段是否包含$old
+    $sql_check = "SELECT * FROM system_map WHERE mnpc LIKE ?";
+    $stmt = $dblj->prepare($sql_check);
+    $stmt->execute(["%$old%"]);
+    if ($stmt->rowCount() == 0) {
     $old = $_POST['change_this_id']."|".$_POST['change_this_count'];
-    $new = $_POST['change_this_id']."|".$_POST['count'];
+    }
+    $new = $_POST['change_this_id']."|".$_POST['count']."|".urlencode($_POST['show_cond']);
     $sql = "UPDATE system_map SET mnpc = REPLACE(mnpc, '$old', '$new') where mid = '$nowmid'";
     $dblj->exec($sql);
 }
@@ -23,9 +31,9 @@ if($_POST['add_this_id']){
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $oldData = $result["mnpc"];
     if($oldData ==''){
-        $new = $_POST['add_this_id']."|".$_POST['add_count'];
+        $new = $_POST['add_this_id']."|".$_POST['add_count']."|".urlencode($_POST['add_show_cond']);
     }else{
-        $new = $oldData.",".$_POST['add_this_id']."|".$_POST['add_count'];
+        $new = $oldData.",".$_POST['add_this_id']."|".$_POST['add_count']."|".urlencode($_POST['add_show_cond']);
     }
     $sql = "UPDATE system_map SET mnpc = '$new' where mid = '$nowmid'";
     $dblj->exec($sql);
@@ -33,11 +41,34 @@ if($_POST['add_this_id']){
 
 if($remove_id){
     if($scene_npc_count ==1){
+        
+    $old = $remove_id."|".$remove_count."|".$remove_show_cond;
+    
+    // 查询mnpc字段是否包含$old
+    $sql_check = "SELECT * FROM system_map WHERE mnpc LIKE ?";
+    $stmt = $dblj->prepare($sql_check);
+    $stmt->execute(["%$old%"]);
+    if ($stmt->rowCount() == 0) {
     $old = $remove_id."|".$remove_count;
+    }
     }elseif($scene_npc_count !=1 && $pos ==1){
+    $old = $remove_id."|".$remove_count."|".$remove_show_cond.",";
+    // 查询mnpc字段是否包含$old
+    $sql_check = "SELECT * FROM system_map WHERE mnpc LIKE ?";
+    $stmt = $dblj->prepare($sql_check);
+    $stmt->execute(["%$old%"]);
+    if ($stmt->rowCount() == 0) {
     $old = $remove_id."|".$remove_count.",";
+    }
     }else{
+    $old = ",".$remove_id."|".$remove_count."|".$remove_show_cond;
+    // 查询mnpc字段是否包含$old
+    $sql_check = "SELECT * FROM system_map WHERE mnpc LIKE ?";
+    $stmt = $dblj->prepare($sql_check);
+    $stmt->execute(["%$old%"]);
+    if ($stmt->rowCount() == 0) {
     $old = ",".$remove_id."|".$remove_count;
+    }
     }
     $sql = "UPDATE system_map SET mnpc = REPLACE(mnpc, '$old', '') where mid = '$nowmid'";
     $dblj->exec($sql);
@@ -67,11 +98,14 @@ foreach ($scene_npc as $npc_detail){
     $npc_list = explode('|',$npc_detail);
     $npc_id = $npc_list[0];
     $npc_count = $npc_list[1];
+    $npc_show_cond = $npc_list[2];
     $npc_count_2 = urlencode($npc_count);
+    $npc_show_cond_2 = urlencode($npc_show_cond);
     $npc_para = player\getnpc($npc_id,$dblj);
     $npc_name = $npc_para ->nname;
-    $npc_change = $encode->encode("cmd=gm_type_map&gm_post_canshu=6&target_midid=$target_midid&change_id=$npc_id&change_old_count=$npc_count_2&sid=$sid");
-    $npc_remove = $encode->encode("cmd=gm_type_map&gm_post_canshu=6&pos=$pos&scene_npc_count=$scene_npc_count&target_midid=$target_midid&remove_id=$npc_id&remove_count=$npc_count_2&sid=$sid");
+    
+    $npc_change = $encode->encode("cmd=gm_type_map&gm_post_canshu=6&target_midid=$target_midid&change_id=$npc_id&change_old_count=$npc_count_2&change_old_show_cond=$npc_show_cond_2&sid=$sid");
+    $npc_remove = $encode->encode("cmd=gm_type_map&gm_post_canshu=6&pos=$pos&scene_npc_count=$scene_npc_count&target_midid=$target_midid&remove_id=$npc_id&remove_count=$npc_count_2&remove_show_cond=$npc_show_cond_2&sid=$sid");
     
     if($pos ==1 && $scene_npc_count>1){
     $next_pos = $now_temp_pos + 1;
@@ -113,6 +147,8 @@ HTML;
 if($change_id !=0){
 $npc_para = player\getnpc($change_id,$dblj);
 $npc_name = $npc_para ->nname;
+
+$change_old_show_cond_2 = urldecode($change_old_show_cond);
 $last_page = $encode->encode("cmd=gm_type_map&gm_post_canshu=6&target_midid=$target_midid&sid=$sid");
 $npc_change = $encode->encode("cmd=gm_type_map&gm_post_canshu=6&target_midid=$target_midid&sid=$sid");
 $npc_html = <<<HTML
@@ -120,7 +156,9 @@ $npc_html = <<<HTML
 <form action="?cmd=$npc_change" method="post">
 <input name="change_this_id" type="hidden" title="确定" value="{$change_id}">
 <input name="change_this_count" type="hidden" title="确定" value="{$change_old_count}">
+<input name="change_this_show_cond" type="hidden" title="确定" value="{$change_old_show_cond}">
 数量表达式:<textarea name="count" maxlength="1024" rows="4" cols="40">{$change_old_count}</textarea><br/>
+显示条件表达式(为空则默认显示):<textarea name="show_cond" maxlength="1024" rows="4" cols="40">{$change_old_show_cond_2}</textarea><br/>
 <input name="submit" type="submit" title="确定" value="确定"/></form><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
@@ -187,7 +225,8 @@ $npc_html = <<<HTML
 <p>新增场景的“{$npc_name}”的电脑人物<br/>
 <form action="?cmd=$npc_add" method="post">
 <input name="add_this_id" type="hidden" title="确定" value="{$add_npc_id}">
-数量表达式:<textarea name="add_count" maxlength="1024" rows="4" cols="40"></textarea><br/>
+数量表达式:<textarea name="add_count" maxlength="1024" rows="4" cols="40">1</textarea><br/>
+显示条件表达式(为空则默认显示):<textarea name="add_show_cond" maxlength="1024" rows="4" cols="40"></textarea><br/>
 <input name="submit" type="submit" title="确定" value="确定"/></form><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>

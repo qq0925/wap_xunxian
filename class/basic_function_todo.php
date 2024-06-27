@@ -882,6 +882,12 @@ if ($clmid->mnpc_now !=""){
     $npc_list = explode(',',$clmid->mnpc_now);
     foreach ($npc_list as $npc_detail){
     $npc_para = explode('|',$npc_detail);
+    $npc_show_cond = urldecode($npc_para[2]);
+    $show_result = checkTriggerCondition($npc_show_cond,$dblj,$sid);
+    if(is_null($show_result)){
+    $show_result = true;
+    }
+    if($show_result){
     $npc_id = $npc_para[0];
     $npc_count = $npc_para[1];
     $sql = "select * from system_npc where nid = '$npc_id' and nkill = 0";//获取npc
@@ -952,6 +958,7 @@ if ($clmid->mnpc_now !=""){
 HTML;
 }
 $npchtml .="<br/>";
+}
 }
     }
 }

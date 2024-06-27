@@ -281,14 +281,24 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $result = $stmt->get_result();
                         // 处理结果
                         $totalNpcCount = 0;
+                        
                         while ($row = $result->fetch_assoc()) {
                             $mnpc = $row["mnpc_now"];
                             $npcs = explode(",", $mnpc); // 拆分成每个npc项
                             foreach ($npcs as $npc) {
+                                $npc_show_cond = urldecode(explode("|", $npc)[2]);
+                                $show_cond = checkTriggerCondition($npc_show_cond,$dblj,$sid);
+                                if(is_null($show_cond)){
+                                $show_cond = true;
+                                }
+                                if($show_cond){
                                 list(, $npcCount) = explode("|", $npc);
                                 $totalNpcCount += (int)$npcCount; // 将每个npc的数量累加
+                                }
+                                
                             }
                         }
+                        
                         $op = $totalNpcCount;
                         break;
                         case 'monster_count':
@@ -1755,8 +1765,16 @@ function process_attribute_2($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$par
                             $mnpc = $row["mnpc_now"];
                             $npcs = explode(",", $mnpc); // 拆分成每个npc项
                             foreach ($npcs as $npc) {
+                                $npc_show_cond = urldecode(explode("|", $npc)[2]);
+                                $show_cond = checkTriggerCondition($npc_show_cond,$dblj,$sid);
+                                if(is_null($show_cond)){
+                                $show_cond = true;
+                                }
+                                if($show_cond){
                                 list(, $npcCount) = explode("|", $npc);
                                 $totalNpcCount += (int)$npcCount; // 将每个npc的数量累加
+                                }
+                                
                             }
                         }
                         $op = $totalNpcCount;
