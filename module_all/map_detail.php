@@ -12,7 +12,9 @@ function map_init($map_id,$dblj){
     $stmt->execute();
     $map = $stmt->fetch(PDO::FETCH_ASSOC);
     $map_name = $map['mname'];
+    $map_name = \lexical_analysis\color_string($map_name);
     $map_desc = $map['mdesc'];
+    $map_desc = \lexical_analysis\color_string($map_desc);
     $map_tianqi = $map['mtianqi'];
     $next_map_name = $map['mup'];
     $nowmid_arr['map_upper'] = $next_map_name;
@@ -36,6 +38,10 @@ function map_find($map_id){
     $stmt->bindParam(':mapId', $map_id, PDO::PARAM_INT);
     $stmt->execute();
     $map = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($map !== false) {
+        // 将 mname 字段通过 lexical_analysis\color_string 函数处理后再存回数组中
+        $map['mname'] = \lexical_analysis\color_string($map['mname']);
+    }
     return $map;
 }
 

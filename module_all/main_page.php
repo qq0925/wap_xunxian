@@ -18,8 +18,31 @@ $player = \player\getplayer($sid,$dblj);
 $gm_html = '';
 $game_main = '';
 
-$get_main_page = \gm\get_scene_page($dblj);
 
+// // 定义缓存文件路径
+// $cacheDir = 'cache';
+// $cacheFile = $cacheDir . '/get_main_page.cache';
+// $cacheTime = 3600; // 缓存时间，单位为秒（这里设置为1小时）
+
+// // 检查缓存目录是否存在，如果不存在则创建
+// if (!is_dir($cacheDir)) {
+//     mkdir($cacheDir, 0777, true); // 0777 表示目录权限，true 表示递归创建目录
+// }
+
+// // 检查缓存文件是否存在且未过期
+// if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTime) {
+//     // 从缓存文件中读取数据
+//     $get_main_page = unserialize(file_get_contents($cacheFile));
+// } else {
+//     // 从数据源获取数据
+//     $get_main_page = \gm\get_scene_page($dblj);
+
+//     // 将数据写入缓存文件
+//     file_put_contents($cacheFile, serialize($get_main_page));
+// }
+
+
+$get_main_page = \gm\get_scene_page($dblj);
 $br = 0;
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $change_scenemodule = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=1&sid=$sid");
@@ -212,8 +235,12 @@ for ($i=0;$i<count($get_main_page);$i++){
     //var_dump($main_show_cond."<br/>");
 
     $show_ret = $main_show_cond !== '' 
-        ? \lexical_analysis\process_string($main_show_cond, $sid, $oid, $mid, null, null, null, "cond_exp") 
+        ? \lexical_analysis\process_string($main_show_cond, $sid, $oid, $mid, null, null, null) 
         : 1;
+    //由于.在php中会被识别为函数省略
+    // 将 . 替换为 。
+        
+    $show_ret = str_replace('.', '。', $show_ret);
     $ret = @eval("return $show_ret;");
     $ret_bool = ($ret !== false && $ret !== null) ? 0 : 1;
     if($ret_bool ==0){

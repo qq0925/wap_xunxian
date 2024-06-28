@@ -1584,7 +1584,7 @@ THEMAINTASK:
             }
             $boat = \player\getboat($sid,$dblj);
             if($boat['boat_distance'] <=0 && $player->uis_sailing ==1){
-            $over_name = \player\getmid($over_id,$dblj)->mname;
+            $over_name = \lexical_analysis\color_string(\player\getmid($over_id,$dblj)->mname);
             \player\changeplayersx('uis_sailing',0,$sid,$dblj);
             \player\changeplayersx('nowmid',$over_id,$sid,$dblj);
             \player\changeplayertable('system_player_boat','boat_distance',0,$sid,$dblj);
