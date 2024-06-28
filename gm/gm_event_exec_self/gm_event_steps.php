@@ -133,6 +133,7 @@ $gm_game_selfeventdefine_fightchange = $encode->encode("cmd=game_event_fight_sel
 
 
 $gm_html =<<<HTML
+<script type="text/javascript" src="js/auto_insert.js"></script>
 <p>定义事件[{$event_name}](id:{$event_id})的步骤{$step_index}<br/>
 </p>
 <form method="post">
@@ -141,7 +142,7 @@ $gm_html =<<<HTML
 <input type="hidden" name="add" value="0">
 触发条件:<textarea name="cond" maxlength="4096" rows="4" cols="40">$step_cond</textarea><br/>
 执行条件:<textarea name="exec_cond" maxlength="4096" rows="4" cols="40">$step_exec_cond</textarea><br/>
-触发时提示语:<textarea name="cmmt" maxlength="4096" rows="4" cols="40">$step_cmmt</textarea><br/>
+触发时提示语:<textarea name="cmmt" maxlength="4096" rows="4" cols="40">$step_cmmt</textarea><button type="button" onclick="insertTextAtCursor()">插入「」</button><br/>
 不满足条件提示语:<textarea name="cmmt2" maxlength="4096" rows="4" cols="40">$step_cmmt2</textarea><br/>
 返回游戏链接:<select name="not_return_link" value="$step_not_return_link">
 <option value="0">允许</option>
