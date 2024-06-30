@@ -36,12 +36,14 @@ function events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$c
                     
                     $cmid = $cmid + 1;
                     $cdid[] = $cmid;
-                    
+                    //这里写默认不生成返回链接的动作
+                    if($cmd !=$pve_fighting){
                     $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
                     $page_url =<<<HTML
                     <a href="?cmd=$just_page">返回游戏</a><br/>
 HTML;
                     echo $page_url;
+                    }
                     }elseif($register_triggle &&!empty($event_step_count)){
                         $steps_page = 1;
                     }

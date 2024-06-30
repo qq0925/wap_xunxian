@@ -53,7 +53,7 @@ if($attack_gid_root){
 $attack_gid_para = $attack_gid_root."|".$attack_gid;
 if($j_event_use_id!=0){
 include_once 'class/events_steps_change.php';
-events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid,$para);
+events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
 }
 global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
 
@@ -81,7 +81,7 @@ $attack_gid_para = $attack_gid_root."|".$attack_gid;
 if($attack_gid_root){
 if($j_event_use_id!=0){
 include_once 'class/events_steps_change.php';
-events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid,$para);
+events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
 }
 global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
 
@@ -105,12 +105,14 @@ for($i=0;$i<@count($ngid);$i++){
     $monster_skills = '';
     $monster_skills_arr = [];
     $attack_gid = $ngid[$i];
-    $guai_busy = \player\get_temp_attr($attack_gid,'busy',2,$dblj);
+    $attack_gid_root = \player\getguaiwu_alive($attack_gid,$dblj)->nid;
+    $attack_gid_para = $attack_gid_root."|".$attack_gid;
+    $guai_busy = \player\get_temp_attr($attack_gid_para,'busy',2,$dblj);
     if($guai_busy >0){
-    $dblj->exec("update game2 set cut_hp = '',fight_omsg = '正忙，不能出招！' where gid = '$attack_gid'");
-    \player\update_temp_attr($attack_gid,'busy',2,$dblj,2,-1);
+    $dblj->exec("update game2 set cut_hp = '',fight_omsg = '正忙，不能出招！' where gid = '$attack_gid_para'");
+    \player\update_temp_attr($attack_gid_para,'busy',2,$dblj,2,-1);
     }else{
-    $sql = "select * from system_npc_midguaiwu where ngid = '$attack_gid' and nhp >0";
+    $sql = "select * from system_npc_midguaiwu where ngid = '$attack_gid_para' and nhp >0";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
     $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
