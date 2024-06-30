@@ -41,6 +41,8 @@ if ($result) {
     $stmt->execute();
     $column = $stmt->fetch(PDO::FETCH_ASSOC);
 
+
+
     if (!$column) {
         // 如果 designer 字段不存在，执行添加字段操作
         $sql = "ALTER TABLE userinfo ADD COLUMN designer INT DEFAULT 0";
@@ -48,6 +50,19 @@ if ($result) {
         $stmt->execute();
     }
 
+    // 检查player_temp_attr表是否存在
+    $result = $dblj->query("SHOW TABLES LIKE 'player_temp_attr'");
+    if ($result->rowCount() == 0) {
+        // 表不存在，创建表
+        $sql = "CREATE TABLE player_temp_attr (
+            obj_id TEXT NOT NULL,
+            obj_oid TEXT NOT NULL,
+            obj_type  INT NOT NULL,
+            attr_name VARCHAR(255) NOT NULL,
+            attr_value VARCHAR(255) NOT NULL
+        )";
+        $dblj->exec($sql);
+    }
 
 $sql = "SELECT username, designer FROM userinfo WHERE token = :token";
 $stmt = $dblj->prepare($sql);

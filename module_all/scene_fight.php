@@ -62,6 +62,13 @@ if($cmd=='pve_fight'){
     $cdid[] = $cmid;
     $clj[] = $cmd;
     //global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
+    
+    $busy = \player\get_temp_attr($sid,'busy',1,$dblj);
+    if($busy >0){
+    $dblj->exec("update game2 set hurt_hp = '' where sid = '$sid'");
+    \player\update_temp_attr($sid,'busy',1,$dblj,2,-1);
+    echo "你不能动弹！预计还要{$busy}回合！<br/>";
+    }else{
     \lexical_analysis\hurt_calc($qtype_id,$sid,$ngid,1,$dblj);//你对怪的伤害
     
     //这种加技能熟练度的方式是和出招次数挂钩而不是怪物数量。
@@ -104,10 +111,15 @@ if($cmd=='pve_fight'){
     }
     }
     }
-    
-    
+}
     \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }elseif($qtype ==2){
+    \player\get_temp_attr($sid,'busy',1,$dblj);
+    if($busy >0){
+    $dblj->exec("update game2 set hurt_hp = '' where sid = '$sid'");
+    $busy = \player\update_temp_attr($sid,'busy',1,$dblj,2,-1);
+    echo "你不能动弹！预计还要{$busy}回合！<br/>";
+    }else{    
     $sql = "select iuse_value,iuse_attr,iname,iweight from system_item_module where iid = '$qtype_id'";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
@@ -133,6 +145,7 @@ if($cmd=='pve_fight'){
     $quick_count = $row['icount'];
     if($quick_count <=0||!$quick_count){
     echo "你的{$use_item_name}已耗尽！<br/>";
+    }
     }
     \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }
@@ -238,6 +251,7 @@ if ($player->uhp <= 0){
 
 
 if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
+    $dblj->exec("DELETE from player_temp_attr where obj_id = '$sid' and attr_name = 'busy'");
     switch ($zdjg){
         case 1:
             \player\changeplayersx('uis_pve',0,$sid,$dblj);

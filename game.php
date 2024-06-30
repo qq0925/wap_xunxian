@@ -348,6 +348,8 @@ echo $refresh_html;
             $cxjg = $dblj->exec($sql);
             $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
             $dblj->exec($sql);
+            // 清空所有临时变量
+            $dblj->exec("DELETE from player_temp_attr where obj_id = '$sid'");
             echo '正在进入游戏...';
             $refresh_html =<<<HTML
             <meta http-equiv="refresh" content="1;URL=?cmd=$gofirst">
@@ -536,17 +538,20 @@ echo $refresh_html;
             $ym = 'gm/gameglobal_notice.php';
             break;
         case 'pve_fight'://打怪事件,一次打一个
-            \player\changeplayersx('uis_pve',1,$sid,$dblj);
+            $player = \player\getplayer($sid,$dblj);
+            
             if($auto_canshu ==1){
                 \player\changeplayersx('uauto_fight',1,$sid,$dblj);
             }elseif($auto_canshu ==2){
                 \player\changeplayersx('uauto_fight',0,$sid,$dblj);
             }
-            $player = \player\getplayer($sid,$dblj);
+            if($player->uis_pve ==0){
             $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
             $dblj->exec($sql);
             $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";
             $dblj->exec($sql);
+            }
+            \player\changeplayersx('uis_pve',1,$sid,$dblj);
             $sql = "update system_npc_midguaiwu set nsid = '$sid' WHERE ngid='$ngid'";
             $dblj->exec($sql);
             $player_nowmid = $player->nowmid;
@@ -1921,6 +1926,7 @@ echo $refresh_html;
             $ym = "module_all/player_phone.php";
             break;
         case 'fight_escape':
+            \player\update_temp_attr($sid,'busy',3,$dblj,1,0);
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
             $dblj->exec("DELETE from system_npc_midguaiwu where nsid = '$sid'");
             $ym = 'module_all/main_page.php';

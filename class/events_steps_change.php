@@ -98,8 +98,8 @@ HTML;
                             }
                             }elseif($step_triggle){
                             if($step_exec_triggle){
-                            $ret = attrsetting($step_s_attrs,$sid);
-                            $ret_2 = attrchanging($step_m_attrs,$sid);
+                            $ret = attrsetting($step_s_attrs,$sid,$oid,$mid,$para);
+                            $ret_2 = attrchanging($step_m_attrs,$sid,$oid,$mid,$para);
                             $ret_3 = itemchanging($step_items,$sid);
                             $ret_4 = skillschanging($step_a_skills,$sid,1);
                             $ret_6 = skillschanging($step_r_skills,$sid,2);

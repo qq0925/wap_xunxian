@@ -123,6 +123,43 @@ function getplayer($sid,$dblj,$uid=null){
     return $player;
 }
 
+function get_temp_attr($obj_id,$attr_name,$obj_type,$dblj){
+    
+if($obj_type ==1){
+$sql="select attr_value from player_temp_attr where obj_id='$obj_id' and obj_type = '$obj_type' and attr_name = '$attr_name'";
+}else{
+$sql="select attr_value from player_temp_attr where obj_oid='$obj_id' and obj_type = '$obj_type' and attr_name = '$attr_name'";
+}
+$cxjg = $dblj->query($sql);
+$row = $cxjg->fetch(\PDO::FETCH_ASSOC);
+$attr_value = $row['attr_value'];
+return $attr_value;
+}
+
+function update_temp_attr($obj_id,$attr_name,$obj_type,$dblj,$op_type,$change_value){
+if($op_type==1){
+        //设属
+if($obj_type ==1){
+$sql="update player_temp_attr set attr_value = '$change_value' where obj_id='$obj_id' and obj_type = '$obj_type' and attr_name = '$attr_name'";
+}elseif($obj_type ==2){
+$sql="update player_temp_attr set attr_value = '$change_value' where obj_oid='$obj_id' and obj_type = '$obj_type' and attr_name = '$attr_name'";
+}else{
+$sql="update player_temp_attr set attr_value = '$change_value' where obj_id='$obj_id' and attr_name = '$attr_name'";
+}
+}elseif($op_type ==2){
+    //更属
+if($obj_type ==1){
+$sql="update player_temp_attr set attr_value = attr_value + '$change_value' where obj_id='$obj_id' and obj_type = '$obj_type' and attr_name = '$attr_name'";
+}elseif($obj_type ==2){
+$sql="update player_temp_attr set attr_value = attr_value + '$change_value' where obj_oid='$obj_id' and obj_type = '$obj_type' and attr_name = '$attr_name'";
+}else{
+$sql="update player_temp_attr set attr_value = attr_value + '$change_value' where obj_id='$obj_id' and attr_name = '$attr_name'";
+}
+}
+$cxjg = $dblj->query($sql);
+
+}
+
 function update_item_burthen($sid,$dblj){
     $query = "SELECT iid, icount FROM system_item WHERE sid = :sid";
     $stmt = $dblj->prepare($query);

@@ -231,6 +231,34 @@ foreach ($keyValuePairs as $pair) {
                     
                     }
                 break;
+            case 'ut':
+                $sql = "select attr_value from player_temp_attr where obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
+                // 检查数据是否存在
+                // 如果数据存在，更新该数据
+                if ($result->num_rows > 0 ) {
+                    $updateQuery = "UPDATE player_temp_attr SET attr_value = '$ele_2' WHERE obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                    $db->query($updateQuery);
+                }else{
+                    // 数据不存在，插入数据并更新值
+                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_type,attr_name,attr_value)values('$sid',1,'$ele_1_2',$ele_2)";
+                    $db->query($alterQuery);
+                }
+                break;
+            case 'ot':
+                $sql = "select attr_value from player_temp_attr where obj_oid = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
+                // 检查数据是否存在
+                // 如果数据存在，更新该数据
+                if ($result->num_rows > 0 ) {
+                    $updateQuery = "UPDATE player_temp_attr SET attr_value = '$ele_2' WHERE obj_oid = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                    $db->query($updateQuery);
+                }else{
+                    // 数据不存在，插入数据并更新值
+                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values('$sid','$mid',2,'$ele_1_2',$ele_2)";
+                    $db->query($alterQuery);
+                }
+                break;
             default:
                 break;
         }
@@ -329,12 +357,45 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($insertQuery);
                 }
                 break;
-
+            case 'ut':
+                $sql = "select attr_value from player_temp_attr where obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
+                $row = $result->fetch_assoc();
+                $attr_value = $row['attr_value'];
+                // 检查数据是否存在
+                // 如果数据存在，更新该数据
+                if ($result->num_rows > 0 ) {
+                    $updateQuery = "UPDATE player_temp_attr SET attr_value = attr_value + '$ele_2' WHERE obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                    $db->query($updateQuery);
+                }else{
+                    // 数据不存在，插入数据并更新值
+                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_type,attr_name,attr_value)values('$sid',1,'$ele_1_2',$ele_2)";
+                    $db->query($alterQuery);
+                }
+                break;
+            case 'ot':
+                $sql = "select attr_value from player_temp_attr where obj_id = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
+                $row = $result->fetch_assoc();
+                $attr_value = $row['attr_value'];
+                // 检查数据是否存在
+                // 如果数据存在，更新该数据
+                if ($result->num_rows > 0 ) {
+                    $updateQuery = "UPDATE player_temp_attr SET attr_value = attr_value + '$ele_2' WHERE obj_id = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                    $db->query($updateQuery);
+                }else{
+                    // 数据不存在，插入数据并更新值
+                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values('$sid','$mid',2,'$ele_1_2',$ele_2)";
+                    $db->query($alterQuery);
+                }
+                break;
             default:
                 break;
         }
+        if($ele_1_1 !='ut'){
          "ele_1: " . $ele_1 . "<br/>";
          "ele_2: " . $ele_2 . "<br/>";
+        }
     } else {
         //echo "无法匹配到键值对<br/>";
         break;

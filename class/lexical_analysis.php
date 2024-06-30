@@ -22,6 +22,7 @@ if ($result) {
     $j_hurt_exp = $row['jhurt_exp'];
     $j_group_attack = $row['jgroup_attack'];
     $j_umsg = $row['jeffect_cmmt'];
+    $j_event_use_id = $row['jevent_use_id'];
 }
 if(!$j_hurt_exp){
 $sql = "SELECT * from system_skill_module where jid = '2'";
@@ -50,6 +51,10 @@ $attack_gid_root = \player\getguaiwu_alive($attack_gid,$dblj)->nid;
 
 if($attack_gid_root){
 $attack_gid_para = $attack_gid_root."|".$attack_gid;
+if($j_event_use_id!=0){
+include_once 'class/events_steps_change.php';
+events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid,$para);
+}
 global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
 
 global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
@@ -74,6 +79,10 @@ $attack_gid = $ngid[$i];
 $attack_gid_root = \player\getguaiwu_alive($attack_gid,$dblj)->nid;
 $attack_gid_para = $attack_gid_root."|".$attack_gid;
 if($attack_gid_root){
+if($j_event_use_id!=0){
+include_once 'class/events_steps_change.php';
+events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid,$para);
+}
 global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
 
 global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
@@ -96,6 +105,11 @@ for($i=0;$i<@count($ngid);$i++){
     $monster_skills = '';
     $monster_skills_arr = [];
     $attack_gid = $ngid[$i];
+    $guai_busy = \player\get_temp_attr($attack_gid,'busy',2,$dblj);
+    if($guai_busy >0){
+    $dblj->exec("update game2 set cut_hp = '',fight_omsg = '正忙，不能出招！' where gid = '$attack_gid'");
+    \player\update_temp_attr($attack_gid,'busy',2,$dblj,2,-1);
+    }else{
     $sql = "select * from system_npc_midguaiwu where ngid = '$attack_gid' and nhp >0";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
@@ -195,6 +209,7 @@ $dblj->exec($sql);
 else{
     $sql = "update game2 set cut_hp = '' where gid = '$attack_gid'";
     $cxjg = $dblj->exec($sql);
+}
 }
 }
 }
@@ -786,6 +801,27 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         
                         if ($op === null||$op =='') {
                             $op = "\"\""; // 或其他默认值
+                            }
+                        $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                        break;
+                        case 'busy':
+                        $sql = "SELECT attr_value FROM player_temp_attr WHERE obj_id = ? and obj_type = 1 and attr_name = 'busy'";
+                        
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param("s", $sid);
+                        
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if($row){
+                        $op = $row["attr_value"];
+                        }
+                        if ($op === null||$op =='') {
+                            $op = "0"; // 或其他默认值
                             }
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
