@@ -109,10 +109,10 @@ for($i=0;$i<@count($ngid);$i++){
     $attack_gid_para = $attack_gid_root."|".$attack_gid;
     $guai_busy = \player\get_temp_attr($attack_gid_para,'busy',2,$dblj);
     if($guai_busy >0){
-    $dblj->exec("update game2 set cut_hp = '',fight_omsg = '正忙，不能出招！' where gid = '$attack_gid_para'");
+    $dblj->exec("update game2 set cut_hp = '',fight_omsg = '正忙，不能出招！' where gid = '$attack_gid'");
     \player\update_temp_attr($attack_gid_para,'busy',2,$dblj,2,-1);
     }else{
-    $sql = "select * from system_npc_midguaiwu where ngid = '$attack_gid_para' and nhp >0";
+    $sql = "select * from system_npc_midguaiwu where ngid = '$attack_gid' and nhp >0";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
     $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);

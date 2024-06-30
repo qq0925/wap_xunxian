@@ -114,12 +114,12 @@ if($cmd=='pve_fight'){
 }
     \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }elseif($qtype ==2){
-    \player\get_temp_attr($sid,'busy',1,$dblj);
+    $busy = \player\get_temp_attr($sid,'busy',1,$dblj);
     if($busy >0){
     $dblj->exec("update game2 set hurt_hp = '' where sid = '$sid'");
     $busy = \player\update_temp_attr($sid,'busy',1,$dblj,2,-1);
     echo "你不能动弹！预计还要{$busy}回合！<br/>";
-    }else{    
+    }else{
     $sql = "select iuse_value,iuse_attr,iname,iweight from system_item_module where iid = '$qtype_id'";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
@@ -147,8 +147,8 @@ if($cmd=='pve_fight'){
     echo "你的{$use_item_name}已耗尽！<br/>";
     }
     }
-    \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }
+    \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }
     
     //以下获取的怪物id均是活着的怪物id
