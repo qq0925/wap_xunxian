@@ -33,7 +33,7 @@ $gm_post = \gm\gm_post($dblj);
             $sql = "insert into userinfo(username,userpass,token) values('$username','$userpass','$token')";
             $cxjg = $dblj->exec($sql);
             echo "注册成功！<br/>";
-            header("refresh:0;url=login_mark.php?token=$token");
+            header("location=login_mark.php?token=$token");
         }
     }
 

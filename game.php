@@ -131,14 +131,21 @@ $sql = "update game1 set endtime='$nowdate',sfzx=0,uis_pve=0 WHERE sid='$sid'";
 $dblj->exec($sql);
 $sql = "update game4 set device_agent='' WHERE sid='$sid'";
 $dblj->exec($sql);
-
-header("refresh:1;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="1;URL=index.php">
+HTML;
+echo $refresh_html;
+//header("refresh:1;url=index.php");
 exit();
 }
 
  if((!isset($sid)||!$sid) &&$cmd !='cj' &&$cmd !='cjplayer'){
-    header("refresh:0;url=index.php");
-    exit();
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="0;URL=index.php">
+HTML;
+echo $refresh_html;
+    // header("refresh:0;url=index.php");
+exit();
  }
 
 
@@ -299,7 +306,11 @@ THEMAINTASK:
             }
             if(!$register_triggle){
             echo $event_cmmt."<br/>";
-            header("refresh:1;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="1;URL=index.php">
+HTML;
+echo $refresh_html;
+            //header("refresh:1;url=index.php");
             }elseif($register_triggle){
             if(!empty($event_data['system_event']['link_evs'])){
                 $system_event_evs = $event_data["system_event_evs"];
@@ -338,7 +349,11 @@ THEMAINTASK:
             $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
             $dblj->exec($sql);
             echo '正在进入游戏...';
-            header("refresh:1;url=?cmd=$gofirst");
+            $refresh_html =<<<HTML
+            <meta http-equiv="refresh" content="1;URL=?cmd=$gofirst">
+HTML;
+            //header("refresh:1;url=?cmd=$gofirst");
+            echo $refresh_html;
             }
             break;
         case 'cjplayer'://具体创建写入
@@ -439,8 +454,11 @@ THEMAINTASK:
                     } catch(PDOException $e) {
                         echo "错误: " . $e->getMessage();
 }
-                    
-                    header("refresh:1;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="1;URL=index.php">
+HTML;
+echo $refresh_html;
+                    //header("refresh:1;url=index.php");
                     }elseif($register_triggle){
                     echo $username.","."欢迎来到".$gameconfig->game_name."<br/>";
                     $nowdate = date('Y-m-d H:i:s');
@@ -456,11 +474,19 @@ THEMAINTASK:
                     }
                     $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
                     $dblj->exec($sql);
-                    header("refresh:1;url=?cmd=$gofirst");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="1;URL=?cmd=$gofirst">
+HTML;
+echo $refresh_html;
+                    //header("refresh:1;url=?cmd=$gofirst");
                 }
             }else{
                 echo "非法操作：疑似重复注册，请文明游戏！<br/>";
-                header("refresh:3;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="3;URL=index.php">
+HTML;
+echo $refresh_html;
+                //header("refresh:3;url=index.php");
                 exit();
             }
             }
@@ -2877,7 +2903,11 @@ if($usersession['session_id'] && $usersession['session_id'] !=$_SESSION['session
     
     if (!isset($sid) || $sid=='' ){
         if ($cmd!='cj' && $cmd!=='cjplayer'){
-            header("refresh:0;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="0;URL=index.php">
+HTML;
+echo $refresh_html;
+            //header("refresh:0;url=index.php");
             exit();
         }
         }else{
@@ -2916,7 +2946,11 @@ if($usersession['session_id'] && $usersession['session_id'] !=$_SESSION['session
 }else{
     //如果一切都不符合条件，就跳转到注册界面。
     echo "出错了！你可能正常尝试进行跨域访问！系统已记录此次行为！<br/>";
-    header("refresh:2;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="2;URL=index.php">
+HTML;
+echo $refresh_html;
+    //header("refresh:2;url=index.php");
     exit();
 }
 

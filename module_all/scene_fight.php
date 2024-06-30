@@ -409,7 +409,11 @@ if($player->uauto_fight ==1 &&$look_canshu !=1){
     $default_id = $default_id ==0?1:$default_id;
     $quick_to = $encode->encode("cmd=pve_fighting&ucmd=$cmid&qtype=1&qtype_id=$default_id&sid=$sid");
     $quick_url = "?cmd=$quick_to"; // 构建完整的 URL
-    header("refresh:2;url={$quick_url}");//这里的2是默认间隔
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="2;URL=$quick_url">
+HTML;
+echo $refresh_html;
+    //header("refresh:2;url={$quick_url}");//这里的2是默认间隔
 }
 $all = <<<HTML
 <head>

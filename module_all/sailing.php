@@ -27,7 +27,11 @@ HTML;
 }else{
 $auto_sail_to = $encode->encode("cmd=sailing_html&boat_speed=$boat_speed&begin_id=$begin_id&over_id=$over_id&distance=$distance&ucmd=$cmid&sid=$sid");
 $auto_sail_url = "?cmd=$auto_sail_to"; // 构建完整的 URL
-header("refresh:2;url={$auto_sail_url}");//这里的2是默认间隔
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="2;URL=$auto_sail_url">
+HTML;
+echo $refresh_html;
+//header("refresh:2;url={$auto_sail_url}");//这里的2是默认间隔
 $close_auto_sailing = $encode->encode("cmd=sailing_html&auto=0&boat_speed=$boat_speed&begin_id=$begin_id&over_id=$over_id&distance=$distance&ucmd=$cmid&sid=$sid");
 $auto_sail_html = <<<HTML
 <a href="?cmd=$close_auto_sailing">关闭自动航行</a><br/>

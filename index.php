@@ -26,7 +26,11 @@ if (isset($_POST[ 'submit']) && $_POST['submit']){
     if (!$exeres){
         $a = '账号或密码错误';
     }elseif ($cxusername == $username && $cxuserpass == $userpass){
-        header("refresh:0;url=login_mark.php?uid=$username&token=$cxtoken");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="0;URL=login_mark.php?uid=$username&token=$cxtoken">
+HTML;
+echo $refresh_html;
+        //header("location=login_mark.php?uid=$username&token=$cxtoken");
         exit();
     }
 
