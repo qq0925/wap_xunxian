@@ -111,6 +111,7 @@ $parents_cmd = 'gm_scene_new';
 global_events_steps_change(22,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
 }
 
+
 //10-11ms
 
 if($cmd !='main_target_event'||!$para){
@@ -174,6 +175,10 @@ $is_Designer = $player->uis_designer;
 $file = sprintf("./ache/%s/user.ini", $wjid);
 
 include("./ini/user_ini.php"); // 包含用户配置文件的逻辑
+
+if($refresh_cmid==1){
+    $iniFile->updItem('验证信息', ['xcmid值' => 1, 'dcmid值' => 1]);
+}
 
 
 //来源页面信息
@@ -264,9 +269,18 @@ HTML;
 
             if($cmdd >=1){
                 // 13-15ms
-
-                goto THEMAINTASK;
-                
+            if($ucmd >10000){
+                echo "触发防挂验证<br/>";
+                $refresh_cmid = $encode->encode("cmd=$cmd&ucmd=1&refresh_cmid=1&sid=$sid");
+                $html = <<<HTML
+                <link rel="stylesheet" href="css/gamecss.css">
+                <br/><font color = "red">点击清除验证，返回游戏</font><br/>
+                <br/>
+                <a href="?cmd=$refresh_cmid">清除验证</a>
+HTML;
+                exit($html);
+            }
+            goto THEMAINTASK;
             }else{
                 //路径
                 $path = 'ache/' . $wjid;
