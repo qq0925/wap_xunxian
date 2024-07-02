@@ -678,6 +678,7 @@ $game_page_11_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=11&main_type=1
 $game_page_11_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=11&main_type=2&sid=$sid");
 $game_page_11_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=11&main_type=3&sid=$sid");
 $game_page_11_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=11&main_type=4&sid=$sid");
+$game_page_11_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=11&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_main_page($dblj);
@@ -721,7 +722,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_11_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_11_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_11_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_11_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_11_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_11_5">添加输入框元素(敬请期待)</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 13) {
 $add_self_module = $encode->encode("cmd=game_self_page_add&sid=$sid");

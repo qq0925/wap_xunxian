@@ -310,7 +310,7 @@ $data = [
             'nlvl', 'nsex', 'ndesc', 'nequips', 'ndrop_exp', 'ndrop_money', 'ndrop_item',
             'ndrop_item_type', 'nskills', 'nshop_item_id', 'nmuban', 'nshop_cond',
             'ntaskid', 'nnick_name', 'nhp', 'nmaxhp', 'ngj', 'nfy', 'nimage', 'nop_target',
-            'ntask_target', 'ncreat_event_id', 'nlook_event_id', 'nattack_event_id',
+            'ntask_target', 'ncreat_event_id', 'nlook_event_id', 'nattack_event_id','nwin_event_id','ndefeat_event_id',
             'npet_event_id', 'nshop_event_id', 'nup_event_id', 'nheart_event_id',
             'nminute_event_id'
         ];
@@ -342,7 +342,7 @@ $data = [
             'ndrop_money', 'ndrop_item', 'ndrop_item_type', 'nskills', 'nshop_item_id',
             'nshop_cond', 'nmuban', 'ntaskid', 'nnick_name', 'nhp', 'nmaxhp', 'ngj', 'nfy',
             'nimage', 'nop_target', 'ntask_target', 'ncreat_event_id', 'nlook_event_id',
-            'nattack_event_id', 'npet_event_id', 'nshop_event_id', 'nup_event_id',
+            'nattack_event_id','nwin_event_id','ndefeat_event_id', 'npet_event_id', 'nshop_event_id', 'nup_event_id',
             'nheart_event_id', 'nminute_event_id'
         ];
     

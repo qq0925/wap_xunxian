@@ -1768,7 +1768,7 @@ echo $refresh_html;
                     $ym = 'gm/gm_npc_design/npc_dead_def.php';
                     break;
                 case '8':
-                    $excludeFields = ['ncreat_event_id','nlook_event_id','nattack_event_id','npet_event_id','nshop_event_id','nup_event_id','nheart_event_id','nminute_event_id','nname', 'nid', 'nstate', 'nop_target','ntask_target','nop_list', 'ntaskid', 'ntask_list'];
+                    $excludeFields = ['ncreat_event_id','nlook_event_id','nattack_event_id','nwin_event_id','ndefeat_event_id','npet_event_id','nshop_event_id','nup_event_id','nheart_event_id','nminute_event_id','nname', 'nid', 'nstate', 'nop_target','ntask_target','nop_list', 'ntaskid', 'ntask_list'];
                     $copy_name .= "(未命名)";
                     // 获取除排除字段外的其他字段
                     $fields = [];

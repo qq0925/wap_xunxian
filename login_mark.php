@@ -41,11 +41,33 @@ if ($result) {
     $stmt->execute();
     $column = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
-
     if (!$column) {
         // 如果 designer 字段不存在，执行添加字段操作
         $sql = "ALTER TABLE userinfo ADD COLUMN designer INT DEFAULT 0";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+    
+    // 检查表是否存在 nwin和ndefeat 字段
+    $sql = "SHOW COLUMNS FROM system_npc LIKE 'nwin_event_id'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$column) {
+        // 如果 designer 字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE system_npc
+ADD nwin_event_id int(11) NOT NULL  
+AFTER nattack_event_id,  
+ADD ndefeat_event_id int(11) NOT NULL  
+AFTER nwin_event_id ;";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $sql = "ALTER TABLE system_npc_midguaiwu
+ADD nwin_event_id int(11) NOT NULL  
+AFTER nattack_event_id,  
+ADD ndefeat_event_id int(11) NOT NULL  
+AFTER nwin_event_id ;";
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
     }

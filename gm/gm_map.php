@@ -3,16 +3,19 @@ $player = player\getplayer($sid,$dblj);
 $map = '';
 $hangshu = 0;
 $cxallmap = \player\getqy_all($dblj);
+
 $br = 0;
 if($hanghsu == 0 && $post_canshu ==0){
 for ($i=0;$i<count($cxallmap);$i++){
     $hangshu +=1;
     $qyname = $cxallmap[$i]['name'];
     $qy_id = $cxallmap[$i]['id'];
+    $cxall_map = \player\getmid_detail($dblj,$qy_id);
+    $map_count = count($cxall_map);
   //$target_mid = $encode->encode("cmd=target_midmid&new_target_mid=$mid&sid=$sid");
         $target_mid = $encode->encode("cmd=gm_map&hangshu=$hangshu&post_canshu=1&qy_id=$qy_id&sid=$sid");
         $map .=<<<HTML
-        <a href="?cmd=$target_mid" >$hangshu.$qyname</a><br/>
+        <a href="?cmd=$target_mid" >$hangshu.{$qyname}($map_count)</a><br/>
 HTML;
     /*if ($br >= 3){
         $br = 0;
