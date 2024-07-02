@@ -1277,7 +1277,7 @@ echo $refresh_html;
 
             $sql = "CREATE TABLE `$newTable` (
               `position` int(4) NOT NULL,
-              `id` int(255) NOT NULL,
+              `id` int(255) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
               `type` varchar(255) DEFAULT '1',
               `show_cond` varchar(255) DEFAULT NULL,
               `value` varchar(255) DEFAULT '未命名',
