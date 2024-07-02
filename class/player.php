@@ -485,6 +485,8 @@ function getnpcguaiwu_attr($nid,$dblj){
     $cxjg->bindColumn('nid',$npcguaiwu->nid);
     $cxjg->bindColumn('nname',$npcguaiwu->nname);
     $cxjg->bindColumn('nhp',$npcguaiwu->nhp);
+    $cxjg->bindColumn('nwin_event_id',$npcguaiwu->nwin_event_id);
+    $cxjg->bindColumn('ndefeat_event_id',$npcguaiwu->ndefeat_event_id);
     $cxjg->bindColumn('ndrop_exp',$npcguaiwu->ndrop_exp);
     $cxjg->bindColumn('ndrop_money',$npcguaiwu->ndrop_money);
     $cxjg->bindColumn('ndrop_item',$npcguaiwu->ndrop_item);
