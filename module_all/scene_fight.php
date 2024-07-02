@@ -161,14 +161,20 @@ if($cmd=='pve_fight'){
     $alive_monster = player\getnpcguaiwu_attr($monster_id,$dblj);
     
     if ($alive_monster->nhp<=0){//怪物死亡
+        $alive_id = $alive_monster->nid;
+        $defeat_id = $alive_monster->ndefeat_event_id;
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $clj[] = $cmd;
-        global_events_steps_change(7,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
+        global_events_steps_change(7,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_id,$para);
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $clj[] = $cmd;
-        global_events_steps_change(31,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
+        global_events_steps_change(31,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_id,$para);
+        if($defeat_id!=0){
+        include_once 'class/events_steps_change.php';
+        events_steps_change($defeat_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_id,$para);
+        }
         // $sql = "delete from system_npc_midguaiwu where ngid = '{$monster_id}' AND nsid='$sid'";
         // $dblj->exec($sql);
         // $sql = "delete from game2 where gid = '{$monster_id}' AND sid='$sid'";
@@ -284,6 +290,11 @@ HTML;
             $parents_cmd = 'gm_scene_new';
             global_events_steps_change(8,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
             \player\changeplayersx('ucmd','',$sid,$dblj);
+            if($alive_monster->nwin_event_id!=0){
+            include_once 'class/events_steps_change.php';
+            events_steps_change($alive_monster->nwin_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
+            }
+            
             //战败事件
             $fight_html = <<<HTML
             战斗失败！<br/>
