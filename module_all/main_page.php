@@ -145,7 +145,7 @@ if (($clmid->mnpc!=''||$clmid->mitem!='') && $minute >= $clmid->mrefresh_time){
     $npc_s = explode(",", $data); // 使用逗号分隔字符串，得到每个项
     foreach ($npc_s as &$npc_a) {
         $parts = explode("|", $npc_a); // 使用竖线分隔每个项
-        if (count($parts) === 2) {
+        if (count($parts) === 2||count($parts) === 3) {
             $id = $parts[0];
             $npc_count = $parts[1];
             $npc_count = \lexical_analysis\process_string($npc_count,$sid);
@@ -196,7 +196,7 @@ if (($clmid->mnpc!=''||$clmid->mitem!='') && $minute >= $clmid->mrefresh_time){
     $items = explode(",", $data); // 使用逗号分隔字符串，得到每个项
     foreach ($items as &$item) {
         $parts = explode("|", $item); // 使用竖线分隔每个项
-        if (count($parts) === 2) {
+        if (count($parts) === 2||count($parts) === 3) {
             $id = $parts[0];
             $item_count = $parts[1];
             $item_count = \lexical_analysis\process_string($item_count,$sid);
