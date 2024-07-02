@@ -480,7 +480,7 @@ function getnpcguaiwu($nid,$dblj){
 
 function getnpcguaiwu_attr($nid,$dblj){
     $npcguaiwu = new npcguaiwu();
-    $sql = "select nid,nname,nhp,ndrop_exp,ndrop_money,ndrop_item from system_npc_midguaiwu where ngid = '$nid'";
+    $sql = "select nid,nname,nhp,nwin_event_id,ndefeat_event_id,ndrop_exp,ndrop_money,ndrop_item from system_npc_midguaiwu where ngid = '$nid'";
     $cxjg = $dblj->query($sql);
     $cxjg->bindColumn('nid',$npcguaiwu->nid);
     $cxjg->bindColumn('nname',$npcguaiwu->nname);
