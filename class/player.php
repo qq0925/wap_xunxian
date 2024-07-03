@@ -160,6 +160,49 @@ $cxjg = $dblj->query($sql);
 
 }
 
+function get_player_equip_mosaic_all($sid,$dblj){
+$sql="select * from player_equip_mosaic where belong_sid = '$sid'";
+$cxjg = $dblj->query($sql);
+$row = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
+
+return $row;
+}
+
+
+
+function get_player_equip_mosaic_once($item_true_id,$sid,$dblj){
+$sql="select equip_mosaic from player_equip_mosaic where belong_sid = '$sid' and equip_id = '$item_true_id'";
+$cxjg = $dblj->query($sql);
+$row = $cxjg->fetch(\PDO::FETCH_ASSOC);
+return $row;
+}
+
+function get_player_equip_detail($mosaic_id,$sid,$dblj){
+$sql="select iname,idesc,iembed_count,itype from system_item_module where iid = (select iid from system_item where sid = '$sid' and item_true_id = '$mosaic_id')";
+$cxjg = $dblj->query($sql);
+$row = $cxjg->fetch(\PDO::FETCH_ASSOC);
+return $row;
+}
+
+function get_player_all_equip_enable($sid,$dblj){
+$sql = "SELECT m.iname,m.iid,m.idesc,m.iembed_count,i.item_true_id,i.iequiped FROM system_item_module m JOIN system_item i ON m.iid = i.iid WHERE i.sid = '$sid' and m.iembed_count >0 AND NOT EXISTS(SELECT 1 FROM player_equip_mosaic WHERE belong_sid = '$sid' AND equip_id = i.item_true_id)";
+$cxjg = $dblj->query($sql);
+$row = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
+return $row;
+}
+
+function get_player_all_mosaic($type,$sid,$dblj){
+    if($type =="兵器"){
+$sql = "SELECT m.iname,m.iid,i.item_true_id,i.iequiped,i.icount FROM system_item_module m JOIN system_item i ON m.iid = i.iid WHERE i.sid = '$sid' and i.iequiped =0 and m.itype = '兵器镶嵌物' and i.icount >0";
+}else{
+$sql = "SELECT m.iname,m.iid,i.item_true_id,i.iequiped,i.icount FROM system_item_module m JOIN system_item i ON m.iid = i.iid WHERE i.sid = '$sid' and i.iequiped =0 and m.itype = '防具镶嵌物' and i.icount >0";
+}
+$cxjg = $dblj->query($sql);
+$row = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
+return $row;
+}
+
+
 function update_item_burthen($sid,$dblj){
     $query = "SELECT iid, icount FROM system_item WHERE sid = :sid";
     $stmt = $dblj->prepare($query);

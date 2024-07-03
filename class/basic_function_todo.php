@@ -1495,7 +1495,7 @@ function mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
     global $encode;
     $mosaic_url = $encode->encode("cmd=mosaic_html&mid=$mid&ucmd=$cmid&sid=$sid");
     $mosaic_url=<<<HTML
-        <a href="?cmd=$mosaic_url">{$value}<br/></a>
+        <a href="?cmd=$mosaic_url">{$value}</a>
 HTML;
     return $mosaic_url;
 }

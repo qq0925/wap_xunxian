@@ -52,7 +52,19 @@ AFTER nwin_event_id ;";
         )";
         $dblj->exec($sql);
     }
-    
+
+    $result = $dblj->query("SHOW TABLES LIKE 'player_equip_mosaic'");
+    if ($result->rowCount() == 0) {
+        // 表不存在，创建表
+        $sql = "CREATE TABLE player_equip_mosaic (
+            equip_id int(11) NOT NULL,
+            equip_root int(11) NOT NULL,
+            belong_sid  text NOT NULL,
+            equip_mosaic VARCHAR(255) NOT NULL
+        )";
+        $dblj->exec($sql);
+    }
+
     
     // 检查某功能字段是否存在
     $result = $dblj->query("select id from system_function where id = 77");
