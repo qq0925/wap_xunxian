@@ -1616,6 +1616,9 @@ echo $refresh_html;
         case 'pick_html'://采集资源
             $ym = 'module_all/pick.php';
             break;
+        case 'mosaic_html'://镶嵌装备
+            $ym = 'module_all/player_equip_mosaic.php';
+            break;
         case 'sailing_html'://出航途中
             $player = \player\getplayer($sid,$dblj);
             if($canshu ==1){

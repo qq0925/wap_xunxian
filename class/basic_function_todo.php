@@ -181,6 +181,9 @@ $value = $value?$value:$func_name;
         case '76':
             $pick_url = pick_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $pick_url;
+        case '77':
+            $mosaic_url = mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $mosaic_url;
         default:
             // code...
             break;
@@ -1484,5 +1487,19 @@ function pick_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
 HTML;
     return $pick_url;
 }
+
+function mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    global $encode;
+    $mosaic_url = $encode->encode("cmd=mosaic_html&mid=$mid&ucmd=$cmid&sid=$sid");
+    $mosaic_url=<<<HTML
+        <a href="?cmd=$mosaic_url">{$value}<br/></a>
+HTML;
+    return $mosaic_url;
+}
+
+
 
 ?>
