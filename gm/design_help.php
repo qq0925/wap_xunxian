@@ -161,9 +161,9 @@ n=npc
 i=item
 j=jineng=skills
 
-名称:equip.b.name
+名称:equips.b.name
 词意:获得用户穿戴武器名称
-名称:equip.0.name
+名称:equips.0.name
 词意:获得用户第一穿戴防具名称，1为第二防具名称，2为第三，以此类推得到装备对象后可以通过.embed_count得到该装备镶物的数量，.embed.n.***得到第n个镶物的属性。如0镶嵌物的装备的卸下事件，事件中u为镶入的镶物，o为镶入到的装备，镶入时只能修改o对象的属性，不能修改o.env的属性，即装备所在人物的属性
 
 
