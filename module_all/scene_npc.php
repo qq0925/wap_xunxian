@@ -165,7 +165,7 @@ for ($i=0;$i<count($get_main_page);$i++){
     }else{
     $mid = $nid;
     }
-    $show_ret = \lexical_analysis\process_string($main_show_cond,$sid,$oid,$mid,null,null,'cond_exp');
+    $show_ret = \lexical_analysis\process_string($main_show_cond,$sid,$oid,$mid,null,null,null);
     // 替换运算符
     try{
         @$ret = eval("return $show_ret;");

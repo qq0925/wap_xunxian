@@ -992,9 +992,9 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                         $stmt->execute();
                                         $result = $stmt->get_result();
                                         $row = $result->fetch_assoc();
-                                        $row_result .= "," . $row['jname'] . "({$skill_lvl})";
+                                        $row_result .= "，" . $row['jname'] ."_". "{$skill_lvl}";
                                     }
-                                    $row_result = ltrim($row_result, ",");
+                                    $row_result = ltrim($row_result, "，");
                                 }
                             } elseif ($attr2 == "equips_cmmt") {
                                 $equips_cmmt = $row['nequips'];
