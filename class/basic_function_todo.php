@@ -184,6 +184,9 @@ $value = $value?$value:$func_name;
         case '77':
             $mosaic_url = mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $mosaic_url;
+        case '78':
+            $equip_core_url = equip_core_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $equip_core_url;
         default:
             // code...
             break;
@@ -1498,6 +1501,85 @@ function mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
         <a href="?cmd=$mosaic_url">{$value}</a>
 HTML;
     return $mosaic_url;
+}
+
+function equip_core_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+global $encode;
+$sql = "select * from system_equip_def where type = '1'";
+$cxjg = $dblj->query($sql);
+$ret = $cxjg ? $cxjg->fetchAll(PDO::FETCH_ASSOC) : [];
+
+$equipbid = null;
+foreach ($ret as $row) {
+    $equiptypeid = $row['id'];
+    $equiptypename = $row['name'];
+    $sql = "select * from system_equip_user where eq_type = 1 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid'";
+    $cxjg = $dblj->query($sql);
+    if ($cxjg) {
+        $row = $cxjg->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $equipbid = $row['eq_true_id'];
+            break;
+        }
+    }
+}
+$equipitem = $encode->encode("cmd=equip_op_basic&eq_type=1&target_event=choose&ucmd=$cmid&sid=$sid");
+$equipbhtml = "无<a href='?cmd=$equipitem'>[装备]</a>";
+if ($equipbid) {
+    $sql = "select * from system_item_module where iid = (select iid from system_item where item_true_id = '$equipbid')";
+    $cxjg = $dblj->query($sql);
+    if ($cxjg) {
+        $row = $cxjg->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $equipbname = \lexical_analysis\color_string($row['iname']);
+            $removeitem = $encode->encode("cmd=equip_op_basic&target_event=remove&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
+            $ckequipbinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
+            $equipbhtml = "<a href='?cmd=$ckequipbinfo'>{$equipbname}</a><a href='?cmd=$removeitem'>[卸下]</a>";
+        }
+    }
+}
+
+$sql = "select * from system_equip_def WHERE type = 2";
+$cxjg = $dblj->query($sql);
+$ret = $cxjg ? $cxjg->fetchAll(PDO::FETCH_ASSOC) : [];
+
+$equipfhtml = '';
+foreach ($ret as $row) {
+    $equiptypeid = $row['id'];
+    $equiptypename = $row['name'];
+    $sql = "select * from system_equip_user where eq_type = 2 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid'";
+    $cxjg = $dblj->query($sql);
+    if ($cxjg) {
+        $row = $cxjg->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $equipfid = $row['eq_true_id'];
+            if ($equipfid) {
+                $sql = "select * from system_item_module where iid = (select iid from system_item where item_true_id = '$equipfid')";
+                $cxjg = $dblj->query($sql);
+                if ($cxjg) {
+                    $row = $cxjg->fetch(PDO::FETCH_ASSOC);
+                    if ($row) {
+                        $equipfname = \lexical_analysis\color_string($row['iname']);
+                    }
+                }
+            }
+            $removeitem = $encode->encode("cmd=equip_op_basic&target_event=remove&ucmd=$cmid&equip_true_id=$equipfid&sid=$sid");
+            $ckequipfinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_true_id=$equipfid&sid=$sid");
+            $equipfhtml .= "{$equiptypename}：<a href='?cmd=$ckequipfinfo'>{$equipfname}</a><a href='?cmd=$removeitem'>[卸下]</a><br/>";
+        }else{
+            $equipitem = $encode->encode("cmd=equip_op_basic&eq_type=2&equip_typename=$equiptypename&eq_subtype=$equiptypeid&target_event=choose&ucmd=$cmid&sid=$sid");
+            $equipfhtml .= "{$equiptypename}：无<a href='?cmd=$equipitem'>[装备]</a><br/>";
+        }
+    }
+}
+
+$bagequiphtml = <<<HTML
+【我的装备】<br/>
+兵器：{$equipbhtml}<br/>
+$equipfhtml
+<br/>
+HTML;
+return $bagequiphtml;
 }
 
 

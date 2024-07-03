@@ -74,4 +74,13 @@ AFTER nwin_event_id ;";
         $dblj->exec($sql);
     }
     
+        // 检查某功能字段是否存在
+    $result = $dblj->query("select id from system_function where id = 78");
+    if ($result->rowCount() == 0) {
+        // 表不存在，创建表
+        $sql = "insert into system_function (belong,id,name,link_function,default_value) values (6,78,'装备核心列表',78,'装备核心列表')";
+        $dblj->exec($sql);
+    }
+    
+    
 ?>

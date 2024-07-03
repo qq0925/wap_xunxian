@@ -666,8 +666,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     }elseif(strpos($attr2, "equips.") === 0){
                     $attr3 = substr($attr2, 7); // 提取 "equips." 后面的部分
                     if (strpos($attr3, 'b.') === 0) {
-                        $attr3 = substr($attr3, 2); // 提取 "b." 后面的部分
-                        $bid = $attr3;
+                        $attr4 = substr($attr3, 2); // 提取 "b." 后面的部分
+                        $bid = $attr4;
                         $sql = "SELECT eq_true_id FROM system_equip_user WHERE eq_type =  1 and eqsid = ?";
                     
                         // 使用预处理语句
@@ -683,9 +683,16 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         if(!$op){
                             $op = 0;
                         }else{
-                        $bid = "i".$bid;
-                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$op')";
-                    
+                        if (strpos($attr4, 'embed.') === 0){
+                        //镶物属性相关
+                        $attr5 = substr($attr4, 6); // 提取 "embed." 后面的部分
+                        if(preg_match('/^(\d+\.)?(.*)/', $attr5, $matches)){
+                        $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
+                        $mosaic_pos = rtrim($prefix, ".");
+                        
+                        $attr6 = $matches[2]; // 匹配到的剩余部分
+                        }
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$op'";
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
                         // 执行查询
@@ -694,8 +701,59 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         // 获取查询结果
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
-                        if($attr3 =="count"){
+                        $mosaic_list = $row['equip_mosaic'];
+                        $mosaic_para = explode('|',$mosaic_list);
+                        if(!$mosaic_para[$mosaic_pos]){
+                            $op = 0;
+                        }else{
+                        $mosaic_id = $mosaic_para[$mosaic_pos];
+                        $xid = "i".$attr6;
+                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mosaic_id')";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if ($row === null||$row =='') {
+                            $op = 0; // 或其他默认值
+                        }else{
+                            $op = nl2br($row[$xid]);
+                        }
+                        }
+                        //镶物属性相关
+                        
+                        
+                        }else{
+                        $bid = "i".$bid;
+                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$op')";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if($attr4 =="count"){
                             $op = $op?1:0;
+                        }elseif($attr4 =="embed_count"){
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$op'";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if($row){
+                        $op = count(explode('|',$row['equip_mosaic']));
+                        }else{
+                        $op = 0;
+                        }
                         }else{
                         if ($row === null||$row =='') {
                             $op = 0; // 或其他默认值
@@ -704,10 +762,124 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }
                         }
                         }
+                        }
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                     }
-                    elseif(strpos($attr3, 'x.') === 0){
+                    elseif(preg_match('/^(\d+\.)?(.*)/', $attr3, $matches)){
+                        $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
+                        $equiped_pos = rtrim($prefix, ".");
+                        $attr4 = $matches[2]; // 匹配到的剩余部分
+                        // SQL 查询语句
+                        $sql = "SELECT id FROM system_equip_def WHERE type = 2 ORDER BY id";
                         
+                        // 执行查询并检查是否有结果
+                        $result = $db->query($sql);
+                        
+                        if ($result->num_rows > 0) {
+                            // 初始化数组
+                            $idArray = array();
+                        
+                            // 将查询结果存入数组
+                            while ($row = $result->fetch_assoc()) {
+                                $idArray[] = $row["id"];
+                            }
+                        }
+                        $equiped_pos = $idArray[$equiped_pos];
+
+                        $fid = $attr4;
+                        $sql = "SELECT eq_true_id FROM system_equip_user WHERE eq_type =  2 and equiped_pos_id = ? and eqsid = ?";
+                    
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param("ss",$equiped_pos,$sid);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        $op = $row["eq_true_id"];
+                        if(!$op){
+                            $op = 0;
+                        }else{
+                        if (strpos($attr4, 'embed.') === 0){
+                        $attr5 = substr($attr4, 6); // 提取 "embed." 后面的部分
+                        if(preg_match('/^(\d+\.)?(.*)/', $attr5, $matches)){
+                        $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
+                        $mosaic_pos = rtrim($prefix, ".");
+                        
+                        $attr6 = $matches[2]; // 匹配到的剩余部分
+                        }
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$op'";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        $mosaic_list = $row['equip_mosaic'];
+                        $mosaic_para = explode('|',$mosaic_list);
+                        if(!$mosaic_para[$mosaic_pos]){
+                            $op = 0;
+                        }else{
+                        $mosaic_id = $mosaic_para[$mosaic_pos];
+                        $xid = "i".$attr6;
+                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mosaic_id')";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if ($row === null||$row =='') {
+                            $op = 0; // 或其他默认值
+                        }else{
+                            $op = nl2br($row[$xid]);
+                        }
+                        }
+                        //镶物属性相关
+                        }else{
+                        $fid = "i".$fid;
+                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$op')";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if($attr4 =="count"){
+                            $op = $op?1:0;
+                        }elseif($attr4 =="embed_count"){
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$op'";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if($row){
+                        $op = count(explode('|',$row['equip_mosaic']));
+                        }else{
+                        $op = 0;
+                        }
+                        }else{
+                        if ($row === null||$row =='') {
+                            $op = 0; // 或其他默认值
+                        }else{
+                            $op = nl2br($row[$fid]);
+                        }
+                        }
+                        }
+                        }
+                        $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                     }
                     }else{
                     $attr3 = $attr1.$attr2;
