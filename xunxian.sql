@@ -5197,6 +5197,7 @@ DELIMITER $$
 --
 CREATE DEFINER=`xunxian`@`%` EVENT `update_game_minute_event` ON SCHEDULE EVERY 1 MINUTE STARTS '2023-06-30 19:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
 UPDATE gm_game_basic SET game_temp_notice_time = game_temp_notice_time-1 WHERE game_temp_notice_time!=0;
+DELETE from system_addition_attr where value = 0;
 END$$
 
 DELIMITER ;
