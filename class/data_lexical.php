@@ -81,10 +81,26 @@ foreach ($keyValuePairs as $pair) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
         //$parts = explode(".", $ele_1);
+        
+        if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
+            $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
+            $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
+                $sql = "SELECT sid FROM game1 where uid = '$prefix_value'";
+                $cxjg = $db->query($sql);
+                if (!$cxjg) {
+                die('查询失败: ' . $db->error);
+                }
+                $row = $cxjg->fetch_assoc();
+                $ele_1 = str_replace("$matches[0]", "u", $ele_1);
+                $temp_sid = $row['sid'];
+                $sid = $temp_sid;
+            }
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
         $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
         $ele_1_2 = substr($ele_1, $SecondEqualsPos + 1);
+        // var_dump($ele_1_1);
+        // var_dump($ele_1_2);
         $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
         //@$ele_1_2 = eval("return $ele_1_2;");
         $ele_1_2 = str_replace('.', '', $ele_1_2);
@@ -292,6 +308,19 @@ foreach ($keyValuePairs as $pair) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
         //$parts = explode(".", $ele_1);
+        if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
+            $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
+            $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
+                $sql = "SELECT sid FROM game1 where uid = '$prefix_value'";
+                $cxjg = $db->query($sql);
+                if (!$cxjg) {
+                die('查询失败: ' . $db->error);
+                }
+                $row = $cxjg->fetch_assoc();
+                $ele_1 = str_replace("$matches[0]", "u", $ele_1);
+                $temp_sid = $row['sid'];
+                $sid = $temp_sid;
+            }
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
         $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);

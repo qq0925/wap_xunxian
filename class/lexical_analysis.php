@@ -1911,7 +1911,6 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 }
                 $row = $cxjg->fetch_assoc();
                 $temp_sid = $row['sid'];
-                var_dump($match);
                 $op = str_replace("f({$match})", "u", $input);
                 if($temp_sid){
                 $input = process_string($op, $temp_sid, $oid, $mid, $jid, $type, $para);
