@@ -5,6 +5,7 @@ require_once 'event_data_get.php';
 require_once 'pdo.php';
 
 $parents_cmd = \player\getplayer($sid,$dblj)->ulast_cmd;
+
 if(!$para){
 events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$parents_page,$oid,$mid,$para);
 }else {
@@ -201,12 +202,15 @@ HTML;
                             include_once $ym;
                             }
                             
+                            
+                            //可以参考读取$module_id的值,非自定模板页面统一返回主界面，其余返回自定模板页面
                             if($step_just_return ==1){
                                 $return_canshu = 1;
                                 $cmd = $parents_cmd;
                                 $currentFilePath = $parents_page;
                                 $ym = $currentFilePath;
                                 include_once $ym;
+                                return;
                             }
                             
                             //存在return参数，直接退出函数
