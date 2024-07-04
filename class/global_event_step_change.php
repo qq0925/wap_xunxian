@@ -174,14 +174,21 @@ HTML;
                                 }
                             $dblj->exec("update system_self_define_module set call_sum = call_sum + 1 where id = '$page_id'");
                             $ym = 'module_all/self_page.php';
+                            $not_ret_canshu = 1;
                             include_once $ym;
                             }
                             if($step_just_return ==1){
+                                $not_ret_canshu = 1;
                                 $cmd = $parents_cmd;
                                 $currentFilePath = $parents_page;
                                 $ym = $currentFilePath;
                                 include_once $ym;
                             }
+                            
+                            if($not_ret_canshu==1){
+                                return;
+                            }
+                            
                             if($steps_page <$steps_count && $step_just_return ==0){
                             if($step_inputs){
                                     $step_input = explode('|',$step_inputs);
