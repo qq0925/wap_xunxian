@@ -883,6 +883,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     }
                     }else{
                     $attr3 = $attr1.$attr2;
+                    $attr3 = str_replace('.', '', $attr3);
                     $sql = "SHOW COLUMNS FROM game1 LIKE '$attr3'";
                     $result = $db->query($sql);
                     if($result->num_rows >0){
@@ -1866,7 +1867,6 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
 
     $matches = [];
     preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
-
     if (!empty($matches[1])) {
         foreach ($matches[1] as $match) {
             $firstDotPosition = strpos($match, '.');
