@@ -1886,6 +1886,41 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
             }
         }
     }
+    
+    $matches_2 = [];
+    preg_match_all('/f\(([\w.]+)\)/', $input, $matches_2);
+    if (!empty($matches_2[1])) {
+        foreach ($matches_2[1] as $match) {
+            $firstDotPosition = strpos($match, '.');
+            if (!empty($firstDotPosition)) {
+                $attr1 = substr($match, 0, $firstDotPosition);
+                $attr2 = substr($match, $firstDotPosition + 1);
+                // 使用 process_attribute 处理单个属性
+                $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
+                if($op =='' || $op == "" || $op ==null){
+                    $op = "\"\"";
+                }
+                // var_dump($match);
+                // var_dump($op);
+                // 替换字符串中的变量
+                
+                $sql = "SELECT sid FROM game1 where uid = '$op'";
+                $cxjg = $db->query($sql);
+                if (!$cxjg) {
+                die('查询失败: ' . $db->error);
+                }
+                $row = $cxjg->fetch_assoc();
+                $temp_sid = $row['sid'];
+                var_dump($match);
+                $op = str_replace("f({$match})", "u", $input);
+                if($temp_sid){
+                $input = process_string($op, $temp_sid, $oid, $mid, $jid, $type, $para);
+                }
+                
+            }
+        }
+    }
+
     // 进行其他逻辑处理
     // ...
 $input = evaluate_expression($input,$db,$sid,$oid,$mid,$jid,$type,$para);
