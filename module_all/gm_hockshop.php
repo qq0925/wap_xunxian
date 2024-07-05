@@ -28,10 +28,16 @@ if($canshu == 'hockshop'){
     if($item_now_count){
         $total = ($item_now_count)*($item_value);
         $item_name = \player\getitem($iid,$dblj)->iname;
+        $item_type = \player\getitem($iid,$dblj)->itype;
         $item_name = \lexical_analysis\color_string($item_name);
         \player\changeplayeritem($item_true_id,-$item_now_count,$sid,$dblj);
         $sql = "update game1 set umoney = umoney +  '$total' where sid = '$sid' ";
         $dblj->exec($sql);
+        
+        if($item_type =="兵器"||$item_type =="防具"){
+            $dblj->exec("DELETE from player_equip_mosaic where equip_id = '$item_true_id'");
+        }
+        
         echo "出售成功，你出售了{$item_name}x{$item_now_count}，获得了{$total}{$gm_post->money_measure}{$gm_post->money_name}!<br/>";
         \player\addplayersx('uburthen',-$item_now_count,$sid,$dblj);
         $player = \player\getplayer($sid,$dblj);
@@ -83,6 +89,7 @@ $cdid[] = $cmid;
 $clj[] = $cmd;
 $gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&newmid=$mid&sid=$sid");
 $shop_html = <<<HTML
+<p>出售装备将会清空镶嵌物！<br/>
 <p>此处所有物品回收折扣率为100.0%<br/>
 你身上有{$gm_post->money_name}:{$player->umoney}{$gm_post->money_measure}<br/>
 负重:{$player->uburthen}/{$player->umax_burthen}<br/>
