@@ -1173,7 +1173,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                 $equips_cmmt = $row['nequips'];
                                 $equip_cmmt = explode(',', $equips_cmmt);
                                 if ($equips_cmmt) {
-                                    foreach ($equip_cmmt as $equips_cmmt_id) {
+                                    foreach ($equip_cmmt as $equips_cmmt_para) {
+                                        $equips_cmmt_id = explode('_',$equips_cmmt_para)[2];
                                         $sql = "SELECT * FROM system_item_module WHERE iid = ?";
                                         $stmt = $db->prepare($sql);
                                         $stmt->bind_param("s", $equips_cmmt_id);
@@ -2067,9 +2068,16 @@ function process_attribute_2($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$par
                         die('查询失败: ' . $db->error);
                     }
                         $row = $result->fetch_assoc();
+
                         $op = $row["nequips"];
-                        $op_2 = explode(",",$op);
-                        $op = $op_2[0];
+                        $pattern = '/兵器_\d+_(\d+)/';
+                        
+                        preg_match_all($pattern, $op, $matches);
+                        
+                        if (!empty($matches[1])) {
+                            // 获取最后一个匹配的数值
+                            $op = end($matches[1]);
+                        }
                         if(!$op){
                             $op = 0;
                         }else{
@@ -2094,8 +2102,77 @@ function process_attribute_2($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$par
                         }
                         $op = process_string_2($op,$sid,$oid,$mid,$jid,$type,$para);
                     }
-                    elseif(strpos($attr3, 'x.') === 0){
+                    elseif(preg_match('/^(\d+\.)?(.*)/', $attr3, $matches)){
+                        $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
+                        $equiped_pos = rtrim($prefix, ".");
+                        $attr4 = $matches[2]; // 匹配到的剩余部分
+                        // SQL 查询语句
+                        $sql = "SELECT id FROM system_equip_def WHERE type = 2 ORDER BY id";
                         
+                        // 执行查询并检查是否有结果
+                        $result = $db->query($sql);
+                        
+                        if ($result->num_rows > 0) {
+                            // 初始化数组
+                            $idArray = array();
+                        
+                            // 将查询结果存入数组
+                            while ($row = $result->fetch_assoc()) {
+                                $idArray[] = $row["id"];
+                            }
+                        }
+                        $equiped_pos = $idArray[$equiped_pos];
+
+                        $fid = $attr4;
+                        $sql = "SELECT nequips FROM system_npc_midguaiwu WHERE ngid = ?";
+
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param("s",$oid);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        if (!$result) {
+                        die('查询失败: ' . $db->error);
+                    }
+                        $row = $result->fetch_assoc();
+
+                        $op = $row["nequips"];
+                        $pattern = '/防具_' . preg_quote($equiped_pos) . '_(\d+)/';
+                        
+                        preg_match_all($pattern, $op, $matches);
+                        
+                        if (!empty($matches[1])) {
+                            // 获取第一个匹配的数值
+                            $op = end($matches[1]);
+                        }
+                        if(!$op){
+                            $op = 0;
+                        }else{
+                        $fid = "i".$fid;
+                        $sql = "SELECT * FROM system_item_module WHERE iid = '$op'";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if($attr4 =="count"){
+                            $op = $op?1:0;
+                        }else{
+                        if ($row === null||$row =='') {
+                            $op = 0; // 或其他默认值
+                        }else{
+                            $op = nl2br($row[$fid]);
+                        }
+                        }
+                        
+                        }
+                        $op = process_string_2($op,$sid,$oid,$mid,$jid,$type,$para);
                     }
                     }
                     elseif(strpos($attr2, "refresh_time") === 0){
