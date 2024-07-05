@@ -2005,6 +2005,7 @@ echo $refresh_html;
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$item_true_id' and sid = '$sid'");
                             $canshu = '装备';
                             echo "你装备了{$iname}<br/>";
+                            //这里可以更新镶嵌物的属性
                             $event_data = global_event_data_get(40,$dblj);
                             $event_cond = $event_data['system_event']['cond'];
                             $event_cmmt = $event_data['system_event']['cmmt'];
@@ -2126,6 +2127,7 @@ echo $refresh_html;
                     }else{
                     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
                     \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
+                    $dblj->exec("DELETE from player_equip_mosaic where equip_id = '$item_true_id'");
                     echo "你丢掉了{$iname}<br/>";
                     $canshu = '装备';
                     }
@@ -2141,6 +2143,7 @@ echo $refresh_html;
                 case 'outall':
                     if($ino_out==0){
                     if($itype =="兵器"||$itype =="防具"){
+                    
                     $result = \player\getnowequiptrueid($item_true_id,$sid,$dblj);
                     if($result ==1){
                     echo "你已经穿上了{$iname}!不能丢弃!<br/>";
@@ -2148,6 +2151,7 @@ echo $refresh_html;
                     }else{
                     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
                     \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
+                    $dblj->exec("DELETE from player_equip_mosaic where equip_id = '$item_true_id'");
                     echo "你丢掉了所有的{$iname}<br/>";
                     $canshu = '装备';
                     }
@@ -2904,6 +2908,7 @@ echo $refresh_html;
 // 13-17ms
 
     $currentFilePath = $ym;
+
     if (!empty($_POST)) {
     foreach ($_POST as $key => $value) {
        $is_designer_post_str .= $key . ' = ' . $value . '<br>';
