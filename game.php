@@ -108,7 +108,10 @@ $player = \player\getplayer($sid,$dblj);
 $up_ret = \player\upplayerlvl($sid,$dblj);
 if($up_ret ==1){
 $parents_cmd = 'gm_scene_new';
+$ret = global_event_data_get(22,$dblj);
+if($ret){
 global_events_steps_change(22,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
+}
 }
 
 
@@ -2949,7 +2952,10 @@ echo $refresh_html;
         $system_offline_time = $gameconfig->offline_time;
         while(floor((strtotime($player->endtime)-strtotime($player->minutetime))/60 >0) &&$cmd!='login' && $cmd!='cjplayer' &&$cmd !='cj'){
         $parents_cmd = $cmd;
+        $ret = global_event_data_get(24,$dblj);
+        if($ret){
         global_events_steps_change(24,$sid,$dblj,$just_page,$steps_page,$cmid,$currentFilePath,null,null,$para);
+        }
         $player->minutetime = date('Y-m-d H:i:s', strtotime($player->minutetime) + 60); // 增加 60 秒
         $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
         $dblj->exec($sql);

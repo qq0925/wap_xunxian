@@ -166,11 +166,17 @@ if($cmd=='pve_fight'){
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $clj[] = $cmd;
+        $ret = global_event_data_get(7,$dblj);
+        if($ret){
         global_events_steps_change(7,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_id,$para);
+        }
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $clj[] = $cmd;
+        $ret = global_event_data_get(31,$dblj);
+        if($ret){
         global_events_steps_change(31,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_id,$para);
+        }
         if($defeat_id!=0){
         include_once 'class/events_steps_change.php';
         events_steps_change($defeat_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_id,$para);
@@ -288,9 +294,15 @@ HTML;
             \player\changeplayersx('uhp',0,$sid,$dblj);
             $player = \player\getplayer($sid,$dblj);
             $parents_cmd = 'gm_scene_new';
+            $ret = global_event_data_get(8,$dblj);
+            if($ret){
             global_events_steps_change(8,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
+            }
             \player\changeplayersx('ucmd','',$sid,$dblj);
+            $ret = global_event_data_get(30,$dblj);
+            if($ret){
             global_events_steps_change(30,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
+            }
             if($alive_monster->nwin_event_id!=0){
             include_once 'class/events_steps_change.php';
             events_steps_change($alive_monster->nwin_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);

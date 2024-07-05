@@ -67,8 +67,10 @@ if($player->tpsmid!=0){
 \player\changeplayersx('tpsmid',0,$sid,$dblj);
 }
 $parents_cmd = 'gm_scene_new';
+$ret = global_event_data_get(48,$dblj);
+if($ret){
 global_events_steps_change(48,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php',null,null,$para);
-
+}
 if($player->ucmd){
     \player\changeplayersx('ucmd',"",$sid,$dblj);
     $player = \player\getplayer($sid,$dblj);

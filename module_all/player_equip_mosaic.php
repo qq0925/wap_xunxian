@@ -19,8 +19,9 @@ if($sure_new_mosaic_canshu){
     }
     $dblj->exec("insert into player_equip_mosaic (equip_id,equip_root,belong_sid,equip_mosaic)values('$insert_true_canshu','$insert_canshu','$sid','$add') ");
     echo "镶嵌成功！<br/>";
-    $mosaic_iid = \player\getitem_true($insert_true_mosaic,$dblj)->iid;
-    \player\additem($sid,$mosaic_iid,-1,$dblj);
+    $out = changeplayeritem($insert_true_canshu,-1,$sid,$dblj);
+    $iweight = \player\getitem_true($insert_true_canshu,$dblj)->iweight;
+    \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
 }
 
 if($sure_old_mosaic_canshu){
@@ -33,8 +34,9 @@ if($sure_old_mosaic_canshu){
     }
     $dblj->exec("update player_equip_mosaic set equip_mosaic = '$add' where equip_id = '$insert_true_canshu' and equip_root = '$insert_canshu'");
     echo "镶嵌成功！<br/>";
-    $mosaic_iid = \player\getitem_true($insert_true_mosaic,$dblj)->iid;
-    \player\additem($sid,$mosaic_iid,-1,$dblj);
+    $out = \player\changeplayeritem($insert_true_mosaic,-1,$sid,$dblj);
+    $iweight = \player\getitem_true($insert_true_mosaic,$dblj)->iweight;
+    \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
 }
 
 if($diss_this_canshu){
@@ -68,8 +70,9 @@ if ($row) {
         $delete_stmt->execute([':sid' => $sid, ':equip_id' => $diss_this_canshu]);
 }
 echo "拆卸成功!<br/>";
-    $mosaic_iid = \player\getitem_true($equip_mosaic,$dblj)->iid;
-    \player\additem($sid,$mosaic_iid,1,$dblj);
+    $out = \player\changeplayeritem($equip_mosaic,-1,$sid,$dblj);
+    $iweight = \player\getitem_true($equip_mosaic,$dblj)->iweight;
+    \player\addplayersx('uburthen',$iweight,$sid,$dblj);
         }
     }
 } else {
@@ -114,6 +117,10 @@ $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $gojustnow = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$mid&sid=$sid");
 $player_equip_mosaic = \player\get_player_equip_mosaic_all($sid,$dblj);
+
+if($_POST['kw']){
+$player_equip_mosaic = \player\get_player_equip_mosaic_all($sid,$dblj,$_POST['kw']);
+}
 
 for($i=1;$i<count($player_equip_mosaic) +1;$i++){
     $equip_para = $player_equip_mosaic[$i-1];
@@ -188,9 +195,10 @@ $mosaic_html_1 = <<<HTML
 已镶嵌 | <a href="?cmd=$gonomosaic">未镶嵌</a><br/>
 $player_equip_html
 $diss_html
-首页/上一页/下一页/末页<br/>
-<input type="text" name="search" placeholder="请输入装备名">
+<form method = "POST">
+<input type="text" name="kw" placeholder="请输入装备名">
  <button type="submit">搜索</button><br/>
+ </form>
  <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
 }else{
@@ -199,6 +207,11 @@ $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $gojustnow = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$mid&sid=$sid");
 $player_equip_mosaic = \player\get_player_all_equip_enable($sid,$dblj);
+
+if($_POST['kw']){
+$player_equip_mosaic = \player\get_player_all_equip_enable($sid,$dblj,$_POST['kw']);
+}
+
 
 for($i=1;$i<count($player_equip_mosaic) +1;$i++){
     $equip_para = $player_equip_mosaic[$i-1];
@@ -230,9 +243,10 @@ $mosaic_html_1 = <<<HTML
 【镶嵌装备】<br/>
 <a href="?cmd=$gomosaic">已镶嵌</a> | 未镶嵌<br/>
 $player_equip_html
-首页/上一页/下一页/末页<br/>
-<input type="text" name="search" placeholder="请输入装备名">
+<form method = "POST">
+<input type="text" name="kw" placeholder="请输入装备名">
  <button type="submit">搜索</button><br/>
+ </form>
  <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
 }
@@ -314,7 +328,7 @@ $mosaic_html_2 = <<<HTML
 HTML;
 }
 //镶嵌执行完成返回页面1并给出镶嵌信息
-
+//首页/上一页/下一页/末页<br/>
 //. <a href="?cmd=$gotomosaic_this_all">一键镶嵌</a>
 
 }
