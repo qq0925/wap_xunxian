@@ -974,11 +974,20 @@ $cxjg = $dblj->query($sql);
 $cxallguaiwu = $cxjg->fetchAll(PDO::FETCH_ASSOC);
 $gwhtml = '';
 for ($i = 0;$i<count($cxallguaiwu);$i++){
+    $guaiwu_creat_event = $cxallguaiwu[$i]['ncreat_event_id'];
+    $guaiwu_ngid = $cxallguaiwu[$i]['ngid'];
+    $guaiwu_nid = $cxallguaiwu[$i]['nid'];
+    $guaiwu_para = $guaiwu_nid ."|"."$guaiwu_ngid";
+
+    if($guaiwu_creat_event!=0){
+    include_once 'class/events_steps_change.php';
+    events_steps_change($guaiwu_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$guaiwu_para,$para);
+    }
     $br = "<br/>";
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $clj[] = $cmd;
-    $gwcmd = $encode->encode("cmd=npc_html&ucmd=$cmid&ngid=".$cxallguaiwu[$i]['ngid']."&nid=".$cxallguaiwu[$i]['nid']."&sid=$sid&nowmid=$nowmid");
+    $gwcmd = $encode->encode("cmd=npc_html&ucmd=$cmid&ngid=".$guaiwu_ngid."&nid=".$guaiwu_nid."&sid=$sid&nowmid=$nowmid");
 $npchtml .="<a href='?cmd=$gwcmd'>".$cxallguaiwu[$i]['nname']."</a>";
 }
 $npchtml .=$br;

@@ -99,10 +99,6 @@ HTML;
             $name:<textarea name="$id" maxlength="200" rows="4" cols="40">$value</textarea><br/>
 HTML;
                 break;
-            case 'gj':
-                break;
-            case 'fy':
-                break;
             case 'kill':
 $selectedOption = ($value == "1") ? 'selected' : '';
 $npc_mid_page .= <<<HTML
