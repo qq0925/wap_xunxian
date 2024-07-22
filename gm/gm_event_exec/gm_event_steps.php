@@ -132,10 +132,10 @@ $gm_html =<<<HTML
 <input type="hidden" name="step_id" value="$event_id">
 <input type="hidden" name="add" value="0">
 <input type="hidden" name="step_belong_id" value="$event_belong">
-触发条件:<textarea name="cond" maxlength="4096" rows="4" cols="40">$event_cond</textarea><br/>
-执行条件:<textarea name="exec_cond" maxlength="4096" rows="4" cols="40">$event_exec_cond</textarea><br/>
-触发时提示语:<textarea name="cmmt" maxlength="4096" rows="4" cols="40">$step_cmmt</textarea><button type="button" onclick="insertTextAtCursor()">插入「」</button><br/>
-不满足条件提示语:<textarea name="cmmt2" maxlength="1024" rows="4" cols="40">$event_cmmt2</textarea><br/>
+触发条件:<textarea name="cond" maxlength="4096" rows="4" cols="40">{$event_cond}</textarea><br/>
+执行条件:<textarea name="exec_cond" maxlength="4096" rows="4" cols="40">{$event_exec_cond}</textarea><br/>
+触发时提示语:<textarea name="cmmt" maxlength="4096" rows="4" cols="40">{$event_cmmt}</textarea><button type="button" onclick="insertTextAtCursor()">插入「」</button><br/>
+不满足条件提示语:<textarea name="cmmt2" maxlength="1024" rows="4" cols="40">{$event_cmmt2}</textarea><br/>
 返回游戏链接:<select name="not_return_link" value="$event_not_return_link">
 <option value="0" >允许</option>
 <option value="1" {$gm_select_1}>不允许</option>
