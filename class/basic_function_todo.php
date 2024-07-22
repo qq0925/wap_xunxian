@@ -1474,6 +1474,19 @@ HTML;
     return $look_url;
 }
 
+function pet_url($cmd,$page_id,$sid,$dblj,$value,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    global $encode;
+    $pet_url = $encode->encode("cmd=player_pet&ucmd=$cmid&sid=$sid");
+    $pet_url=<<<HTML
+        <a href="?cmd=$pet_url">{$value}</a>
+HTML;
+    return $pet_url;
+}
+
+
 function sail_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
