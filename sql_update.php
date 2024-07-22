@@ -65,7 +65,26 @@ AFTER nwin_event_id ;";
         $dblj->exec($sql);
     }
 
-    
+    $result = $dblj->query("SHOW TABLES LIKE 'system_player_setting'");
+    if ($result->rowCount() == 0) {
+        // 表不存在，创建表
+        $sql = "CREATE TABLE `system_player_setting`  (
+  `sid` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `if_photo` int(1) NOT NULL COMMENT '是否显示图片',
+  `if_message` int(1) NOT NULL,
+  `if_save_last_message` int(1) NOT NULL,
+  `save_last_message_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `show_message_reg` int(2) NOT NULL,
+  `show_list_reg` int(2) NOT NULL,
+  `accept_state` int(1) NOT NULL,
+  `back_color` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `text_color` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `cmd_color` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = COMPACT";
+        $dblj->exec($sql);
+    }
+
+
     // 检查某功能字段是否存在
     $result = $dblj->query("select id from system_function where id = 77");
     if ($result->rowCount() == 0) {

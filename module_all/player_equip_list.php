@@ -30,6 +30,7 @@ $parents_page = $currentFilePath;
 $encode = new \encode\encode();
 $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
+$uis_designer = $player->uis_designer;
 $game_main = '';
 $get_main_page = \gm\get_equip_page($dblj);
 $br = 0;
@@ -118,12 +119,20 @@ $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $ret_game = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 
+if($uis_designer ==1){
+$equips_module = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=6&sid=$sid");
+$designer_html = <<<HTML
+<a href="?cmd=$equips_module">设计装备模板</a><br/>
+HTML;
+}
+
 $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="css/gamecss.css">
 </head>
 $game_main<br/>
+$designer_html
 <a href="?cmd=$ret_game">返回游戏</a><br/>
 HTML;
 echo $all;
