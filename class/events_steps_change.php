@@ -107,7 +107,11 @@ HTML;
                             //考虑module_id取值。物品和战斗页面触发条件不满足不生成返回游戏链接
                             //$event_data['system_event']['module_id']
                             if($parents_cmd!="iteminfo_new"||$step_not_return_link ==0){
+                                if($mid){
                             $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
+                                }else{
+                            $just_page = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+                                }
                              $page_url =<<<HTML
                     <a href="?cmd=$just_page">返回游戏</a><br/>
 HTML;
