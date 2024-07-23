@@ -1877,13 +1877,13 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
                 if($op =='' || $op == "" || $op ==null){
-                    $op = "\"\"";
+                    $op = 0;
                 }
                 // var_dump($match);
                 // var_dump($op);
                 // 替换字符串中的变量
-                
                 $input = str_replace("v({$match})", $op, $input);
+                
             }
         }
     }
