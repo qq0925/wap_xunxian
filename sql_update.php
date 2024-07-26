@@ -14,6 +14,37 @@
         $stmt->execute();
     }
 
+    $sql = "SHOW COLUMNS FROM system_pet_player LIKE 'pnid'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$column) {
+$sql1 = "DROP TABLE IF EXISTS `system_pet_player`;";
+$sql2 = "CREATE TABLE `system_pet_player` (
+  `pnid` int(11) NOT NULL,
+  `pid` int(11) NOT NULL,
+  `psid` text NOT NULL,
+  `plvl` int(11) NOT NULL,
+  `pexp` int(255) NOT NULL,
+  `php` int(255) NOT NULL,
+  `pmaxhp` int(255) NOT NULL,
+  `pgj` int(255) NOT NULL,
+  `pfy` int(255) NOT NULL,
+  `phunger` int(3) NOT NULL,
+  `pthirst` int(3) NOT NULL,
+  `pmood` int(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+
+$stmt1 = $dblj->prepare($sql1);
+$stmt1->execute();
+
+$stmt2 = $dblj->prepare($sql2);
+$stmt2->execute();
+
+    }
+
+
     // 检查表是否存在 adopt 字段
     $sql = "SHOW COLUMNS FROM system_event_evs_self LIKE 'a_adopt'";
     $stmt = $dblj->prepare($sql);
