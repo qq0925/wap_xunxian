@@ -59,6 +59,8 @@ $step_cmmt = $row['cmmt'];
 $step_cmmt2 = $row['cmmt2'];
 $step_not_return_link = $row['not_return_link'];
 $step_just_return = $row['just_return'];
+$step_a_adopt = $row['a_adopt'];
+$step_r_adopt = $row['r_adopt'];
     $s_attrs_count = 0;
     if (!empty($row['s_attrs'])) {
     $s_attrs_count = explode(',', $row['s_attrs']);
@@ -113,6 +115,19 @@ $step_just_return = $row['just_return'];
     $inputs_count = count($inputs_count);
 }
 
+    $a_adopt_count = 0;
+    if (!empty($row['a_adopt'])) {
+    $a_adopt_count = explode(',', $row['a_adopt']);
+    $a_adopt_count = count($a_adopt_count);
+}
+
+    $r_adopt_count = 0;
+    if (!empty($row['r_adopt'])) {
+    $r_adopt_count = explode(',', $row['r_adopt']);
+    $r_adopt_count = count($r_adopt_count);
+}
+
+
     $step_view_user_exp = $row['view_user_exp'];
     $step_page_name = $row['page_name'];
     $step_refresh_scene_npcs = $row['refresh_scene_npcs'];
@@ -130,7 +145,7 @@ $gm_game_selfeventdefine_taskremove = $encode->encode("cmd=game_event_taskremove
 $gm_game_selfeventdefine_scenemove = $encode->encode("cmd=game_event_destsadd_self&event_id=$event_id&step_id=$step_id&sid=$sid");
 $gm_game_selfeventdefine_inputs = $encode->encode("cmd=game_event_inputs_self&event_id=$event_id&step_id=$step_id&sid=$sid");
 $gm_game_selfeventdefine_fightchange = $encode->encode("cmd=game_event_fight_self&event_id=$event_id&step_id=$step_id&sid=$sid");
-
+$gm_game_selfeventdefine_petadd = $encode->encode("cmd=game_event_pet_self&event_id=$event_id&step_id=$step_id&sid=$sid");
 
 $gm_html =<<<HTML
 <script type="text/javascript" src="js/auto_insert.js"></script>
@@ -160,8 +175,8 @@ $gm_html =<<<HTML
 触发任务:<a href="">修改(0)</a>！！<br/>
 删除任务:<a href="?cmd=$gm_game_selfeventdefine_taskremove">修改({$r_tasks_count})</a><br/>
 挑战人物:<a href="?cmd=$gm_game_selfeventdefine_fightchange">修改({$r_fight_count})</a><br/>
-收养宠物对象:<a href="">添加</a>！！<br/>
-删除宠物对象:<a href="">添加</a>！！<br/>
+收养宠物对象:<a href="?cmd=$gm_game_selfeventdefine_petadd">添加({$a_adopt_count})</a><br/>
+删除宠物对象:<a href="">添加({$r_adopt_count})</a><br/>
 移动目标:<a href="?cmd=$gm_game_selfeventdefine_scenemove">修改({$dests_count})</a><br/>
 查看玩家的ID表达式:<textarea name="view_user_exp" maxlength="4096" rows="4" cols="40">$step_view_user_exp</textarea><br/>
 显示页面模板:<input name="page_name" type="text" maxlength="20" value="{$step_page_name}"><br/>

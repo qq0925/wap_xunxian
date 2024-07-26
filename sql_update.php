@@ -14,6 +14,26 @@
         $stmt->execute();
     }
 
+    // 检查表是否存在 adopt 字段
+    $sql = "SHOW COLUMNS FROM system_event_evs_self LIKE 'a_adopt'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$column) {
+        // 如果 designer 字段不存在，执行添加字段操作
+    $sql = "ALTER TABLE system_event_evs_self ADD COLUMN `a_adopt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '添加宠物',
+                ADD COLUMN `r_adopt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '删除宠物'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    
+    $sql = "ALTER TABLE system_event_evs ADD COLUMN `a_adopt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '添加宠物',
+                ADD COLUMN `r_adopt` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '删除宠物'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    
+    }
+
 
     // 检查表是否存在 nwin和ndefeat 字段
     $sql = "SHOW COLUMNS FROM system_npc LIKE 'nwin_event_id'";

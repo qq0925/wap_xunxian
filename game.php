@@ -1448,6 +1448,13 @@ echo $refresh_html;
             $ym = 'gm/gm_event_exec_self/gm_event_fightchange.php';
         }
             break;
+        case 'game_event_pet_self':
+            if($pet_id){
+                $ym = 'gm/gm_event_exec_self/game_event_pet_self_2.php';
+            }else{
+                $ym = 'gm/gm_event_exec_self/game_event_pet_self.php';
+            }
+            break;
         case 'gm_post_4'://地图添加相关事件
             if($map_add_canshu == 1){
                 $sql = "INSERT INTO system_map (marea_name, mname, marea_id) VALUES ('$marea_name', '未命名', $qy_id)";
@@ -1648,6 +1655,9 @@ echo $refresh_html;
             break;
         case 'player_state'://状态
             $ym = 'module_all/scene_player_detail.php';
+            break;
+        case 'player_pet'://宠物
+            $ym = 'module_all/player_pet_list.php';
             break;
         case 'player_skill'://技能
             $ym = 'module_all/player_skill.php';
