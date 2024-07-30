@@ -1799,8 +1799,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $attr_attr = $attr_para[2];
                     // 提取获取排名数据的函数
                     if (!function_exists('lexical_analysis\getRankData2')){
-                    function getRankData2($db) {
-                        $sql = "SELECT * FROM system_rank";
+                    function getRankData2($db,$rank_name) {
+                        $sql = "SELECT * FROM system_rank where rank_name = '$rank_name'";
                         $stmt = $db->prepare($sql);
                         $stmt->execute();
                         $result = $stmt->get_result();
@@ -1854,20 +1854,16 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     }
                     
                     // 获取排名数据
-                    $rankData = getRankData2($db);
+                    $rankData = getRankData2($db,$attr_name);
                     
                     foreach ($rankData as $row) {
-                        $rank_name = $row['rank_name'];
                         $rankExp = $row['rank_exp'];
                         $show_cond = $row['show_cond'];
                         $userData = getUserData2($db, $rankExp, $show_cond);
                         usort($userData, function ($a, $b) {
                             return $b['score'] - $a['score'];
                         });
-
-                        if ($rank_name == $attr_name) {
-                            $op = isset($userData[$attr_pos][$attr_attr]) ? $userData[$attr_pos][$attr_attr] : 0;
-                        }
+                            $op = $userData[$attr_pos][$attr_attr] ?? 0;
                     }
                     $op = process_string($op, $sid, $oid, $mid, $jid, $type, $para);
                     break;
