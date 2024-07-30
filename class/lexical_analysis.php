@@ -6,6 +6,28 @@ use mysqli;
 
 //input是原始输入，sid是用户识别码，uid用于特殊事件，oid用于o关键字，mid用于获取当前场景id或npc的id,para用于分辨是泛字符串解析还是纯变量解析
 
+class Cache {
+    private static $cache = [];
+    private static $expiry = [];
+
+    public static function set($key, $value, $ttl) {
+        self::$cache[$key] = $value;
+        self::$expiry[$key] = time() + $ttl;
+    }
+
+    public static function get($key) {
+        if (isset(self::$cache[$key]) && time() < self::$expiry[$key]) {
+            return self::$cache[$key];
+        }
+        return false;
+    }
+
+    public static function clear($key) {
+        unset(self::$cache[$key]);
+        unset(self::$expiry[$key]);
+    }
+}
+
 function hurt_calc($jid=null,$sid,$gid,$type,$dblj){
 $ngid = explode(',',$gid);
 $servername = "127.0.0.1";
@@ -1792,81 +1814,97 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     }
                     $op = process_string($op, $sid, $oid, $mid, $jid, $type, $para);
                     break;
-                case 'gphn':
-                    $attr_para = explode(".","$attr2");
-                    $attr_name = $attr_para[0];
-                    $attr_pos = $attr_para[1];
-                    $attr_attr = $attr_para[2];
-                    // 提取获取排名数据的函数
-                    if (!function_exists('lexical_analysis\getRankData2')){
-                    function getRankData2($db,$rank_name) {
-                        $sql = "SELECT * FROM system_rank where rank_name = '$rank_name'";
-                        $stmt = $db->prepare($sql);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
+                    case 'gphn':
+                        $attr_para = explode(".", "$attr2");
+                        $attr_name = $attr_para[0];
+                        $attr_pos = $attr_para[1];
+                        $attr_attr = $attr_para[2];
                     
-                        if (!$result) {
-                            die('查询失败: ' . $db->error);
-                        }
+                        // 缓存的键名
+                        $rankCacheKey = "rankData_$attr_name";
+                        $userCacheKey = "userData_$attr_name";
                     
-                        $rankData = [];
-                        while ($row = $result->fetch_assoc()) {
-                            $rankData[] = $row;
-                        }
-                    
-                        return $rankData;
-                    }
-                    }
-                    
-                    // 提取获取用户数据的函数
-                    if (!function_exists('lexical_analysis\getUserData2')){
-                    function getUserData2($db, $rankExp, $showCond) {
-                        $sql = "SELECT uname, sid,uid FROM game1";
-                        $cxjg = $db->query($sql);
-                    
-                        if (!$cxjg) {
-                            die('查询失败: ' . $db->error);
-                        }
-                    
-                        $userData = [];
-                        while ($row = $cxjg->fetch_assoc()) {
-                            $userSid = $row['sid'];
-                            $userExp = process_string($rankExp, $userSid);
-                            $userShowCond = checkTriggerCondition($showCond, $db, $userSid);
-                    
-                            if (is_null($userShowCond)) {
-                                $userShowCond = 1;
-                            }
-                    
-                            if ($userShowCond) {
-                                $user_name = $row['uname'];
-                                $userUid = $row['uid'];
-                                $userData[] = [
-                                    'score' => $userExp,
-                                    'id' => $userUid,
-                                    'name' => $user_name
-                                ];
+                        // 提取获取排名数据的函数
+                        if (!function_exists('lexical_analysis\getRankData2')) {
+                            function getRankData2($db, $rank_name) {
+                                $sql = "SELECT * FROM system_rank where rank_name = '$rank_name'";
+                                $stmt = $db->prepare($sql);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                            
+                                if (!$result) {
+                                    die('查询失败: ' . $db->error);
+                                }
+                            
+                                $rankData = [];
+                                while ($row = $result->fetch_assoc()) {
+                                    $rankData[] = $row;
+                                }
+                            
+                                return $rankData;
                             }
                         }
                     
-                        return $userData;
-                    }
-                    }
+                        // 提取获取用户数据的函数
+                        if (!function_exists('lexical_analysis\getUserData2')) {
+                            function getUserData2($db, $rankExp, $showCond) {
+                                $sql = "SELECT uname, sid, uid FROM game1";
+                                $cxjg = $db->query($sql);
+                            
+                                if (!$cxjg) {
+                                    die('查询失败: ' . $db->error);
+                                }
+                            
+                                $userData = [];
+                                while ($row = $cxjg->fetch_assoc()) {
+                                    $userSid = $row['sid'];
+                                    $userExp = process_string($rankExp, $userSid);
+                                    $userShowCond = checkTriggerCondition($showCond, $db, $userSid);
+                            
+                                    if (is_null($userShowCond)) {
+                                        $userShowCond = 1;
+                                    }
+                            
+                                    if ($userShowCond) {
+                                        $user_name = $row['uname'];
+                                        $userUid = $row['uid'];
+                                        $userData[] = [
+                                            'score' => $userExp,
+                                            'id' => $userUid,
+                                            'name' => $user_name
+                                        ];
+                                    }
+                                }
+                            
+                                return $userData;
+                            }
+                        }
                     
-                    // 获取排名数据
-                    $rankData = getRankData2($db,$attr_name);
+                        // 从缓存获取排名数据
+                        $rankData = Cache::get($rankCacheKey);
+                        if ($rankData === false) {
+                            $rankData = getRankData2($db, $attr_name);
+                            Cache::set($rankCacheKey, $rankData, 1); // 缓存1秒
+                        }
                     
-                    foreach ($rankData as $row) {
-                        $rankExp = $row['rank_exp'];
-                        $show_cond = $row['show_cond'];
-                        $userData = getUserData2($db, $rankExp, $show_cond);
-                        usort($userData, function ($a, $b) {
-                            return $b['score'] - $a['score'];
-                        });
+                        foreach ($rankData as $row) {
+                            $rankExp = $row['rank_exp'];
+                            $show_cond = $row['show_cond'];
+                            
+                            // 从缓存获取用户数据
+                            $userData = Cache::get($userCacheKey);
+                            if ($userData === false) {
+                                $userData = getUserData2($db, $rankExp, $show_cond);
+                                Cache::set($userCacheKey, $userData, 1); // 缓存1秒
+                            }
+                    
+                            usort($userData, function ($a, $b) {
+                                return $b['score'] - $a['score'];
+                            });
                             $op = $userData[$attr_pos][$attr_attr] ?? 0;
-                    }
-                    $op = process_string($op, $sid, $oid, $mid, $jid, $type, $para);
-                    break;
+                        }
+                        $op = process_string($op, $sid, $oid, $mid, $jid, $type, $para);
+                        break;
                 default:
                     return 0;
                     break;
