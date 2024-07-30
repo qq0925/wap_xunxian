@@ -280,6 +280,14 @@ function get_npc_detail($dblj,$npc_id){
     return $ret;
 }
 
+function get_pet_list($dblj,$sid){
+    $sql = "select * from system_pet_player where psid = '$sid' ORDER BY pstate DESC";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
+    return $ret;
+}
+
+
 function get_map_out($dblj,$map_id){
     $sql = "select * from system_map where mid ='$map_id'";
     $cxjg = $dblj->query($sql);
@@ -614,6 +622,8 @@ function get_mysqldata_2($dblj, $data_type, $data_id){
             // 处理 s_attrs 字段
             $s_attrs = $evsRow['s_attrs'];
             $m_attrs = $evsRow['m_attrs'];
+            $a_skills = $evsRow['a_skills'];
+            $r_skills = $evsRow['r_skills'];
             $not_return_link = $evsRow['not_return_link'];
             $just_return = $evsRow['just_return'];
             $not_return_link = ($not_return_link == 0) ? "F" : "T";
@@ -659,6 +669,8 @@ function get_mysqldata_2($dblj, $data_type, $data_id){
             $evs[] = [
                 '#data_events_Mapping#' => [
                     'id' => $evsRow['id'],
+                    'a_skills' => $evsRow['a_skills'],
+                    'r_skills' => $evsRow['r_skills'],
                     'cond' => $evsRow['cond'],
                     'cmmt' => $evsRow['cmmt'],
                     'cmmt2' => $evsRow['cmmt2'],
@@ -675,6 +687,8 @@ function get_mysqldata_2($dblj, $data_type, $data_id){
             'id' => $evsRow['id'],
             's_attrs' => $s_attrs_2,
             'm_attrs' => $m_attrs_2,
+            'a_skills' => $evsRow['a_skills'],
+            'r_skills' => $evsRow['r_skills'],
             'cond' => $evsRow['cond'],
             'cmmt' => $evsRow['cmmt'],
             'cmmt2' => $evsRow['cmmt2'],

@@ -1,24 +1,49 @@
 <?php
 
 
-$ret_game = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
-$pet_html = <<<HTML
-(未出战)【GM宠】|【<a href="?cmd=$ret_game">野兔</a>】...<br/>
-【这里是宠物图片】<br/>
-名称：小寻寻<br/>
-小寻寻： 亲爱的主人……吃饱了！精神亢奋！咱是不是可以出去打架了？<br/>
-生命:194/194<br/>
-攻:1-7 | 防:1-2<br/>
-饥饿：500 / 500 <a href="?cmd=$ret_game">喂食</a><br/>
-清洁：500 / 500 <a href="?cmd=$ret_game">洗澡</a><br/>
-心情：985 / 1000<br/>
-状态：<a href="?cmd=$ret_game">附身</a> 取消附身<br/>
-放生：<a href="?cmd=$ret_game">丢弃</a><br/>
-成长:13/1000<br/>
+if($pet_fight_id){
+    echo "你放出了{$pet_name}。<br/>";
+    $dblj->exec("update system_pet_player set pstate = 0 where psid = '$sid'");
+    $dblj->exec("update system_pet_player set pstate = 1 where psid = '$sid' and pid = '$pet_fight_id'");
+}
+if($pet_rest_id){
+    echo "你收回了{$pet_name}。<br/>";
+    $dblj->exec("update system_pet_player set pstate = 0 where psid = '$sid' and pid = '$pet_rest_id'");
+}
+$player_now_pet_count=1;
+$player_max_pet_count=8;
 
+$pet_para = \gm\get_pet_list($dblj,$sid);
+$ret_game = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+
+for($i=1;$i<count($pet_para) + 1;$i++){
+    $pet_id = $pet_para[$i-1]['pid'];
+    $pet_name = $pet_para[$i-1]['pname'];
+    $pet_lvl = $pet_para[$i-1]['plvl'];
+    $pet_state = $pet_para[$i-1]['pstate'];
+    $pet_detail = $encode->encode("cmd=player_petinfo&pet_id=$pet_id&ucmd=$cmid&sid=$sid");
+    if($pet_state ==1){
+    $pet_change = $encode->encode("cmd=player_pet&pet_rest_id=$pet_id&pet_name=$pet_name&ucmd=$cmid&sid=$sid");
+    $pet_state_text = "战";
+    $pet_url = "<a href='?cmd=$pet_change'>休息</a>";
+    }else{
+    $pet_change = $encode->encode("cmd=player_pet&pet_fight_id=$pet_id&pet_name=$pet_name&ucmd=$cmid&sid=$sid");
+    $pet_state_text = "休";
+    $pet_url = "<a href='?cmd=$pet_change'>出战</a>";
+    }
+    $pet_detail_html .= <<<HTML
+<a href="?cmd=$pet_detail">{$i}.{$pet_name}({$pet_lvl})</a>({$pet_state_text}){$pet_url}<br/>
+HTML;
+}
+if(!$pet_detail_html){
+    $pet_detail_html = "你没有收养宠物。<br/>";
+}
+$pet_html = <<<HTML
+【我的宠物】<br/>
 ================<br/>
-兽栏：1/8<br/>
+$pet_detail_html
 ----------<br/>
+兽栏：{$player_now_pet_count}/{$player_max_pet_count}<br/>
 <a href="?cmd=$ret_game">返回游戏</a><br/>
 HTML;
 echo $pet_html;

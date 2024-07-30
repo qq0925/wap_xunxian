@@ -1132,6 +1132,29 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             // 替换字符串中的变量
                             //$input = str_replace("{{$match}}", $op, $input);
                             break;
+                        case 'pet':
+                            $attr3 = 'p'.$attr2;
+                            $sql = "SELECT * FROM system_pet_player WHERE pid = ?";
+                            $stmt = $db->prepare($sql);
+                            $stmt->bind_param("s", $mid);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            if (!$result) {
+                                die('查询失败: ' . $db->error);
+                            }
+                            $row = $result->fetch_assoc();
+                            if ($row == null||$row =='') {
+                                $op = 0; // 或其他默认值
+                                }else{
+                            $op = nl2br($row[$attr3]);
+                            if ($op === null||$op =='') {
+                            $op = "\"\""; // 或其他默认值
+                            }
+                                }
+                            $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                            // 替换字符串中的变量
+                            //$input = str_replace("{{$match}}", $op, $input);
+                            break;
                         case 'npc':
                             $attr3 = 'n'.$attr2;
                             if (is_numeric($mid)){

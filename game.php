@@ -1659,6 +1659,9 @@ echo $refresh_html;
         case 'player_pet'://宠物
             $ym = 'module_all/player_pet_list.php';
             break;
+        case 'player_petinfo'://宠物详情
+            $ym = 'module_all/player_pet_detail.php';
+            break;
         case 'player_skill'://技能
             $ym = 'module_all/player_skill.php';
             break;

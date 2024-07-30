@@ -24,18 +24,22 @@ $sql1 = "DROP TABLE IF EXISTS `system_pet_player`;";
 $sql2 = "CREATE TABLE `system_pet_player`  (
   `pnid` int(11) NOT NULL,
   `pid` int(11) NOT NULL AUTO_INCREMENT,
+  `pname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `pphoto` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `psid` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `plvl` int(11) NOT NULL,
+  `pmaxexp` int(255) NOT NULL,
   `pexp` int(255) NOT NULL,
   `php` int(255) NOT NULL,
   `pmaxhp` int(255) NOT NULL,
   `pgj` int(255) NOT NULL,
   `pfy` int(255) NOT NULL,
+  `pstate` int(1) NOT NULL,
   `phunger` int(3) NOT NULL,
   `pthirst` int(3) NOT NULL,
   `pmood` int(4) NOT NULL,
   PRIMARY KEY (`pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Compact;";
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Compact;";
 
 $stmt1 = $dblj->prepare($sql1);
 $stmt1->execute();

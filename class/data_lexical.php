@@ -64,6 +64,7 @@ function checkTriggerCondition($condition,$dblj=null,$sid,$oid=null,$mid=null) {
 }
 
 function attrsetting($input,$sid,$oid=null,$mid=null,$para=null){
+
     // 创建数据库连接
 $servername = "127.0.0.1";
 $username = "xunxian";
@@ -115,8 +116,6 @@ foreach ($keyValuePairs as $pair) {
         //     } else {
         //     echo "无法匹配到小数点 '.'<br/>";
         //     }
-            
-            
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         switch ($ele_1_1) {
@@ -175,6 +174,7 @@ foreach ($keyValuePairs as $pair) {
                 break;
             case 'o':
                 // 检查字段是否存在
+                
                 if(strpos($ele_1_2, "c_msg") === 0){
                     $sql = "select uname,uid from game1 where sid ='$oid'";
                     $result = $db->query($sql);
@@ -204,6 +204,16 @@ foreach ($keyValuePairs as $pair) {
                     $stmt->execute();
                     
                     }
+                elseif($oid =='pet'){
+                $reg = "p".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_pet_player LIKE '$reg'");
+
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_pet_player SET $reg = '$ele_2' WHERE psid = '$sid' and pid = $mid";
+                    $db->query($updateQuery);
+                }
+                }
                 else{
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
 
@@ -365,6 +375,18 @@ foreach ($keyValuePairs as $pair) {
                 echo "{$attr_name}+{$ele_2}<br/>";
                 }elseif($ele_2 <0 && $attr_name){
                 echo "{$attr_name}{$ele_2}<br/>";
+                }
+                break;
+            case 'o':
+                if($oid =='pet'){
+                $reg = "p".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_pet_player LIKE '$reg'");
+
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_pet_player SET $reg = $reg + '$ele_2' WHERE psid = '$sid' and pid = $mid";
+                    $db->query($updateQuery);
+                }
                 }
                 break;
             case 'g':
@@ -668,6 +690,85 @@ function taskschanging($input, $sid, $type, $oid = null, $mid = null, $para = nu
                         $deleteStmt = $db->prepare($deleteQuery);
                         $deleteStmt->bind_param("is", $pair, $sid);
                         $deleteResult = $deleteStmt->execute();
+                    }
+                    break;
+            }
+        }
+    }
+
+    return 1;
+}
+
+function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null){
+    // 创建数据库连接
+    $servername = "127.0.0.1";
+    $username = "xunxian";
+    $password = "123456";
+    $dbname = "xunxian";
+    $db = new mysqli($servername, $username, $password, $dbname);
+
+    // 使用逗号分割字符串
+    $keyValuePairs = explode(",", $input);
+    foreach ($keyValuePairs as $pair) {
+        if ($pair) {
+            $query = "SELECT nname,npet_event_id,nid FROM system_npc WHERE nid = ?";
+            $stmt = $db->prepare($query);
+            $stmt->bind_param("i", $pair);  // "i"表示绑定一个整数参数
+            $stmt->execute();
+            $stmt->bind_result($nname,$npet_event_id,$pet_root_id);  // 绑定结果到变量
+            $stmt->fetch();
+            $stmt->free_result();
+            switch ($type) {
+                case '1':
+                    // 检查收养数量是否超过最大数量，这里的8先写死
+                    $checkQuery = "SELECT * FROM system_pet_player WHERE psid = ?";
+                    $checkStmt = $db->prepare($checkQuery);
+                    $checkStmt->bind_param("s", $sid);
+                    $checkStmt->execute();
+                    $checkResult = $checkStmt->get_result();
+
+                    if ($checkResult->num_rows <= 8) {
+                        // 判断对应npc有无被收养事件，进行插入操作
+                        
+                        $insertQuery = "INSERT IGNORE INTO system_pet_player (pnid,pname, psid, plvl) VALUES (?,?,?,'1')";
+                        $insertStmt = $db->prepare($insertQuery);
+                        $insertStmt->bind_param("iss", $pet_root_id,$nname,$sid);
+                        $insertResult = $insertStmt->execute();
+                        $lastInsertedId = $db->insert_id;
+                        if($npet_event_id !=0){
+                        include_once 'events_steps_change.php';
+                        include 'pdo.php';
+                        events_steps_change($npet_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','pet',$lastInsertedId,$para);
+}
+                        if ($insertResult) {
+                            echo "收养了{$nname}<br/>";
+                        }
+                    }
+                    else{
+                        echo "收养{$nname}失败，可能数量已达上限!<br/>";
+                    }
+                    break;
+
+                case '2':
+                    // 检查字段是否存在
+                    $checkQuery = "SELECT * FROM system_pet_player WHERE psid = ? and pid = ? and pstate = 0";
+                    $checkStmt = $db->prepare($checkQuery);
+                    $checkStmt->bind_param("si", $sid,$pair);
+                    $checkStmt->execute();
+                    $checkResult = $checkStmt->get_result();
+
+                    if ($checkResult->num_rows > 0) {
+                        // 存在数据，进行删除操作
+                        $deleteQuery = "DELETE FROM system_pet_player WHERE pid = ? and psid = ?";
+                        $deleteStmt = $db->prepare($deleteQuery);
+                        $deleteStmt->bind_param("is", $pair, $sid);
+                        $deleteResult = $deleteStmt->execute();
+
+                        if ($deleteResult) {
+                            echo "放生了{$nname}<br/>";
+                        }
+                    } else {
+                        echo "你没有{$nname}或正在出战！<br/>";
                     }
                     break;
             }
