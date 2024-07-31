@@ -1455,6 +1455,13 @@ echo $refresh_html;
                 $ym = 'gm/gm_event_exec_self/game_event_pet_self.php';
             }
             break;
+        case 'game_event_pet':
+            if($pet_id){
+                $ym = 'gm/gm_event_exec/game_event_pet_2.php';
+            }else{
+                $ym = 'gm/gm_event_exec/game_event_pet.php';
+            }
+            break;
         case 'gm_post_4'://地图添加相关事件
             if($map_add_canshu == 1){
                 $sql = "INSERT INTO system_map (marea_name, mname, marea_id) VALUES ('$marea_name', '未命名', $qy_id)";

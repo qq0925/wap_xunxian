@@ -58,6 +58,8 @@ if($rows) {
     $event_cmmt2 = $rows['cmmt2'];
     $event_not_return_link = $rows['not_return_link'];
     $event_just_return = $rows['just_return'];
+    $event_a_adopt = $rows['a_adopt'];
+    $event_r_adopt = $rows['r_adopt'];
     $s_attrs_count = 0;
     if (!empty($rows['s_attrs'])) {
     $s_attrs_count = explode(',', $rows['s_attrs']);
@@ -106,6 +108,19 @@ if($rows) {
     $inputs_count = count($inputs_count);
 }
 
+    $a_adopt_count = 0;
+    if (!empty($rows['a_adopt'])) {
+    $a_adopt_count = explode(',', $rows['a_adopt']);
+    $a_adopt_count = count($a_adopt_count);
+}
+
+    $r_adopt_count = 0;
+    if (!empty($rows['r_adopt'])) {
+    $r_adopt_count = explode(',', $rows['r_adopt']);
+    $r_adopt_count = count($r_adopt_count);
+}
+
+
     $event_view_user_exp = $rows['view_user_exp'];
     $event_page_name = $rows['page_name'];
     $event_refresh_scene_npcs = $rows['refresh_scene_npcs'];
@@ -123,6 +138,8 @@ $gm_game_globaleventdefine_skilladd = $encode->encode("cmd=game_event_skilladd&s
 $gm_game_globaleventdefine_skillremove = $encode->encode("cmd=game_event_skillremove&step_belong_id=$event_belong&step_id=$event_id&sid=$sid");
 $gm_game_globaleventdefine_scenemove = $encode->encode("cmd=game_event_destsadd&step_belong_id=$event_belong&step_id=$event_id&sid=$sid");
 $gm_game_globaleventdefine_inputs = $encode->encode("cmd=game_event_inputs&step_belong_id=$event_belong&step_id=$event_id&sid=$sid");
+$gm_game_globaleventdefine_petadd = $encode->encode("cmd=game_event_pet&step_belong_id=$event_belong&step_id=$event_id&sid=$sid");
+
 
 $gm_html =<<<HTML
 <script type="text/javascript" src="js/auto_insert.js"></script>
@@ -152,8 +169,8 @@ $gm_html =<<<HTML
 触发任务:<a href="">修改(0)</a><br/>
 删除任务:<a href="">修改({$r_tasks_count})</a><br/>
 挑战人物:<a href="">增加</a><br/>
-收养宠物对象:<a href="">添加</a><br/>
-删除宠物对象:<a href="">添加</a><br/>
+收养宠物对象:<a href="?cmd=$gm_game_globaleventdefine_petadd">添加({$a_adopt_count})</a><br/>
+删除宠物对象:<a href="">添加({$r_adopt_count})</a><br/>
 移动目标:<a href="?cmd=$gm_game_globaleventdefine_scenemove">修改({$dests_count})</a><br/>
 查看玩家的ID表达式:<textarea name="view_user_exp" maxlength="4096" rows="4" cols="40">$event_view_user_exp</textarea><br/>
 显示页面模板:<input name="page_name" type="text" maxlength="20" value="$event_page_name"/><br/>

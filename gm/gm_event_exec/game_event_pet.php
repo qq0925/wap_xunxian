@@ -2,30 +2,30 @@
 
 if($delete_cmd ==1){
     echo "你删除了收养宠物！<br/>";
-    $query = "UPDATE system_event_evs_self SET a_adopt = '' WHERE `id` = :id and `belong` = :belong_id";
+    $query = "UPDATE system_event_evs SET a_adopt = '' WHERE `id` = :id and `belong` = :belong_id";
     $stmt = $dblj->prepare($query);
     $stmt->bindParam(':id', $step_id);
-    $stmt->bindParam(':belong_id', $event_id);
+    $stmt->bindParam(':belong_id', $step_belong_id);
     $stmt->execute();
 }
 
 if($pet_choose ==3){
     echo "你设置收养对方为宠物！<br/>";
-    $query = "UPDATE system_event_evs_self SET a_adopt = 'oppo' WHERE `id` = :id and `belong` = :belong_id";
+    $query = "UPDATE system_event_evs SET a_adopt = 'oppo' WHERE `id` = :id and `belong` = :belong_id";
     $stmt = $dblj->prepare($query);
     $stmt->bindParam(':id', $step_id);
-    $stmt->bindParam(':belong_id', $event_id);
+    $stmt->bindParam(':belong_id', $step_belong_id);
     $stmt->execute();
 }
 
 if($npc_id){
     $adopt_name = \player\getnpc($npc_id,$dblj)->nname;
     echo "你将{$adopt_name}设置为收养对象！<br/>";
-    $query = "UPDATE system_event_evs_self SET `a_adopt` = :adopt WHERE `id` = :id and `belong` = :belong_id";
+    $query = "UPDATE system_event_evs SET `a_adopt` = :adopt WHERE `id` = :id and `belong` = :belong_id";
     $stmt = $dblj->prepare($query);
     $stmt->bindParam(':adopt', $npc_id);
     $stmt->bindParam(':id', $step_id);
-    $stmt->bindParam(':belong_id', $event_id);
+    $stmt->bindParam(':belong_id', $step_belong_id);
     $stmt->execute();
 }
 
@@ -35,11 +35,11 @@ if($_POST['adopt']){
     if($try_result){
         $try_name = \player\getnpc($try_id,$dblj)->nname;
         echo "你将{$try_name}设置为收养对象！<br/>";
-        $query = "UPDATE system_event_evs_self SET `a_adopt` = :adopt WHERE `id` = :id and `belong` = :belong_id";
+        $query = "UPDATE system_event_evs SET `a_adopt` = :adopt WHERE `id` = :id and `belong` = :belong_id";
         $stmt = $dblj->prepare($query);
         $stmt->bindParam(':adopt', $try_result);
         $stmt->bindParam(':id', $step_id);
-        $stmt->bindParam(':belong_id', $event_id);
+        $stmt->bindParam(':belong_id', $step_belong_id);
         $stmt->execute();
     }else{
         echo "输入有误！不存在！<br/>";
@@ -47,10 +47,10 @@ if($_POST['adopt']){
     unset($pet_choose);
 }
 
-$query = "SELECT a_adopt FROM system_event_evs_self WHERE `id` = :id and `belong` = :belong_id";
+$query = "SELECT a_adopt FROM system_event_evs WHERE `id` = :id and `belong` = :belong_id";
 $stmt = $dblj->prepare($query);
 $stmt->bindParam(':id', $step_id);
-$stmt->bindParam(':belong_id', $event_id);
+$stmt->bindParam(':belong_id', $step_belong_id);
 $stmt->execute();
 
 // 获取结果
@@ -63,15 +63,15 @@ $adopt_text = \player\getnpc($step_a_adopt,$dblj)->nname??"无";
 }
 
 if($adopt_text!="无"){
-    $delete_adopt = $encode->encode("cmd=game_event_pet_self&delete_cmd=1&step_id=$step_id&event_id=$event_id&sid=$sid");
+    $delete_adopt = $encode->encode("cmd=game_event_pet&delete_cmd=1&step_id=$step_id&step_belong_id=$step_belong_id&sid=$sid");
     $adopt_text .= "<a href='?cmd=$delete_adopt'>删除</a>";
 }
 
 if(!$pet_choose||$pet_choose ==3){
-$pet_choose_1 = $encode->encode("cmd=game_event_pet_self&pet_choose=1&step_id=$step_id&event_id=$event_id&sid=$sid");
-$pet_choose_2 = $encode->encode("cmd=game_event_pet_self&pet_choose=2&step_id=$step_id&event_id=$event_id&sid=$sid");
-$pet_choose_3 = $encode->encode("cmd=game_event_pet_self&pet_choose=3&step_id=$step_id&event_id=$event_id&sid=$sid");
-$last_page = $encode->encode("cmd=gm_game_selfeventdefine_steps&step_id=$step_id&event_id=$event_id&sid=$sid");
+$pet_choose_1 = $encode->encode("cmd=game_event_pet&pet_choose=1&step_id=$step_id&step_belong_id=$step_belong_id&sid=$sid");
+$pet_choose_2 = $encode->encode("cmd=game_event_pet&pet_choose=2&step_id=$step_id&step_belong_id=$step_belong_id&sid=$sid");
+$pet_choose_3 = $encode->encode("cmd=game_event_pet&pet_choose=3&step_id=$step_id&step_belong_id=$step_belong_id&sid=$sid");
+$last_page = $encode->encode("cmd=gm_game_globaleventdefine_steps&step_id=$step_id&step_belong_id=$step_belong_id&sid=$sid");
 $pet_html = <<<HTML
 定义事件步骤的收养宠物对象<br/>
 收养宠物对象：{$adopt_text}<br/>
@@ -89,7 +89,7 @@ $cxallmap = \gm\getqy_all($dblj);
 $br = 0;
 
 if($post_canshu ==0){
-$last_page = $encode->encode("cmd=game_event_pet_self&step_id=$step_id&event_id=$event_id&sid=$sid");
+$last_page = $encode->encode("cmd=game_event_pet&step_id=$step_id&step_belong_id=$step_belong_id&sid=$sid");
 for ($i=0;$i<count($cxallmap);$i++){
     $qyname = $cxallmap[$i]['name'];
     $qy_id = $cxallmap[$i]['id'];
@@ -106,13 +106,13 @@ if (isset($_POST['kw'])) {
     $qy_id = $cxallmap[$i]['id'];
 }
   if($qy_id ==0){
-      $target_mid = $encode->encode("cmd=game_event_pet_self&event_id=$event_id&step_id=$step_id&post_canshu=1&qy_id=0&pet_choose=1&sid=$sid");
+      $target_mid = $encode->encode("cmd=game_event_pet&step_belong_id=$step_belong_id&step_id=$step_id&post_canshu=1&qy_id=0&pet_choose=1&sid=$sid");
         $no_area =<<<HTML
         <a href="?cmd=$target_mid" >未分区</a><br/>
 HTML;
   }elseif($qy_id !=0){
         $hangshu +=1;
-        $target_mid = $encode->encode("cmd=game_event_pet_self&event_id=$event_id&step_id=$step_id&post_canshu=1&qy_id=$qy_id&pet_choose=1&sid=$sid");
+        $target_mid = $encode->encode("cmd=game_event_pet&step_belong_id=$step_belong_id&step_id=$step_id&post_canshu=1&qy_id=$qy_id&pet_choose=1&sid=$sid");
         $map .=<<<HTML
         <a href="?cmd=$target_mid" >$hangshu.$qyname(a{$qy_id})</a><br/>
 HTML;
@@ -151,7 +151,7 @@ elseif($post_canshu ==1){
     // 计算总页数
     $totalPages = ceil($totalRows / $list_row);
     
-    $re_area = $encode->encode("cmd=game_event_pet_self&event_id=$event_id&step_id=$step_id&pet_choose=1&sid=$sid");
+    $re_area = $encode->encode("cmd=game_event_pet&step_belong_id=$step_belong_id&step_id=$step_id&pet_choose=1&sid=$sid");
     $hangshu = $offset;
     if(isset($qy_id)){
     $cxthe_qy = \gm\getqy($dblj,$qy_id);
@@ -163,7 +163,7 @@ elseif($post_canshu ==1){
         $npc_nname = $cxallnpc[$i]['nname'];
         $npc_nid = $cxallnpc[$i]['nid'];
         $qy_name = $cxallnpc[$i]['narea_name'];
-        $target_mid = $encode->encode("cmd=game_event_pet_self&event_id=$event_id&step_id=$step_id&qy_id=$qy_id&npc_id=$npc_nid&sid=$sid");
+        $target_mid = $encode->encode("cmd=game_event_pet&step_belong_id=$step_belong_id&step_id=$step_id&qy_id=$qy_id&npc_id=$npc_nid&sid=$sid");
         $npc_html .=<<<HTML
         <a href="?cmd=$target_mid">$hangshu.{$npc_nname}(n{$npc_nid})</a><br/>
 HTML;
@@ -171,14 +171,14 @@ HTML;
 }
 
 if ($currentPage > 2 && $currentPage == $totalPages) {
-    $main_page = $encode->encode("cmd=game_event_pet_self&event_id=$event_id&step_id=$step_id&qy_id=$qy_id&post_canshu=1&list_page=1&pet_choose=1&sid=$sid");
+    $main_page = $encode->encode("cmd=game_event_pet&step_belong_id=$step_belong_id&step_id=$step_id&qy_id=$qy_id&post_canshu=1&list_page=1&pet_choose=1&sid=$sid");
     $page_html .=<<<HTML
 <a href="?cmd=$main_page">首页</a>
 HTML;
 }
 if ($currentPage > 1) {
     $list_page = $currentPage -  1;
-    $main_page = $encode->encode("cmd=game_event_pet_self&event_id=$event_id&step_id=$step_id&qy_id=$qy_id&post_canshu=1&list_page=$list_page&pet_choose=1&sid=$sid");
+    $main_page = $encode->encode("cmd=game_event_pet&step_belong_id=$step_belong_id&step_id=$step_id&qy_id=$qy_id&post_canshu=1&list_page=$list_page&pet_choose=1&sid=$sid");
     $page_html .=<<<HTML
 <a href="?cmd=$main_page">上页</a>
 HTML;
@@ -186,7 +186,7 @@ HTML;
 
 if ($currentPage < $totalPages) {
     $list_page = $currentPage +  1;
-    $main_page = $encode->encode("cmd=game_event_pet_self&event_id=$event_id&step_id=$step_id&qy_id=$qy_id&post_canshu=1&list_page=$list_page&pet_choose=1&sid=$sid");
+    $main_page = $encode->encode("cmd=game_event_pet&step_belong_id=$step_belong_id&step_id=$step_id&qy_id=$qy_id&post_canshu=1&list_page=$list_page&pet_choose=1&sid=$sid");
     $page_html .=<<<HTML
 <a href="?cmd=$main_page">下页</a>
 HTML;
@@ -194,7 +194,7 @@ HTML;
 
 if ($totalPages > 2 && $currentPage < $totalPages-1) {
     $list_page = $totalPages;
-    $main_page = $encode->encode("cmd=game_event_pet_self&event_id=$event_id&step_id=$step_id&qy_id=$qy_id&post_canshu=1&list_page=$list_page&pet_choose=1&sid=$sid");
+    $main_page = $encode->encode("cmd=game_event_pet&step_belong_id=$step_belong_id&step_id=$step_id&qy_id=$qy_id&post_canshu=1&list_page=$list_page&pet_choose=1&sid=$sid");
     $page_html .=<<<HTML
 <a href="?cmd=$main_page">末页</a>
 HTML;
@@ -216,7 +216,7 @@ $pet_area
 HTML;
     //直接选择法的分支
 }elseif ($pet_choose ==2) {
-$last_page = $encode->encode("cmd=game_event_pet_self&step_id=$step_id&event_id=$event_id&sid=$sid");
+$last_page = $encode->encode("cmd=game_event_pet&step_id=$step_id&step_belong_id=$step_belong_id&sid=$sid");
 $pet_html = <<<HTML
 <p>请输入目标电脑人物id表达式<br/>
 </p>
