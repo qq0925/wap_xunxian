@@ -1306,6 +1306,58 @@ HTML;
     return $quick_url;
 }
 
+function self_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
+    $sql = "SELECT * from game1 where sid = '$sid'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $player_list = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $player_id_root = $player_list['uid'];
+    $player_nowmid = $player_list['nowmid'];
+    $player_name = $player_list['uname'];
+    $player_hp = $player_list['uhp'];
+    $player_maxhp = $player_list['umaxhp'];
+    $player_text =<<<HTML
+[{$player_name}]:({$player_hp}/{$player_maxhp})<br/>
+HTML;
+    if($cmd =="pve_fighting"){
+    $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = :sid";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $cut_hp = $row['total_cut_hp'];
+
+    if($cut_hp!=''){
+    $cut_hp = $cut_hp >=0?"-".$cut_hp:"+".$cut_hp;
+    $player_text =<<<HTML
+[{$player_name}]:({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
+HTML;
+    }
+    }
+    $sql = "SELECT * from system_pet_player where psid = :sid and pstate = 1";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if($row){
+    $pet_name = $row['pname'];
+    $pet_hp = $row['php'];
+    $pet_maxhp = $row['pmaxhp'];
+    if($pet_hp <=0){
+    $player_text .=<<<HTML
+[{$pet_name}]已经战死！<br/>
+HTML;
+    }else{
+    $player_text .=<<<HTML
+[{$pet_name}]:({$pet_hp}/{$pet_maxhp}){$cut_hp}<br/>
+HTML;
+}
+}
+    return $player_text;
+    
+}
+
 function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $sql = "SELECT * from system_npc_midguaiwu where nsid = '$sid'";
     $stmt = $dblj->prepare($sql);

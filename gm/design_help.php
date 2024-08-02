@@ -84,8 +84,8 @@ g：代表公共数据
 ！！！{u.is_pk}为1是pk
 ！！！{u.is_practice}为1是比武
 ！！！{u.is_polemical}为1是发起pk者
-！！！{u.callout_adopt_count}获得放出宠物的数量
-！！！{u.callout_adopt.n.xx}获得放出的第n个宠物的xx属性
+{u.callout_adopt.count}获得放出宠物的数量
+{u.callout_adopt.n.xx}获得放出的第n个宠物的xx属性
 ！！！{u.adopt_count}获得拥有宠物的数量
 ！！！{u.is_adopt}为1时表示是宠物
 关于宠物有一些内置属性可供取用(仅在宠物模板，npc被收养事件中生效):o.lvl(等级)，o.name(姓名)，o.nid(源npcid)，o.id(id)，o.photo(照片)，o.sid(拥有者sid)，o.exp,o.maxexp(经验，最大经验)，o.hp,o.maxhp(生命，最大生命)，o.gj(攻击)，o.fy(防御)，o.state(0为休息，1为出战状态)，o.hunger(当前饥饿值，一般最大500)，o.thirst(当前口渴值，一般最大500)，o.mood(当前心情值，一般最大1000)，放出状态下会每分钟扣除固定的饥饿值和口渴值，若饥饿和口渴有一个低于一半，则开始递增式递减每分钟心情值扣除，反之则会递增式递增每分钟心情值增加，到达最大值后心情值不再增长。

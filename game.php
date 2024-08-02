@@ -2983,7 +2983,7 @@ echo $refresh_html;
         // flush();
         }
         
-        if ($minute>=$system_offline_time &&$player->uis_designer==0 &&$system_offline_time !=0){
+        if ($minute>=$system_offline_time &&$player->uis_designer==0 &&$system_offline_time !=0||$player->sfzx==0){
             //单位是秒
             echo '<meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">';
             echo "【哎呀！你好像进入了虚无领域!】<br/>".$player->uname."离线时间过长，请重新登陆";

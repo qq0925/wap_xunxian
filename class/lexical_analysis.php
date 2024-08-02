@@ -903,6 +903,116 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                     }
+                    }elseif(strpos($attr2, "callout_adopt.") === 0){
+                    $attr3 = substr($attr2, 14); // 提取 "callout_adopt." 后面的部分
+                    if (strpos($attr3, 'count') === 0) {
+                        $sql = "SELECT COUNT(*) as total_callout FROM system_pet_player WHERE pstate =  1 and psid = ?";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param("s",$sid);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        $op = $row["total_callout"];
+                        if(!$op){
+                            $op = 0;
+                        }
+                        $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                    }
+                    elseif(preg_match('/^(\d+\.)?(.*)/', $attr3, $matches)){
+                        $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
+                        $pet_pos = rtrim($prefix, ".");
+                        $attr4 = $matches[2]; // 匹配到的剩余部分
+                        // SQL 查询语句
+                        $sql = "SELECT pid FROM system_pet_player WHERE psid = ? ORDER BY pid";
+
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param("s",$sid);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+
+                        if ($result->num_rows > 0) {
+                            // 初始化数组
+                            $idArray = array();
+                        
+                            // 将查询结果存入数组
+                            while ($row = $result->fetch_assoc()) {
+                                $idArray[] = $row["pid"];
+                            }
+                        }
+                        $pet_pos = $idArray[$pet_pos];
+
+                        $fid = $attr4;
+                        
+                        if (strpos($attr4, 'cut_hp') === 0){
+                        $attr5 = substr($attr4, 6); // 提取 "embed." 后面的部分
+                        if(preg_match('/^(\d+\.)?(.*)/', $attr5, $matches)){
+                        $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
+                        $mosaic_pos = rtrim($prefix, ".");
+                        
+                        $attr6 = $matches[2]; // 匹配到的剩余部分
+                        }
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$op'";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        $mosaic_list = $row['equip_mosaic'];
+                        $mosaic_para = explode('|',$mosaic_list);
+                        if(!$mosaic_para[$mosaic_pos]){
+                            $op = 0;
+                        }else{
+                        $mosaic_id = $mosaic_para[$mosaic_pos];
+                        $xid = "i".$attr6;
+                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mosaic_id')";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if ($row === null||$row =='') {
+                            $op = 0; // 或其他默认值
+                        }else{
+                            $op = nl2br($row[$xid]);
+                        }
+                        }
+                        //镶物属性相关
+                        }else{
+                        $pid = "p".$fid;
+                        $sql = "SELECT * FROM system_pet_player WHERE pid = '$pet_pos'";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        
+                        if ($row === null||$row =='') {
+                            $op = 0; // 或其他默认值
+                        }else{
+                            $op = nl2br($row[$pid]);
+                        }
+                        }
+                        
+                        $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                    }
                     }else{
                     $attr3 = $attr1.$attr2;
                     $attr3 = str_replace('.', '', $attr3);
