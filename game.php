@@ -367,7 +367,7 @@ echo $refresh_html;
             $dblj->exec($sql);
             // 清空所有临时变量
             $dblj->exec("DELETE from player_temp_attr where obj_id = '$sid'");
-            echo '正在进入游戏...';
+            echo '正在进入游戏...<br/>';
             $refresh_html =<<<HTML
             <meta http-equiv="refresh" content="1;URL=?cmd=$gofirst">
 HTML;
