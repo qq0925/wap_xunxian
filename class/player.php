@@ -136,6 +136,35 @@ $attr_value = $row['attr_value'];
 return $attr_value;
 }
 
+function update_message_sql($sid,$dblj,$input,$view_type=null){
+    $nowdate = date('Y-m-d H:i:s');
+    $imuid = getplayer($sid,$dblj)->uid;
+    
+    $input = htmlspecialchars($input);
+    if($view_type){
+    $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time,viewed) values('系统信息','$input',0,{$imuid},1,'$nowdate',1)";
+    }else{
+    $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('系统信息','$input',0,{$imuid},1,'$nowdate')";
+    }
+    $dblj->exec($sql);
+
+}
+
+function put_system_message_sql($uid,$dblj){
+$sql = "SELECT msg,id FROM system_chat_data where uid = 0 and imuid = '$uid' and viewed = 0  ORDER BY id DESC";//系统未读信息获取
+$ltcxjg = $dblj->query($sql);
+$lthtml='';
+if ($ltcxjg){
+    $ret = $ltcxjg->fetchAll(\PDO::FETCH_ASSOC);
+    for ($i=0;$i < count($ret);$i++){
+        $umsg = $ret[$i]['msg'];
+        $mid = $ret[$i]['id'];
+        echo $umsg."<br/>";
+        $dblj->exec("update system_chat_data set viewed = 1 where id = '$mid'");
+    }
+}
+}
+
 function update_temp_attr($obj_id,$attr_name,$obj_type,$dblj,$op_type,$change_value){
 if($op_type==1){
         //设属

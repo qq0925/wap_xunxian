@@ -318,6 +318,7 @@ foreach ($keyValuePairs as $pair) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
         //$parts = explode(".", $ele_1);
+        $old_sid = $sid;
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
             $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
@@ -331,6 +332,12 @@ foreach ($keyValuePairs as $pair) {
                 $temp_sid = $row['sid'];
                 $sid = $temp_sid;
             }
+            if($old_sid ==$sid){
+                $echo_type = "self";
+            }else{
+                $echo_type = "other";
+            }
+            unset($old_sid);
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
         $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
@@ -371,10 +378,25 @@ foreach ($keyValuePairs as $pair) {
                     $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$sid')";
                     $db->query($alterQuery);
                 }
+                include "pdo.php";
+                if($echo_type !="self"){
                 if($ele_2 >=0 && $attr_name){
-                echo "{$attr_name}+{$ele_2}<br/>";
+                $echo_mess =  "{$attr_name}+{$ele_2}";
+                \player\update_message_sql($sid,$dblj,$echo_mess);
                 }elseif($ele_2 <0 && $attr_name){
-                echo "{$attr_name}{$ele_2}<br/>";
+                $echo_mess =  "{$attr_name}{$ele_2}";
+                \player\update_message_sql($sid,$dblj,$echo_mess);
+                }
+                }else{
+                if($ele_2 >=0 && $attr_name){
+                $echo_mess =  "{$attr_name}+{$ele_2}";
+                echo $echo_mess."<br/>";
+                \player\update_message_sql($sid,$dblj,$echo_mess,1);
+                }elseif($ele_2 <0 && $attr_name){
+                $echo_mess =  "{$attr_name}{$ele_2}";
+                echo $echo_mess."<br/>";
+                \player\update_message_sql($sid,$dblj,$echo_mess,1);
+                }
                 }
                 break;
             case 'o':

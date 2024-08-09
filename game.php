@@ -2993,6 +2993,7 @@ echo $refresh_html;
             header("refresh:1;url=index.php");
             exit();
         }else{
+            \player\put_system_message_sql($player->uid,$dblj);
             $sql = "update game1 set endtime='$nowdate',sfzx=1 WHERE sid='$sid'";
             $dblj->exec($sql);
         }

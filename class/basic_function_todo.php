@@ -1129,10 +1129,8 @@ if ($ltcxjg){
         $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
         if($uid){
             $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
-        }else{
-            $lthtml .="[<span style='color: orangered;'>$uname</span>]:{$umsg}<span class='txt-fade'>[{$send_time}]</span><br/>";
+            $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }
-        $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }elseif(!$uid && $chat_type == 0&&$minute <10){
             $lthtml .="[<span style='color: orangered;'>公共</span>]<div class='hpys' style='display: inline'>$uname:</div>$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
         }
