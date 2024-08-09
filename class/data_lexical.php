@@ -310,15 +310,15 @@ $db = new mysqli($servername, $username, $password, $dbname);
 
 // 使用逗号分割字符串
 $keyValuePairs = explode(",", $input);
-
+$old_sid = $sid;
 foreach ($keyValuePairs as $pair) {
+$sid = $old_sid;
     // 找到第一个等号的位置
     $firstEqualsPos = strpos($pair, '=');
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
         //$parts = explode(".", $ele_1);
-        $old_sid = $sid;
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
             $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
