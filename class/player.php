@@ -1353,6 +1353,13 @@ function getfightpara($sid,$dblj){
     return $row;
 }
 
+function getpet_fight($sid,$dblj){
+    $sql = "SELECT * from system_pet_player where psid = '$sid' and php >0 and pstate = 1";
+    $result = $dblj->query($sql);
+    $row = $result->fetchAll(\PDO::FETCH_ASSOC);
+    return $row;
+}
+
 
 class getbasicgmdata{
     var $skill_count;

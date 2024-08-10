@@ -312,8 +312,8 @@ $db = new mysqli($servername, $username, $password, $dbname);
 $keyValuePairs = explode(",", $input);
 $old_sid = $sid;
 foreach ($keyValuePairs as $pair) {
-$sid = $old_sid;
     // 找到第一个等号的位置
+$sid = $old_sid;
     $firstEqualsPos = strpos($pair, '=');
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
@@ -337,7 +337,6 @@ $sid = $old_sid;
             }else{
                 $echo_type = "other";
             }
-            unset($old_sid);
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
         $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
@@ -733,11 +732,11 @@ function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null
     $keyValuePairs = explode(",", $input);
     foreach ($keyValuePairs as $pair) {
         if ($pair) {
-            $query = "SELECT nname,npet_event_id,nid FROM system_npc WHERE nid = ?";
+            $query = "SELECT nname,npet_event_id,nid,nskills FROM system_npc WHERE nid = ?";
             $stmt = $db->prepare($query);
             $stmt->bind_param("i", $pair);  // "i"表示绑定一个整数参数
             $stmt->execute();
-            $stmt->bind_result($nname,$npet_event_id,$pet_root_id);  // 绑定结果到变量
+            $stmt->bind_result($nname,$npet_event_id,$pet_root_id,$pet_default_skills);  // 绑定结果到变量
             $stmt->fetch();
             $stmt->free_result();
             switch ($type) {
@@ -752,11 +751,24 @@ function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null
                     if ($checkResult->num_rows <= 8) {
                         // 判断对应npc有无被收养事件，进行插入操作
                         
-                        $insertQuery = "INSERT IGNORE INTO system_pet_player (pnid,pname, psid, plvl) VALUES (?,?,?,'1')";
+                        $insertQuery = "INSERT IGNORE INTO system_pet_player (pnid,pname, psid, plvl,php,pmaxhp) VALUES (?,?,?,'1','1','1')";
                         $insertStmt = $db->prepare($insertQuery);
                         $insertStmt->bind_param("iss", $pet_root_id,$nname,$sid);
                         $insertResult = $insertStmt->execute();
                         $lastInsertedId = $db->insert_id;
+                        
+                        if($pet_default_skills){
+                        $pet_default_skills_para = explode(',',$pet_default_skills);
+                        foreach ($pet_default_skills_para as $pet_default_skills_one){
+                            $pet_default_skill = explode('|',$pet_default_skills_one);
+                            $pet_default_skill_id = $pet_default_skill[0];
+                            $insertQuery = "INSERT IGNORE INTO system_skill_user (jsid,jid,jlvl, jpid) VALUES (?,?,1,?)";
+                            $insertStmt = $db->prepare($insertQuery);
+                            $insertStmt->bind_param("sii",$sid, $pet_default_skill_id,$lastInsertedId);
+                            $insertResult = $insertStmt->execute();
+                        }
+                        }
+                        
                         if($npet_event_id !=0){
                         include_once 'events_steps_change.php';
                         include 'pdo.php';

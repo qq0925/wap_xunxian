@@ -14,6 +14,25 @@
         $stmt->execute();
     }
 
+    // 检查表是否存在 jpid 字段
+    $sql = "SHOW COLUMNS FROM system_skill_user LIKE 'jpid'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$column) {
+        // 如果 jpid 字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE system_skill_user ADD COLUMN jpid INT(11) DEFAULT 0 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $sql = "ALTER TABLE game2 ADD COLUMN pid INT(11) DEFAULT 0 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $sql = "ALTER TABLE game3 ADD COLUMN pid INT(11) DEFAULT 0 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
     $sql = "SHOW COLUMNS FROM system_pet_player LIKE 'pnid'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
@@ -156,6 +175,5 @@ AFTER nwin_event_id ;";
         $sql = "insert into system_function (belong,id,name,link_function,default_value) values (6,78,'装备核心列表',78,'装备核心列表')";
         $dblj->exec($sql);
     }
-    
     
 ?>

@@ -10,11 +10,21 @@ include_once 'class/global_event_step_change.php';
 $parents_page = $currentFilePath;
 
 $player = \player\getplayer($sid,$dblj);
+$pet = \player\getpet_fight($sid,$dblj);
 $clmid = player\getmid($player->nowmid,$dblj);
 $fight_arr = player\getfightpara($sid,$dblj);
 
-$ngid = "";
 
+$npid = "";
+//此变量用于获取你所战斗的仍然活着的宠物基本属性
+$fight_pet_count = @count($pet);
+for($i=0;$i<$fight_pet_count;$i++){
+    $fight_pid = $pet[$i]['pid'];
+    $npid .=$fight_pid.",";
+}
+$npid = rtrim($npid,',');
+
+$ngid = "";
 //此变量用于获取你所战斗的仍然活着的怪物基本属性
 $fight_arr_count = @count($fight_arr);
 for($i=0;$i<$fight_arr_count;$i++){
@@ -112,6 +122,13 @@ if($cmd=='pve_fight'){
     }
     }
 }
+
+    //宠物伤害逻辑
+    
+    if($npid){
+    \lexical_analysis\hurt_calc(null,$sid,$ngid,3,$dblj,$npid);//宠对怪的伤害
+    }
+
     \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }elseif($qtype ==2){
     $busy = \player\get_temp_attr($sid,'busy',1,$dblj);
@@ -147,6 +164,11 @@ if($cmd=='pve_fight'){
     echo "你的{$use_item_name}已耗尽！<br/>";
     }
     }
+    }
+    
+    //宠物伤害逻辑
+    if($npid){
+    \lexical_analysis\hurt_calc(null,$sid,$ngid,3,$dblj,$npid);//宠对怪的伤害
     }
     \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }
