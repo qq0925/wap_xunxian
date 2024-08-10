@@ -622,7 +622,8 @@ echo $refresh_html;
                         $ym = 'module_all/liaotian.php';
                         break;
                     case "im":
-                        if ($player->uname!='' &&$player->uid !=$imuid){
+                        $check_uid = \player\getplayer(null,$dblj,$imuid)->uid;
+                        if ($player->uname!='' &&$player->uid !=$imuid &&$check_uid){
                             $ltmsg = htmlspecialchars($ltmsg);
                                 $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','$ltmsg',$player->uid,{$imuid},1,'$nowdate')";
                             $cxjg = $dblj->exec($sql);
@@ -631,7 +632,7 @@ echo $refresh_html;
                             echo "发送成功!"."你对对方说：".$ltmsg."<br/>";
                             $ym = 'module_all/scene_oplayer_detail.php';
                         }else{
-                            echo "发送失败！<br/>";
+                            echo "发送失败！用户不存在！<br/>";
                             $ltlx = 'im';
                             $ym = 'module_all/liaotian.php';
                         }
