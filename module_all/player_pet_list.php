@@ -10,11 +10,15 @@ if($pet_rest_id){
     echo "你收回了{$pet_name}。<br/>";
     $dblj->exec("update system_pet_player set pstate = 0 where psid = '$sid' and pid = '$pet_rest_id'");
 }
-$player_now_pet_count=1;
-$player_max_pet_count=8;
 
 $pet_para = \gm\get_pet_list($dblj,$sid);
 $ret_game = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+
+$player_now_pet_count=count($pet_para);
+$player_callout_max_pet_count= \player\getgameconfig($dblj)->pet_max_count;
+$player_max_pet_count = 8;//默认最大收养8个
+
+
 
 for($i=1;$i<count($pet_para) + 1;$i++){
     $pet_id = $pet_para[$i-1]['pid'];
