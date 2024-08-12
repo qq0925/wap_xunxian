@@ -67,6 +67,7 @@ $map_shop_item_count = 0;
 
 $nowdate = date('Y-m-d H:i:s');
 if ($update ==1){
+    echo "更新成功！<br/>";
     //$excludeFields = ['mname', 'mop_target', 'mid', 'mup', 'mdown', 'mleft', 'mright'];
     $sql = "update system_map set mgtime='$nowdate' WHERE mid='$player->nowmid'";
     $dblj->exec($sql);
@@ -79,12 +80,13 @@ if ($update ==1){
         if (count($parts) === 2||count($parts) === 3) {
             $id = $parts[0];
             $npc_count = $parts[1];
+            $npc_show_cond = $parts[2];
             $npc_count = \lexical_analysis\process_string($npc_count,$sid);
             $npc_count = \lexical_analysis\process_string($npc_count,$sid);
             @$npc_count = eval("return $npc_count;");
             
             // 更新处理后的值
-            $npc_a = "$id|$npc_count";
+            $npc_a = "$id|$npc_count|$npc_show_cond";
         }
     }
     // 将处理后的数据重新组合成字符串

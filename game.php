@@ -556,7 +556,8 @@ echo $refresh_html;
             break;
         case 'pve_fight'://打怪事件,一次打一个
             $player = \player\getplayer($sid,$dblj);
-            
+            $pet = \player\getpet_fight($sid,$dblj);
+            $pid = $pet[0]['pid'];
             if($auto_canshu ==1){
                 \player\changeplayersx('uauto_fight',1,$sid,$dblj);
             }elseif($auto_canshu ==2){
@@ -566,6 +567,10 @@ echo $refresh_html;
             $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
             $dblj->exec($sql);
             $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";
+            $dblj->exec($sql);
+            $sql = "insert into game2(sid,gid,pid) values ('$sid','$ngid','$pid')";
+            $dblj->exec($sql);
+            $sql = "insert into game3(sid,gid,pid) values ('$ngid','$sid','$pid')";
             $dblj->exec($sql);
             }
             \player\changeplayersx('uis_pve',1,$sid,$dblj);

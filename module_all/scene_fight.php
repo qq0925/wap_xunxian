@@ -302,6 +302,7 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
             战斗胜利！<br/>
             你打死了{$alive_monster->nname}<br/>
             你生命：({$player->uhp}/{$player->umaxhp})<br/>
+            $pets
             $huode
             $rwts
             =========<br/>

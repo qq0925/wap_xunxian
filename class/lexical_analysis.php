@@ -307,7 +307,7 @@ $attack_gid_para = $attack_gid_root."|".$attack_gid;
 // global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
 
 $hurt_cut = process_string_3($p_hurt_exp,$pid,$attack_gid,$pets_skills,$sid,null,1);
-var_dump($hurt_cut);
+
 
 $hurt_cut = @eval("return $hurt_cut;"); // 计算 eval 表达式的结果
 $hurt_cut = (int)floor($hurt_cut);
@@ -317,9 +317,10 @@ $dblj->exec($sql);
 $sql = "update game2 set hurt_hp = hurt_hp + {$hurt_cut} where gid = '$attack_gid'";
 $dblj->exec($sql);
 
-//$j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc',$attack_gid_para);
-//$sql = "update game2 set fight_umsg = '$j_umsg' where sid = '$sid'";
-//$cxjg = $dblj->exec($sql);
+$p_umsg = \lexical_analysis\process_string_3($p_umsg,$pid,$attack_gid,$pets_skills,$sid,null,1);
+
+$sql = "update game2 set fight_umsg = '$p_umsg' where sid = '$sid' and gid = '$attack_gid' and pid = '$pid'";
+$cxjg = $dblj->exec($sql);
 
 
 }
@@ -348,9 +349,10 @@ $dblj->exec($sql);
 $sql = "update game2 set hurt_hp = hurt_hp + {$hurt_cut} where gid = '$attack_gid'";
 $dblj->exec($sql);
 
-//$j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc',$attack_gid_para);
-//$sql = "update game2 set fight_umsg = '$j_umsg' where sid = '$sid' and gid = '$attack_gid'";
-//$cxjg = $dblj->exec($sql);
+$p_umsg = \lexical_analysis\process_string_3($p_umsg,$pid,$attack_gid,$pets_skills,$sid,null,1);
+
+$sql = "update game2 set fight_umsg = '$p_umsg' where sid = '$sid' and gid = '$attack_gid' and pid = '$pid'";
+$cxjg = $dblj->exec($sql);
 
 }
 }

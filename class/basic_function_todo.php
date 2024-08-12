@@ -1348,7 +1348,7 @@ HTML;
 HTML;
     }else{
     $player_text .=<<<HTML
-[{$pet_name}]:({$pet_hp}/{$pet_maxhp}){$cut_hp}<br/>
+[{$pet_name}]:({$pet_hp}/{$pet_maxhp}){$pcut_hp}<br/>
 HTML;
 }
 }
@@ -1438,7 +1438,7 @@ function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $monster_nowmid = $monster_list[$i]['nmid'];
 
     if($cmd =="pve_fighting"){
-    $sql = "SELECT * from game2 where sid = :sid and gid = :gid";
+    $sql = "SELECT * from game2 where sid = :sid and gid = :gid AND pid = 0";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
@@ -1447,6 +1447,17 @@ function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     if($row['fight_umsg']){
     $fight_umsg .= $row['fight_umsg']."<br/>";
     }
+    
+    $sql = "SELECT * from game2 where sid = :sid and gid = :gid AND pid != 0";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
+    $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if($row['fight_umsg']){
+    $fight_umsg .= $row['fight_umsg']."<br/>";
+    }
+    
     }
 }
     return $fight_umsg;
