@@ -352,6 +352,7 @@ for ($i = 1; $i <= $map_x; $i++) {
 HTML;
 }
 $map_out = $encode->encode("cmd=gm_post_4&out_canshu=1&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
+$map_in = $encode->encode("cmd=gm_post_4&in_canshu=1&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
 $map_add = $encode->encode("cmd=gm_post_4&map_add_canshu=1&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
 $map_add_batch = $encode->encode("cmd=gm_post_4&add_batch=1&post_canshu=2&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
 $npc_add_batch = $encode->encode("cmd=gm_post_4&add_batch=1&canshu=1&post_canshu=4&qy_id=$qy_id&sid=$sid");
@@ -416,6 +417,7 @@ if($list_page){
 }
 $allmap = <<<HTML
 <a href="?cmd=$map_out" >导出{$marea_name}场景->excel</a><br/>
+<a href="?cmd=$map_in" >导入{$marea_name}场景<-excel</a><br/>
 [地图设计]<br/>
 {$marea_name}(a{$qy_id})区域的场景：<br/>
 $map

@@ -1488,6 +1488,8 @@ echo $refresh_html;
             $ym = 'gm/gm_map_2.php';
                 }elseif($out_canshu ==1){
             $ym = 'gm/gm_map/map_data_out.php';
+                }elseif($in_canshu ==1){
+            $ym = 'gm/gm_map/map_data_in.php';
                 }else{
             $ym = 'gm/gm_map_3.php';
             }
