@@ -4,6 +4,7 @@ require_once 'class/encode.php';//导入加密算法模块
 require_once 'class/gm.php';//导入后台管理员模块
 
 
+$dblj = DB::pdo();
 $encode = new \encode\encode();//创建一个名为 $encode 的新对象，并使用命名空间 \encode\encode() 实例化该对象。
 $a = '';
 $gm_post = new \gm\gm();//同上encode的理

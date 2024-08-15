@@ -2,16 +2,18 @@
 require_once 'lexical_analysis.php';
 require_once 'data_lexical.php';
 require_once 'event_data_get.php';
-require_once 'pdo.php';
+require_once dirname(__DIR__) . '/pdo.php';
 
-$parents_cmd = \player\getplayer($sid,$dblj)->ulast_cmd;
-if(!$para){
-global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$parents_page,$oid,$mid,$para);
-}else {
+$dblj = DB::pdo();
+
+$parents_cmd = \player\getplayer($sid, $dblj)->ulast_cmd;
+if (!$para) {
+    global_events_steps_change($target_event, $sid, $dblj, $just_page, $steps_page, $cmid, $parents_page, $oid, $mid, $para);
+} else {
     $input_value = $_POST['value'];
     $sql = "insert into system_player_inputs(sid,event_id,id,value)values('$sid','$target_event','$id','$input_value')";
     $dblj->exec($sql);
-global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$parents_page,null,null,$para);
+    global_events_steps_change($target_event, $sid, $dblj, $just_page, $steps_page, $cmid, $parents_page, null, null, $para);
 }
 function global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$cmid,$parents_page,$oid=null,$mid=null,$para=null){
                 //事件逻辑

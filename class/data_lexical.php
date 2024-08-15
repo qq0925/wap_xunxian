@@ -1,15 +1,12 @@
 <?php
 require_once 'lexical_analysis.php';
 require_once 'encode.php';
+require_once 'pdo.php';
 // 在用户登录时，检查是否有其他设备已登录，并强制其下线
 
 
 function check_if_logged($sid){
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
     $query = "SELECT session_id FROM user_sessions WHERE sid = ? and is_active = 1";
     $stmt = $db->prepare($query);
     $stmt->bind_param("s", $sid);
@@ -26,11 +23,7 @@ function check_if_logged($sid){
 
 
 function login($sid, $sessionId,$deviceInfo) {
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
 
     // 在 user_sessions 表中记录当前会话
     $insertQuery = "INSERT INTO user_sessions (sid, session_id, is_active,device_info) VALUES (?, ?, 1,?)";
@@ -41,11 +34,7 @@ function login($sid, $sessionId,$deviceInfo) {
 
 // 在用户退出登录时，标记会话为无效
 function logout($sid) {
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
     // 假设已经连接到数据库 $db
     $updateQuery = "UPDATE user_sessions SET is_active = 0 WHERE sid = ?";
     $updateStmt = $db->prepare($updateQuery);
@@ -66,11 +55,7 @@ function checkTriggerCondition($condition,$dblj=null,$sid,$oid=null,$mid=null) {
 function attrsetting($input,$sid,$oid=null,$mid=null,$para=null){
 
     // 创建数据库连接
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
+$db = DB::conn();
 
 // 使用逗号分割字符串
 $keyValuePairs = explode(",", $input);
@@ -302,11 +287,7 @@ return 1;
 
 function attrchanging($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
+$db = DB::conn();
 
 // 使用逗号分割字符串
 $keyValuePairs = explode(",", $input);
@@ -479,11 +460,7 @@ return 1;
 
 function itemchanging($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
 
 //做负重判断
 
@@ -586,12 +563,7 @@ return 1;
 }
 
 function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = null){
-    // 创建数据库连接
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
 
     // 使用逗号分割字符串
     $keyValuePairs = explode(",", $input);
@@ -664,11 +636,7 @@ function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = n
 
 function taskschanging($input, $sid, $type, $oid = null, $mid = null, $para = null){
     // 创建数据库连接
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
 
     // 使用逗号分割字符串
     $keyValuePairs = explode(",", $input);
@@ -722,11 +690,7 @@ function taskschanging($input, $sid, $type, $oid = null, $mid = null, $para = nu
 
 function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null){
     // 创建数据库连接
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
 
     // 使用逗号分割字符串
     $keyValuePairs = explode(",", $input);
@@ -815,11 +779,7 @@ function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null
 function destsing($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
 global $encode;
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
 
 $mid = \lexical_analysis\process_string($input,$sid);
 $sql = "SELECT COUNT(*) AS count FROM system_map WHERE mid = ?";
