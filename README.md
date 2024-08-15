@@ -9,6 +9,7 @@ php7.4(必选。低版本不支持部分函数，高版本部分函数弃用直�
 
 
 其中，下载后将configs_example.php重命名为configs.php
+
 使用前必须导入数据库：xunxian.sql，
 数据库的配置如下
 表名：xunxian
