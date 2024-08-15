@@ -24,10 +24,10 @@ DROP TABLE IF EXISTS `forum_res`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `forum_res` (
-  `belong` varchar(255) NOT NULL,
-  `sid` text NOT NULL,
-  `created_time` datetime NOT NULL,
-  `content` text NOT NULL
+  `belong` varchar(255) NOT NULL DEFAULT '',
+  `sid` varchar(255) NOT NULL DEFAULT '',
+  `created_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `content` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -49,11 +49,11 @@ DROP TABLE IF EXISTS `forum_text`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `forum_text` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `sid` text NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `content` text NOT NULL,
-  `response_count` int(11) NOT NULL,
-  `view_count` int(11) NOT NULL,
+  `sid` varchar(255) NOT NULL DEFAULT '',
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `content` text,
+  `response_count` int(11) NOT NULL DEFAULT 0,
+  `view_count` int(11) NOT NULL DEFAULT 0,
   `created_time` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -82,10 +82,10 @@ CREATE TABLE `game1` (
   `ucmd` text DEFAULT NULL COMMENT '//当前页面cmd',
   `ulast_cmd` text DEFAULT NULL COMMENT '//最后页面cmd',
   `uphone` varchar(11) NOT NULL DEFAULT '',
-  `sid` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `token` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `sid` varchar(255) DEFAULT '',
+  `token` varchar(255) DEFAULT '',
   `utran_state` int(11) NOT NULL DEFAULT 0 COMMENT '交易状态，0未交易，1正在进行交易请求确认，2正在交易',
-  `uname` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `uname` text DEFAULT NULL,
   `uimage` varchar(255) NOT NULL DEFAULT '',
   `unick_name` text DEFAULT NULL,
   `ulvl` int(10) unsigned NOT NULL DEFAULT 1,
@@ -120,7 +120,7 @@ CREATE TABLE `game1` (
   `cw` int(11) NOT NULL DEFAULT 0,
   `ispvp` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=gb2312 COLLATE=gb2312_chinese_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,8 +195,8 @@ DROP TABLE IF EXISTS `game4`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game4` (
-  `sid` text NOT NULL,
-  `device_agent` text NOT NULL
+  `sid` varchar(255) NOT NULL DEFAULT '',
+  `device_agent` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -218,7 +218,7 @@ DROP TABLE IF EXISTS `game_equip_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_equip_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -249,7 +249,7 @@ DROP TABLE IF EXISTS `game_function_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_function_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -280,7 +280,7 @@ DROP TABLE IF EXISTS `game_item_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_item_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -311,7 +311,7 @@ DROP TABLE IF EXISTS `game_main_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_main_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT '0',
@@ -342,7 +342,7 @@ DROP TABLE IF EXISTS `game_npc_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_npc_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -373,7 +373,7 @@ DROP TABLE IF EXISTS `game_oplayer_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_oplayer_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -404,7 +404,7 @@ DROP TABLE IF EXISTS `game_pet_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_pet_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -434,7 +434,7 @@ DROP TABLE IF EXISTS `game_player_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_player_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -465,7 +465,7 @@ DROP TABLE IF EXISTS `game_pve_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_pve_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -496,7 +496,7 @@ DROP TABLE IF EXISTS `game_scene_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_scene_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -527,7 +527,7 @@ DROP TABLE IF EXISTS `game_self_page_HP_lift_1`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_self_page_HP_lift_1` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -558,7 +558,7 @@ DROP TABLE IF EXISTS `game_self_page_HW003`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_self_page_HW003` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -589,7 +589,7 @@ DROP TABLE IF EXISTS `game_self_page_bounty_01`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_self_page_bounty_01` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -620,7 +620,7 @@ DROP TABLE IF EXISTS `game_self_page_tent`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_self_page_tent` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -651,7 +651,7 @@ DROP TABLE IF EXISTS `game_self_page_test`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_self_page_test` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -682,7 +682,7 @@ DROP TABLE IF EXISTS `game_self_page_vip`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_self_page_vip` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -713,7 +713,7 @@ DROP TABLE IF EXISTS `game_skill_page`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_skill_page` (
-  `position` int(4) NOT NULL,
+  `position` int(4) NOT NULL DEFAULT 0,
   `id` int(255) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT '1',
   `show_cond` varchar(255) DEFAULT NULL,
@@ -744,8 +744,8 @@ DROP TABLE IF EXISTS `global_data`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `global_data` (
-  `gid` varchar(255) NOT NULL,
-  `gvalue` text NOT NULL
+  `gid` varchar(255) NOT NULL DEFAULT '',
+  `gvalue` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -768,14 +768,14 @@ DROP TABLE IF EXISTS `gm_game_attr`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gm_game_attr` (
   `pos` int(11) NOT NULL AUTO_INCREMENT COMMENT ' 位置',
-  `id` varchar(255) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `id` varchar(255) DEFAULT '',
+  `name` varchar(255) DEFAULT '',
   `value_type` varchar(255) DEFAULT '1',
-  `default_value` varchar(255) DEFAULT NULL,
+  `default_value` varchar(255) DEFAULT '',
   `if_item_use_attr` int(1) NOT NULL DEFAULT 0,
-  `if_basic` int(1) NOT NULL,
+  `if_basic` int(1) NOT NULL DEFAULT 0,
   `if_show` varchar(255) DEFAULT '1',
-  `attr_type` varchar(255) DEFAULT NULL,
+  `attr_type` varchar(255) DEFAULT '',
   PRIMARY KEY (`pos`)
 ) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -799,38 +799,38 @@ DROP TABLE IF EXISTS `gm_game_basic`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gm_game_basic` (
   `game_id` int(10) NOT NULL DEFAULT 0,
-  `game_name` text NOT NULL,
-  `game_desc` text NOT NULL,
-  `game_creat_time` datetime NOT NULL,
-  `game_open_time` datetime NOT NULL,
-  `money_name` text NOT NULL,
-  `money_measure` text NOT NULL,
-  `promotion_exp` varchar(1024) NOT NULL,
-  `promotion_cond` varchar(1024) NOT NULL,
-  `mod_promotion_exp` varchar(1024) NOT NULL,
-  `mod_promotion_cond` varchar(1024) NOT NULL,
-  `clan_promotion_exp` varchar(1024) NOT NULL,
-  `clan_promotion_cond` varchar(1024) NOT NULL,
-  `default_skill_id` int(10) NOT NULL,
-  `entrance_id` int(10) NOT NULL,
-  `game_status` int(10) NOT NULL,
+  `game_name` text,
+  `game_desc` text,
+  `game_creat_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `game_open_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `money_name` text,
+  `money_measure` text,
+  `promotion_exp` varchar(1024) NOT NULL DEFAULT '',
+  `promotion_cond` varchar(1024) NOT NULL DEFAULT '',
+  `mod_promotion_exp` varchar(1024) NOT NULL DEFAULT '',
+  `mod_promotion_cond` varchar(1024) NOT NULL DEFAULT '',
+  `clan_promotion_exp` varchar(1024) NOT NULL DEFAULT '',
+  `clan_promotion_cond` varchar(1024) NOT NULL DEFAULT '',
+  `default_skill_id` int(10) NOT NULL DEFAULT 0,
+  `entrance_id` int(10) NOT NULL DEFAULT 0,
+  `game_status` int(10) NOT NULL DEFAULT 0,
   `game_max_char` int(10) NOT NULL DEFAULT 50 COMMENT '//聊天信息最大字符数',
-  `gm_post_canshu` int(10) NOT NULL,
-  `game_forum_gm_id` text NOT NULL COMMENT '//论坛版主',
-  `game_status_string` varchar(255) NOT NULL,
+  `gm_post_canshu` int(10) NOT NULL DEFAULT 0,
+  `game_forum_gm_id` text COMMENT '//论坛版主',
+  `game_status_string` varchar(255) NOT NULL DEFAULT '',
   `pet_max_count` int(2) NOT NULL DEFAULT 1,
   `team_max_count` int(2) NOT NULL DEFAULT 1,
-  `default_storage` int(10) NOT NULL COMMENT '//默认仓库容量',
-  `player_offline_time` int(2) NOT NULL COMMENT '//玩家无操作状态下离线时间，单位：分钟',
-  `player_send_global_msg_interval` int(11) NOT NULL COMMENT '//玩家发送公共聊天（除了私聊）的间隔时间',
-  `scene_op_br` int(2) NOT NULL COMMENT '//场景操作是否换行',
-  `npc_op_br` int(2) NOT NULL COMMENT '//npc操作是否换行',
-  `item_op_br` int(2) NOT NULL COMMENT '//物品操作是否换行',
-  `list_row` int(11) NOT NULL COMMENT '//列表行数',
-  `game_player_regular_minute` datetime NOT NULL COMMENT '//玩家分钟时',
-  `near_player_show` int(3) NOT NULL COMMENT '//场景附近玩家显示，大于部分以省略号呈现',
-  `game_temp_notice` varchar(255) NOT NULL COMMENT '//临时公告',
-  `game_temp_notice_time` int(4) NOT NULL COMMENT '//临时公告剩余分钟数',
+  `default_storage` int(10) NOT NULL DEFAULT 0 COMMENT '//默认仓库容量',
+  `player_offline_time` int(2) NOT NULL DEFAULT 10 COMMENT '//玩家无操作状态下离线时间，单位：分钟',
+  `player_send_global_msg_interval` int(11) NOT NULL DEFAULT 0 COMMENT '//玩家发送公共聊天（除了私聊）的间隔时间',
+  `scene_op_br` int(2) NOT NULL DEFAULT 0 COMMENT '//场景操作是否换行',
+  `npc_op_br` int(2) NOT NULL DEFAULT 0 COMMENT '//npc操作是否换行',
+  `item_op_br` int(2) NOT NULL DEFAULT 0 COMMENT '//物品操作是否换行',
+  `list_row` int(11) NOT NULL DEFAULT 0 COMMENT '//列表行数',
+  `game_player_regular_minute` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '//玩家分钟时',
+  `near_player_show` int(3) NOT NULL DEFAULT 5 COMMENT '//场景附近玩家显示，大于部分以省略号呈现',
+  `game_temp_notice` varchar(255) NOT NULL DEFAULT '' COMMENT '//临时公告',
+  `game_temp_notice_time` int(4) NOT NULL DEFAULT 0  COMMENT '//临时公告剩余分钟数',
   PRIMARY KEY (`game_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -853,11 +853,11 @@ DROP TABLE IF EXISTS `gm_game_scene`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `gm_game_scene` (
-  `location_num` int(255) DEFAULT NULL,
-  `type` int(255) DEFAULT NULL,
-  `show_cond` varchar(255) DEFAULT NULL,
-  `value` varchar(255) DEFAULT NULL,
-  `target_text` varchar(255) DEFAULT NULL
+  `location_num` int(255) DEFAULT 0,
+  `type` int(255) DEFAULT 0,
+  `show_cond` varchar(255) DEFAULT '',
+  `value` varchar(255) DEFAULT '',
+  `target_text` varchar(255) DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -878,10 +878,10 @@ DROP TABLE IF EXISTS `player_equip_mosaic`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `player_equip_mosaic` (
-  `equip_id` int(11) NOT NULL,
-  `equip_root` int(11) NOT NULL,
-  `belong_sid` text NOT NULL,
-  `equip_mosaic` varchar(255) NOT NULL
+  `equip_id` int(11) NOT NULL DEFAULT 0,
+  `equip_root` int(11) NOT NULL DEFAULT 0,
+  `belong_sid` varchar(255) NOT NULL DEFAULT '',
+  `equip_mosaic` varchar(255) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -902,11 +902,11 @@ DROP TABLE IF EXISTS `player_temp_attr`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `player_temp_attr` (
-  `obj_id` text NOT NULL,
-  `obj_oid` text NOT NULL,
-  `obj_type` int(11) NOT NULL,
-  `attr_name` varchar(255) NOT NULL,
-  `attr_value` varchar(255) NOT NULL
+  `obj_id` text ,
+  `obj_oid` text ,
+  `obj_type` int(11) NOT NULL DEFAULT 0,
+  `attr_name` varchar(255) NOT NULL DEFAULT '',
+  `attr_value` varchar(255) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -928,26 +928,26 @@ DROP TABLE IF EXISTS `playerchongwu`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `playerchongwu` (
   `cwid` int(11) NOT NULL AUTO_INCREMENT,
-  `cwname` varchar(255) NOT NULL,
-  `cwhp` int(11) NOT NULL,
-  `cwmaxhp` int(11) NOT NULL,
-  `cwgj` int(11) NOT NULL,
-  `cwfy` int(11) NOT NULL,
-  `cwbj` int(11) NOT NULL,
-  `cwxx` int(11) NOT NULL,
-  `cwlv` int(11) NOT NULL,
-  `cwexp` int(11) NOT NULL,
-  `tool1` int(11) NOT NULL,
-  `tool2` int(11) NOT NULL,
-  `tool3` int(11) NOT NULL,
-  `tool4` int(11) NOT NULL,
-  `tool5` int(11) NOT NULL,
-  `tool6` int(11) NOT NULL,
-  `sid` varchar(255) NOT NULL,
-  `uphp` int(11) NOT NULL,
-  `upgj` int(11) NOT NULL,
-  `upfy` int(11) NOT NULL,
-  `cwpz` int(11) NOT NULL,
+  `cwname` varchar(255) NOT NULL DEFAULT '',
+  `cwhp` int(11) NOT NULL DEFAULT 0,
+  `cwmaxhp` int(11) NOT NULL DEFAULT 0,
+  `cwgj` int(11) NOT NULL DEFAULT 0,
+  `cwfy` int(11) NOT NULL DEFAULT 0,
+  `cwbj` int(11) NOT NULL DEFAULT 0,
+  `cwxx` int(11) NOT NULL DEFAULT 0,
+  `cwlv` int(11) NOT NULL DEFAULT 0,
+  `cwexp` int(11) NOT NULL DEFAULT 0,
+  `tool1` int(11) NOT NULL DEFAULT 0,
+  `tool2` int(11) NOT NULL DEFAULT 0,
+  `tool3` int(11) NOT NULL DEFAULT 0,
+  `tool4` int(11) NOT NULL DEFAULT 0,
+  `tool5` int(11) NOT NULL DEFAULT 0,
+  `tool6` int(11) NOT NULL DEFAULT 0,
+  `sid` varchar(255) NOT NULL DEFAULT '',
+  `uphp` int(11) NOT NULL DEFAULT 0,
+  `upgj` int(11) NOT NULL DEFAULT 0,
+  `upfy` int(11) NOT NULL DEFAULT 0,
+  `cwpz` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`cwid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -970,14 +970,14 @@ DROP TABLE IF EXISTS `playerdaoju`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `playerdaoju` (
-  `djname` varchar(255) NOT NULL,
-  `djzl` varchar(255) NOT NULL,
-  `djinfo` varchar(255) NOT NULL,
-  `uid` int(11) NOT NULL,
-  `sid` text NOT NULL,
-  `djsum` int(11) NOT NULL,
-  `djid` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `djname` varchar(255) NOT NULL DEFAULT '',
+  `djzl` varchar(255) NOT NULL DEFAULT '',
+  `djinfo` varchar(255) NOT NULL DEFAULT '',
+  `uid` int(11) NOT NULL DEFAULT 0,
+  `sid` varchar(255) NOT NULL DEFAULT '',
+  `djsum` int(11) NOT NULL DEFAULT 0,
+  `djid` int(11) NOT NULL DEFAULT 0
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -998,15 +998,15 @@ DROP TABLE IF EXISTS `playerjineng`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `playerjineng` (
-  `jnname` varchar(255) NOT NULL,
-  `jnid` int(11) NOT NULL,
-  `jngj` int(11) NOT NULL,
-  `jnfy` int(11) NOT NULL,
-  `jnbj` int(11) NOT NULL,
-  `jnxx` int(11) NOT NULL,
-  `sid` text NOT NULL,
-  `jncount` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `jnname` varchar(255) NOT NULL DEFAULT '',
+  `jnid` int(11) NOT NULL DEFAULT 0,
+  `jngj` int(11) NOT NULL DEFAULT 0,
+  `jnfy` int(11) NOT NULL DEFAULT 0,
+  `jnbj` int(11) NOT NULL DEFAULT 0,
+  `jnxx` int(11) NOT NULL DEFAULT 0,
+  `sid` varchar(255) NOT NULL DEFAULT '',
+  `jncount` int(11) NOT NULL DEFAULT 0
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1027,23 +1027,23 @@ DROP TABLE IF EXISTS `playerrenwu`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `playerrenwu` (
-  `rwname` varchar(255) NOT NULL,
-  `rwzl` int(11) NOT NULL,
-  `rwdj` varchar(255) NOT NULL,
-  `rwzb` varchar(255) NOT NULL,
-  `rwexp` varchar(255) NOT NULL,
-  `rwyxb` varchar(255) NOT NULL,
-  `sid` text NOT NULL,
-  `rwzt` int(11) NOT NULL,
-  `rwid` int(11) NOT NULL,
-  `rwyq` int(11) NOT NULL,
-  `rwcount` int(11) NOT NULL,
-  `rwnowcount` int(11) NOT NULL,
-  `rwlx` int(11) NOT NULL,
-  `rwyp` text NOT NULL,
-  `data` int(11) NOT NULL,
-  `rwjineng` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `rwname` varchar(255) NOT NULL DEFAULT '',
+  `rwzl` int(11) NOT NULL DEFAULT 0,
+  `rwdj` varchar(255) NOT NULL DEFAULT '',
+  `rwzb` varchar(255) NOT NULL DEFAULT '',
+  `rwexp` varchar(255) NOT NULL DEFAULT '',
+  `rwyxb` varchar(255) NOT NULL DEFAULT '',
+  `sid` varchar(255) NOT NULL DEFAULT '',
+  `rwzt` int(11) NOT NULL DEFAULT 0,
+  `rwid` int(11) NOT NULL DEFAULT 0,
+  `rwyq` int(11) NOT NULL DEFAULT 0,
+  `rwcount` int(11) NOT NULL DEFAULT 0,
+  `rwnowcount` int(11) NOT NULL DEFAULT 0,
+  `rwlx` int(11) NOT NULL DEFAULT 0,
+  `rwyp` text,
+  `data` int(11) NOT NULL DEFAULT 0,
+  `rwjineng` varchar(255) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1064,17 +1064,17 @@ DROP TABLE IF EXISTS `playeryaopin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `playeryaopin` (
-  `ypname` varchar(255) NOT NULL,
-  `ypid` int(11) NOT NULL,
-  `yphp` int(11) NOT NULL,
-  `ypgj` int(11) NOT NULL,
-  `ypfy` int(11) NOT NULL,
-  `ypxx` int(11) NOT NULL,
-  `ypbj` int(11) NOT NULL,
-  `sid` text NOT NULL,
-  `ypsum` int(11) NOT NULL,
-  `ypjg` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `ypname` varchar(255) NOT NULL DEFAULT '',
+  `ypid` int(11) NOT NULL DEFAULT 0,
+  `yphp` int(11) NOT NULL DEFAULT 0,
+  `ypgj` int(11) NOT NULL DEFAULT 0,
+  `ypfy` int(11) NOT NULL DEFAULT 0,
+  `ypxx` int(11) NOT NULL DEFAULT 0,
+  `ypbj` int(11) NOT NULL DEFAULT 0,
+  `sid` varchar(255) NOT NULL DEFAULT '',
+  `ypsum` int(11) NOT NULL DEFAULT 0,
+  `ypjg` int(11) NOT NULL DEFAULT 0
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1095,22 +1095,22 @@ DROP TABLE IF EXISTS `playerzhuangbei`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `playerzhuangbei` (
-  `zbname` varchar(255) NOT NULL,
-  `zbinfo` varchar(255) NOT NULL,
-  `zbgj` varchar(255) NOT NULL,
-  `zbfy` varchar(255) NOT NULL,
-  `zbbj` varchar(255) NOT NULL,
-  `zbxx` varchar(255) NOT NULL,
-  `zbid` int(11) NOT NULL,
-  `uid` int(11) NOT NULL,
+  `zbname` varchar(255) NOT NULL DEFAULT '',
+  `zbinfo` varchar(255) NOT NULL DEFAULT '',
+  `zbgj` varchar(255) NOT NULL DEFAULT '',
+  `zbfy` varchar(255) NOT NULL DEFAULT '',
+  `zbbj` varchar(255) NOT NULL DEFAULT '',
+  `zbxx` varchar(255) NOT NULL DEFAULT '',
+  `zbid` int(11) NOT NULL DEFAULT 0,
+  `uid` int(11) NOT NULL DEFAULT 0,
   `zbnowid` int(11) NOT NULL AUTO_INCREMENT,
-  `sid` text NOT NULL,
-  `zbhp` varchar(255) NOT NULL,
-  `qianghua` int(11) NOT NULL,
-  `zblv` int(11) NOT NULL,
-  `zbtool` int(11) NOT NULL,
+  `sid` varchar(255) NOT NULL DEFAULT '',
+  `zbhp` varchar(255) NOT NULL DEFAULT '',
+  `qianghua` int(11) NOT NULL DEFAULT 0,
+  `zblv` int(11) NOT NULL DEFAULT 0,
+  `zbtool` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`zbnowid`)
-) ENGINE=MyISAM AUTO_INCREMENT=75647 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=75647 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1131,7 +1131,7 @@ DROP TABLE IF EXISTS `system_addition_attr`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_addition_attr` (
-  `sid` text NOT NULL,
+  `sid` varchar(255) NOT NULL DEFAULT '',
   `oid` varchar(255) NOT NULL DEFAULT '',
   `mid` int(11) NOT NULL DEFAULT 0,
   `name` text DEFAULT NULL,
@@ -1158,9 +1158,9 @@ DROP TABLE IF EXISTS `system_area`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_area` (
   `belong` int(11) NOT NULL COMMENT '//所属大区域，0失落之地，1日出之地，2灼热之地，3日落之地，4极寒之地，5湿热之地',
-  `pos` int(11) NOT NULL,
-  `id` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `pos` int(11) NOT NULL DEFAULT 0,
+  `id` int(11) NOT NULL DEFAULT 0,
+  `name` varchar(255) DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1184,9 +1184,9 @@ DROP TABLE IF EXISTS `system_auc`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_auc` (
   `auc_id` int(11) NOT NULL AUTO_INCREMENT,
-  `auc_area` int(11) NOT NULL COMMENT '拍卖行所属区域id',
-  `auc_name` varchar(255) NOT NULL,
-  `auc_desc` varchar(255) NOT NULL,
+  `auc_area` int(11) NOT NULL DEFAULT 0 COMMENT '拍卖行所属区域id',
+  `auc_name` varchar(255) NOT NULL DEFAULT '',
+  `auc_desc` varchar(255) NOT NULL DEFAULT '',
   `auc_money` varchar(255) NOT NULL DEFAULT 'money' COMMENT '拍卖行用什么货币交易',
   `auc_fee` int(2) NOT NULL DEFAULT 10 COMMENT '手续费，如10就是10%',
   PRIMARY KEY (`auc_id`)
@@ -1211,16 +1211,16 @@ DROP TABLE IF EXISTS `system_auc_data`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_auc_data` (
   `auc_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '交易id',
-  `belong` int(11) NOT NULL COMMENT '所属拍卖行id',
-  `auc_item_id` int(11) NOT NULL COMMENT '物品真实id',
-  `auc_item_name` varchar(255) NOT NULL COMMENT '物品真实名称',
-  `auc_item_type` varchar(255) NOT NULL COMMENT '物品类别',
-  `auc_count` int(11) NOT NULL COMMENT '物品数量',
-  `auc_sale_id` text NOT NULL COMMENT '拍卖者id',
-  `auc_low_value` int(11) NOT NULL COMMENT '起拍价',
-  `auc_now_value` int(11) NOT NULL COMMENT '当前价/最高价/成交价',
-  `auc_pay_id` text NOT NULL COMMENT '最高出价者id',
-  `auc_pay_creat_time` datetime NOT NULL COMMENT '拍卖者上架时间',
+  `belong` int(11) NOT NULL DEFAULT 0 COMMENT '所属拍卖行id',
+  `auc_item_id` int(11) NOT NULL DEFAULT 0 COMMENT '物品真实id',
+  `auc_item_name` varchar(255) NOT NULL DEFAULT '' COMMENT '物品真实名称',
+  `auc_item_type` varchar(255) NOT NULL DEFAULT '' COMMENT '物品类别',
+  `auc_count` int(11) NOT NULL DEFAULT 0 COMMENT '物品数量',
+  `auc_sale_id` text  COMMENT '拍卖者id',
+  `auc_low_value` int(11) NOT NULL DEFAULT 0 COMMENT '起拍价',
+  `auc_now_value` int(11) NOT NULL DEFAULT 0 COMMENT '当前价/最高价/成交价',
+  `auc_pay_id` text COMMENT '最高出价者id',
+  `auc_pay_creat_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '拍卖者上架时间',
   PRIMARY KEY (`auc_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1243,9 +1243,9 @@ DROP TABLE IF EXISTS `system_boss`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_boss` (
-  `boss_id` int(11) NOT NULL,
-  `boss_name` varchar(255) DEFAULT NULL,
-  `boss_lvl` int(11) DEFAULT NULL,
+  `boss_id` int(11) NOT NULL DEFAULT 0,
+  `boss_name` varchar(255) DEFAULT '',
+  `boss_lvl` int(11) DEFAULT 0,
   PRIMARY KEY (`boss_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1267,9 +1267,9 @@ DROP TABLE IF EXISTS `system_buff`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_buff` (
-  `buff_id` int(11) NOT NULL,
-  `buff_name` varchar(255) DEFAULT NULL,
-  `buff_impact` varchar(255) DEFAULT NULL,
+  `buff_id` int(11) NOT NULL DEFAULT 0,
+  `buff_name` varchar(255) DEFAULT '',
+  `buff_impact` varchar(255) DEFAULT '',
   PRIMARY KEY (`buff_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1291,17 +1291,17 @@ DROP TABLE IF EXISTS `system_chat_data`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_chat_data` (
-  `name` text NOT NULL,
-  `msg` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `send_time` datetime NOT NULL,
   `id` int(255) NOT NULL AUTO_INCREMENT,
+  `name` text,
+  `msg` text ,
+  `send_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `uid` int(11) NOT NULL DEFAULT 0,
   `imuid` int(11) NOT NULL DEFAULT 0 COMMENT '12345生效，此时为对方id，城市id，区域id，队伍id，公会id',
   `chat_type` int(1) NOT NULL DEFAULT 0 COMMENT '0为公共，1为私聊，2为城聊，3为区聊，4为队聊，5为会聊',
   `send_type` int(1) NOT NULL DEFAULT 0 COMMENT '0为玩家或系统，1为npc，2为物品',
   `viewed` int(1) NOT NULL DEFAULT 0 COMMENT '0为未看，1为已读',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=563 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=563 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1322,9 +1322,9 @@ DROP TABLE IF EXISTS `system_designer_assist`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_designer_assist` (
-  `sid` text NOT NULL,
-  `op_target` varchar(255) NOT NULL,
-  `op_canshu` varchar(255) NOT NULL
+  `sid` varchar(255) NOT NULL DEFAULT '',
+  `op_target` varchar(255) NOT NULL DEFAULT '',
+  `op_canshu` varchar(255) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1347,10 +1347,10 @@ DROP TABLE IF EXISTS `system_draw`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_draw` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '它的id是什么',
-  `name` varchar(255) NOT NULL COMMENT '抽奖名称',
-  `cons_type` int(1) NOT NULL COMMENT '1金钱2物品3属性',
-  `cons_count` text NOT NULL COMMENT '元素id及每次消耗多少：1|2',
-  `draw_reward` text NOT NULL COMMENT '2|1|10,6|1|20，前者表物品id，接着的是物品数量，后者表示抽中概率',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '抽奖名称',
+  `cons_type` int(1) NOT NULL DEFAULT 1 COMMENT '1金钱2物品3属性',
+  `cons_count` text COMMENT '元素id及每次消耗多少：1|2',
+  `draw_reward` text  COMMENT '2|1|10,6|1|20，前者表物品id，接着的是物品数量，后者表示抽中概率',
   `cons_open_time` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '开放时间',
   `cons_close_time` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '关闭时间',
   PRIMARY KEY (`id`)
@@ -1376,8 +1376,8 @@ DROP TABLE IF EXISTS `system_equip_def`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_equip_def` (
   `id` int(2) NOT NULL AUTO_INCREMENT,
-  `name` varchar(10) NOT NULL,
-  `type` tinyint(4) DEFAULT NULL,
+  `name` varchar(10) NOT NULL DEFAULT '',
+  `type` tinyint(4) DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1400,9 +1400,9 @@ DROP TABLE IF EXISTS `system_equip_default`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_equip_default` (
-  `pos` int(11) NOT NULL,
-  `name` varchar(10) NOT NULL,
-  `type` tinyint(4) DEFAULT NULL,
+  `pos` int(11) NOT NULL DEFAULT 0,
+  `name` varchar(10) NOT NULL DEFAULT '',
+  `type` tinyint(4) DEFAULT 0,
   PRIMARY KEY (`pos`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1425,13 +1425,13 @@ DROP TABLE IF EXISTS `system_equip_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_equip_user` (
-  `eqsid` varchar(255) NOT NULL,
+  `eqsid` varchar(255) NOT NULL DEFAULT '',
   `eqid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '源id',
-  `eq_true_id` int(10) NOT NULL COMMENT '真实id',
-  `eq_type` int(1) NOT NULL COMMENT '1武器，2防具',
-  `equiped_pos_id` varchar(11) NOT NULL COMMENT '装备位置',
+  `eq_true_id` int(10) NOT NULL DEFAULT 0 COMMENT '真实id',
+  `eq_type` int(1) NOT NULL DEFAULT 1 COMMENT '1武器，2防具',
+  `equiped_pos_id` varchar(11) NOT NULL DEFAULT 0 COMMENT '装备位置',
   PRIMARY KEY (`eqid`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=116 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=116 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1452,12 +1452,12 @@ DROP TABLE IF EXISTS `system_event`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_event` (
-  `belong` int(1) NOT NULL,
+  `belong` int(1) NOT NULL DEFAULT 0,
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `cond` varchar(255) DEFAULT NULL,
+  `cond` varchar(255) DEFAULT '',
   `cmmt` text DEFAULT NULL,
-  `link_evs` varchar(255) DEFAULT NULL,
-  `desc` varchar(255) DEFAULT NULL,
+  `link_evs` varchar(255) DEFAULT '',
+  `desc` varchar(255) DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1480,17 +1480,17 @@ DROP TABLE IF EXISTS `system_event_evs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_event_evs` (
-  `belong` varchar(4) NOT NULL COMMENT '步骤从属事件',
-  `id` int(4) NOT NULL COMMENT '步骤id',
+  `belong` varchar(4) NOT NULL DEFAULT '' COMMENT '步骤从属事件',
+  `id` int(4) NOT NULL DEFAULT 0 COMMENT '步骤id',
   `s_attrs` text DEFAULT NULL COMMENT '设置属性',
   `m_attrs` text DEFAULT NULL COMMENT '更改属性',
-  `equips` varchar(255) DEFAULT NULL COMMENT '装备相关',
-  `a_skills` varchar(255) DEFAULT NULL COMMENT '学会技能',
-  `r_skills` varchar(255) DEFAULT NULL COMMENT '废除技能',
-  `items` varchar(255) DEFAULT NULL COMMENT '更改物品',
-  `a_tasks` varchar(255) DEFAULT NULL COMMENT '触发任务',
-  `r_tasks` varchar(255) DEFAULT NULL COMMENT '删除任务',
-  `cond` varchar(255) DEFAULT NULL COMMENT '触发条件',
+  `equips` varchar(255) DEFAULT '' COMMENT '装备相关',
+  `a_skills` varchar(255) DEFAULT '' COMMENT '学会技能',
+  `r_skills` varchar(255) DEFAULT '' COMMENT '废除技能',
+  `items` varchar(255) DEFAULT '' COMMENT '更改物品',
+  `a_tasks` varchar(255) DEFAULT '' COMMENT '触发任务',
+  `r_tasks` varchar(255) DEFAULT '' COMMENT '删除任务',
+  `cond` varchar(255) DEFAULT '' COMMENT '触发条件',
   `exec_cond` text DEFAULT NULL COMMENT '执行条件',
   `cmmt` text DEFAULT NULL COMMENT '触发提示语',
   `cmmt2` text DEFAULT NULL COMMENT '不满足提示语',
@@ -1498,12 +1498,12 @@ CREATE TABLE `system_event_evs` (
   `dests` varchar(255) DEFAULT NULL COMMENT '移动目标',
   `inputs` text DEFAULT NULL COMMENT '用户输入',
   `just_return` tinyint(4) DEFAULT 0 COMMENT '执行后立即返回',
-  `view_user_exp` varchar(255) DEFAULT NULL COMMENT '查看玩家的id表达式',
-  `page_name` varchar(100) DEFAULT NULL COMMENT '显示页面模板',
-  `refresh_scene_npcs` varchar(255) DEFAULT NULL COMMENT '刷新场景npc',
-  `refresh_scene_items` varchar(255) DEFAULT NULL COMMENT '刷新场景物品',
-  `a_adopt` varchar(255) DEFAULT NULL COMMENT '添加宠物',
-  `r_adopt` varchar(255) DEFAULT NULL COMMENT '删除宠物'
+  `view_user_exp` varchar(255) DEFAULT '' COMMENT '查看玩家的id表达式',
+  `page_name` varchar(100) DEFAULT '' COMMENT '显示页面模板',
+  `refresh_scene_npcs` varchar(255) DEFAULT '' COMMENT '刷新场景npc',
+  `refresh_scene_items` varchar(255) DEFAULT '' COMMENT '刷新场景物品',
+  `a_adopt` varchar(255) DEFAULT '' COMMENT '添加宠物',
+  `r_adopt` varchar(255) DEFAULT '' COMMENT '删除宠物'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1525,27 +1525,27 @@ DROP TABLE IF EXISTS `system_event_evs_npc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_event_evs_npc` (
-  `belong` varchar(4) NOT NULL COMMENT '步骤从属事件',
-  `id` int(4) NOT NULL COMMENT '步骤id',
+  `belong` varchar(4) NOT NULL DEFAULT 0 COMMENT '步骤从属事件',
+  `id` int(4) NOT NULL DEFAULT 0 COMMENT '步骤id',
   `s_attrs` text DEFAULT NULL COMMENT '设置属性',
   `m_attrs` text DEFAULT NULL COMMENT '更改属性',
-  `equips` varchar(255) DEFAULT NULL COMMENT '装备相关',
-  `a_skills` varchar(255) DEFAULT NULL COMMENT '技能相关',
-  `items` varchar(255) DEFAULT NULL COMMENT '更改物品',
-  `a_tasks` varchar(255) DEFAULT NULL COMMENT '触发任务',
-  `r_tasks` varchar(255) DEFAULT NULL COMMENT '删除任务',
-  `cond` varchar(255) DEFAULT NULL COMMENT '触发条件',
+  `equips` varchar(255) DEFAULT '' COMMENT '装备相关',
+  `a_skills` varchar(255) DEFAULT '' COMMENT '技能相关',
+  `items` varchar(255) DEFAULT '' COMMENT '更改物品',
+  `a_tasks` varchar(255) DEFAULT '' COMMENT '触发任务',
+  `r_tasks` varchar(255) DEFAULT '' COMMENT '删除任务',
+  `cond` varchar(255) DEFAULT '' COMMENT '触发条件',
   `exec_cond` text DEFAULT NULL COMMENT '执行条件',
   `cmmt` text DEFAULT NULL COMMENT '触发提示语',
   `cmmt2` text DEFAULT NULL COMMENT '不满足提示语',
   `not_return_link` tinyint(4) DEFAULT 0 COMMENT '是否有返回游戏的链接',
-  `dests` varchar(255) DEFAULT NULL COMMENT '移动目标',
+  `dests` varchar(255) DEFAULT '' COMMENT '移动目标',
   `inputs` text DEFAULT NULL COMMENT '用户输入',
   `just_return` tinyint(4) DEFAULT 0 COMMENT '执行后立即返回',
-  `view_user_exp` varchar(255) DEFAULT NULL COMMENT '查看玩家的id表达式',
-  `page_name` varchar(100) DEFAULT NULL COMMENT '显示页面模板',
-  `refresh_scene_npcs` varchar(255) DEFAULT NULL COMMENT '刷新场景npc',
-  `refresh_scene_items` varchar(255) DEFAULT NULL COMMENT '刷新场景物品'
+  `view_user_exp` varchar(255) DEFAULT '' COMMENT '查看玩家的id表达式',
+  `page_name` varchar(100) DEFAULT '' COMMENT '显示页面模板',
+  `refresh_scene_npcs` varchar(255) DEFAULT '' COMMENT '刷新场景npc',
+  `refresh_scene_items` varchar(255) DEFAULT '' COMMENT '刷新场景物品'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='这是处理非公共事件的其余事件';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1567,8 +1567,8 @@ DROP TABLE IF EXISTS `system_event_evs_self`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_event_evs_self` (
-  `belong` varchar(4) NOT NULL COMMENT '步骤从属事件',
-  `id` int(4) NOT NULL COMMENT '步骤id',
+  `belong` varchar(4) NOT NULL DEFAULT 0 COMMENT '步骤从属事件',
+  `id` int(4) NOT NULL DEFAULT 0 COMMENT '步骤id',
   `s_attrs` text DEFAULT NULL COMMENT '设置属性',
   `m_attrs` text DEFAULT NULL COMMENT '更改属性',
   `equips` varchar(255) DEFAULT NULL COMMENT '装备相关',
@@ -1613,14 +1613,14 @@ DROP TABLE IF EXISTS `system_event_self`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_event_self` (
-  `belong` varchar(255) NOT NULL,
-  `module_id` varchar(255) NOT NULL,
-  `root_op_id` int(11) NOT NULL,
-  `id` int(4) NOT NULL,
-  `cond` text NOT NULL,
-  `cmmt` text NOT NULL,
-  `link_evs` varchar(255) DEFAULT NULL,
-  `desc` varchar(255) DEFAULT NULL,
+  `belong` varchar(255) NOT NULL DEFAULT '',
+  `module_id` varchar(255) NOT NULL DEFAULT '',
+  `root_op_id` int(11) NOT NULL DEFAULT 0,
+  `id` int(4) NOT NULL DEFAULT 0,
+  `cond` text,
+  `cmmt` text ,
+  `link_evs` varchar(255) DEFAULT '',
+  `desc` varchar(255) DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1644,9 +1644,9 @@ DROP TABLE IF EXISTS `system_exp_def`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_exp_def` (
   `pos` int(11) NOT NULL AUTO_INCREMENT,
-  `id` varchar(20) NOT NULL,
+  `id` varchar(20) NOT NULL DEFAULT '',
   `type` int(1) DEFAULT NULL,
-  `value` text NOT NULL,
+  `value` text,
   PRIMARY KEY (`pos`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1670,12 +1670,12 @@ DROP TABLE IF EXISTS `system_fb`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_fb` (
   `fbid` int(11) NOT NULL AUTO_INCREMENT,
-  `fbname` varchar(255) NOT NULL,
-  `fbinfo` varchar(255) NOT NULL,
-  `fbnpc` varchar(255) NOT NULL,
-  `fbmonster` varchar(255) NOT NULL,
-  `fbitem` varchar(255) NOT NULL,
-  `fbevents` varchar(255) NOT NULL,
+  `fbname` varchar(255) NOT NULL DEFAULT '',
+  `fbinfo` varchar(255) NOT NULL DEFAULT '',
+  `fbnpc` varchar(255) NOT NULL DEFAULT '',
+  `fbmonster` varchar(255) NOT NULL DEFAULT '',
+  `fbitem` varchar(255) NOT NULL DEFAULT '',
+  `fbevents` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`fbid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1698,9 +1698,9 @@ DROP TABLE IF EXISTS `system_fight_quick`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_fight_quick` (
-  `sid` text NOT NULL,
+  `sid` varchar(255) NOT NULL DEFAULT '',
   `quick_value` text DEFAULT NULL COMMENT '格式：type_id|id',
-  `quick_pos` int(11) NOT NULL
+  `quick_pos` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1722,11 +1722,11 @@ DROP TABLE IF EXISTS `system_function`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_function` (
-  `belong` varchar(255) NOT NULL,
-  `id` int(2) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `link_function` varchar(255) DEFAULT NULL,
-  `default_value` varchar(255) DEFAULT NULL,
+  `belong` varchar(255) NOT NULL DEFAULT '',
+  `id` int(2) NOT NULL DEFAULT 0,
+  `name` varchar(255) DEFAULT '',
+  `link_function` varchar(255) DEFAULT '',
+  `default_value` varchar(255) DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1787,7 +1787,7 @@ DROP TABLE IF EXISTS `system_item_module`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_item_module` (
   `iid` int(11) NOT NULL AUTO_INCREMENT,
-  `iarea_name` varchar(255) NOT NULL,
+  `iarea_name` varchar(255) NOT NULL DEFAULT '',
   `iarea_id` int(11) NOT NULL DEFAULT 0,
   `iname` varchar(255) NOT NULL DEFAULT '',
   `iimage` varchar(255) NOT NULL DEFAULT '',
@@ -1799,22 +1799,22 @@ CREATE TABLE `system_item_module` (
   `iprice` int(11) NOT NULL DEFAULT 0,
   `ino_give` tinyint(1) NOT NULL DEFAULT 0,
   `ino_out` tinyint(1) NOT NULL DEFAULT 0,
-  `iop_target` varchar(255) NOT NULL,
-  `itask_target` varchar(255) NOT NULL,
-  `icreat_event_id` int(11) NOT NULL,
-  `ilook_event_id` int(11) NOT NULL,
-  `iuse_event_id` int(11) NOT NULL,
-  `iminute_event_id` int(11) NOT NULL,
-  `iuse_attr` varchar(255) NOT NULL COMMENT '使用目标',
-  `iuse_value` varchar(255) NOT NULL COMMENT '使用效果值',
-  `iattack_value` varchar(255) NOT NULL COMMENT '兵器，兵器镶物攻击力',
-  `irecovery_value` varchar(255) NOT NULL COMMENT '防具，防具镶物防御力',
-  `iembed_count` varchar(255) NOT NULL COMMENT '可镶宝数',
-  `iequip_cond` varchar(255) NOT NULL COMMENT '装备条件表达式',
-  `img_add` int(11) NOT NULL,
+  `iop_target` varchar(255) NOT NULL DEFAULT '',
+  `itask_target` varchar(255) NOT NULL DEFAULT '',
+  `icreat_event_id` int(11) NOT NULL DEFAULT 0,
+  `ilook_event_id` int(11) NOT NULL DEFAULT 0,
+  `iuse_event_id` int(11) NOT NULL DEFAULT 0,
+  `iminute_event_id` int(11) NOT NULL DEFAULT 0,
+  `iuse_attr` varchar(255) NOT NULL DEFAULT '' COMMENT '使用目标',
+  `iuse_value` varchar(255) NOT NULL DEFAULT '' COMMENT '使用效果值',
+  `iattack_value` varchar(255) NOT NULL DEFAULT '' COMMENT '兵器，兵器镶物攻击力',
+  `irecovery_value` varchar(255) NOT NULL DEFAULT '' COMMENT '防具，防具镶物防御力',
+  `iembed_count` varchar(255) NOT NULL DEFAULT '' COMMENT '可镶宝数',
+  `iequip_cond` varchar(255) NOT NULL DEFAULT '' COMMENT '装备条件表达式',
+  `img_add` int(11) NOT NULL DEFAULT 0,
   `iwg_fj` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`iid`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1835,8 +1835,8 @@ DROP TABLE IF EXISTS `system_item_op`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_item_op` (
-  `belong` int(10) NOT NULL,
-  `id` int(10) NOT NULL,
+  `belong` int(10) NOT NULL DEFAULT 0,
+  `id` int(10) NOT NULL DEFAULT 0,
   `show_cond` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT '未命名',
   `link_event` varchar(255) DEFAULT NULL,
@@ -1863,8 +1863,8 @@ DROP TABLE IF EXISTS `system_lp`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_lp` (
   `lp_id` int(11) NOT NULL AUTO_INCREMENT,
-  `lp_name` varchar(255) NOT NULL,
-  `lp_desc` text NOT NULL,
+  `lp_name` varchar(255) NOT NULL DEFAULT '',
+  `lp_desc` text,
   PRIMARY KEY (`lp_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1888,36 +1888,36 @@ DROP TABLE IF EXISTS `system_map`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_map` (
   `mid` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `mname` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
-  `mitem` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
-  `mitem_now` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
-  `mnpc` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
-  `mnpc_now` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
-  `mgtime` datetime NOT NULL,
-  `mpick_time` datetime NOT NULL,
+  `mname` text ,
+  `mitem` text ,
+  `mitem_now` text ,
+  `mnpc` text,
+  `mnpc_now` text ,
+  `mgtime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `mpick_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `mrefresh_time` int(11) NOT NULL DEFAULT 1,
-  `mphoto` varchar(255) CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
-  `mdesc` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
-  `mup` int(11) NOT NULL,
-  `mdown` int(11) NOT NULL,
-  `mleft` int(11) NOT NULL,
-  `mright` int(11) NOT NULL,
-  `marea_name` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
-  `marea_id` int(11) NOT NULL,
-  `mop_target` varchar(255) CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
-  `mtask_target` varchar(255) CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
-  `mcreat_event_id` int(11) NOT NULL,
-  `mlook_event_id` int(11) NOT NULL,
-  `minto_event_id` int(11) NOT NULL,
-  `mout_event_id` int(11) NOT NULL,
-  `mminute_event_id` int(11) NOT NULL,
+  `mphoto` varchar(255) NOT NULL DEFAULT '',
+  `mdesc` text ,
+  `mup` int(11) NOT NULL DEFAULT 0,
+  `mdown` int(11) NOT NULL DEFAULT 0,
+  `mleft` int(11) NOT NULL DEFAULT 0,
+  `mright` int(11) NOT NULL DEFAULT 0,
+  `marea_name` text,
+  `marea_id` int(11) NOT NULL DEFAULT 0,
+  `mop_target` varchar(255) NOT NULL DEFAULT '',
+  `mtask_target` varchar(255) NOT NULL DEFAULT '',
+  `mcreat_event_id` int(11) NOT NULL DEFAULT 0,
+  `mlook_event_id` int(11) NOT NULL DEFAULT 0,
+  `minto_event_id` int(11) NOT NULL DEFAULT 0,
+  `mout_event_id` int(11) NOT NULL DEFAULT 0,
+  `mminute_event_id` int(11) NOT NULL DEFAULT 0,
   `mshop` tinyint(1) NOT NULL DEFAULT 0,
   `mhockshop` tinyint(1) NOT NULL DEFAULT 0,
-  `mshop_item_id` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL,
+  `mshop_item_id` text ,
   `mkill` tinyint(1) NOT NULL DEFAULT 1,
   `mstorage` tinyint(1) NOT NULL DEFAULT 0,
-  `mtianqi` varchar(255) CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL DEFAULT '晴天',
-  `mdire` varchar(255) CHARACTER SET gb2312 COLLATE gb2312_chinese_ci NOT NULL DEFAULT '0,0,0',
+  `mtianqi` varchar(255) NOT NULL DEFAULT '晴天',
+  `mdire` varchar(255) NOT NULL DEFAULT '0,0,0',
   `mis_tp` tinyint(1) NOT NULL DEFAULT 0,
   `mtp_type` int(1) NOT NULL DEFAULT 0 COMMENT '0为无，1为渡口，2为陆行车站，2为飞行营地',
   `mis_rp` tinyint(1) NOT NULL DEFAULT 0,
@@ -1946,12 +1946,12 @@ DROP TABLE IF EXISTS `system_map_op`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_map_op` (
-  `belong` int(10) NOT NULL,
-  `id` int(10) NOT NULL,
-  `show_cond` varchar(255) NOT NULL,
+  `belong` int(10) NOT NULL DEFAULT 0,
+  `id` int(10) NOT NULL DEFAULT 0,
+  `show_cond` varchar(255) NOT NULL DEFAULT '',
   `name` varchar(255) NOT NULL DEFAULT '未命名',
-  `link_event` int(11) NOT NULL,
-  `link_task` int(11) NOT NULL,
+  `link_event` int(11) NOT NULL DEFAULT 0,
+  `link_task` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1975,13 +1975,13 @@ DROP TABLE IF EXISTS `system_mk`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_mk` (
   `mk_id` int(11) NOT NULL AUTO_INCREMENT,
-  `mk_item_root` int(11) NOT NULL COMMENT '资源对应物品id',
-  `mk_name` varchar(255) NOT NULL,
-  `mk_desc` varchar(255) NOT NULL,
-  `mk_rarity` int(1) NOT NULL COMMENT '稀有度，0为最低级，9为最高级',
-  `mk_renew_time` int(11) NOT NULL COMMENT '刷新时间，以秒为单位',
-  `mk_pick_cond` text NOT NULL COMMENT '采集条件表达式',
-  `mk_action_name` varchar(255) NOT NULL COMMENT '采集动作名称，eg:矿石用挖矿、树木用砍伐',
+  `mk_item_root` int(11) NOT NULL DEFAULT 0 COMMENT '资源对应物品id',
+  `mk_name` varchar(255) NOT NULL DEFAULT '',
+  `mk_desc` varchar(255) NOT NULL DEFAULT '',
+  `mk_rarity` int(1) NOT NULL DEFAULT 0 COMMENT '稀有度，0为最低级，9为最高级',
+  `mk_renew_time` int(11) NOT NULL DEFAULT 0 COMMENT '刷新时间，以秒为单位',
+  `mk_pick_cond` text COMMENT '采集条件表达式',
+  `mk_action_name` varchar(255) NOT NULL DEFAULT '' COMMENT '采集动作名称，eg:矿石用挖矿、树木用砍伐',
   PRIMARY KEY (`mk_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='资源设计表';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2003,10 +2003,10 @@ DROP TABLE IF EXISTS `system_money_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_money_type` (
-  `rid` varchar(11) NOT NULL COMMENT '货币标识',
-  `rname` varchar(255) NOT NULL COMMENT '货币名称',
-  `runit` varchar(255) NOT NULL COMMENT '货币单位',
-  `rif_default` int(1) NOT NULL COMMENT '是否默认货币',
+  `rid` varchar(11) NOT NULL DEFAULT '' COMMENT '货币标识',
+  `rname` varchar(255) NOT NULL DEFAULT '' COMMENT '货币名称',
+  `runit` varchar(255) NOT NULL DEFAULT '' COMMENT '货币单位',
+  `rif_default` int(1) NOT NULL DEFAULT 0 COMMENT '是否默认货币',
   PRIMARY KEY (`rid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2028,55 +2028,53 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `system_npc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `system_npc` (
-  `narea_id` int(11) NOT NULL,
-  `narea_name` varchar(255) NOT NULL,
-  `nid` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `nstate` int(1) NOT NULL DEFAULT 0,
-  `nkill` int(1) NOT NULL DEFAULT 0,
-  `nnot_dead` int(1) NOT NULL DEFAULT 0,
-  `nchuck` int(1) NOT NULL DEFAULT 0,
-  `nrefresh_time` int(255) NOT NULL DEFAULT 0,
-  `nshop` int(1) NOT NULL DEFAULT 0,
-  `nhock_shop` int(1) NOT NULL DEFAULT 0,
-  `naccept_give` int(1) NOT NULL DEFAULT 0,
-  `nname` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `nexp` int(11) NOT NULL,
-  `nlvl` int(11) NOT NULL,
-  `nsex` varchar(255) NOT NULL,
-  `ndesc` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `nequips` text NOT NULL,
-  `ndrop_exp` text NOT NULL,
-  `ndrop_money` text NOT NULL,
-  `ndrop_item` text NOT NULL,
-  `ndrop_item_type` int(1) NOT NULL COMMENT '0直接到背包，1掉落到地上',
-  `nskills` text NOT NULL,
-  `nshop_item_id` varchar(255) NOT NULL,
-  `nmuban` text NOT NULL,
-  `nshop_cond` text NOT NULL COMMENT '交易条件，包括购买和出售',
-  `ntaskid` text NOT NULL,
-  `nnick_name` varchar(255) NOT NULL DEFAULT '',
-  `nhp` int(11) NOT NULL DEFAULT 100,
-  `nmaxhp` int(11) NOT NULL DEFAULT 100,
-  `ngj` int(11) NOT NULL DEFAULT 0,
-  `nfy` int(11) NOT NULL DEFAULT 1,
-  `nimage` varchar(255) NOT NULL DEFAULT '',
-  `nop_target` varchar(255) NOT NULL,
-  `ntask_target` varchar(255) NOT NULL,
-  `ncreat_event_id` int(11) NOT NULL,
-  `nlook_event_id` int(11) NOT NULL,
-  `nattack_event_id` int(11) NOT NULL,
-  `nwin_event_id` int(11) NOT NULL,
-  `ndefeat_event_id` int(11) NOT NULL,
-  `npet_event_id` int(11) NOT NULL,
-  `nshop_event_id` int(11) NOT NULL,
-  `nup_event_id` int(11) NOT NULL,
-  `nheart_event_id` int(11) NOT NULL,
-  `nminute_event_id` int(11) NOT NULL,
-  PRIMARY KEY (`nid`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=90 DEFAULT CHARSET=gb2312 COLLATE=gb2312_chinese_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
+CREATE TABLE `system_npc` (
+  `narea_id` int(11) NOT NULL default 0,
+  `narea_name` varchar(255) NOT NULL default '',
+  `nid` int(11) UNSIGNED NOT NULL default 0,
+  `nstate` int(1) NOT NULL DEFAULT '0',
+  `nkill` int(1) NOT NULL DEFAULT '0',
+  `nnot_dead` int(1) NOT NULL DEFAULT '0',
+  `nchuck` int(1) NOT NULL DEFAULT '0',
+  `nrefresh_time` int(255) NOT NULL DEFAULT '0',
+  `nshop` int(1) NOT NULL DEFAULT '0',
+  `nhock_shop` int(1) NOT NULL DEFAULT '0',
+  `naccept_give` int(1) NOT NULL DEFAULT '0',
+  `nname` text ,
+  `nexp` int(11) NOT NULL default 0,
+  `nlvl` int(11) NOT NULL default 0,
+  `nsex` varchar(255) NOT NULL default '',
+  `ndesc` text ,
+  `nequips` text,
+  `ndrop_exp` text,
+  `ndrop_money` text ,
+  `ndrop_item` text,
+  `ndrop_item_type` int(1) NOT NULL default 0 COMMENT '0直接到背包，1掉落到地上',
+  `nskills` text,
+  `nshop_item_id` varchar(255) NOT NULL default '',
+  `nmuban` text,
+  `nshop_cond` text COMMENT '交易条件，包括购买和出售',
+  `ntaskid` text ,
+  `nnick_name` varchar(255) NOT NULL DEFAULT '',
+  `nhp` int(11) NOT NULL DEFAULT '100',
+  `nmaxhp` int(11) NOT NULL DEFAULT '100',
+  `ngj` int(11) NOT NULL DEFAULT '0',
+  `nfy` int(11) NOT NULL DEFAULT '1',
+  `nimage` varchar(255) NOT NULL DEFAULT '',
+  `nop_target` varchar(255) NOT NULL default '',
+  `ntask_target` varchar(255) NOT NULL default '',
+  `ncreat_event_id` int(11) NOT NULL default 0,
+  `nlook_event_id` int(11) NOT NULL default 0,
+  `nattack_event_id` int(11) NOT NULL default 0,
+  `nwin_event_id` int(11) NOT NULL default 0,
+  `ndefeat_event_id` int(11) NOT NULL default 0,
+  `npet_event_id` int(11) NOT NULL default 0,
+  `nshop_event_id` int(11) NOT NULL default 0,
+  `nup_event_id` int(11) NOT NULL default 0,
+  `nheart_event_id` int(11) NOT NULL default 0,
+  `nminute_event_id` int(11) NOT NULL default 0
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 --
 -- Dumping data for table `system_npc`
 --
@@ -2096,7 +2094,7 @@ DROP TABLE IF EXISTS `system_npc_midguaiwu`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_npc_midguaiwu` (
   `ngid` int(11) NOT NULL AUTO_INCREMENT COMMENT '怪物id主键',
-  `ncreate_time` datetime NOT NULL,
+  `ncreate_time` datetime NOT NULL default '1900-01-01 00:00:00' COMMENT '创建时间',
   `nsid` varchar(255) DEFAULT '' COMMENT '归属者',
   `narea_id` int(11) NOT NULL DEFAULT 0,
   `narea_name` varchar(255) NOT NULL DEFAULT '',
@@ -2110,11 +2108,11 @@ CREATE TABLE `system_npc_midguaiwu` (
   `nshop` int(1) NOT NULL DEFAULT 0,
   `nhock_shop` int(1) NOT NULL DEFAULT 0,
   `naccept_give` int(1) NOT NULL DEFAULT 0,
-  `nname` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT '',
+  `nname` varchar(128) DEFAULT '',
   `nexp` int(11) NOT NULL DEFAULT 0,
   `nlvl` int(11) NOT NULL DEFAULT 0,
   `nsex` varchar(255) NOT NULL DEFAULT '',
-  `ndesc` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `ndesc` text DEFAULT NULL,
   `nequips` text DEFAULT NULL,
   `ndrop_exp` text DEFAULT NULL,
   `ndrop_money` text DEFAULT NULL,
@@ -2144,7 +2142,7 @@ CREATE TABLE `system_npc_midguaiwu` (
   `nheart_event_id` int(11) NOT NULL DEFAULT 0,
   `nminute_event_id` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`ngid`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=98 DEFAULT CHARSET=gb2312 COLLATE=gb2312_chinese_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2165,8 +2163,8 @@ DROP TABLE IF EXISTS `system_npc_op`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_npc_op` (
-  `belong` int(10) NOT NULL,
-  `id` int(10) NOT NULL,
+  `belong` int(10) NOT NULL default 0,
+  `id` int(10) NOT NULL default 0,
   `show_cond` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT '未命名',
   `link_event` varchar(255) DEFAULT NULL,
@@ -2193,10 +2191,10 @@ DROP TABLE IF EXISTS `system_npc_relationship`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_npc_relationship` (
-  `npc_id_1` int(11) NOT NULL,
-  `npc_id_2` int(11) NOT NULL,
-  `npc_relationship` varchar(255) NOT NULL,
-  `npc_relationship_lvl` int(1) NOT NULL COMMENT '关系亲近等级，1最小9最大'
+  `npc_id_1` int(11) NOT NULL default 0,
+  `npc_id_2` int(11) NOT NULL default 0,
+  `npc_relationship` varchar(255) NOT NULL default '',
+  `npc_relationship_lvl` int(1) NOT NULL default 1 COMMENT '关系亲近等级，1最小9最大'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2218,9 +2216,9 @@ DROP TABLE IF EXISTS `system_oplayer`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_oplayer` (
   `oid` int(11) NOT NULL AUTO_INCREMENT,
-  `osid` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `token` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `oname` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `osid` text ,
+  `token` text ,
+  `oname` text,
   `olvl` int(10) unsigned NOT NULL DEFAULT 1,
   `oyxb` int(11) NOT NULL DEFAULT 2000,
   `uczb` int(11) NOT NULL DEFAULT 100,
@@ -2234,29 +2232,29 @@ CREATE TABLE `system_oplayer` (
   `uendtime` datetime NOT NULL,
   `unowmid` int(11) NOT NULL DEFAULT 225,
   `uwx` int(11) NOT NULL DEFAULT 0,
-  `unowguaiwu` int(11) NOT NULL,
-  `tool1` int(11) NOT NULL,
-  `tool2` int(11) NOT NULL,
-  `tool3` int(11) NOT NULL,
-  `tool4` int(11) NOT NULL,
-  `tool5` int(11) NOT NULL,
-  `tool6` int(11) NOT NULL,
+  `unowguaiwu` int(11) NOT NULL default 0,
+  `tool1` int(11) NOT NULL DEFAULT 0,
+  `tool2` int(11) NOT NULL DEFAULT 0,
+  `tool3` int(11) NOT NULL DEFAULT 0,
+  `tool4` int(11) NOT NULL DEFAULT 0,
+  `tool5` int(11) NOT NULL DEFAULT 0,
+  `tool6` int(11) NOT NULL DEFAULT 0,
   `ubj` int(11) NOT NULL DEFAULT 0,
   `uxx` int(11) NOT NULL DEFAULT 0,
   `sfzx` int(11) NOT NULL DEFAULT 0,
-  `qandaotime` datetime NOT NULL,
-  `xiuliantime` datetime NOT NULL,
+  `qandaotime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `xiuliantime` datetime NOT NULL default '0000-00-00 00:00:00',
   `sfxl` int(11) NOT NULL DEFAULT 0,
-  `yp1` int(11) NOT NULL,
-  `yp2` int(11) NOT NULL,
-  `yp3` int(11) NOT NULL,
-  `cw` int(11) NOT NULL,
-  `jn1` int(11) NOT NULL,
-  `jn2` int(11) NOT NULL,
-  `jn3` int(11) NOT NULL,
+  `yp1` int(11) NOT NULL default 0,
+  `yp2` int(11) NOT NULL default 0,
+  `yp3` int(11) NOT NULL default 0,
+  `cw` int(11) NOT NULL default 0,
+  `jn1` int(11) NOT NULL DEFAULT 0,
+  `jn2` int(11) NOT NULL DEFAULT 0,
+  `jn3` int(11) NOT NULL DEFAULT 0,
   `ispvp` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`oid`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=gb2312 COLLATE=gb2312_chinese_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2276,24 +2274,24 @@ DROP TABLE IF EXISTS `system_pet_player`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_pet_player` (
-  `pnid` int(11) NOT NULL,
+  `pnid` int(11) NOT NULL default 0,
   `pid` int(11) NOT NULL AUTO_INCREMENT,
-  `pname` varchar(255) NOT NULL,
-  `pphoto` varchar(255) NOT NULL,
-  `psid` text NOT NULL,
-  `plvl` int(11) NOT NULL,
-  `pmaxexp` int(255) NOT NULL,
-  `pexp` int(255) NOT NULL,
-  `php` int(255) NOT NULL,
-  `pmaxhp` int(255) NOT NULL,
-  `pgj` int(255) NOT NULL,
-  `pfy` int(255) NOT NULL,
-  `pstate` int(1) NOT NULL,
-  `phunger` int(3) NOT NULL,
-  `pthirst` int(3) NOT NULL,
-  `pmood` int(4) NOT NULL,
+  `pname` varchar(255) NOT NULL default '',
+  `pphoto` varchar(255) NOT NULL default '',
+  `psid` text,
+  `plvl` int(11) NOT NULL default 0,
+  `pmaxexp` int(255) NOT NULL default 0,
+  `pexp` int(255) NOT NULL default 0,
+  `php` int(255) NOT NULL default 0,
+  `pmaxhp` int(255) NOT NULL default 0,
+  `pgj` int(255) NOT NULL default 0,
+  `pfy` int(255) NOT NULL default 0,
+  `pstate` int(1) NOT NULL default  0,
+  `phunger` int(3) NOT NULL default 0,
+  `pthirst` int(3) NOT NULL default 0,
+  `pmood` int(4) NOT NULL default 0,
   PRIMARY KEY (`pid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2313,12 +2311,12 @@ DROP TABLE IF EXISTS `system_photo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_photo` (
-  `id` text NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `photo_url` varchar(255) NOT NULL,
-  `photo_style` text NOT NULL COMMENT 'height: 72px;width: 128px 场景用',
-  `format_type` varchar(255) NOT NULL
+  `id` text,
+  `name` varchar(255) NOT NULL default '',
+  `type` varchar(255) NOT NULL default '',
+  `photo_url` varchar(255) NOT NULL default '',
+  `photo_style` text COMMENT 'height: 72px;width: 128px 场景用',
+  `format_type` varchar(255) NOT NULL default ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2340,8 +2338,8 @@ DROP TABLE IF EXISTS `system_photo_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_photo_type` (
-  `name` varchar(255) NOT NULL,
-  `contains` text NOT NULL
+  `name` varchar(255) NOT NULL default '',
+  `contains` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2364,9 +2362,9 @@ DROP TABLE IF EXISTS `system_player`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_player` (
   `uid` int(11) NOT NULL AUTO_INCREMENT,
-  `sid` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `token` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `uname` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `sid` text,
+  `token` text,
+  `uname` text,
   `ulvl` int(10) unsigned NOT NULL DEFAULT 1,
   `uyxb` int(11) NOT NULL DEFAULT 2000,
   `uczb` int(11) NOT NULL DEFAULT 100,
@@ -2380,32 +2378,32 @@ CREATE TABLE `system_player` (
   `uendtime` datetime NOT NULL,
   `unowmid` int(11) NOT NULL DEFAULT 225,
   `uwx` int(11) NOT NULL DEFAULT 0,
-  `unowguaiwu` int(11) NOT NULL,
-  `tool1` int(11) NOT NULL,
-  `tool2` int(11) NOT NULL,
-  `tool3` int(11) NOT NULL,
-  `tool4` int(11) NOT NULL,
-  `tool5` int(11) NOT NULL,
-  `tool6` int(11) NOT NULL,
+  `unowguaiwu` int(11) NOT NULL default 0,
+  `tool1` int(11) NOT NULL DEFAULT 0,
+  `tool2` int(11) NOT NULL DEFAULT 0,
+  `tool3` int(11) NOT NULL DEFAULT 0,
+  `tool4` int(11) NOT NULL DEFAULT 0,
+  `tool5` int(11) NOT NULL DEFAULT 0,
+  `tool6` int(11) NOT NULL DEFAULT 0,
   `ubj` int(11) NOT NULL DEFAULT 0,
   `uxx` int(11) NOT NULL DEFAULT 0,
   `sfzx` int(11) NOT NULL DEFAULT 0,
-  `qandaotime` datetime NOT NULL,
-  `xiuliantime` datetime NOT NULL,
+  `qandaotime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `xiuliantime` datetime NOT NULL default '0000-00-00 00:00:00',
   `sfxl` int(11) NOT NULL DEFAULT 0,
-  `yp1` int(11) NOT NULL,
-  `yp2` int(11) NOT NULL,
-  `yp3` int(11) NOT NULL,
-  `cw` int(11) NOT NULL,
-  `jn1` int(11) NOT NULL,
-  `jn2` int(11) NOT NULL,
-  `jn3` int(11) NOT NULL,
+  `yp1` int(11) NOT NULL DEFAULT 0,
+  `yp2` int(11) NOT NULL DEFAULT 0,
+  `yp3` int(11) NOT NULL DEFAULT 0,
+  `cw` int(11) NOT NULL default 0,
+  `jn1` int(11) NOT NULL default 0,
+  `jn2` int(11) NOT NULL default 0,
+  `jn3` int(11) NOT NULL default 0,
   `ispvp` int(11) NOT NULL DEFAULT 0,
   `unick_name` varchar(255) DEFAULT '',
   `uimage` varchar(255) DEFAULT '',
   `ukill` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=gb2312 COLLATE=gb2312_chinese_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2425,9 +2423,9 @@ DROP TABLE IF EXISTS `system_player_black`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_player_black` (
-  `usid` text NOT NULL,
-  `osid` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `usid` text,
+  `osid` text
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2447,13 +2445,13 @@ DROP TABLE IF EXISTS `system_player_boat`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_player_boat` (
-  `sid` text NOT NULL,
-  `boat_name` varchar(255) NOT NULL,
-  `boat_cons` int(11) NOT NULL COMMENT '百里能耗',
-  `boat_distance` int(11) NOT NULL COMMENT '剩余航行距离',
+  `sid` varchar(255) NOT NULL default '',
+  `boat_name` varchar(255) NOT NULL default  '',
+  `boat_cons` int(11) NOT NULL default 0 COMMENT '百里能耗',
+  `boat_distance` int(11) NOT NULL default 0 COMMENT '剩余航行距离',
   `boat_speed` int(11) NOT NULL DEFAULT 255 COMMENT '船速',
-  `boat_begin_id` int(11) NOT NULL COMMENT '起始id',
-  `boat_over_id` int(11) NOT NULL COMMENT '目标id',
+  `boat_begin_id` int(11) NOT NULL default 0 COMMENT '起始id',
+  `boat_over_id` int(11) NOT NULL default 0 COMMENT '目标id',
   `boat_durable` int(11) NOT NULL DEFAULT 200 COMMENT '耐久,每航行1000海里-1',
   `boat_max_durable` int(11) NOT NULL DEFAULT 200 COMMENT '最大耐久'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -2477,9 +2475,9 @@ DROP TABLE IF EXISTS `system_player_friend`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_player_friend` (
-  `usid` text NOT NULL,
-  `osid` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `usid` text,
+  `osid` text
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2500,10 +2498,10 @@ DROP TABLE IF EXISTS `system_player_inputs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_player_inputs` (
-  `sid` text NOT NULL,
-  `event_id` int(11) NOT NULL,
-  `id` text NOT NULL,
-  `value` text NOT NULL
+  `sid` varchar(255) NOT NULL default '',
+  `event_id` int(11) NOT NULL default 0,
+  `id` text,
+  `value` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2524,18 +2522,18 @@ DROP TABLE IF EXISTS `system_player_setting`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_player_setting` (
-  `sid` text NOT NULL,
-  `if_photo` int(1) NOT NULL COMMENT '是否显示图片',
-  `if_message` int(1) NOT NULL,
-  `if_save_last_message` int(1) NOT NULL,
-  `save_last_message_text` text NOT NULL,
-  `show_message_reg` int(2) NOT NULL,
-  `show_list_reg` int(2) NOT NULL,
-  `accept_state` int(1) NOT NULL,
-  `back_color` varchar(255) NOT NULL,
-  `text_color` varchar(255) NOT NULL,
-  `cmd_color` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT;
+  `sid` varchar(255) NOT NULL default '',
+  `if_photo` int(1) NOT NULL default 0 COMMENT '是否显示图片',
+  `if_message` int(1) NOT NULL default 0,
+  `if_save_last_message` int(1) NOT NULL default 0,
+  `save_last_message_text` text,
+  `show_message_reg` int(2) NOT NULL default 0,
+  `show_list_reg` int(2) NOT NULL default 0,
+  `accept_state` int(1) NOT NULL default 0,
+  `back_color` varchar(255) NOT NULL default '',
+  `text_color` varchar(255) NOT NULL default '',
+  `cmd_color` varchar(255) NOT NULL default ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2556,11 +2554,11 @@ DROP TABLE IF EXISTS `system_pvp_score`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_pvp_score` (
   `pvp_id` int(11) NOT NULL AUTO_INCREMENT,
-  `pvp_name` varchar(255) NOT NULL,
-  `pvp_show_cond` varchar(255) NOT NULL,
-  `pvp_battle_cond` varchar(255) NOT NULL,
-  `pvp_start_time` datetime NOT NULL,
-  `pvp_end_time` datetime NOT NULL,
+  `pvp_name` varchar(255) NOT NULL default '',
+  `pvp_show_cond` varchar(255) NOT NULL default '',
+  `pvp_battle_cond` varchar(255) NOT NULL default '',
+  `pvp_start_time` datetime NOT NULL default '0000-00-00 00:00:00',
+  `pvp_end_time` datetime NOT NULL default '0000-00-00 00:00:00',
   PRIMARY KEY (`pvp_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2583,11 +2581,11 @@ DROP TABLE IF EXISTS `system_rank`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_rank` (
   `rank_id` int(11) NOT NULL AUTO_INCREMENT,
-  `rank_name` varchar(255) NOT NULL,
-  `rank_exp` varchar(255) NOT NULL COMMENT '表达式',
-  `show_cond` text NOT NULL,
+  `rank_name` varchar(255) NOT NULL default '',
+  `rank_exp` varchar(255) NOT NULL default '' COMMENT '表达式',
+  `show_cond` text,
   `show_count` int(3) NOT NULL DEFAULT 10,
-  `show_obj` int(1) NOT NULL COMMENT '0为玩家，1为宠物',
+  `show_obj` int(1) NOT NULL default 0 COMMENT '0为玩家，1为宠物',
   PRIMARY KEY (`rank_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2610,8 +2608,8 @@ DROP TABLE IF EXISTS `system_regular_tasks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_regular_tasks` (
-  `reg_id` int(11) NOT NULL COMMENT 'id',
-  `reg_regular` text NOT NULL COMMENT '规则',
+  `reg_id` int(11) NOT NULL default 0 COMMENT 'id',
+  `reg_regular` text COMMENT '规则',
   PRIMARY KEY (`reg_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2634,13 +2632,13 @@ DROP TABLE IF EXISTS `system_rp`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_rp` (
   `rp_id` int(11) NOT NULL AUTO_INCREMENT,
-  `rp_item_root` int(11) NOT NULL COMMENT '资源对应物品id',
-  `rp_name` varchar(255) NOT NULL,
-  `rp_desc` varchar(255) NOT NULL,
-  `rp_rarity` int(1) NOT NULL COMMENT '稀有度，0为最低级，9为最高级',
-  `rp_renew_time` int(11) NOT NULL COMMENT '刷新时间，以秒为单位',
-  `rp_pick_cond` text NOT NULL COMMENT '采集条件表达式',
-  `rp_action_name` varchar(255) NOT NULL COMMENT '采集动作名称，eg:矿石用挖矿、树木用砍伐',
+  `rp_item_root` int(11) NOT NULL default 0 COMMENT '资源对应物品id',
+  `rp_name` varchar(255) NOT NULL default '',
+  `rp_desc` varchar(255) NOT NULL default '',
+  `rp_rarity` int(1) NOT NULL default 0 COMMENT '稀有度，0为最低级，9为最高级',
+  `rp_renew_time` int(11) NOT NULL default 0 COMMENT '刷新时间，以秒为单位',
+  `rp_pick_cond` text COMMENT '采集条件表达式',
+  `rp_action_name` varchar(255) NOT NULL default '' COMMENT '采集动作名称，eg:矿石用挖矿、树木用砍伐',
   PRIMARY KEY (`rp_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='资源设计表';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2664,8 +2662,8 @@ DROP TABLE IF EXISTS `system_self_define_module`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_self_define_module` (
   `pos` int(11) NOT NULL AUTO_INCREMENT,
-  `id` varchar(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `id` varchar(11) NOT NULL default '',
+  `name` varchar(255) DEFAULT '',
   `call_sum` int(11) DEFAULT 0,
   PRIMARY KEY (`pos`,`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -2689,31 +2687,31 @@ DROP TABLE IF EXISTS `system_skill`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_skill` (
-  `jname` varchar(255) NOT NULL,
+  `jname` varchar(255) NOT NULL default '',
   `jid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `jdesc` varchar(255) NOT NULL COMMENT '技能描述',
-  `joccasion` int(1) NOT NULL COMMENT '使用场合',
-  `jimage` varchar(255) NOT NULL,
-  `jhurt_mod` text NOT NULL COMMENT '伤害系数',
+  `jdesc` varchar(255) NOT NULL default '' COMMENT '技能描述',
+  `joccasion` int(1) NOT NULL default 0 COMMENT '使用场合',
+  `jimage` varchar(255) NOT NULL default '',
+  `jhurt_mod` text COMMENT '伤害系数',
   `jgroup_attack` int(1) NOT NULL DEFAULT 1 COMMENT '攻击范围，-1代表攻击所有',
-  `jcooling_time` int(11) NOT NULL COMMENT '冷却时间（秒）',
-  `jcooling_round` int(11) NOT NULL COMMENT '冷却时间（回合）',
-  `jhurt_attr` text NOT NULL COMMENT '伤害目标',
-  `jdeplete_attr` text NOT NULL COMMENT '消耗目标',
-  `jhurt_exp` text NOT NULL COMMENT '伤害公式',
-  `jdeplete_exp` text NOT NULL COMMENT '消耗公式',
+  `jcooling_time` int(11) NOT NULL default 0 COMMENT '冷却时间（秒）',
+  `jcooling_round` int(11) NOT NULL default 0 COMMENT '冷却时间（回合）',
+  `jhurt_attr` text COMMENT '伤害目标',
+  `jdeplete_attr` text COMMENT '消耗目标',
+  `jhurt_exp` text COMMENT '伤害公式',
+  `jdeplete_exp` text COMMENT '消耗公式',
   `jequip_type` int(11) NOT NULL DEFAULT 19980925 COMMENT '使用兵器类型，默认为任意',
-  `jequip_appoint` varchar(255) NOT NULL COMMENT '指定兵器id',
-  `juse_cond` text NOT NULL COMMENT '使用条件表达式',
-  `jcant_use_cmmt` text NOT NULL COMMENT '不满足使用条件提示语',
-  `jadd_point_exp` text NOT NULL COMMENT '熟练度表达式',
-  `jpromotion` text NOT NULL COMMENT '升级公式',
-  `jpromotion_cond` text NOT NULL COMMENT '升级条件表达式',
-  `jeffect_cmmt` varchar(255) NOT NULL COMMENT '出招效果描述',
-  `jevent_use_id` int(11) NOT NULL COMMENT '使用事件指向id',
-  `jevent_up_id` int(11) NOT NULL COMMENT '升级事件指向id',
+  `jequip_appoint` varchar(255) NOT NULL default '' COMMENT '指定兵器id',
+  `juse_cond` text  COMMENT '使用条件表达式',
+  `jcant_use_cmmt` text COMMENT '不满足使用条件提示语',
+  `jadd_point_exp` text  COMMENT '熟练度表达式',
+  `jpromotion` text  COMMENT '升级公式',
+  `jpromotion_cond` text  COMMENT '升级条件表达式',
+  `jeffect_cmmt` varchar(255) NOT NULL default '' COMMENT '出招效果描述',
+  `jevent_use_id` int(11) NOT NULL default 0 COMMENT '使用事件指向id',
+  `jevent_up_id` int(11) NOT NULL default 0 COMMENT '升级事件指向id',
   PRIMARY KEY (`jid`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2734,19 +2732,19 @@ DROP TABLE IF EXISTS `system_skill_module`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_skill_module` (
-  `jid` int(11) NOT NULL COMMENT '用于标识默认值和修改值,默认值1修改值2',
-  `jhurt_attr` text NOT NULL COMMENT '伤害目标',
-  `jdeplete_attr` text NOT NULL COMMENT '消耗目标',
-  `jhurt_exp` text NOT NULL COMMENT '伤害公式',
-  `jdeplete_exp` text NOT NULL COMMENT '消耗公式',
-  `jadd_point_exp` text NOT NULL COMMENT '单次增加熟练度公式',
-  `jpromotion` text NOT NULL COMMENT '升级公式',
-  `jpromotion_cond` text NOT NULL COMMENT '升级条件表达式',
-  `jeffect_cmmt` varchar(255) NOT NULL COMMENT '使用效果描述',
-  `jevent_use_id` int(11) NOT NULL COMMENT '使用事件指向id',
-  `jevent_up_id` int(11) NOT NULL COMMENT '升级事件指向id',
+  `jid` int(11) NOT NULL default 1 COMMENT '用于标识默认值和修改值,默认值1修改值2',
+  `jhurt_attr` text COMMENT '伤害目标',
+  `jdeplete_attr` text COMMENT '消耗目标',
+  `jhurt_exp` text COMMENT '伤害公式',
+  `jdeplete_exp` text COMMENT '消耗公式',
+  `jadd_point_exp` text COMMENT '单次增加熟练度公式',
+  `jpromotion` text COMMENT '升级公式',
+  `jpromotion_cond` text COMMENT '升级条件表达式',
+  `jeffect_cmmt` varchar(255) NOT NULL default '' COMMENT '使用效果描述',
+  `jevent_use_id` int(11) NOT NULL default 0 COMMENT '使用事件指向id',
+  `jevent_up_id` int(11) NOT NULL default 0 COMMENT '升级事件指向id',
   PRIMARY KEY (`jid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2767,13 +2765,13 @@ DROP TABLE IF EXISTS `system_skill_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_skill_user` (
-  `jsid` varchar(255) NOT NULL,
-  `jid` int(10) unsigned NOT NULL,
-  `jlvl` int(11) NOT NULL COMMENT '技能等级',
-  `jpoint` int(11) NOT NULL COMMENT '当前熟练度',
-  `jdefault` int(1) NOT NULL COMMENT '0为非默认，1为默认，在自动战斗中生效',
+  `jsid` varchar(255) NOT NULL default '',
+  `jid` int(10) unsigned NOT NULL default 0,
+  `jlvl` int(11) NOT NULL default 0 COMMENT '技能等级',
+  `jpoint` int(11) NOT NULL default 0 COMMENT '当前熟练度',
+  `jdefault` int(1) NOT NULL default 0 COMMENT '0为非默认，1为默认，在自动战斗中生效',
   `jpid` int(11) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2794,15 +2792,15 @@ DROP TABLE IF EXISTS `system_storage`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_storage` (
-  `ibelong_mid` int(11) NOT NULL COMMENT '//所属地图',
-  `item_true_id` int(11) NOT NULL,
-  `sid` varchar(255) NOT NULL,
-  `uid` int(10) NOT NULL,
-  `iid` int(11) NOT NULL,
-  `icount` int(11) NOT NULL,
-  `ibind` int(11) NOT NULL COMMENT '0为未绑定，1为绑定。',
-  `iroot` varchar(255) NOT NULL COMMENT '物品来源格式：类别|id，类别0代表未知，1代表怪物掉落，2代表玩家打造，3代表任务赠送，4代表其它'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `ibelong_mid` int(11) NOT NULL default 0 COMMENT '//所属地图',
+  `item_true_id` int(11) NOT NULL default 0,
+  `sid` varchar(255) NOT NULL default '',
+  `uid` int(10) NOT NULL default 0,
+  `iid` int(11) NOT NULL default 0,
+  `icount` int(11) NOT NULL default 0,
+  `ibind` int(11) NOT NULL default 0 COMMENT '0为未绑定，1为绑定。',
+  `iroot` varchar(255) NOT NULL default '' COMMENT '物品来源格式：类别|id，类别0代表未知，1代表怪物掉落，2代表玩家打造，3代表任务赠送，4代表其它'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2823,11 +2821,11 @@ DROP TABLE IF EXISTS `system_storage_locked`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_storage_locked` (
-  `ibelong_mid` int(11) NOT NULL COMMENT '//所属地图',
-  `sid` varchar(255) NOT NULL,
-  `istate` int(1) NOT NULL COMMENT '0代表没锁，1代表锁住',
-  `password` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `ibelong_mid` int(11) NOT NULL default 0 COMMENT '//所属地图',
+  `sid` varchar(255) NOT NULL default '',
+  `istate` int(1) NOT NULL default 0 COMMENT '0代表没锁，1代表锁住',
+  `password` varchar(255) NOT NULL default ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2848,25 +2846,25 @@ DROP TABLE IF EXISTS `system_task`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_task` (
-  `tbelong` int(11) NOT NULL COMMENT '属于哪个父任务系列',
-  `tid` int(11) NOT NULL,
-  `tname` varchar(255) NOT NULL,
-  `tnpc_id` int(11) NOT NULL COMMENT '哪个npc发布的',
-  `ttype` int(1) NOT NULL COMMENT '1杀怪2寻物3办事',
-  `ttype2` int(1) NOT NULL COMMENT '1主线2支线3日常',
-  `tgiveup` int(1) NOT NULL COMMENT '0不可放弃1可放弃',
-  `treaccept` int(1) NOT NULL COMMENT '0不可重复接受1可重复接受',
-  `taccept_lvl` int(11) NOT NULL COMMENT '最低接受等级',
-  `tcond` text NOT NULL COMMENT '触发条件',
-  `taccept_cond` text NOT NULL COMMENT '接受条件',
-  `tcmmt1` varchar(255) NOT NULL COMMENT '不能接受提示语',
-  `tcmmt2` varchar(255) NOT NULL COMMENT '未完成提示语',
-  `ttarget_event_accept` int(255) NOT NULL COMMENT '接受事件id',
-  `ttarget_event_giveup` int(255) NOT NULL COMMENT '放弃事件id',
-  `ttarget_event_finish` int(255) NOT NULL COMMENT '完成事件id',
-  `ttarget_obj` varchar(255) NOT NULL COMMENT '任务要求，格式：id|数量,id|数量，会因type不同而不同',
+  `tbelong` int(11) NOT NULL default 0 COMMENT '属于哪个父任务系列',
+  `tid` int(11) NOT NULL default 0,
+  `tname` varchar(255) NOT NULL default '',
+  `tnpc_id` int(11) NOT NULL default 0 COMMENT '哪个npc发布的',
+  `ttype` int(1) NOT NULL default 1 COMMENT '1杀怪2寻物3办事',
+  `ttype2` int(1) NOT NULL default 1 COMMENT '1主线2支线3日常',
+  `tgiveup` int(1) NOT NULL default 0 COMMENT '0不可放弃1可放弃',
+  `treaccept` int(1) NOT NULL default 0 COMMENT '0不可重复接受1可重复接受',
+  `taccept_lvl` int(11) NOT NULL default 0 COMMENT '最低接受等级',
+  `tcond` text  COMMENT '触发条件',
+  `taccept_cond` text  COMMENT '接受条件',
+  `tcmmt1` varchar(255) NOT NULL default '' COMMENT '不能接受提示语',
+  `tcmmt2` varchar(255) NOT NULL default '' COMMENT '未完成提示语',
+  `ttarget_event_accept` int(255) NOT NULL default 0 COMMENT '接受事件id',
+  `ttarget_event_giveup` int(255) NOT NULL default 0 COMMENT '放弃事件id',
+  `ttarget_event_finish` int(255) NOT NULL default 0 COMMENT '完成事件id',
+  `ttarget_obj` varchar(255) NOT NULL default '' COMMENT '任务要求，格式：id|数量,id|数量，会因type不同而不同',
   PRIMARY KEY (`tid`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2887,8 +2885,8 @@ DROP TABLE IF EXISTS `system_task_evs_old`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_task_evs_old` (
-  `id` varchar(4) NOT NULL COMMENT '任务id，以t开头',
-  `name` varchar(255) DEFAULT NULL COMMENT '任务名',
+  `id` varchar(4) NOT NULL default '' COMMENT '任务id，以t开头',
+  `name` varchar(255) DEFAULT '' COMMENT '任务名',
   `s_cond` varchar(255) DEFAULT NULL COMMENT '触发条件',
   `cond` varchar(255) DEFAULT NULL COMMENT '接受条件',
   `cmmt1` text DEFAULT NULL COMMENT '不能提示语',
@@ -2921,9 +2919,9 @@ DROP TABLE IF EXISTS `system_task_father`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_task_father` (
-  `f_id` int(11) NOT NULL COMMENT '系列id',
-  `f_name` varchar(255) NOT NULL COMMENT '系列名称',
-  `f_desc` varchar(255) NOT NULL COMMENT '系列介绍',
+  `f_id` int(11) NOT NULL default 0 COMMENT '系列id',
+  `f_name` varchar(255) NOT NULL default '' COMMENT '系列名称',
+  `f_desc` varchar(255) NOT NULL default ''  COMMENT '系列介绍',
   PRIMARY KEY (`f_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2945,11 +2943,11 @@ DROP TABLE IF EXISTS `system_task_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_task_user` (
-  `tid` int(11) NOT NULL,
-  `sid` text NOT NULL,
-  `tnowcount` varchar(255) NOT NULL COMMENT '//当前任务进度数量,格式:id|数量',
-  `tstate` int(1) NOT NULL COMMENT '//任务状态，1未完成2已完成'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+  `tid` int(11) NOT NULL default 0,
+  `sid` varchar(255) NOT NULL default '',
+  `tnowcount` varchar(255) NOT NULL default '' COMMENT '//当前任务进度数量,格式:id|数量',
+  `tstate` int(1) NOT NULL default 1 COMMENT '//任务状态，1未完成2已完成'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -2971,13 +2969,13 @@ DROP TABLE IF EXISTS `system_team_user`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_team_user` (
   `team_id` int(11) NOT NULL AUTO_INCREMENT,
-  `team_name` varchar(255) NOT NULL,
-  `team_decla` varchar(255) NOT NULL,
-  `team_master` varchar(255) NOT NULL,
-  `team_member` varchar(255) NOT NULL,
+  `team_name` varchar(255) NOT NULL default '',
+  `team_decla` varchar(255) NOT NULL default '',
+  `team_master` varchar(255) NOT NULL default '',
+  `team_member` varchar(255) NOT NULL default '',
   `team_auto_pass` int(1) NOT NULL DEFAULT 0,
-  `team_created_time` datetime NOT NULL,
-  `team_putin_id` varchar(255) NOT NULL COMMENT '申请人uid，格式：id1|id2|...',
+  `team_created_time` datetime NOT NULL default '0000-00-00 00:00:00',
+  `team_putin_id` varchar(255) NOT NULL default '' COMMENT '申请人uid，格式：id1|id2|...',
   PRIMARY KEY (`team_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3000,11 +2998,11 @@ DROP TABLE IF EXISTS `system_tran_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `system_tran_user` (
-  `tran_id` int(11) NOT NULL,
-  `tran_state` varchar(255) NOT NULL,
-  `tran_sid` int(11) NOT NULL,
-  `tran_oid` int(11) NOT NULL,
-  `tran_value` text NOT NULL,
+  `tran_id` int(11) NOT NULL default 0,
+  `tran_state` varchar(255) NOT NULL default '',
+  `tran_sid` int(11) NOT NULL default 0,
+  `tran_oid` int(11) NOT NULL default 0,
+  `tran_value` text,
   PRIMARY KEY (`tran_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3027,10 +3025,10 @@ DROP TABLE IF EXISTS `user_sessions`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_sessions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `session_id` text NOT NULL,
-  `sid` text NOT NULL,
-  `is_active` int(11) NOT NULL,
-  `device_info` varchar(255) NOT NULL,
+  `session_id` varchar(255) NOT NULL default '',
+  `sid` varchar(255) NOT NULL default '',
+  `is_active` int(11) NOT NULL default 0,
+  `device_info` varchar(255) NOT NULL default '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3057,7 +3055,7 @@ CREATE TABLE `userinfo` (
   `token` text DEFAULT NULL,
   `sid` text DEFAULT NULL,
   `designer` int(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=gb2312 COLLATE=gb2312_chinese_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -3078,18 +3076,18 @@ DROP TABLE IF EXISTS `zhuangbei`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `zhuangbei` (
-  `zbname` varchar(255) NOT NULL,
-  `zbinfo` varchar(255) NOT NULL,
-  `zbgj` varchar(255) NOT NULL,
-  `zbfy` varchar(255) NOT NULL,
-  `zbbj` varchar(255) NOT NULL,
-  `zbxx` varchar(255) NOT NULL,
+  `zbname` varchar(255) NOT NULL default '',
+  `zbinfo` varchar(255) NOT NULL default '',
+  `zbgj` varchar(255) NOT NULL default '',
+  `zbfy` varchar(255) NOT NULL default '',
+  `zbbj` varchar(255) NOT NULL default '',
+  `zbxx` varchar(255) NOT NULL default '',
   `zbid` int(11) NOT NULL AUTO_INCREMENT,
-  `zbhp` varchar(255) NOT NULL,
-  `zblv` int(11) NOT NULL,
-  `zbtool` int(11) NOT NULL,
+  `zbhp` varchar(255) NOT NULL default '',
+  `zblv` int(11) NOT NULL default 0,
+  `zbtool` int(11) NOT NULL default 0,
   PRIMARY KEY (`zbid`)
-) ENGINE=MyISAM AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
