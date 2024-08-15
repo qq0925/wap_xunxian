@@ -1996,11 +1996,15 @@ echo $refresh_html;
             $iname = $item->iname;
             $ino_out = $item->ino_out;
             $iweight = $item->iweight;
+            if($canshu =="全部" || !$canshu){
+            $canshu = "全部";
+            }else{
             $canshu = ($itype == "消耗品") ? "消耗品" : (
                 ($itype == "兵器" || $itype == "防具") ? "装备" : (
-                    ($itype == "书籍" || $itype == "任务物品" || $itype == "其它") ? "其它" : "全部"
+                    ($itype == "书籍" || $itype == "任务物品" || $itype == "兵器镶嵌物" || $itype == "防具镶嵌物" || $itype == "其它") ? "其它" : "全部"
                 )
             );
+            }
             $iname = \lexical_analysis\color_string($iname);
             switch($target_event){
                 case 'use':
@@ -2034,7 +2038,6 @@ echo $refresh_html;
                             if($result ==0){
                             \player\changeequipstate($sid,$dblj,$iid,$item_true_id,1);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$item_true_id' and sid = '$sid'");
-                            $canshu = '装备';
                             echo "你装备了{$iname}<br/>";
                             //这里可以更新镶嵌物的属性
                             $event_data = global_event_data_get(40,$dblj);
@@ -2077,7 +2080,6 @@ echo $refresh_html;
                             }
                             }else{
                             echo "你已经装备了{$iname}！<br/>";
-                            $canshu = '装备';
                             }
                             break;
                         case '防具':
@@ -2085,7 +2087,6 @@ echo $refresh_html;
                             if($result ==0){
                             \player\changeequipstate($sid,$dblj,$iid,$item_true_id,1);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$item_true_id' and sid = '$sid'");
-                            $canshu = '装备';
                             echo "你装备了{$iname}<br/>";
                             $event_data = global_event_data_get(40,$dblj);
                             $event_cond = $event_data['system_event']['cond'];
@@ -2127,7 +2128,6 @@ echo $refresh_html;
                             }
                             }else{
                             echo "你已经装备上了{$iname}！<br/>";
-                            $canshu = '装备';
                             }
                             break;
                         case '其它':
@@ -2154,13 +2154,11 @@ echo $refresh_html;
                     $result = \player\getnowequiptrueid($item_true_id,$sid,$dblj);
                     if($result ==1){
                     echo "你已经穿上了{$iname}!不能丢弃!<br/>";
-                    $canshu = '装备';
                     }else{
                     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
                     \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
                     $dblj->exec("DELETE from player_equip_mosaic where equip_id = '$item_true_id'");
                     echo "你丢掉了{$iname}<br/>";
-                    $canshu = '装备';
                     }
                     }else{
                     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
@@ -2178,13 +2176,11 @@ echo $refresh_html;
                     $result = \player\getnowequiptrueid($item_true_id,$sid,$dblj);
                     if($result ==1){
                     echo "你已经穿上了{$iname}!不能丢弃!<br/>";
-                    $canshu = '装备';
                     }else{
                     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
                     \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
                     $dblj->exec("DELETE from player_equip_mosaic where equip_id = '$item_true_id'");
                     echo "你丢掉了所有的{$iname}<br/>";
-                    $canshu = '装备';
                     }
                     }else{
                     $out_count = \player\changeplayeritem($item_true_id,"all",$sid,$dblj);
@@ -2201,7 +2197,6 @@ echo $refresh_html;
                     case '兵器':
                         \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
-                        $canshu = '装备';
                         echo "你卸下了{$iname}<br/>";
                         $event_data = global_event_data_get(41,$dblj);
                         $event_cond = $event_data['system_event']['cond'];
@@ -2245,7 +2240,6 @@ echo $refresh_html;
                     case '防具':
                         \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
-                        $canshu = '装备';
                         echo "你卸下了{$iname}<br/>";
                             $event_data = global_event_data_get(41,$dblj);
                             $event_cond = $event_data['system_event']['cond'];
@@ -2307,6 +2301,7 @@ echo $refresh_html;
             }elseif($target_event =='look_book'){
             $ym = "module_all/gm_book_details.php";
                 }else{
+                    
             $ym = "module_all/scene_item.php";
             }
             break;
