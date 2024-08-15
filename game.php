@@ -486,7 +486,7 @@ echo $refresh_html;
                     $stmt = $dblj->prepare($sql);
                     $sql = "update game1 set endtime='$nowdate',minutetime = '$nowdate',sfzx=1 WHERE sid='$sid'";
                     $cxjg = $dblj->exec($sql);
-                    $stmt->execute(array('系统通知',"万中无一的{$username}踏上了旅途",'',"$nowdate"));
+                    $stmt->execute(array('系统通知',"万中无一的{$username}踏上了旅途",'0',"$nowdate"));
                     for($i = 1;$i <8;$i++){
                     $sql = "insert into system_fight_quick(sid,quick_pos) values(?,?)";
                     $stmt = $dblj->prepare($sql);
