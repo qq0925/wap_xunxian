@@ -1,15 +1,12 @@
 <?php
 
+require_once 'pdo.php';
+
 $area_add = $encode->encode("cmd=area_post&gm_post_canshu=0&sid=$sid");
 $gm = $encode->encode("cmd=gm&sid=$sid");
 
 
-$username='xunxian';
-$password='123456';
-$dbname='xunxian';
-$servername = "127.0.0.1";
-
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = DB::conn();
 
 // 检查连接是否成功
 if (!$conn) {
@@ -27,9 +24,6 @@ if ($result->num_rows > 0) {
 } else {
     echo "表中没有数据";
 }
-
-// 关闭连接
-$conn->close();
 
 //进行重复区域名称检测
 
