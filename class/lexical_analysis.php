@@ -1,6 +1,7 @@
 <?php
-
 namespace lexical_analysis;
+
+use DB;
 use mysqli;
 //解析各个地方传来的{}。
 
@@ -28,14 +29,13 @@ class Cache {
     }
 }
 
+require_once 'pdo.php';
+
 function hurt_calc($jid=null,$sid,$gid,$type,$dblj,$pid=null){
 $ngid = explode(',',$gid);
 
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
+$db = DB::conn();
+
 //这段是处理伤害公式的获取
 if($jid){
 $sql = "SELECT * from system_skill where jid = '$jid'";
@@ -1981,7 +1981,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $op = nl2br($row['value']);
                     // 替换字符串中的变量
                     $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
-                    
+                   
                     $op = @eval("return $op;");
                     //$input = str_replace("{{$match}}", $op, $input);
                     break;
@@ -2178,11 +2178,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
 
 // 定义处理字符串的函数
 function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $type = null, $para = null) {
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
 
     $matches = [];
     preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
@@ -2929,11 +2925,7 @@ function process_attribute_2($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$par
 
 // 定义处理字符串的函数
 function process_string_2($input, $sid, $oid = null, $mid = null, $jid = null, $type = null, $para = null) {
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
     $matches = [];
     preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
 
@@ -3635,12 +3627,7 @@ function process_attribute_3($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$par
 
 // 定义处理字符串的函数
 function process_string_3($input, $sid, $oid = null, $mid = null, $jid = null, $type = null, $para = null) {
-    
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
     $matches = [];
     preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
 
@@ -3697,11 +3684,7 @@ function generate_image_link($hashtag) {
     $para = explode("|",$hashtag);
     $para_1 = $para[0];
     $para_2 = $para[1];
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
     
     $sql = "SELECT photo_url from system_photo where id = '$para_2' and type = '$para_1'";
     $result = $db ->query($sql);
@@ -3717,11 +3700,7 @@ function generate_image_style($hashtag){
     $para = explode("|",$hashtag);
     $para_1 = $para[0];
     $para_2 = $para[1];
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
     
     $sql = "SELECT photo_style from system_photo where id = '$para_2' and type = '$para_1'";
     $result = $db ->query($sql);
