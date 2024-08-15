@@ -2,29 +2,28 @@
 session_start();
 $start_time = microtime(true);
 //error_reporting(0);
-error_reporting(E_ALL & ~E_NOTICE);
 //ini_set('display_errors', '0');
 require 'class/player.php';
 require 'class/encode.php';
 require 'class/gm.php';
-include_once 'pdo.php';
+include 'pdo.php';
 require 'class/lexical_analysis.php';
 require 'class/event_data_get.php';
 require 'class/data_lexical.php';
 include 'class/iniclass.php';
-include_once 'class/global_event_step_change.php';
+include 'class/global_event_step_change.php';
 // require_once 'class/autoreact.php';
 // header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 // header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 // header("Cache-Control: no-cache, must-revalidate");
 // header("Pragma: no-cache");
-
-$encode = $encode ?? new \encode\encode();
-if(empty($player)){
+if(!$encode){
+$encode = new \encode\encode();
+}
+if(!$player){
 $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
 }
-
 if(!$gm_post){
 $gm_post = new \gm\gm();
 $gm_post = \gm\gm_post($dblj);
@@ -422,7 +421,7 @@ HTML;
                     }
                     
                     $userAgent = $_SERVER['HTTP_USER_AGENT'];
-                    $dblj->exec("insert into game4 (device_agent,sid) values ('$userAgent','$sid')");
+                    $dblj->exec("insert into game4 (device_agent,sid)values($userAgent,$sid)");
                     //注册事件逻辑
                     $event_data = global_event_data_get(1,$dblj);
                     $event_cond = $event_data['system_event']['cond'];
@@ -486,7 +485,7 @@ echo $refresh_html;
                     $stmt = $dblj->prepare($sql);
                     $sql = "update game1 set endtime='$nowdate',minutetime = '$nowdate',sfzx=1 WHERE sid='$sid'";
                     $cxjg = $dblj->exec($sql);
-                    $stmt->execute(array('系统通知',"万中无一的{$username}踏上了旅途",'0',"$nowdate"));
+                    $stmt->execute(array('系统通知',"万中无一的{$username}踏上了旅途",'',"$nowdate"));
                     for($i = 1;$i <8;$i++){
                     $sql = "insert into system_fight_quick(sid,quick_pos) values(?,?)";
                     $stmt = $dblj->prepare($sql);
@@ -558,7 +557,7 @@ echo $refresh_html;
         case 'pve_fight'://打怪事件,一次打一个
             $player = \player\getplayer($sid,$dblj);
             $pet = \player\getpet_fight($sid,$dblj);
-            $pid = $pet[0]['pid'] ?? 0;
+            $pid = $pet[0]['pid'];
             if($auto_canshu ==1){
                 \player\changeplayersx('uauto_fight',1,$sid,$dblj);
             }elseif($auto_canshu ==2){
@@ -2026,7 +2025,6 @@ echo $refresh_html;
                                 if($iuse_value >0){
                                     $iuse_value = "+".$iuse_value."<br/>";
                                 }
-                                $canshu = '消耗品';
                                 \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
                                 echo "{$attr_name}".$iuse_value;
                             }else{
