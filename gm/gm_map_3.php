@@ -67,6 +67,7 @@ $map_shop_item_count = 0;
 
 $nowdate = date('Y-m-d H:i:s');
 if ($update ==1){
+    echo "更新成功！<br/>";
     //$excludeFields = ['mname', 'mop_target', 'mid', 'mup', 'mdown', 'mleft', 'mright'];
     $sql = "update system_map set mgtime='$nowdate' WHERE mid='$player->nowmid'";
     $dblj->exec($sql);
@@ -76,15 +77,16 @@ if ($update ==1){
     $npc_s = explode(",", $data); // 使用逗号分隔字符串，得到每个项
     foreach ($npc_s as &$npc_a) {
         $parts = explode("|", $npc_a); // 使用竖线分隔每个项
-        if (count($parts) === 2) {
+        if (count($parts) === 2||count($parts) === 3) {
             $id = $parts[0];
             $npc_count = $parts[1];
+            $npc_show_cond = $parts[2];
             $npc_count = \lexical_analysis\process_string($npc_count,$sid);
             $npc_count = \lexical_analysis\process_string($npc_count,$sid);
             @$npc_count = eval("return $npc_count;");
             
             // 更新处理后的值
-            $npc_a = "$id|$npc_count";
+            $npc_a = "$id|$npc_count|$npc_show_cond";
         }
     }
     // 将处理后的数据重新组合成字符串
@@ -124,7 +126,7 @@ if ($update ==1){
     $items = explode(",", $data); // 使用逗号分隔字符串，得到每个项
     foreach ($items as &$item) {
         $parts = explode("|", $item); // 使用竖线分隔每个项
-        if (count($parts) === 2) {
+        if (count($parts) === 2||count($parts) === 3) {
             $id = $parts[0];
             $item_count = $parts[1];
             $item_count = \lexical_analysis\process_string($item_count,$sid);
@@ -146,7 +148,7 @@ if ($update ==1){
     $items = explode(",", $clmid_item_count); // 使用逗号分隔字符串，得到每个项
     foreach ($items as &$item) {
         $parts = explode("|", $item); // 使用竖线分隔每个项
-        if (count($parts) === 2) {
+        if (count($parts) === 2||count($parts) === 3) {
             $id = $parts[0];
             $item_count = $parts[1];
             $item_count = \lexical_analysis\process_string($item_count,$sid);

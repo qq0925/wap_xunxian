@@ -7,7 +7,7 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Expires: Sat, 1 Jan 2000 00:00:00 GMT");
 
 $encode = new \encode\encode();//创建一个名为 $encode 的新对象，并使用命名空间 \encode\encode() 实例化该对象。
-
+$dblj = DB::pdo();
 
 $Dcmd = $_SERVER['QUERY_STRING'];
 $result = array();
@@ -35,19 +35,9 @@ if ($result) {
 
     include './ini/xuser_ini.php';
     $a10 = ($iniFile->getItem('验证信息', 'xcmid值'));
-    // 检查表是否存在 designer 字段
-    $sql = "SHOW COLUMNS FROM userinfo LIKE 'designer'";
-    $stmt = $dblj->prepare($sql);
-    $stmt->execute();
-    $column = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$column) {
-        // 如果 designer 字段不存在，执行添加字段操作
-        $sql = "ALTER TABLE userinfo ADD COLUMN designer INT DEFAULT 0";
-        $stmt = $dblj->prepare($sql);
-        $stmt->execute();
-    }
-
+    
+    
+    include 'sql_update.php';
 
 $sql = "SELECT username, designer FROM userinfo WHERE token = :token";
 $stmt = $dblj->prepare($sql);

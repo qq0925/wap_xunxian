@@ -1,15 +1,12 @@
 <?php
-require_once 'lexical_analysis.php';
-require_once 'encode.php';
+// require_once 'lexical_analysis.php';
+// require_once 'encode.php';
+// require_once 'pdo.php';
 // 在用户登录时，检查是否有其他设备已登录，并强制其下线
 
 
 function check_if_logged($sid){
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
     $query = "SELECT session_id FROM user_sessions WHERE sid = ? and is_active = 1";
     $stmt = $db->prepare($query);
     $stmt->bind_param("s", $sid);
@@ -26,11 +23,7 @@ function check_if_logged($sid){
 
 
 function login($sid, $sessionId,$deviceInfo) {
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
 
     // 在 user_sessions 表中记录当前会话
     $insertQuery = "INSERT INTO user_sessions (sid, session_id, is_active,device_info) VALUES (?, ?, 1,?)";
@@ -41,11 +34,7 @@ function login($sid, $sessionId,$deviceInfo) {
 
 // 在用户退出登录时，标记会话为无效
 function logout($sid) {
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
     // 假设已经连接到数据库 $db
     $updateQuery = "UPDATE user_sessions SET is_active = 0 WHERE sid = ?";
     $updateStmt = $db->prepare($updateQuery);
@@ -64,12 +53,9 @@ function checkTriggerCondition($condition,$dblj=null,$sid,$oid=null,$mid=null) {
 }
 
 function attrsetting($input,$sid,$oid=null,$mid=null,$para=null){
+
     // 创建数据库连接
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
+$db = DB::conn();
 
 // 使用逗号分割字符串
 $keyValuePairs = explode(",", $input);
@@ -81,12 +67,28 @@ foreach ($keyValuePairs as $pair) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
         //$parts = explode(".", $ele_1);
+        
+        if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
+            $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
+            $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
+                $sql = "SELECT sid FROM game1 where uid = '$prefix_value'";
+                $cxjg = $db->query($sql);
+                if (!$cxjg) {
+                die('查询失败: ' . $db->error);
+                }
+                $row = $cxjg->fetch_assoc();
+                $ele_1 = str_replace("$matches[0]", "u", $ele_1);
+                $temp_sid = $row['sid'];
+                $sid = $temp_sid;
+            }
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
         $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
         $ele_1_2 = substr($ele_1, $SecondEqualsPos + 1);
+        // var_dump($ele_1_1);
+        // var_dump($ele_1_2);
         $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
-        @$ele_1_2 = eval("return $ele_1_2;");
+        //@$ele_1_2 = eval("return $ele_1_2;");
         $ele_1_2 = str_replace('.', '', $ele_1_2);
         }else{
             echo "错误语法警告！<br/>";
@@ -99,8 +101,6 @@ foreach ($keyValuePairs as $pair) {
         //     } else {
         //     echo "无法匹配到小数点 '.'<br/>";
         //     }
-            
-            
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         switch ($ele_1_1) {
@@ -159,6 +159,7 @@ foreach ($keyValuePairs as $pair) {
                 break;
             case 'o':
                 // 检查字段是否存在
+                
                 if(strpos($ele_1_2, "c_msg") === 0){
                     $sql = "select uname,uid from game1 where sid ='$oid'";
                     $result = $db->query($sql);
@@ -188,6 +189,16 @@ foreach ($keyValuePairs as $pair) {
                     $stmt->execute();
                     
                     }
+                elseif($oid =='pet'){
+                $reg = "p".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_pet_player LIKE '$reg'");
+
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_pet_player SET $reg = '$ele_2' WHERE psid = '$sid' and pid = $mid";
+                    $db->query($updateQuery);
+                }
+                }
                 else{
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
 
@@ -231,6 +242,34 @@ foreach ($keyValuePairs as $pair) {
                     
                     }
                 break;
+            case 'ut':
+                $sql = "select attr_value from player_temp_attr where obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
+                // 检查数据是否存在
+                // 如果数据存在，更新该数据
+                if ($result->num_rows > 0 ) {
+                    $updateQuery = "UPDATE player_temp_attr SET attr_value = '$ele_2' WHERE obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                    $db->query($updateQuery);
+                }else{
+                    // 数据不存在，插入数据并更新值
+                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_type,attr_name,attr_value)values('$sid',1,'$ele_1_2',$ele_2)";
+                    $db->query($alterQuery);
+                }
+                break;
+            case 'ot':
+                $sql = "select attr_value from player_temp_attr where obj_oid = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
+                // 检查数据是否存在
+                // 如果数据存在，更新该数据
+                if ($result->num_rows > 0 ) {
+                    $updateQuery = "UPDATE player_temp_attr SET attr_value = '$ele_2' WHERE obj_oid = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                    $db->query($updateQuery);
+                }else{
+                    // 数据不存在，插入数据并更新值
+                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values('$sid','$mid',2,'$ele_1_2',$ele_2)";
+                    $db->query($alterQuery);
+                }
+                break;
             default:
                 break;
         }
@@ -248,28 +287,43 @@ return 1;
 
 function attrchanging($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
+$db = DB::conn();
 
 // 使用逗号分割字符串
 $keyValuePairs = explode(",", $input);
-
+$old_sid = $sid;
 foreach ($keyValuePairs as $pair) {
     // 找到第一个等号的位置
+$sid = $old_sid;
     $firstEqualsPos = strpos($pair, '=');
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
         //$parts = explode(".", $ele_1);
+        if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
+            $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
+            $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
+                $sql = "SELECT sid FROM game1 where uid = '$prefix_value'";
+                $cxjg = $db->query($sql);
+                if (!$cxjg) {
+                die('查询失败: ' . $db->error);
+                }
+                $row = $cxjg->fetch_assoc();
+                $ele_1 = str_replace("$matches[0]", "u", $ele_1);
+                $temp_sid = $row['sid'];
+                $sid = $temp_sid;
+            }
+            if($old_sid ==$sid){
+                $echo_type = "self";
+            }else{
+                $echo_type = "other";
+            }
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
         $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
         $ele_1_2 = substr($ele_1, $SecondEqualsPos + 1);
         $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
-        @$ele_1_2 = eval("return $ele_1_2;");
+        //@$ele_1_2 = eval("return $ele_1_2;");
         $ele_1_2 = str_replace('.', '', $ele_1_2);
         }else{
             echo "错误语法警告！<br/>";
@@ -304,10 +358,37 @@ foreach ($keyValuePairs as $pair) {
                     $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$sid')";
                     $db->query($alterQuery);
                 }
+                include "pdo.php";
+                if($echo_type !="self"){
                 if($ele_2 >=0 && $attr_name){
-                echo "{$attr_name}+{$ele_2}<br/>";
+                $echo_mess =  "{$attr_name}+{$ele_2}";
+                \player\update_message_sql($sid,$dblj,$echo_mess);
                 }elseif($ele_2 <0 && $attr_name){
-                echo "{$attr_name}{$ele_2}<br/>";
+                $echo_mess =  "{$attr_name}{$ele_2}";
+                \player\update_message_sql($sid,$dblj,$echo_mess);
+                }
+                }else{
+                if($ele_2 >=0 && $attr_name){
+                $echo_mess =  "{$attr_name}+{$ele_2}";
+                echo $echo_mess."<br/>";
+                \player\update_message_sql($sid,$dblj,$echo_mess,1);
+                }elseif($ele_2 <0 && $attr_name){
+                $echo_mess =  "{$attr_name}{$ele_2}";
+                echo $echo_mess."<br/>";
+                \player\update_message_sql($sid,$dblj,$echo_mess,1);
+                }
+                }
+                break;
+            case 'o':
+                if($oid =='pet'){
+                $reg = "p".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_pet_player LIKE '$reg'");
+
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_pet_player SET $reg = $reg + '$ele_2' WHERE psid = '$sid' and pid = $mid";
+                    $db->query($updateQuery);
+                }
                 }
                 break;
             case 'g':
@@ -329,12 +410,45 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($insertQuery);
                 }
                 break;
-
+            case 'ut':
+                $sql = "select attr_value from player_temp_attr where obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
+                $row = $result->fetch_assoc();
+                $attr_value = $row['attr_value'];
+                // 检查数据是否存在
+                // 如果数据存在，更新该数据
+                if ($result->num_rows > 0 ) {
+                    $updateQuery = "UPDATE player_temp_attr SET attr_value = attr_value + '$ele_2' WHERE obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                    $db->query($updateQuery);
+                }else{
+                    // 数据不存在，插入数据并更新值
+                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_type,attr_name,attr_value)values('$sid',1,'$ele_1_2',$ele_2)";
+                    $db->query($alterQuery);
+                }
+                break;
+            case 'ot':
+                $sql = "select attr_value from player_temp_attr where obj_id = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
+                $row = $result->fetch_assoc();
+                $attr_value = $row['attr_value'];
+                // 检查数据是否存在
+                // 如果数据存在，更新该数据
+                if ($result->num_rows > 0 ) {
+                    $updateQuery = "UPDATE player_temp_attr SET attr_value = attr_value + '$ele_2' WHERE obj_id = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                    $db->query($updateQuery);
+                }else{
+                    // 数据不存在，插入数据并更新值
+                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values('$sid','$mid',2,'$ele_1_2',$ele_2)";
+                    $db->query($alterQuery);
+                }
+                break;
             default:
                 break;
         }
+        if($ele_1_1 !='ut'){
          "ele_1: " . $ele_1 . "<br/>";
          "ele_2: " . $ele_2 . "<br/>";
+        }
     } else {
         //echo "无法匹配到键值对<br/>";
         break;
@@ -346,11 +460,7 @@ return 1;
 
 function itemchanging($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
+$db = DB::conn();
 
 //做负重判断
 
@@ -454,11 +564,7 @@ return 1;
 
 function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = null){
     // 创建数据库连接
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
 
     // 使用逗号分割字符串
     $keyValuePairs = explode(",", $input);
@@ -531,11 +637,7 @@ function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = n
 
 function taskschanging($input, $sid, $type, $oid = null, $mid = null, $para = null){
     // 创建数据库连接
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
 
     // 使用逗号分割字符串
     $keyValuePairs = explode(",", $input);
@@ -587,14 +689,98 @@ function taskschanging($input, $sid, $type, $oid = null, $mid = null, $para = nu
     return 1;
 }
 
+function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null){
+    // 创建数据库连接
+    $db = DB::conn();
+
+    // 使用逗号分割字符串
+    $keyValuePairs = explode(",", $input);
+    foreach ($keyValuePairs as $pair) {
+        if ($pair) {
+            $query = "SELECT nname,npet_event_id,nid,nskills FROM system_npc WHERE nid = ?";
+            $stmt = $db->prepare($query);
+            $stmt->bind_param("i", $pair);  // "i"表示绑定一个整数参数
+            $stmt->execute();
+            $stmt->bind_result($nname,$npet_event_id,$pet_root_id,$pet_default_skills);  // 绑定结果到变量
+            $stmt->fetch();
+            $stmt->free_result();
+            switch ($type) {
+                case '1':
+                    // 检查收养数量是否超过最大数量，这里的8先写死
+                    $checkQuery = "SELECT * FROM system_pet_player WHERE psid = ?";
+                    $checkStmt = $db->prepare($checkQuery);
+                    $checkStmt->bind_param("s", $sid);
+                    $checkStmt->execute();
+                    $checkResult = $checkStmt->get_result();
+
+                    if ($checkResult->num_rows <= 8) {
+                        // 判断对应npc有无被收养事件，进行插入操作
+                        
+                        $insertQuery = "INSERT IGNORE INTO system_pet_player (pnid,pname, psid, plvl,php,pmaxhp) VALUES (?,?,?,'1','1','1')";
+                        $insertStmt = $db->prepare($insertQuery);
+                        $insertStmt->bind_param("iss", $pet_root_id,$nname,$sid);
+                        $insertResult = $insertStmt->execute();
+                        $lastInsertedId = $db->insert_id;
+                        
+                        if($pet_default_skills){
+                        $pet_default_skills_para = explode(',',$pet_default_skills);
+                        foreach ($pet_default_skills_para as $pet_default_skills_one){
+                            $pet_default_skill = explode('|',$pet_default_skills_one);
+                            $pet_default_skill_id = $pet_default_skill[0];
+                            $insertQuery = "INSERT IGNORE INTO system_skill_user (jsid,jid,jlvl, jpid) VALUES (?,?,1,?)";
+                            $insertStmt = $db->prepare($insertQuery);
+                            $insertStmt->bind_param("sii",$sid, $pet_default_skill_id,$lastInsertedId);
+                            $insertResult = $insertStmt->execute();
+                        }
+                        }
+                        
+                        if($npet_event_id !=0){
+                        include_once 'events_steps_change.php';
+                        include 'pdo.php';
+                        events_steps_change($npet_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','pet',$lastInsertedId,$para);
+}
+                        if ($insertResult) {
+                            echo "收养了{$nname}<br/>";
+                        }
+                    }
+                    else{
+                        echo "收养{$nname}失败，可能数量已达上限!<br/>";
+                    }
+                    break;
+
+                case '2':
+                    // 检查字段是否存在
+                    $checkQuery = "SELECT * FROM system_pet_player WHERE psid = ? and pid = ? and pstate = 0";
+                    $checkStmt = $db->prepare($checkQuery);
+                    $checkStmt->bind_param("si", $sid,$pair);
+                    $checkStmt->execute();
+                    $checkResult = $checkStmt->get_result();
+
+                    if ($checkResult->num_rows > 0) {
+                        // 存在数据，进行删除操作
+                        $deleteQuery = "DELETE FROM system_pet_player WHERE pid = ? and psid = ?";
+                        $deleteStmt = $db->prepare($deleteQuery);
+                        $deleteStmt->bind_param("is", $pair, $sid);
+                        $deleteResult = $deleteStmt->execute();
+
+                        if ($deleteResult) {
+                            echo "放生了{$nname}<br/>";
+                        }
+                    } else {
+                        echo "你没有{$nname}或正在出战！<br/>";
+                    }
+                    break;
+            }
+        }
+    }
+
+    return 1;
+}
+
 function destsing($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
 global $encode;
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
+$db = DB::conn();
 
 $mid = \lexical_analysis\process_string($input,$sid);
 $sql = "SELECT COUNT(*) AS count FROM system_map WHERE mid = ?";

@@ -125,12 +125,20 @@ break;
 HTML;
 break;
 }
+if(!empty($main_id)){
 $gm_html =<<<HTML
 $page
 <a href="?cmd=$delete_ele">删除该元素</a><br/>
 <a href="?cmd=$game_main">返回上一级</a><br/>
 <a href="?cmd=$gm_main">返回设计大厅</a><br/>
 HTML;
+}else{
+$gm_html =<<<HTML
+$page
+<a href="?cmd=$game_main">返回上一级</a><br/>
+<a href="?cmd=$gm_main">返回设计大厅</a><br/>
+HTML;
+}
 echo $gm_html;
 }elseif ($delete_canshu==1 &&$delete_all ==0) {
     $last_page = $encode->encode("cmd=game_self_page_2&self_id=$self_id&main_id=$delete_id&main_type=$delete_type&sid=$sid");

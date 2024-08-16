@@ -1,644 +1,453 @@
 <?php
-// 定义处理单个属性的函数
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
 
-function evaluate_expression($expr, $db, $sid){
-$expr = preg_replace_callback('/\{eval\(([^)]+)\)\}/', function($matches) use ($db, $sid) {
-    $eval_expr = $matches[1]; // 获取 eval 中的表达式
-    $eval_result = @eval("return $eval_expr;"); // 计算 eval 表达式的结果
-    return $eval_result; // 返回计算结果
-}, $expr);
-//var_dump($expr);
-$expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db, $sid) {
-    $attr = $matches[1]; // 获取匹配到的变量名
-            $firstDotPosition = strpos($attr, '.');
-            if (!empty($firstDotPosition)) {
-                $attr1 = substr($attr, 0, $firstDotPosition);
-                $attr2 = substr($attr, $firstDotPosition + 1);
-                // 使用 process_attribute 处理单个属性
-                $op = process_attribute($attr1,$attr2,$sid, $oid, $mid);
-                // 替换字符串中的变量
-            }
-        
-    // 在这里根据变量名获取对应的值，例如从数据库中查询
-    // 假设你从数据库中获取了 $attr_value
-    return $op;
-}, $expr);
-//var_dump($expr);
-// 现在 $expr 中的 {eval(...)} 和 {...} 部分已经被替换成了对应的值
-$result = $expr;
-try{
+$start_time = hrtime(true);
+class Lexer {
+    private $input;
+    private $position;
+    private $currentChar;
 
-//$result = eval("return $expr;");
-}catch (ParseError $e){
-                print("语法错误: ". $e->getMessage());
-                
-            }
-            catch (Error $e){
-                print("执行错误: ". $e->getMessage());
-}
-return $result;
-}
+    public function __construct($input) {
+        $this->input = $input;
+        $this->position = 0;
+        $this->currentChar = $input[$this->position];
+    }
 
-function process_attribute($attr1, $attr2,$sid, $oid, $mid) {
-    global $db; // 引用全局数据库连接
-            switch ($attr1) {
-                case 'u':
-                    $attr3 = $attr1.$attr2;
-                    $sql = "SELECT * FROM game1 WHERE sid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $sid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if ($row === null) {
-                        $op = 0; // 或其他默认值
-                        }else{
-                    $op = nl2br($row[$attr3]);
-                        }
-                    $op = process_string($op,$sid);
-                    // 替换字符串中的变量
-                    break;
-                default:
-                    return $op;
-                    break;
-            }
-    // 在这里根据属性的不同进行处理
-    // ...
-    // 返回属性值，处理过程中可能会嵌套调用 process_string
-    return $op;
-}
-
-// 定义处理字符串的函数
-function process_string($input, $sid, $oid = null, $mid = null, $uid = null, $type = null, $para = null) {
-    global $db; // 引用全局数据库连接
-
-    $matches = [];
-    preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
-
-    if (!empty($matches[1])) {
-        foreach ($matches[1] as $match) {
-            $firstDotPosition = strpos($match, '.');
-            if (!empty($firstDotPosition)) {
-                $attr1 = substr($match, 0, $firstDotPosition);
-                $attr2 = substr($match, $firstDotPosition + 1);
-
-                // 使用 process_attribute 处理单个属性
-                $op = process_attribute($attr1,$attr2,$sid, $oid, $mid);
-                // 替换字符串中的变量
-                $input = str_replace("v({$match})", $op, $input);
-            }
+    private function advance() {
+        $this->position++;
+        if ($this->position >= strlen($this->input)) {
+            $this->currentChar = null; // End of input
+        } else {
+            $this->currentChar = $this->input[$this->position];
         }
     }
 
-    // 进行其他逻辑处理
-    // ...
-$input = evaluate_expression($input,$db,$sid);
-    return $input;
+    private function skipWhitespace() {
+        while ($this->currentChar !== null && ctype_space($this->currentChar)) {
+            $this->advance();
+        }
+    }
+
+    private function createToken($type, $value) {
+        return ["type" => $type, "value" => $value];
+    }
+
+    public function getNextToken() {
+        while ($this->currentChar !== null) {
+            if (ctype_space($this->currentChar)) {
+                $this->skipWhitespace();
+                continue;
+            }
+
+            if (ctype_alpha($this->currentChar) || $this->currentChar === '_') {
+                return $this->identifier();
+            }
+
+            if (ctype_digit($this->currentChar)) {
+                return $this->number();
+            }
+
+            if ($this->currentChar === '"') {
+                return $this->string();
+            }
+
+            switch ($this->currentChar) {
+                case '+':
+                    $this->advance();
+                    return $this->createToken(Token::PLUS, '+');
+                case '-':
+                    $this->advance();
+                    return $this->createToken(Token::MINUS, '-');
+                case '*':
+                    $this->advance();
+                    return $this->createToken(Token::MUL, '*');
+                case '/':
+                    $this->advance();
+                    return $this->createToken(Token::DIV, '/');
+                case '(':
+                    $this->advance();
+                    return $this->createToken(Token::LPAREN, '(');
+                case ')':
+                    $this->advance();
+                    return $this->createToken(Token::RPAREN, ')');
+                case '{':
+                    $this->advance();
+                    return $this->createToken(Token::LCURLY, '{');
+                case '}':
+                    $this->advance();
+                    return $this->createToken(Token::RCURLY, '}');
+                case '.':
+                    $this->advance();
+                    return $this->createToken(Token::DOT, '.');
+                case '?':
+                    $this->advance();
+                    return $this->createToken(Token::QUESTION, '?');
+                case ':':
+                    $this->advance();
+                    return $this->createToken(Token::COLON, ':');
+                case '|':
+                    $this->advance();
+                    if ($this->currentChar === '|') {
+                        $this->advance();
+                        return $this->createToken(Token::OR, '||');
+                    }
+                    throw new Exception("未知字符: |");
+                case '&':
+                    $this->advance();
+                    if ($this->currentChar === '&') {
+                        $this->advance();
+                        return $this->createToken(Token::AND, '&&');
+                    }
+                    throw new Exception("未知字符: &");
+                case '>':
+                    $this->advance();
+                    if ($this->currentChar === '=') {
+                        $this->advance();
+                        return $this->createToken(Token::GTE, '>=');
+                    }
+                    return $this->createToken(Token::GT, '>');
+                case '<':
+                    $this->advance();
+                    if ($this->currentChar === '=') {
+                        $this->advance();
+                        return $this->createToken(Token::LTE, '<=');
+                    }
+                    return $this->createToken(Token::LT, '<');
+                case '=':
+                    $this->advance();
+                    if ($this->currentChar === '=') {
+                        $this->advance();
+                        return $this->createToken(Token::EQ, '==');
+                    }
+                    throw new Exception("未知字符: =");
+                case '!':
+                    $this->advance();
+                    if ($this->currentChar === '=') {
+                        $this->advance();
+                        return $this->createToken(Token::NEQ, '!=');
+                    }
+                    throw new Exception("未知字符: !");
+                default:
+                    throw new Exception("未知字符: " . $this->currentChar);
+            }
+        }
+
+        return $this->createToken(Token::EOF, null);
+    }
+
+    private function identifier() {
+        $result = '';
+        while ($this->currentChar !== null && (ctype_alnum($this->currentChar) || $this->currentChar === '_')) {
+            $result .= $this->currentChar;
+            $this->advance();
+        }
+        if ($result === 'v') {
+            return $this->createToken(Token::FUNCTION, 'v');
+        } elseif ($result === 'eval') {
+            return $this->createToken(Token::EVAL, 'eval');
+        }
+        return $this->createToken(Token::IDENTIFIER, $result);
+    }
+
+    private function number() {
+        $result = '';
+        while ($this->currentChar !== null && ctype_digit($this->currentChar)) {
+            $result .= $this->currentChar;
+            $this->advance();
+        }
+        return $this->createToken(Token::NUMBER, $result);
+    }
+
+    private function string() {
+        $result = '';
+        $this->advance(); // Skip the opening quote
+        while ($this->currentChar !== null && $this->currentChar !== '"') {
+            $result .= $this->currentChar;
+            $this->advance();
+        }
+        $this->advance(); // Skip the closing quote
+        return $this->createToken(Token::STRING, $result);
+    }
 }
 
-// 使用示例
-if($_POST){
-$input = $_POST['lexical_text'];
-$sid = "c2853ea53cf2b2731616d4f3e26a50b7";
-
-$expr = process_string($input, $sid, $oid, $mid);
-echo "本次代码结果:".$expr;
+class Token {
+    const EOF = 'EOF';
+    const IDENTIFIER = 'IDENTIFIER';
+    const NUMBER = 'NUMBER';
+    const PLUS = 'PLUS';
+    const MINUS = 'MINUS';
+    const MUL = 'MUL';
+    const DIV = 'DIV';
+    const LPAREN = 'LPAREN';
+    const RPAREN = 'RPAREN';
+    const LCURLY = 'LCURLY';
+    const RCURLY = 'RCURLY';
+    const FUNCTION = 'FUNCTION';
+    const EVAL = 'EVAL';
+    const DOT = 'DOT';
+    const QUESTION = 'QUESTION';
+    const COLON = 'COLON';
+    const OR = 'OR';
+    const AND = 'AND';
+    const STRING = 'STRING';
+    const GT = 'GT';
+    const LT = 'LT';
+    const GTE = 'GTE';
+    const LTE = 'LTE';
+    const EQ = 'EQ';
+    const NEQ = 'NEQ';
 }
-$lexical_html = <<<HTML
+
+
+class Interpreter {
+    private $lexer;
+    private $currentToken;
+    private $contextCallback;
+    private $dblj;
+    private $sid;
+    private $u_type;
+    private $oid;
+    private $o_type;
+    private $mid;
+    private $cid;
+    private $eid;
+    private $gid;
+
+    public function __construct($lexer, $contextCallback, $dblj, $sid = null, $u_type = null, $oid = null, $o_type = null, $mid = null, $cid = null, $eid = null, $gid = null) {
+        $this->lexer = $lexer;
+        $this->currentToken = $this->lexer->getNextToken();
+        $this->contextCallback = $contextCallback;
+        $this->dblj = $dblj;
+        $this->sid = $sid;
+        $this->u_type = $u_type;
+        $this->oid = $oid;
+        $this->o_type = $o_type;
+        $this->mid = $mid;
+        $this->cid = $cid;
+        $this->eid = $eid;
+        $this->gid = $gid;
+    }
+
+    private function eat($tokenType) {
+        if ($this->currentToken['type'] === $tokenType) {
+            $this->currentToken = $this->lexer->getNextToken();
+        } else {
+            throw new Exception("无效的语法: 期望 {$tokenType}, 但找到 {$this->currentToken['type']}");
+        }
+    }
+
+    public function expr() {
+        return $this->or_expr();
+    }
+
+    private function or_expr() {
+        $result = $this->and_expr();
+
+        while ($this->currentToken['type'] === Token::OR) {
+            $this->eat(Token::OR);
+            $result = $result || $this->and_expr();
+        }
+
+        return $result;
+    }
+
+    private function and_expr() {
+        $result = $this->comparison_expr();
+
+        while ($this->currentToken['type'] === Token::AND) {
+            $this->eat(Token::AND);
+            $result = $result && $this->comparison_expr();
+        }
+
+        return $result;
+    }
+
+    private function comparison_expr() {
+        $result = $this->ternary_expr();
+
+        while (in_array($this->currentToken['type'], [Token::GT, Token::LT, Token::GTE, Token::LTE, Token::EQ, Token::NEQ])) {
+            $token = $this->currentToken;
+            if ($token['type'] === Token::GT) {
+                $this->eat(Token::GT);
+                $result = $result > $this->ternary_expr();
+            } elseif ($token['type'] === Token::LT) {
+                $this->eat(Token::LT);
+                $result = $result < $this->ternary_expr();
+            } elseif ($token['type'] === Token::GTE) {
+                $this->eat(Token::GTE);
+                $result = $result >= $this->ternary_expr();
+            } elseif ($token['type'] === Token::LTE) {
+                $this->eat(Token::LTE);
+                $result = $result <= $this->ternary_expr();
+            } elseif ($token['type'] === Token::EQ) {
+                $this->eat(Token::EQ);
+                $result = $result == $this->ternary_expr();
+            } elseif ($token['type'] === Token::NEQ) {
+                $this->eat(Token::NEQ);
+                $result = $result != $this->ternary_expr();
+            }
+        }
+
+        return $result;
+    }
+
+    private function ternary_expr() {
+        $result = $this->additive_expr();
+
+        if ($this->currentToken['type'] === Token::QUESTION) {
+            $this->eat(Token::QUESTION);
+            $trueExpr = $this->ternary_expr();
+            $this->eat(Token::COLON);
+            $falseExpr = $this->ternary_expr();
+            $result = $result ? $trueExpr : $falseExpr;
+        }
+
+        return $result;
+    }
+
+    private function additive_expr() {
+        $result = $this->multiplicative_expr();
+
+        while (in_array($this->currentToken['type'], [Token::PLUS, Token::MINUS])) {
+            $token = $this->currentToken;
+            if ($token['type'] === Token::PLUS) {
+                $this->eat(Token::PLUS);
+                $result += $this->multiplicative_expr();
+            } elseif ($token['type'] === Token::MINUS) {
+                $this->eat(Token::MINUS);
+                $result -= $this->multiplicative_expr();
+            }
+        }
+
+        return $result;
+    }
+
+    private function multiplicative_expr() {
+        $result = $this->factor();
+
+        while (in_array($this->currentToken['type'], [Token::MUL, Token::DIV])) {
+            $token = $this->currentToken;
+            if ($token['type'] === Token::MUL) {
+                $this->eat(Token::MUL);
+                $result *= $this->factor();
+            } elseif ($token['type'] === Token::DIV) {
+                $this->eat(Token::DIV);
+                $result /= $this->factor();
+            }
+        }
+
+        return $result;
+    }
+
+    private function factor() {
+        $token = $this->currentToken;
+
+        if ($token['type'] === Token::NUMBER) {
+            $this->eat(Token::NUMBER);
+            return intval($token['value']);
+        } elseif ($token['type'] === Token::STRING) {
+            $this->eat(Token::STRING);
+            return $token['value'];
+        } elseif ($token['type'] === Token::LPAREN) {
+            $this->eat(Token::LPAREN);
+            $result = $this->expr();
+            $this->eat(Token::RPAREN);
+            return $result;
+        } elseif ($token['type'] === Token::LCURLY) {
+            $this->eat(Token::LCURLY);
+            $result = $this->expr();
+            $this->eat(Token::RCURLY);
+            return $result;
+        } elseif ($token['type'] === Token::IDENTIFIER) {
+            return $this->propertyAccess();
+        } elseif ($token['type'] === Token::FUNCTION || $token['type'] === Token::EVAL) {
+            return $this->functionCall();
+        } else {
+            throw new Exception("无效的语法: " . $token['type']);
+        }
+    }
+
+    private function propertyAccess() {
+        $object = $this->currentToken['value'];
+        $this->eat(Token::IDENTIFIER);
+
+        if ($this->currentToken['type'] === Token::DOT) {
+            $this->eat(Token::DOT);
+            $property = $this->currentToken['value'];
+            $this->eat(Token::IDENTIFIER);
+            return call_user_func($this->contextCallback, $object, $property, $this->dblj, $this->sid, $this->u_type, $this->oid, $this->o_type, $this->mid, $this->cid, $this->eid, $this->gid);
+        }
+
+        throw new Exception("属性访问错误");
+    }
+
+    private function functionCall() {
+        $funcName = $this->currentToken['value'];
+        $this->eat($this->currentToken['type']);
+        $this->eat(Token::LPAREN);
+        $result = null;
+
+        if ($funcName === 'v') {
+            $result = $this->expr();
+        } elseif ($funcName === 'eval') {
+            $result = $this->expr();
+            $result = eval("return \"$result\";");
+        } else {
+            throw new Exception("未知的函数调用: $funcName");
+        }
+
+        $this->eat(Token::RPAREN);
+        return $result;
+    }
+}
+
+
+function contextCallback($object, $property, $dblj, $sid = null, $u_type = null, $oid = null, $o_type = null, $mid = null, $cid = null, $eid = null, $gid = null) {
+    if ($object === 'u' && $sid !== null) {
+        $attr_name = $object . $property;
+        $stmt = $dblj->prepare("SELECT $attr_name FROM game1 WHERE sid = :sid");
+        $stmt->execute(['sid' => $sid]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result[$attr_name] : null;
+    }
+    throw new Exception("属性不存在: $object.$property");
+}
+
+if($_POST['lexical_text']){
+    $lexical_code = $_POST['lexical_text'];
+
+try {
+    $input = $lexical_code;
+    $sid = "959c9277a3e15eacff9e5f117e51f5bb";
+    $lexer = new Lexer($input);
+    $contextCallback = function($object, $property, $dblj, $sid, $u_type, $oid, $o_type, $mid, $cid, $eid, $gid) {
+        if ($object === 'u' && $property === 'sex') {
+            return '男';
+        }
+        return null;
+    };
+    $interpreter = new Interpreter($lexer, $contextCallback, $dblj = null, $sid = null, $u_type = null, $oid = null, $o_type = null, $mid = null, $cid = null, $eid = null, $gid = null);
+    $result = $interpreter->expr();
+    echo $result."<br/>";
+} catch (Exception $e) {
+    echo 'Error: ' . $e->getMessage();
+}
+}
+
+if($_POST['lexical_text']){
+    $lexical_code = $_POST['lexical_text'];
+}
+
+$gm_html =<<<HTML
 <form method="post">
-测试解析字符串:<textarea name="lexical_text" maxlength="4096" rows="4" cols="40"></textarea><br/>
+测试解析字符串:<textarea name="lexical_text" maxlength="4096" rows="4" cols="40">{$lexical_code}</textarea><br/>
 <input type="submit" value="提交">
 </form>
 HTML;
-echo $lexical_html;
+echo $gm_html;
+
+
+
+$end_time = hrtime(true);
+$execution_time = ($end_time - $start_time) / 1e6;// 单位是毫秒
+echo "执行时间：".$execution_time."ms"; // 输出结果
 ?>
-
-
-function process_string($input, $sid,$oid=null,$mid=null,$uid=null,$type=null,$para=null) {
-// 创建数据库连接
-$servername = "127.0.0.1";
-$username = "xunxian";
-$password = "123456";
-$dbname = "xunxian";
-$db = new mysqli($servername, $username, $password, $dbname);
-
-    $matches = [];
-    preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
-    var_dump($matches);
-    if (!empty($matches[1])) {
-        $input = str_replace("{eval(", "", $input);
-        $input = str_replace(")}", "", $input);
-        foreach ($matches[1] as $match) {
-        $firstDotPosition = strpos($match, '.');
-        if (!empty($firstDotPosition)) {
-            $attr1 = substr($match, 0, $firstDotPosition);
-            $attr2 = substr($match, $firstDotPosition+1);
-            if ($db->connect_error) {
-                die("连接数据库失败: " . $db->connect_error);
-            }
-            switch ($attr1) {
-                case 'u':
-                    $attr3 = $attr1.$attr2;
-                    $sql = "SELECT * FROM game1 WHERE sid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $sid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if ($row === null) {
-                        $op = 0; // 或其他默认值
-                        }else{
-                    $op = nl2br($row[$attr3]);
-                        }
-                    $op = process_string($op,$sid);
-                    // 替换字符串中的变量
-                    $input = str_replace("v({$match})", $op, $input);
-                       $pattern = '/\[(.*?)\]/'; // 匹配方括号中的内容，并将内容作为第一个子模式
-                       $matches = array();
-                       if (preg_match_all($pattern, $input, $matches)) {
-                           $results = $matches[1]; // 提取所有子模式的内容
-                           foreach ($results as $result) {
-                               $input = eval("return '$input';");
-                           }
-                           
-                       } else {
-                           var_dump($input);
-                           @$input = eval("return $input;");
-                           
-                       }
-                            //$input = eval("return \"$output\";")
-                    break;
-                case 'o':
-                    switch($oid){
-                        case 'scene':
-                            $attr3 = 'm'.$attr2;
-                            $sql = "SELECT * FROM system_map WHERE mid = ?";
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-                            if (!$result) {
-                                die('查询失败: ' . $db->error);
-                            }
-                            $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                $op = 0; // 或其他默认值
-                                }else{
-                            $op = nl2br($row[$attr3]);
-                                }
-                            $op = process_string($op,$sid);
-                            // 替换字符串中的变量
-                            $input = str_replace("v({$match})", $op, $input);
-                            $pattern = '/\[(.*?)\]/'; // 匹配方括号中的内容，并将内容作为第一个子模式
-                            $matches = array();
-                            if (preg_match_all($pattern, $input, $matches)) {
-                                $results = $matches[1]; // 提取所有子模式的内容
-                                foreach ($results as $result) {
-                                    $input = eval("return '$input';");
-                                 }
-                             } else {
-                           @$input = eval("return $input;");
-                           
-                       }
-                            break;
-                        case 'npc':
-                            $attr3 = 'n'.$attr2;
-                            if (is_numeric($mid)){
-                            $sql = "SELECT * FROM system_npc WHERE nid = ?";
-                            }else{
-                            $data_mid = explode("|",$mid);
-                            $mid = $data_mid[1];
-                            $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = ?";
-                            }
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-                            if (!$result) {
-                                die('查询失败: ' . $db->error);
-                            }
-                            $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                $op = 0; // 或其他默认值
-                                }else{
-                            $op = nl2br($row[$attr3]);
-                                }
-                            $op = process_string($op,$sid);
-                            // 替换字符串中的变量
-                            $input = str_replace("v({$match})", $op, $input);
-                            $pattern = '/\[(.*?)\]/'; // 匹配方括号中的内容，并将内容作为第一个子模式
-                            $matches = array();
-                            if (preg_match_all($pattern, $input, $matches)) {
-                                $results = $matches[1]; // 提取所有子模式的内容
-                                foreach ($results as $result) {
-                                    $input = eval("return '$input';");
-                                 }
-                             } else {
-                           @$input = eval("return $input;");
-                       } 
-                            break;
-                        case 'item':
-                            $attr3 = 'i'.$attr2;
-                            if($attr3 =="icount"){
-                                $sql = "SELECT * FROM system_item WHERE iid = ? and sid = ?";
-                                $stmt = $db->prepare($sql);
-                                $stmt->bind_param("ss", $mid,$sid);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                            }else{
-                                $sql = "SELECT * FROM system_item_module WHERE iid = ?";
-                                $stmt = $db->prepare($sql);
-                                $stmt->bind_param("s", $mid);
-                                $stmt->execute();
-                                $result = $stmt->get_result();                               
-                            }
-                            if (!$result) {
-                                die('查询失败: ' . $db->error);
-                            }
-                            $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                $op = 0; // 或其他默认值
-                                }else{
-                            $op = nl2br($row[$attr3]);
-                                }
-                            $op = process_string($op,$sid);
-                            // 替换字符串中的变量
-                            $input = str_replace("v({$match})", $op, $input);
-                            $pattern = '/\[(.*?)\]/'; // 匹配方括号中的内容，并将内容作为第一个子模式
-                            $matches = array();
-                            if (preg_match_all($pattern, $input, $matches)) {
-                                $results = $matches[1]; // 提取所有子模式的内容
-                                foreach ($results as $result) {
-                                    $input = eval("return '$input';");
-                                 }
-                             } else {
-                           @$input = eval("return $input;");
-                           
-                       }
-                            break;
-                        case 'scene_oplayer':
-                    $attr3 = 'u'.$attr2;
-                    $sql = "SELECT * FROM game1 WHERE sid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if ($row === null) {
-                        $op = 0; // 或其他默认值
-                        }else{
-                    $op = nl2br($row[$attr3]);
-                        }
-                    $op = process_string($op,$sid);
-                    // 替换字符串中的变量
-                    $input = str_replace("v({$match})", $op, $input);
-                       $pattern = '/\[(.*?)\]/'; // 匹配方括号中的内容，并将内容作为第一个子模式
-                       $matches = array();
-                       if (preg_match_all($pattern, $input, $matches)) {
-                           $results = $matches[1]; // 提取所有子模式的内容
-                           foreach ($results as $result) {
-                               $input = eval("return '$input';");
-                           }
-                           
-                       } else {
-                           @$input = eval("return $input;");
-                           
-                       }
-                    break;
-                    }
-                    break;
-                case 'c':
-                    $game_id = '19980925';
-                    $attr4 = 'game_';
-                    $attr3 = $attr4.$attr2;
-                    $sql = "SELECT * FROM gm_game_basic WHERE game_id = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $game_id);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if ($row === null) {
-                        $op = 0; // 或其他默认值
-                        }else{
-                    $op = nl2br($row[$attr3]);
-                        }
-                    $op = process_string($op,$sid);
-                    // 替换字符串中的变量
-                    $input = str_replace("v({$match})", $op, $input);
-                       $pattern = '/\[(.*?)\]/'; // 匹配方括号中的内容，并将内容作为第一个子模式
-                       $matches = array();
-                       if (preg_match_all($pattern, $input, $matches)) {
-                           $results = $matches[1]; // 提取所有子模式的内容
-                           foreach ($results as $result) {
-                               $input = eval("return '$input';");
-                           }
-                           
-                       } else {
-                           @$input = eval("return $input;");
-                           
-                       }
-                    break;
-                case 'g':
-                    $sql = "SELECT * FROM global_data WHERE id = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $attr2);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if ($row === null) {
-                        $op = 0; // 或其他默认值
-                        }else{
-                    $op = nl2br($row['value']);
-                        }
-                    $op = process_string($op,$sid);
-                    // 替换字符串中的变量
-                    $input = str_replace("v({$match})", $op, $input);
-                       $pattern = '/\[(.*?)\]/'; // 匹配方括号中的内容，并将内容作为第一个子模式
-                       $matches = array();
-                       if (preg_match_all($pattern, $input, $matches)) {
-                           $results = $matches[1]; // 提取所有子模式的内容
-                           foreach ($results as $result) {
-                               $input = eval("return '$input';");
-                           }
-                           
-                       } else {
-                           @$input = eval("return $input;");
-                           
-                       }
-                    break;
-                case 'e':
-                    $sql = "SELECT * FROM system_exp_def WHERE id = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $attr2);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    $op = nl2br($row['value']);
-                    // 替换字符串中的变量
-                    $op = process_string($op,$sid);
-                    $op = "(".$op.")";
-                    $input = str_replace("v({$match})", $op, $input);
-                    $pattern = '/\[(.*?)\]/'; // 匹配方括号中的内容，并将内容作为第一个子模式
-                    $matches = array();
-                    if (preg_match_all($pattern, $input, $matches)) {
-                           $results = $matches[1]; // 提取所有子模式的内容
-                           foreach ($results as $result) {
-                               $input = eval("return '$input';");
-                           }
-                           
-                       } else {
-                           @$input = eval("return $input;");
-                           
-                       }
-                    break;
-                case 'r':
-                    if(!is_numeric($attr2)){
-                        $attr2 = "{".$attr2."}";
-                    }
-                    $attr2 = process_string($attr2,$sid);
-                    $input = rand(1,$attr2)-1;
-                    return $input;
-                    break;
-                default:
-                    return $input;
-                    break;
-            }
-        }
-    }    
-} else {
-    goto b;
-}
-
-    
-    b:
-    preg_match_all('/\{([^}]+)\}/', $input, $matches);
-    foreach ($matches[1] as $match) {
-        $firstDotPosition = strpos($match, '.');
-        if (!empty($firstDotPosition)) {
-            $attr1 = substr($match, 0, $firstDotPosition);
-            $attr2 = substr($match, $firstDotPosition+1);
-            if ($db->connect_error) {
-                die("连接数据库失败: " . $db->connect_error);
-            }
-
-            switch ($attr1) {
-                case 'u':
-                    $attr3 = $attr1.$attr2;
-                    $sql = "SELECT * FROM game1 WHERE sid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $sid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if ($row === null) {
-                        $op = 0; // 或其他默认值
-                        }else{
-                    $op = nl2br($row[$attr3]);
-                        }
-                    $op = process_string($op,$sid);
-                    // 替换字符串中的变量
-                    $input = str_replace("{{$match}}", $op, $input);
-                    break;
-                case 'o':
-                    switch($oid){
-                        case 'scene':
-                            $attr3 = 'm'.$attr2;
-                            $sql = "SELECT * FROM system_map WHERE mid = ?";
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-                            if (!$result) {
-                                die('查询失败: ' . $db->error);
-                            }
-                            $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                $op = 0; // 或其他默认值
-                                }else{
-                            $op = nl2br($row[$attr3]);
-                                }
-                            $op = process_string($op,$sid);
-                            // 替换字符串中的变量
-                            $input = str_replace("{{$match}}", $op, $input);
-                            break;
-                        case 'npc':
-                            $attr3 = 'n'.$attr2;
-                            if (is_numeric($mid)){
-                            $sql = "SELECT * FROM system_npc WHERE nid = ?";
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            }else{
-                            $data_mid = explode("|",$mid);
-                            $mid2 = $data_mid[1];
-                            $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = ?";
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid2);
-                            }
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-                            if (!$result) {
-                                die('查询失败: ' . $db->error);
-                            }
-                            $row = $result->fetch_assoc();
-                            $row_result = $row[$attr3];
-                            if ($row_result === null ||$row_result ==='') {
-                                $op = 0; // 或其他默认值
-                                }else{
-                            $op = nl2br($row_result);
-                                }
-                            $op = process_string($op,$sid,$oid,$mid);
-                            // 替换字符串中的变量
-                            $input = str_replace("{{$match}}", $op, $input);
-                            break;
-                        case 'item':
-                            $attr3 = 'i'.$attr2;
-                            if($attr3 =="icount"){
-                                $sql = "SELECT * FROM system_item WHERE iid = ? and sid = ?";
-                                $stmt = $db->prepare($sql);
-                                $stmt->bind_param("ss", $mid,$sid);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                            }else{
-                                $sql = "SELECT * FROM system_item_module WHERE iid = ?";
-                                $stmt = $db->prepare($sql);
-                                $stmt->bind_param("s", $mid);
-                                $stmt->execute();
-                                $result = $stmt->get_result();                               
-                            }
-                            if (!$result) {
-                                die('查询失败: ' . $db->error);
-                            }
-                            $row = $result->fetch_assoc();
-                            $row_result = $row[$attr3];
-                            if ($row_result === null ||$row_result ==='') {
-                                $op = 0; // 或其他默认值
-                                }else{
-                            $op = nl2br($row_result);
-                                }
-                            $op = process_string($op,$sid,$oid,$mid);
-                            // 替换字符串中的变量
-                            $input = str_replace("{{$match}}", $op, $input);
-                            break;
-                        case 'scene_oplayer':
-                            $attr3 = 'u'.$attr2;
-                            $sql = "SELECT * FROM game1 WHERE sid = ?";
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-                            if (!$result) {
-                                die('查询失败: ' . $db->error);
-                            }
-                            $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                $op = 0; // 或其他默认值
-                                }else{
-                            $op = nl2br($row[$attr3]);
-                                }
-                            $op = process_string($op,$sid);
-                            // 替换字符串中的变量
-                            $input = str_replace("{{$match}}", $op, $input);
-                            break;
-                    }
-                    break;
-                case 'c':
-                    $game_id = '19980925';
-                    $attr4 = 'game_';
-                    $attr3 = $attr4.$attr2;
-                    $sql = "SELECT * FROM gm_game_basic WHERE game_id = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $game_id);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if ($row === null) {
-                        $op = 0; // 或其他默认值
-                        }else{
-                    $op = nl2br($row[$attr3]);
-                        }
-                    $op = process_string($op,$sid);
-                    // 替换字符串中的变量
-                    $input = str_replace("{{$match}}", $op, $input);
-                    break;
-                case 'g':
-                    $sql = "SELECT * FROM global_data WHERE id = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $attr2);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if ($row === null) {
-                        $op = 0; // 或其他默认值
-                        }else{
-                    $op = nl2br($row['value']);
-                        }
-                    $op = process_string($op,$sid);
-                    // 替换字符串中的变量
-                    $input = str_replace("{{$match}}", $op, $input);
-                    break;
-                case 'e':
-                    $sql = "SELECT * FROM system_exp_def WHERE id = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $attr2);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    $op = nl2br($row['value']);
-                    // 替换字符串中的变量
-                    var_dump($op);
-                    $op = process_string($op,$sid);
-                    $input = str_replace("{{$match}}", $op, $input);
-                    break;
-                case 'r':
-                    if(!is_numeric($attr2)){
-                        $attr2 = "{".$attr2."}";
-                    }
-                    $attr2 = process_string($attr2,$sid);
-                    $input = rand(1,$attr2)-1;
-                    return $input;
-                    break;
-                default:
-                    return $input;
-                    break;
-            }
-
-        }
-    }
-    $db->close();
-    return $input;
-}

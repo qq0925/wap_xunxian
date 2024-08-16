@@ -8,7 +8,7 @@ $sail_choose_2 = $encode->encode("cmd=sail_html&choose_area_belong=2&ucmd=$cmid&
 $sail_choose_3 = $encode->encode("cmd=sail_html&choose_area_belong=3&ucmd=$cmid&mid=$mid&sid=$sid");
 $sail_choose_4 = $encode->encode("cmd=sail_html&choose_area_belong=4&ucmd=$cmid&mid=$mid&sid=$sid");
 $sail_choose_5 = $encode->encode("cmd=sail_html&choose_area_belong=5&ucmd=$cmid&mid=$mid&sid=$sid");
-$map_name = \player\getmid($mid,$dblj)->mname;
+$map_name = \lexical_analysis\color_string(\player\getmid($mid,$dblj)->mname);
 $map_dire = \player\getmid($mid,$dblj)->mdire;
 $map_area_id = \player\getmid($mid,$dblj)->marea_id;
 $map_area_belong = \gm\getqy($dblj,$map_area_id)['belong'];

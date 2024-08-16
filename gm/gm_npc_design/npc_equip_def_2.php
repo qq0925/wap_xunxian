@@ -61,7 +61,9 @@ if ($gm_cxjg){
 for ($i=1;$i<count($gm_ret) +1;$i++){
     $equip_name = $gm_ret[$i-1]['iname'];
     $equip_id = $gm_ret[$i-1]['iid'];
-    $equip_url = $encode->encode("cmd=gm_type_npc&gm_post_canshu=6&equip_add_id=$equip_id&npc_id=$npc_id&sid=$sid");
+    $equip_type = $gm_ret[$i-1]['itype'];
+    $equip_subtype = $gm_ret[$i-1]['isubtype'];
+    $equip_url = $encode->encode("cmd=gm_type_npc&gm_post_canshu=6&equip_type=$equip_type&equip_subtype=$equip_subtype&equip_add_id=$equip_id&npc_id=$npc_id&sid=$sid");
     $equip_list .=<<<HTML
     [$i].<a href="?cmd=$equip_url">{$equip_name}</a><br/>
 HTML;

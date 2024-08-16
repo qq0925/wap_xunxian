@@ -2,7 +2,7 @@
 include 'pdo.php';//导入pdo数据库模块
 require_once 'class/encode.php';//导入加密算法模块
 require_once 'class/gm.php';//导入后台管理员模块
-
+$dblj = DB::pdo();
 
 $encode = new \encode\encode();//创建一个名为 $encode 的新对象，并使用命名空间 \encode\encode() 实例化该对象。
 $a = '';
@@ -26,7 +26,11 @@ if (isset($_POST[ 'submit']) && $_POST['submit']){
     if (!$exeres){
         $a = '账号或密码错误';
     }elseif ($cxusername == $username && $cxuserpass == $userpass){
-        header("refresh:0;url=login_mark.php?uid=$username&token=$cxtoken");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="0;URL=login_mark.php?uid=$username&token=$cxtoken">
+HTML;
+echo $refresh_html;
+        //header("location=login_mark.php?uid=$username&token=$cxtoken");
         exit();
     }
 

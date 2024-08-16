@@ -114,6 +114,7 @@ if ($update ==2){
     $dblj->exec($sql);
     $clmid = '';
     $npc_s = '';
+    $data_n = '';
     $clmid_npc_count = '';
     $clmid_item_count = '';
     $clmid = player\getmid($map_id,$dblj);
@@ -122,15 +123,16 @@ if ($update ==2){
     $npc_s = explode(",", $data_n); // 使用逗号分隔字符串，得到每个项
     foreach ($npc_s as &$npc_a) {
         $parts = explode("|", $npc_a); // 使用竖线分隔每个项
-        if (count($parts) === 2) {
+        if (count($parts) === 2||count($parts) === 3) {
             $id = $parts[0];
             $npc_count = $parts[1];
+            $npc_show_cond = $parts[2];
             $npc_count = \lexical_analysis\process_string($npc_count,$sid);
             $npc_count = \lexical_analysis\process_string($npc_count,$sid);
             @$npc_count = eval("return $npc_count;");
             
             // 更新处理后的值
-            $npc_a = "$id|$npc_count";
+            $npc_a = "$id|$npc_count|$npc_show_cond";
         }
     }
     // 将处理后的数据重新组合成字符串
@@ -170,7 +172,7 @@ if ($update ==2){
     $items = explode(",", $data_i); // 使用逗号分隔字符串，得到每个项
     foreach ($items as &$item) {
         $parts = explode("|", $item); // 使用竖线分隔每个项
-        if (count($parts) === 2) {
+        if (count($parts) === 2||count($parts) === 3) {
             $id = $parts[0];
             $item_count = $parts[1];
             $item_count = \lexical_analysis\process_string($item_count,$sid);
@@ -350,6 +352,7 @@ for ($i = 1; $i <= $map_x; $i++) {
 HTML;
 }
 $map_out = $encode->encode("cmd=gm_post_4&out_canshu=1&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
+$map_in = $encode->encode("cmd=gm_post_4&in_canshu=1&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
 $map_add = $encode->encode("cmd=gm_post_4&map_add_canshu=1&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
 $map_add_batch = $encode->encode("cmd=gm_post_4&add_batch=1&post_canshu=2&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
 $npc_add_batch = $encode->encode("cmd=gm_post_4&add_batch=1&canshu=1&post_canshu=4&qy_id=$qy_id&sid=$sid");
@@ -414,6 +417,7 @@ if($list_page){
 }
 $allmap = <<<HTML
 <a href="?cmd=$map_out" >导出{$marea_name}场景->excel</a><br/>
+<a href="?cmd=$map_in" >导入{$marea_name}场景<-excel</a><br/>
 [地图设计]<br/>
 {$marea_name}(a{$qy_id})区域的场景：<br/>
 $map

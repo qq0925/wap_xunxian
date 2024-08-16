@@ -17,26 +17,42 @@ include 'class/global_event_step_change.php';
 // header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 // header("Cache-Control: no-cache, must-revalidate");
 // header("Pragma: no-cache");
-
+if(!$encode){
 $encode = new \encode\encode();
+}
+if(!$player){
 $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
+}
+if(!$gm_post){
 $gm_post = new \gm\gm();
 $gm_post = \gm\gm_post($dblj);
+}
+if(!$guaiwu){
 $guaiwu = new \player\guaiwu();
+}
+if(!$clmid){
 $clmid = new \player\clmid();
+}
+if(!$npc){
 $npc = new \player\npc();
+}
+
+//3-4ms
+
 
 $Dcmd = $_SERVER['QUERY_STRING'];
 
 $allow_sep = "300";//间隔时间，单位毫秒。
+
 function getMillisecond() {
     list($t1, $t2) = explode(' ', microtime());
     return (float)sprintf('%.0f',(floatval($t1) + floatval($t2)) * 1000);
 }
+
+
 if (isset($_SESSION["post_sep"]))
 {
-
     if (getMillisecond() - $_SESSION["post_sep"] < $allow_sep)
     {
         $msg = '<meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">你点击太快了^_^!<br/><a href="?'.$Dcmd.'">继续</a>';
@@ -62,7 +78,7 @@ $cmd = $variables['cmd'];
 if (isset($cmd)&&!isset($sid)){
     $Dcmd = $encode->decode($cmd);
 
-    @parse_str($Dcmd,$variables);
+    parse_str($Dcmd,$variables);
     extract($variables);
     if (!empty($_POST)) {
         extract($_POST);
@@ -84,14 +100,24 @@ if (isset($cmd)&&!isset($sid)){
         $is_designer_parse_str .= "{$name}={$value}<br/>";
     }
     $designer_para_cmd = $cmd;
+    
+
+//3-4ms
+
 $player = \player\getplayer($sid,$dblj);
 $up_ret = \player\upplayerlvl($sid,$dblj);
 if($up_ret ==1){
 $parents_cmd = 'gm_scene_new';
+$ret = global_event_data_get(22,$dblj);
+if($ret){
 global_events_steps_change(22,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
 }
+}
 
-if($cmd !='main_target_event'){
+
+//10-11ms
+
+if($cmd !='main_target_event'||!$para){
 $sql = "delete from system_player_inputs where sid = '$sid'";
 $dblj->exec($sql);
 }
@@ -105,20 +131,30 @@ if($cmd =='logout'){
 //logout($sid);
 $nowdate = date('Y-m-d H:i:s');
 echo $player->uname."已成功退出登陆！";
-$sql = "update game1 set endtime='$nowdate',sfzx=0 WHERE sid='$sid'";
+$sql = "update game1 set endtime='$nowdate',sfzx=0,uis_pve=0 WHERE sid='$sid'";
 $dblj->exec($sql);
 $sql = "update game4 set device_agent='' WHERE sid='$sid'";
 $dblj->exec($sql);
-
-
-header("refresh:1;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="1;URL=index.php">
+HTML;
+echo $refresh_html;
+//header("refresh:1;url=index.php");
 exit();
 }
 
  if((!isset($sid)||!$sid) &&$cmd !='cj' &&$cmd !='cjplayer'){
-    header("refresh:0;url=index.php");
-    exit();
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="0;URL=index.php">
+HTML;
+echo $refresh_html;
+    // header("refresh:0;url=index.php");
+exit();
  }
+
+
+// 10-11ms
+
     ///////////分割处理线，上为Dcmd解析，下为cmd关键逻辑
 
 // $ucmd = $player->ucmd;
@@ -127,21 +163,25 @@ exit();
 // \player\changeplayersx('ucmd',$ucmd,$sid,$dblj);
 // }
 // \player\changeplayersx('ulast_cmd',$ucmd,$sid,$dblj);
-$ucmd = (int)$ucmd;
+
+//$ucmd = (int)$ucmd;
+
+
 $wjid = $player->uid;
 $is_Designer = $player->uis_designer;
-if($is_Designer !=1){
-//error_reporting(0);
-//ini_set('display_errors', '0');
-}
-$if_online = $player->sfzx;
-if($if_online ==1){
+
+// $if_online = $player->sfzx;
+// if($if_online ==1){
     
-}
+// }
 // 设置文件路径，使用相对路径
 $file = sprintf("./ache/%s/user.ini", $wjid);
 
 include("./ini/user_ini.php"); // 包含用户配置文件的逻辑
+
+if($refresh_cmid==1){
+    $iniFile->updItem('验证信息', ['xcmid值' => 1, 'dcmid值' => 1]);
+}
 
 
 //来源页面信息
@@ -231,7 +271,19 @@ HTML;
             }
 
             if($cmdd >=1){
-                goto THEMAINTASK;
+                // 13-15ms
+            if($ucmd >10000){
+                echo "触发防挂验证<br/>";
+                $refresh_cmid = $encode->encode("cmd=$cmd&ucmd=1&refresh_cmid=1&sid=$sid");
+                $html = <<<HTML
+                <link rel="stylesheet" href="css/gamecss.css">
+                <br/><font color = "red">点击清除验证，返回游戏</font><br/>
+                <br/>
+                <a href="?cmd=$refresh_cmid">清除验证</a>
+HTML;
+                exit($html);
+            }
+            goto THEMAINTASK;
             }else{
                 //路径
                 $path = 'ache/' . $wjid;
@@ -240,6 +292,7 @@ HTML;
                 $ininame = $path . "/" . $inina;
                 $iniFile = new iniFile($ininame);
             }
+
 THEMAINTASK:
     switch ($cmd){
         case 'cj'://创建账号
@@ -248,17 +301,19 @@ THEMAINTASK:
         case 'login'://登录
             $player = \player\getplayer($sid,$dblj);
             // 用户登录成功后生成并存储会话标识
-            $ret = check_if_logged($sid);
-            $deviceInfo = $_SERVER['HTTP_USER_AGENT'];// 使用设备信息作为标识
-            if(!$ret || $ret !=$_SESSION['sessionID']){
-            session_start();
-            $sessionID = uniqid();
-            $_SESSION['sessionID'] = $sessionID;
-            //logout($sid);
-            //login($sid,$_SESSION['sessionID'],$deviceInfo);
-            }else{
-            //login($sid,$_SESSION['sessionID'],$deviceInfo);
-            }
+            // $ret = check_if_logged($sid);
+            // $deviceInfo = $_SERVER['HTTP_USER_AGENT'];// 使用设备信息作为标识
+            // if(!$ret || $ret !=$_SESSION['sessionID']){
+            // session_start();
+            // $sessionID = uniqid();
+            // $_SESSION['sessionID'] = $sessionID;
+            // //logout($sid);
+            // //login($sid,$_SESSION['sessionID'],$deviceInfo);
+            // }else{
+            // //login($sid,$_SESSION['sessionID'],$deviceInfo);
+            // }
+            
+            
             $event_data = global_event_data_get(2,$dblj);
             $event_cond = $event_data['system_event']['cond'];
             $event_cmmt = $event_data['system_event']['cmmt'];
@@ -268,7 +323,11 @@ THEMAINTASK:
             }
             if(!$register_triggle){
             echo $event_cmmt."<br/>";
-            header("refresh:1;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="1;URL=index.php">
+HTML;
+echo $refresh_html;
+            //header("refresh:1;url=index.php");
             }elseif($register_triggle){
             if(!empty($event_data['system_event']['link_evs'])){
                 $system_event_evs = $event_data["system_event_evs"];
@@ -300,13 +359,20 @@ THEMAINTASK:
             }
             $gofirst = $encode->encode("cmd=gm_game_firstpage&ucmd=1&sid=$sid");
             $dblj->exec("DELETE from system_npc_midguaiwu where nsid = '$sid'");
+            $item_burthen = \player\update_item_burthen($sid,$dblj);
             $nowdate = date('Y-m-d H:i:s');
-            $sql = "update game1 set endtime='$nowdate',minutetime = '$nowdate',sfzx=1 WHERE sid='$sid'";
+            $sql = "update game1 set endtime='$nowdate',minutetime = '$nowdate',sfzx=1,uis_pve = 0,uburthen = '$item_burthen' WHERE sid='$sid'";
             $cxjg = $dblj->exec($sql);
             $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
             $dblj->exec($sql);
-            echo '正在进入游戏...';
-            header("refresh:1;url=?cmd=$gofirst");
+            // 清空所有临时变量
+            $dblj->exec("DELETE from player_temp_attr where obj_id = '$sid'");
+            echo '正在进入游戏...<br/>';
+            $refresh_html =<<<HTML
+            <meta http-equiv="refresh" content="1;URL=?cmd=$gofirst">
+HTML;
+            //header("refresh:1;url=?cmd=$gofirst");
+            echo $refresh_html;
             }
             break;
         case 'cjplayer'://具体创建写入
@@ -407,8 +473,11 @@ THEMAINTASK:
                     } catch(PDOException $e) {
                         echo "错误: " . $e->getMessage();
 }
-                    
-                    header("refresh:1;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="1;URL=index.php">
+HTML;
+echo $refresh_html;
+                    //header("refresh:1;url=index.php");
                     }elseif($register_triggle){
                     echo $username.","."欢迎来到".$gameconfig->game_name."<br/>";
                     $nowdate = date('Y-m-d H:i:s');
@@ -424,11 +493,19 @@ THEMAINTASK:
                     }
                     $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
                     $dblj->exec($sql);
-                    header("refresh:1;url=?cmd=$gofirst");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="1;URL=?cmd=$gofirst">
+HTML;
+echo $refresh_html;
+                    //header("refresh:1;url=?cmd=$gofirst");
                 }
             }else{
                 echo "非法操作：疑似重复注册，请文明游戏！<br/>";
-                header("refresh:3;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="3;URL=index.php">
+HTML;
+echo $refresh_html;
+                //header("refresh:3;url=index.php");
                 exit();
             }
             }
@@ -478,17 +555,25 @@ THEMAINTASK:
             $ym = 'gm/gameglobal_notice.php';
             break;
         case 'pve_fight'://打怪事件,一次打一个
-            \player\changeplayersx('uis_pve',1,$sid,$dblj);
+            $player = \player\getplayer($sid,$dblj);
+            $pet = \player\getpet_fight($sid,$dblj);
+            $pid = $pet[0]['pid'];
             if($auto_canshu ==1){
                 \player\changeplayersx('uauto_fight',1,$sid,$dblj);
             }elseif($auto_canshu ==2){
                 \player\changeplayersx('uauto_fight',0,$sid,$dblj);
             }
-            $player = \player\getplayer($sid,$dblj);
+            if($player->uis_pve ==0){
             $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
             $dblj->exec($sql);
             $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";
             $dblj->exec($sql);
+            $sql = "insert into game2(sid,gid,pid) values ('$sid','$ngid','$pid')";
+            $dblj->exec($sql);
+            $sql = "insert into game3(sid,gid,pid) values ('$ngid','$sid','$pid')";
+            $dblj->exec($sql);
+            }
+            \player\changeplayersx('uis_pve',1,$sid,$dblj);
             $sql = "update system_npc_midguaiwu set nsid = '$sid' WHERE ngid='$ngid'";
             $dblj->exec($sql);
             $player_nowmid = $player->nowmid;
@@ -542,7 +627,8 @@ THEMAINTASK:
                         $ym = 'module_all/liaotian.php';
                         break;
                     case "im":
-                        if ($player->uname!='' &&$player->uid !=$imuid){
+                        $check_uid = \player\getplayer(null,$dblj,$imuid)->uid;
+                        if ($player->uname!='' &&$player->uid !=$imuid &&$check_uid){
                             $ltmsg = htmlspecialchars($ltmsg);
                                 $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','$ltmsg',$player->uid,{$imuid},1,'$nowdate')";
                             $cxjg = $dblj->exec($sql);
@@ -551,7 +637,7 @@ THEMAINTASK:
                             echo "发送成功!"."你对对方说：".$ltmsg."<br/>";
                             $ym = 'module_all/scene_oplayer_detail.php';
                         }else{
-                            echo "发送失败！<br/>";
+                            echo "发送失败！用户不存在！<br/>";
                             $ltlx = 'im';
                             $ym = 'module_all/liaotian.php';
                         }
@@ -951,14 +1037,32 @@ THEMAINTASK:
                     break;
             }
             $cxjg =$dblj->exec($sql);
+            if($cxjg){
+            echo "已删除“{$gm_game_attr_id}”属性<br/>";
+            }else{
+            echo "没有“{$gm_game_attr_id}”属性！<br/>";
+            }
             $ym = 'gm/gameattr_define.php';
             }
             break;
-        case 'gm_post_2'://属性更新过程实现
+        case 'gm_post_2':
+            $gm_default_value = $gm_default_value ?: 0;
             if(isset($gm_post_canshu_2) && $gm_post_canshu !=8){
-            $sql = "UPDATE gm_game_attr SET name = '$gm_name',
-            default_value = '$gm_default_value',if_show = '$gm_attr_hidden' where id = '$gm_id' AND value_type = '$gm_post_type_2';";
-            $cxjg =$dblj->exec($sql);
+            //属性更新过程实现
+
+            $sql = "UPDATE gm_game_attr SET name = :gm_name, 
+                    default_value = :gm_default_value, if_show = :gm_attr_hidden 
+                    WHERE id = :gm_id AND value_type = :gm_post_type_2";
+            $stmt = $dblj->prepare($sql);
+            
+            $stmt->bindParam(':gm_name', $gm_name);
+            $stmt->bindParam(':gm_default_value', $gm_default_value);
+            $stmt->bindParam(':gm_attr_hidden', $gm_attr_hidden);
+            $stmt->bindParam(':gm_id', $gm_id);
+            $stmt->bindParam(':gm_post_type_2', $gm_post_type_2);
+            
+            $cxjg = $stmt->execute();
+            
             switch($gm_post_type_2){
                 case '1':
                     $update_column = "u".$gm_id;
@@ -987,9 +1091,7 @@ THEMAINTASK:
             }
             $cxjg =$dblj->exec($sql);
             }elseif ($gm_post_canshu == 8) {
-                
-                
-                
+            
             // 检查数据是否存在
             $check_column_sql = "SELECT id FROM `gm_game_attr` WHERE value_type = :gm_post_canshu_2 and id = :gm_id";
             $stmt = $dblj->prepare($check_column_sql);
@@ -1001,7 +1103,6 @@ THEMAINTASK:
                 // 字段存在，报错
             echo "不能添加重复的属性标识！<br/>";
             } else {
-                //var_dump($gm_default_value);
             switch($gm_attr_type){
                     case '0':
                         $add_type = "INT DEFAULT '{$gm_default_value}'";
@@ -1050,9 +1151,10 @@ THEMAINTASK:
             $cxjg =$dblj->exec($sql);
             $sql = "INSERT INTO gm_game_attr(id, name, value_type, default_value, if_show, attr_type) VALUES ('$gm_id', '$gm_name', '$gm_post_canshu_2', '$gm_default_value', '$gm_attr_hidden', '$gm_attr_type')";
             $cxjg =$dblj->exec($sql);
+            $gm_post_canshu = $gm_post_canshu_2;
+            echo "新增属性“{$gm_id}”成功！<br/>";
             }
             }
-            $gm_post_canshu=$gm_post_canshu_2;
             $ym = 'gm/gameattr_define.php';
             break;
         case 'game_page_2'://模板事件
@@ -1181,9 +1283,19 @@ THEMAINTASK:
             $cxjg = $dblj->exec($sql);
             $self_id = $page_id;
             $newTable = "game_self_page_".$page_id;
-            // 复制表结构
-            $sourceTable = "game_self_page_test";
-            $stmt = $dblj->prepare("CREATE TABLE $newTable LIKE $sourceTable");
+
+            $sql = "CREATE TABLE `$newTable` (
+              `position` int(4) NOT NULL,
+              `id` int(255) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+              `type` varchar(255) DEFAULT '1',
+              `show_cond` varchar(255) DEFAULT NULL,
+              `value` varchar(255) DEFAULT '未命名',
+              `target_tasks` varchar(255) DEFAULT NULL,
+              `target_event` varchar(255) DEFAULT '0',
+              `target_func` varchar(255) DEFAULT '0',
+              `link_value` varchar(255) DEFAULT '0'
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+            $stmt = $dblj->prepare($sql);
             $stmt->execute();
             $ym = 'module_all/self_module/self_module_page.php';
             }
@@ -1342,6 +1454,20 @@ THEMAINTASK:
             $ym = 'gm/gm_event_exec_self/gm_event_fightchange.php';
         }
             break;
+        case 'game_event_pet_self':
+            if($pet_id){
+                $ym = 'gm/gm_event_exec_self/game_event_pet_self_2.php';
+            }else{
+                $ym = 'gm/gm_event_exec_self/game_event_pet_self.php';
+            }
+            break;
+        case 'game_event_pet':
+            if($pet_id){
+                $ym = 'gm/gm_event_exec/game_event_pet_2.php';
+            }else{
+                $ym = 'gm/gm_event_exec/game_event_pet.php';
+            }
+            break;
         case 'gm_post_4'://地图添加相关事件
             if($map_add_canshu == 1){
                 $sql = "INSERT INTO system_map (marea_name, mname, marea_id) VALUES ('$marea_name', '未命名', $qy_id)";
@@ -1362,6 +1488,8 @@ THEMAINTASK:
             $ym = 'gm/gm_map_2.php';
                 }elseif($out_canshu ==1){
             $ym = 'gm/gm_map/map_data_out.php';
+                }elseif($in_canshu ==1){
+            $ym = 'gm/gm_map/map_data_in.php';
                 }else{
             $ym = 'gm/gm_map_3.php';
             }
@@ -1513,6 +1641,9 @@ THEMAINTASK:
         case 'pick_html'://采集资源
             $ym = 'module_all/pick.php';
             break;
+        case 'mosaic_html'://镶嵌装备
+            $ym = 'module_all/player_equip_mosaic.php';
+            break;
         case 'sailing_html'://出航途中
             $player = \player\getplayer($sid,$dblj);
             if($canshu ==1){
@@ -1526,7 +1657,7 @@ THEMAINTASK:
             }
             $boat = \player\getboat($sid,$dblj);
             if($boat['boat_distance'] <=0 && $player->uis_sailing ==1){
-            $over_name = \player\getmid($over_id,$dblj)->mname;
+            $over_name = \lexical_analysis\color_string(\player\getmid($over_id,$dblj)->mname);
             \player\changeplayersx('uis_sailing',0,$sid,$dblj);
             \player\changeplayersx('nowmid',$over_id,$sid,$dblj);
             \player\changeplayertable('system_player_boat','boat_distance',0,$sid,$dblj);
@@ -1539,6 +1670,12 @@ THEMAINTASK:
             break;
         case 'player_state'://状态
             $ym = 'module_all/scene_player_detail.php';
+            break;
+        case 'player_pet'://宠物
+            $ym = 'module_all/player_pet_list.php';
+            break;
+        case 'player_petinfo'://宠物详情
+            $ym = 'module_all/player_pet_detail.php';
             break;
         case 'player_skill'://技能
             $ym = 'module_all/player_skill.php';
@@ -1665,7 +1802,7 @@ THEMAINTASK:
                     $ym = 'gm/gm_npc_design/npc_dead_def.php';
                     break;
                 case '8':
-                    $excludeFields = ['ncreat_event_id','nlook_event_id','nattack_event_id','npet_event_id','nshop_event_id','nup_event_id','nheart_event_id','nminute_event_id','nname', 'nid', 'nstate', 'nop_target','ntask_target','nop_list', 'ntaskid', 'ntask_list'];
+                    $excludeFields = ['ncreat_event_id','nlook_event_id','nattack_event_id','nwin_event_id','ndefeat_event_id','npet_event_id','nshop_event_id','nup_event_id','nheart_event_id','nminute_event_id','nname', 'nid', 'nstate', 'nop_target','ntask_target','nop_list', 'ntaskid', 'ntask_list'];
                     $copy_name .= "(未命名)";
                     // 获取除排除字段外的其他字段
                     $fields = [];
@@ -1837,6 +1974,7 @@ THEMAINTASK:
             $ym = "module_all/player_phone.php";
             break;
         case 'fight_escape':
+            \player\update_temp_attr($sid,'busy',3,$dblj,1,0);
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
             $dblj->exec("DELETE from system_npc_midguaiwu where nsid = '$sid'");
             $ym = 'module_all/main_page.php';
@@ -1858,11 +1996,15 @@ THEMAINTASK:
             $iname = $item->iname;
             $ino_out = $item->ino_out;
             $iweight = $item->iweight;
+            if($canshu =="全部" || !$canshu){
+            $canshu = "全部";
+            }else{
             $canshu = ($itype == "消耗品") ? "消耗品" : (
                 ($itype == "兵器" || $itype == "防具") ? "装备" : (
-                    ($itype == "书籍" || $itype == "任务物品" || $itype == "其它") ? "其它" : "全部"
+                    ($itype == "书籍" || $itype == "任务物品" || $itype == "兵器镶嵌物" || $itype == "防具镶嵌物" || $itype == "其它") ? "其它" : "全部"
                 )
             );
+            }
             $iname = \lexical_analysis\color_string($iname);
             switch($target_event){
                 case 'use':
@@ -1883,7 +2025,6 @@ THEMAINTASK:
                                 if($iuse_value >0){
                                     $iuse_value = "+".$iuse_value."<br/>";
                                 }
-                                $canshu = '消耗品';
                                 \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
                                 echo "{$attr_name}".$iuse_value;
                             }else{
@@ -1896,11 +2037,48 @@ THEMAINTASK:
                             if($result ==0){
                             \player\changeequipstate($sid,$dblj,$iid,$item_true_id,1);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$item_true_id' and sid = '$sid'");
-                            $canshu = '装备';
                             echo "你装备了{$iname}<br/>";
+                            //这里可以更新镶嵌物的属性
+                            $event_data = global_event_data_get(40,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$item_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$item_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    echo $step_cmmt."<br/>";
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$item_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$item_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$item_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$item_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$item_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                             }else{
                             echo "你已经装备了{$iname}！<br/>";
-                            $canshu = '装备';
                             }
                             break;
                         case '防具':
@@ -1908,11 +2086,47 @@ THEMAINTASK:
                             if($result ==0){
                             \player\changeequipstate($sid,$dblj,$iid,$item_true_id,1);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$item_true_id' and sid = '$sid'");
-                            $canshu = '装备';
                             echo "你装备了{$iname}<br/>";
+                            $event_data = global_event_data_get(40,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$item_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$item_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    echo $step_cmmt."<br/>";
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$item_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$item_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$item_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$item_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$item_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                             }else{
                             echo "你已经装备上了{$iname}！<br/>";
-                            $canshu = '装备';
                             }
                             break;
                         case '其它':
@@ -1939,12 +2153,11 @@ THEMAINTASK:
                     $result = \player\getnowequiptrueid($item_true_id,$sid,$dblj);
                     if($result ==1){
                     echo "你已经穿上了{$iname}!不能丢弃!<br/>";
-                    $canshu = '装备';
                     }else{
                     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
                     \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
+                    $dblj->exec("DELETE from player_equip_mosaic where equip_id = '$item_true_id'");
                     echo "你丢掉了{$iname}<br/>";
-                    $canshu = '装备';
                     }
                     }else{
                     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
@@ -1958,15 +2171,15 @@ THEMAINTASK:
                 case 'outall':
                     if($ino_out==0){
                     if($itype =="兵器"||$itype =="防具"){
+                    
                     $result = \player\getnowequiptrueid($item_true_id,$sid,$dblj);
                     if($result ==1){
                     echo "你已经穿上了{$iname}!不能丢弃!<br/>";
-                    $canshu = '装备';
                     }else{
                     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
                     \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
+                    $dblj->exec("DELETE from player_equip_mosaic where equip_id = '$item_true_id'");
                     echo "你丢掉了所有的{$iname}<br/>";
-                    $canshu = '装备';
                     }
                     }else{
                     $out_count = \player\changeplayeritem($item_true_id,"all",$sid,$dblj);
@@ -1983,14 +2196,88 @@ THEMAINTASK:
                     case '兵器':
                         \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
-                        $canshu = '装备';
                         echo "你卸下了{$iname}<br/>";
+                        $event_data = global_event_data_get(41,$dblj);
+                        $event_cond = $event_data['system_event']['cond'];
+                        $event_cmmt = $event_data['system_event']['cmmt'];
+                        $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$item_true_id);
+                        if(is_null($register_triggle)){
+                            $register_triggle =1;
+                        }
+                        if(!$register_triggle){
+                        }elseif($register_triggle){
+                        if(!empty($event_data['system_event']['link_evs'])){
+                            $system_event_evs = $event_data["system_event_evs"];
+                            foreach ($system_event_evs as $index => $event) {
+                            $step_cond = $event['cond'];
+                            $step_cmmt = $event['cmmt'];
+                            $step_cmmt2 = $event['cmmt2'];
+                            $step_s_attrs = $event['s_attrs'];
+                            $step_m_attrs = $event['m_attrs'];
+                            $step_items = $event['items'];
+                            $step_a_skills = $event['a_skills'];
+                            $step_r_skills = $event['r_skills'];
+                            $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$item_true_id);
+                            if(is_null($step_triggle)){
+                            $step_triggle =1;
+                                }
+                            if(!$step_triggle){
+                                echo $step_cmmt2."<br/>";
+                                }elseif($step_triggle){
+                                echo $step_cmmt."<br/>";
+                                $ret = attrsetting($step_s_attrs,$sid,'item',$item_true_id);
+                                $ret = attrchanging($step_m_attrs,$sid,'item',$item_true_id);
+                                $ret = itemchanging($step_items,$sid,'item',$item_true_id);
+                                $ret = skillschanging($step_a_skills,$sid,1,'item',$item_true_id);
+                                $ret = skillschanging($step_r_skills,$sid,2,'item',$item_true_id);
+                                }
+                            }
+                                    
+                        }
+                        }
                         break;
                     case '防具':
                         \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
-                        $canshu = '装备';
                         echo "你卸下了{$iname}<br/>";
+                            $event_data = global_event_data_get(41,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$item_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$item_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    echo $step_cmmt."<br/>";
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$item_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$item_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$item_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$item_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$item_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                         break;
                     }
                     break;
@@ -2013,6 +2300,7 @@ THEMAINTASK:
             }elseif($target_event =='look_book'){
             $ym = "module_all/gm_book_details.php";
                 }else{
+                    
             $ym = "module_all/scene_item.php";
             }
             break;
@@ -2024,7 +2312,7 @@ THEMAINTASK:
                 if ($row) {
                     $iid = $row['iid'];
                     $itype = $row['itype'];
-                    $iname = $row['iname'];
+                    $iname = \lexical_analysis\color_string($row['iname']);
                 }
             }
             switch($target_event){
@@ -2038,12 +2326,90 @@ THEMAINTASK:
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$equip_true_id' and sid = '$sid'");
                             $canshu = '装备';
                             echo "你装备了{$iname}<br/>";
+                            $event_data = global_event_data_get(40,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$equip_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$equip_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    if($step_cmmt){
+                                    echo $step_cmmt."<br/>";
+                                    }
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$equip_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$equip_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$equip_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$equip_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$equip_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                             break;
                         case '防具':
                             \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,1);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$equip_true_id' and sid = '$sid'");
                             $canshu = '装备';
                             echo "你装备了{$iname}<br/>";
+                            $event_data = global_event_data_get(40,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$equip_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$equip_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    echo $step_cmmt."<br/>";
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$equip_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$equip_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$equip_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$equip_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$equip_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                             break;
                         default:
                             echo "{$iname}不能直接使用<br/>";
@@ -2058,11 +2424,87 @@ THEMAINTASK:
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
                         $canshu = '装备';
                         echo "你卸下了{$iname}<br/>";
+                            $event_data = global_event_data_get(41,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$equip_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$equip_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    echo $step_cmmt."<br/>";
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$equip_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$equip_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$equip_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$equip_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$equip_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                         break;
                     case '防具':
                         \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
                         echo "你卸下了{$iname}<br/>";
+                            $event_data = global_event_data_get(41,$dblj);
+                            $event_cond = $event_data['system_event']['cond'];
+                            $event_cmmt = $event_data['system_event']['cmmt'];
+                            $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$equip_true_id);
+                            if(is_null($register_triggle)){
+                                $register_triggle =1;
+                            }
+                            if(!$register_triggle){
+                            }elseif($register_triggle){
+                            if(!empty($event_data['system_event']['link_evs'])){
+                                $system_event_evs = $event_data["system_event_evs"];
+                                foreach ($system_event_evs as $index => $event) {
+                                $step_cond = $event['cond'];
+                                $step_cmmt = $event['cmmt'];
+                                $step_cmmt2 = $event['cmmt2'];
+                                $step_s_attrs = $event['s_attrs'];
+                                $step_m_attrs = $event['m_attrs'];
+                                $step_items = $event['items'];
+                                $step_a_skills = $event['a_skills'];
+                                $step_r_skills = $event['r_skills'];
+                                $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$equip_true_id);
+                                if(is_null($step_triggle)){
+                                $step_triggle =1;
+                                    }
+                                if(!$step_triggle){
+                                    echo $step_cmmt2."<br/>";
+                                    }elseif($step_triggle){
+                                    echo $step_cmmt."<br/>";
+                                    $ret = attrsetting($step_s_attrs,$sid,'item',$equip_true_id);
+                                    $ret = attrchanging($step_m_attrs,$sid,'item',$equip_true_id);
+                                    $ret = itemchanging($step_items,$sid,'item',$equip_true_id);
+                                    $ret = skillschanging($step_a_skills,$sid,1,'item',$equip_true_id);
+                                    $ret = skillschanging($step_r_skills,$sid,2,'item',$equip_true_id);
+                                    }
+                                }
+                                        
+                            }
+                            }
                         break;
                     }
                     $ym = "module_all/player_equip_list.php";
@@ -2488,8 +2930,10 @@ THEMAINTASK:
             $ym = "module_all/gm_gift_info.php";
             break;
     }
-    
+// 13-17ms
+
     $currentFilePath = $ym;
+
     if (!empty($_POST)) {
     foreach ($_POST as $key => $value) {
        $is_designer_post_str .= $key . ' = ' . $value . '<br>';
@@ -2512,7 +2956,11 @@ if($usersession['session_id'] && $usersession['session_id'] !=$_SESSION['session
     
     if (!isset($sid) || $sid=='' ){
         if ($cmd!='cj' && $cmd!=='cjplayer'){
-            header("refresh:0;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="0;URL=index.php">
+HTML;
+echo $refresh_html;
+            //header("refresh:0;url=index.php");
             exit();
         }
         }else{
@@ -2526,7 +2974,10 @@ if($usersession['session_id'] && $usersession['session_id'] !=$_SESSION['session
         $system_offline_time = $gameconfig->offline_time;
         while(floor((strtotime($player->endtime)-strtotime($player->minutetime))/60 >0) &&$cmd!='login' && $cmd!='cjplayer' &&$cmd !='cj'){
         $parents_cmd = $cmd;
+        $ret = global_event_data_get(24,$dblj);
+        if($ret){
         global_events_steps_change(24,$sid,$dblj,$just_page,$steps_page,$cmid,$currentFilePath,null,null,$para);
+        }
         $player->minutetime = date('Y-m-d H:i:s', strtotime($player->minutetime) + 60); // 增加 60 秒
         $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
         $dblj->exec($sql);
@@ -2534,7 +2985,7 @@ if($usersession['session_id'] && $usersession['session_id'] !=$_SESSION['session
         // flush();
         }
         
-        if ($minute>=$system_offline_time &&$player->uis_designer==0 &&$system_offline_time !=0){
+        if ($minute>=$system_offline_time &&$player->uis_designer==0 &&$system_offline_time !=0||$player->sfzx==0){
             //单位是秒
             echo '<meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">';
             echo "【哎呀！你好像进入了虚无领域!】<br/>".$player->uname."离线时间过长，请重新登陆";
@@ -2544,6 +2995,7 @@ if($usersession['session_id'] && $usersession['session_id'] !=$_SESSION['session
             header("refresh:1;url=index.php");
             exit();
         }else{
+            \player\put_system_message_sql($player->uid,$dblj);
             $sql = "update game1 set endtime='$nowdate',sfzx=1 WHERE sid='$sid'";
             $dblj->exec($sql);
         }
@@ -2551,7 +3003,11 @@ if($usersession['session_id'] && $usersession['session_id'] !=$_SESSION['session
 }else{
     //如果一切都不符合条件，就跳转到注册界面。
     echo "出错了！你可能正常尝试进行跨域访问！系统已记录此次行为！<br/>";
-    header("refresh:2;url=index.php");
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="2;URL=index.php">
+HTML;
+echo $refresh_html;
+    //header("refresh:2;url=index.php");
     exit();
 }
 
@@ -2568,7 +3024,11 @@ $connInfo = $dblj->getAttribute(PDO::ATTR_SERVER_INFO);
 echo "Database type: " . $dbType . "<br>";
 echo "Connection info: " . $connInfo . "<br>";
 */
+// 20-27ms
+
 ?>
+
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -2609,7 +3069,11 @@ echo $noticeContent;
 
 
     if (!$ym==''){
+        
+        //23-27ms
         include "$ym";
+        //这里的include是吃性能大户
+        //80-599ms
     }?>
 </body>
 <footer>

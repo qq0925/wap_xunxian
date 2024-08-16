@@ -106,6 +106,14 @@ switch ($gm_post_canshu) {
         $module_type = 'system_npc';
         $module_event_id = "nattack_event_id";
         break;
+    case 'npc_win':
+        $module_type = 'system_npc';
+        $module_event_id = "nwin_event_id";
+        break;
+    case 'npc_defeat':
+        $module_type = 'system_npc';
+        $module_event_id = "ndefeat_event_id";
+        break;
     case 'npc_pet':
         $module_type = 'system_npc';
         $module_event_id = "npet_event_id";
@@ -171,7 +179,7 @@ if($add_event ==1){
     $sql = "update `$module_type` set $module_event_id = '$max_id' where mid = '$main_id'";
     }elseif($gm_post_canshu == 'item_creat' || $gm_post_canshu == 'item_look' || $gm_post_canshu == 'item_use' || $gm_post_canshu == 'item_minute'){
     $sql = "update `$module_type` set $module_event_id = '$max_id' where iid = '$main_id'";
-    }elseif($gm_post_canshu == 'npc_creat' || $gm_post_canshu == 'npc_look' || $gm_post_canshu == 'npc_attack' || $gm_post_canshu == 'npc_minute' || $gm_post_canshu == 'npc_up' || $gm_post_canshu == 'npc_shop' || $gm_post_canshu == 'npc_heart' || $gm_post_canshu == 'npc_pet'){
+    }elseif($gm_post_canshu == 'npc_creat' || $gm_post_canshu == 'npc_look' || $gm_post_canshu == 'npc_attack' || $gm_post_canshu == 'npc_win' || $gm_post_canshu == 'npc_defeat' || $gm_post_canshu == 'npc_minute' || $gm_post_canshu == 'npc_up' || $gm_post_canshu == 'npc_shop' || $gm_post_canshu == 'npc_heart' || $gm_post_canshu == 'npc_pet'){
     $sql = "update `$module_type` set $module_event_id = '$max_id' where nid = '$main_id'";
     }elseif($gm_post_canshu == 'map_op' || $gm_post_canshu == 'item_op' ||$gm_post_canshu == 'npc_op'){
     $sql = "update `$module_type` set link_event = '$max_id' where id = '$main_id'";
@@ -235,7 +243,7 @@ $gm_main = $encode->encode("cmd=gm_skill_def&skill_id=$main_id&skill_post_canshu
 $gm_main = $encode->encode("cmd=gm_type_map&target_midid=$main_id&gm_post_canshu=3&sid=$sid");
 }elseif($gm_post_canshu == 'item_creat' || $gm_post_canshu == 'item_look' || $gm_post_canshu == 'item_use' || $gm_post_canshu == 'item_minute'){
 $gm_main = $encode->encode("cmd=gm_type_item&item_id=$main_id&gm_post_canshu=3&sid=$sid");
-}elseif($gm_post_canshu == 'npc_creat' || $gm_post_canshu == 'npc_look' || $gm_post_canshu == 'npc_attack' || $gm_post_canshu == 'npc_minute' || $gm_post_canshu == 'npc_up' || $gm_post_canshu == 'npc_shop' || $gm_post_canshu == 'npc_heart' || $gm_post_canshu == 'npc_pet'){
+}elseif($gm_post_canshu == 'npc_creat' || $gm_post_canshu == 'npc_look' || $gm_post_canshu == 'npc_attack' || $gm_post_canshu == 'npc_win' || $gm_post_canshu == 'npc_defeat' || $gm_post_canshu == 'npc_minute' || $gm_post_canshu == 'npc_up' || $gm_post_canshu == 'npc_shop' || $gm_post_canshu == 'npc_heart' || $gm_post_canshu == 'npc_pet'){
 $gm_main = $encode->encode("cmd=gm_type_npc&npc_id=$main_id&gm_post_canshu=3&sid=$sid");
 }elseif($gm_post_canshu == 'map_op'){
 $gm_main = $encode->encode("cmd=system_map_op_detail&op_id=$main_id&sid=$sid");

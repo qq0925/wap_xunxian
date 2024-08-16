@@ -14,7 +14,7 @@ $game_main = '';
 $get_main_page = \gm\get_skill_page($dblj);
 $br = 0;
 $player = player\getplayer($sid,$dblj);
-
+$uis_designer = $player->uis_designer;
 for ($i=0;$i<count($get_main_page);$i++){
     $oid = 'skill';
     $main_id = $get_main_page[$i]['id'];
@@ -106,14 +106,24 @@ $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $goskilllist = $encode->encode("cmd=player_skill&ucmd=$cmid&sid=$sid");
+
+if($player->uis_designer ==1){
+$change_skillmodule = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=8&sid=$sid");
+$gm_html = <<<HTML
+<a href="?cmd=$change_skillmodule">设计技能模板</a><br/>
+HTML;
+}
+
 $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="css/gamecss.css">
 </head>
 $game_main
+$gm_html
 <a href="?cmd=$goskilllist">返回技能列表</a><br/>
 <a href="?cmd=$gonowmid">返回游戏</a>
 HTML;
+
 echo $all;
 ?>

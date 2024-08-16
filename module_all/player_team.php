@@ -181,7 +181,8 @@ $dblj->exec("update system_team_user set team_putin_id = '' where team_id = '$te
 }
 
 if($canshu =="out"){
-$o_team_id = \player\getplayer(null,$dblj,$out_id)->uteam_id;
+$o_team_id = \player\getplayer($sid,$dblj,null)->uteam_id;
+
 if($o_team_id ==$team_id){
 echo "你已退出队伍!<br/>";
 $dblj->exec("update game1 set uteam_id = '' where sid ='$sid'");

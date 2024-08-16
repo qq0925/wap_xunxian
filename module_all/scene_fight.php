@@ -3,6 +3,7 @@ require_once 'class/player.php';
 require_once 'class/encode.php';
 require_once 'class/gm.php';
 include_once 'pdo.php';
+
 // require_once 'class/lexical_analysis.php';
 require_once 'class/basic_function_todo.php';
 include_once 'class/global_event_step_change.php';
@@ -10,10 +11,24 @@ include_once 'class/global_event_step_change.php';
 $parents_page = $currentFilePath;
 
 $player = \player\getplayer($sid,$dblj);
+$pet = \player\getpet_fight($sid,$dblj);
 $clmid = player\getmid($player->nowmid,$dblj);
 $fight_arr = player\getfightpara($sid,$dblj);
+
+
+$npid = "";
+//此变量用于获取你所战斗的仍然活着的宠物基本属性
+$fight_pet_count = @count($pet);
+for($i=0;$i<$fight_pet_count;$i++){
+    $fight_pid = $pet[$i]['pid'];
+    $npid .=$fight_pid.",";
+}
+$npid = rtrim($npid,',');
+
 $ngid = "";
-for($i=0;$i<@count($fight_arr);$i++){
+//此变量用于获取你所战斗的仍然活着的怪物基本属性
+$fight_arr_count = @count($fight_arr);
+for($i=0;$i<$fight_arr_count;$i++){
     $fight_gid = $fight_arr[$i]['ngid'];
     $ngid .=$fight_gid.",";
 }
@@ -25,9 +40,9 @@ $game_main = '';
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$player->sid");
-$goplayer_state = $encode->encode("cmd=player_state&ucmd=$cmid&sid=$player->sid");
-$goplayer_item = $encode->encode("cmd=item_html&ucmd=$cmid&sid=$player->sid");
+$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+$goplayer_state = $encode->encode("cmd=player_state&ucmd=$cmid&sid=$sid");
+$goplayer_item = $encode->encode("cmd=item_html&ucmd=$cmid&sid=$sid");
 $get_main_page = \gm\get_pve_page($dblj);
 $br = 0;
 $cmid = $cmid + 1;
@@ -35,8 +50,8 @@ $cdid[] = $cmid;
 $clj[] = $cmd;
 
 // while(@count(explode(',',$ngid)>0)){
-// $npc = player\getnpcguaiwu($ngid,$dblj);
-// if (!empty($npc->nsid)&&$npc->nsid !=$sid){
+// $alive_monster = player\getnpcguaiwu($ngid,$dblj);
+// if (!empty($alive_monster->nsid)&&$alive_monster->nsid !=$sid){
 //         $html = <<<HTML
 //         对方已经被其他人攻击了！<br/>
 //         <br/>
@@ -54,8 +69,20 @@ if($cmd=='pve_fight'){
     //技能攻击
     if($qtype ==1){
     $parents_cmd = 'gm_scene_new';
-    global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    //global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
+    
+    $busy = \player\get_temp_attr($sid,'busy',1,$dblj);
+    if($busy >0){
+    $dblj->exec("update game2 set hurt_hp = '' where sid = '$sid'");
+    \player\update_temp_attr($sid,'busy',1,$dblj,2,-1);
+    echo "你不能动弹！预计还要{$busy}回合！<br/>";
+    }else{
     \lexical_analysis\hurt_calc($qtype_id,$sid,$ngid,1,$dblj);//你对怪的伤害
+    
+    //这种加技能熟练度的方式是和出招次数挂钩而不是怪物数量。
     $sql = "select jadd_point_exp from system_skill where jid = '$qtype_id'";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
@@ -64,16 +91,20 @@ if($cmd=='pve_fight'){
     }else{
     $add_point = 1;
     }
-    $sql = "select jpromotion,jname from system_skill where jid = '$qtype_id'";
+    $sql = "select jpromotion,jname,jpromotion_cond from system_skill where jid = '$qtype_id'";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
     $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
     $jpromotion = $ret['jpromotion'];
     $jname = $ret['jname'];
+    $jpromotion_cond = $ret['jpromotion_cond'];
     $jpromotion = ceil(\lexical_analysis\process_string($jpromotion,$sid,'skill',$qtype_id,$qtype_id));
+    $jpromotion_cond = \lexical_analysis\process_string($jpromotion_cond,$sid,'skill',$qtype_id,$qtype_id);
+    $jpromotion_cond = @eval("return $jpromotion_cond;");
     }else{
     $jpromotion = 1;
     }
+    if($jpromotion_cond){
     $sql = "update system_skill_user set jpoint = jpoint + '$add_point' where jsid = '$sid' and jid = '$qtype_id'";
     $dblj->exec($sql);
     $sql = "select jpoint,jlvl from system_skill_user where jid = '$qtype_id' and jsid = '$sid'";
@@ -89,9 +120,24 @@ if($cmd=='pve_fight'){
         $sql = "update system_skill_user set jpoint = jpoint - '$diff',jlvl = jlvl + 1 where jsid = '$sid' and jid = '$qtype_id'";
         $cxjg = $dblj->exec($sql);
     }
-    \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }
+    }
+}
+
+    //宠物伤害逻辑
+    
+    if($npid){
+    \lexical_analysis\hurt_calc(null,$sid,$ngid,3,$dblj,$npid);//宠对怪的伤害
+    }
+
+    \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }elseif($qtype ==2){
+    $busy = \player\get_temp_attr($sid,'busy',1,$dblj);
+    if($busy >0){
+    $dblj->exec("update game2 set hurt_hp = '' where sid = '$sid'");
+    $busy = \player\update_temp_attr($sid,'busy',1,$dblj,2,-1);
+    echo "你不能动弹！预计还要{$busy}回合！<br/>";
+    }else{
     $sql = "select iuse_value,iuse_attr,iname,iweight from system_item_module where iid = '$qtype_id'";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
@@ -118,36 +164,65 @@ if($cmd=='pve_fight'){
     if($quick_count <=0||!$quick_count){
     echo "你的{$use_item_name}已耗尽！<br/>";
     }
+    }
+    }
+    
+    //宠物伤害逻辑
+    if($npid){
+    \lexical_analysis\hurt_calc(null,$sid,$ngid,3,$dblj,$npid);//宠对怪的伤害
+    }
     \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
     }
-    }
     
-    
-    
+    //以下获取的怪物id均是活着的怪物id
     $monster_ids = explode(',',$ngid);
-    for($i=0;$i<@count($monster_ids);$i++){
+    $monster_count = count($monster_ids);
+    
+    //此处任务逻辑可能导致程序卡死
+    for($i=0;$i<$monster_count;$i++){
     $monster_id = $monster_ids[$i];
-    $npc = player\getnpcguaiwu($monster_id,$dblj);
-    if ($npc->nhp<=0){//怪物死亡
-        global_events_steps_change(7,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$npc->nid,$para);
-        global_events_steps_change(31,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$npc->nid,$para);
+    $alive_monster = player\getnpcguaiwu_attr($monster_id,$dblj);
+    
+    if ($alive_monster->nhp<=0){//怪物死亡
+        $alive_id = $alive_monster->nid;
+        $defeat_id = $alive_monster->ndefeat_event_id;
+        $cmid = $cmid + 1;
+        $cdid[] = $cmid;
+        $clj[] = $cmd;
+        $ret = global_event_data_get(7,$dblj);
+        if($ret){
+        global_events_steps_change(7,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_id,$para);
+        }
+        $cmid = $cmid + 1;
+        $cdid[] = $cmid;
+        $clj[] = $cmd;
+        $ret = global_event_data_get(31,$dblj);
+        if($ret){
+        global_events_steps_change(31,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_id,$para);
+        }
+        if($defeat_id!=0){
+        include_once 'class/events_steps_change.php';
+        events_steps_change($defeat_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_id,$para);
+        }
         // $sql = "delete from system_npc_midguaiwu where ngid = '{$monster_id}' AND nsid='$sid'";
         // $dblj->exec($sql);
         // $sql = "delete from game2 where gid = '{$monster_id}' AND sid='$sid'";
         //$dblj->exec($sql);
-
-        $fight_arr = player\getfightpara($sid,$dblj);
-        if(empty($fight_arr)){
-        $zdjg = 1;  
-        }
-        $drop_exp = $npc->ndrop_exp;//掉落相关
-        $drop_money = $npc->ndrop_money;
-        $drop_items = $npc->ndrop_item;
+        
+        $drop_exp = $alive_monster->ndrop_exp;//掉落相关
+        $drop_money = $alive_monster->ndrop_money;
+        $drop_items = $alive_monster->ndrop_item;
+        if($drop_exp){
         $drop_exp = \lexical_analysis\process_string($drop_exp,$sid);
+        }
+        if($drop_money){
         $drop_money = \lexical_analysis\process_string($drop_money,$sid);
-        $drop_item = explode(',',$drop_items);
+        }
         if($drop_items){
-        for($j=0;$j<@count($drop_item);$j++){
+        
+        $drop_item = explode(',',$drop_items);
+        $drop_item_count = count($drop_item);
+        for($j=0;$j<$drop_item_count;$j++){
             $drop_para = explode('|',$drop_item[$j]);
             $drop_id = $drop_para[0];
             $drop_item_name = \player\getitem($drop_id,$dblj)->iname;
@@ -162,30 +237,12 @@ if($cmd=='pve_fight'){
             if($drop_count >0 && $player_last_burthen >=$drop_total_weight && $player_last_burthen>0){
                 $get_ret = \player\additem($sid,$drop_id,$drop_count,$dblj);
                 if($get_ret!=-2){
-                    \player\changeitem_belong($get_ret,1, $npc->nid,$dblj);//更新物品掉落来源
+                    \player\changeitem_belong($get_ret,1, $alive_monster->nid,$dblj);//更新物品掉落来源
                 }
                 $huode .= "得到：{$drop_item_name}x{$drop_count} <br/>";
-                $taskarr = \player\getplayertask($sid,$dblj);//任务相关
-                for ($l=0;$l<@count($taskarr);$l++){
-                    $rwtype = $taskarr[$l]['ttype'];
-                    $rw_paras = explode(',',$taskarr[$l]['ttarget_obj']);
-                    $rw_check_count = @count($rw_paras);
-                    $rw_check_done = 0;
-                    for($i=0;$i<$rw_check_count;$i++){
-                    $rw_para = explode('|',$rw_paras[$i]);
-                    $rwtarget_id = $rw_para[0];
-                    $rwcount = $rw_para[1];
-                    //$rwid = $taskarr[$l]['tid'];
-                    $rwzt = $taskarr[$l]['tstate'];
-                    if ($rwtarget_id==$drop_id && $rwtype==2 && $rwzt!=2){
-                        $rw_obj_name = \player\getitem($rwtarget_id,$dblj)->iname;
-                        $rw_obj_name = \lexical_analysis\color_string($rw_obj_name);
-                        $rwnowcount = \player\getitem_count($rwtarget_id,$sid,$dblj)['icount'];
-                        $rwts .= "任务：".$taskarr[$l]['tname']."<br/>{$rw_obj_name}".'('.$rwnowcount."/".$rwcount.')<br/>';
-                        break;
-                    }
-                    }
-                }
+                
+                $rwts_item = \player\update_task($sid,$dblj,$drop_id,null,null);
+                $rwts .= $rwts_item;
             }elseif($drop_count <0){
                 $item_true_id = \player\getplayeritem_attr('item_true_id',$sid,$drop_id,$dblj)['item_true_id'];
                 \player\changeplayeritem($item_true_id,$drop_count,$sid,$dblj);
@@ -207,42 +264,29 @@ if($cmd=='pve_fight'){
             $drop_money = $drop_money>=0?"+".$drop_money:$drop_money;
             $huode .= "信用币{$drop_money}枚 <br/>";
         }
-        $taskarr = \player\getplayertask($sid,$dblj);//任务相关
-        for ($k=0;$k<@count($taskarr);$k++){
-            $rwnpc_id = $taskarr[$k]['tnpc_id'];
-            $rwtype = $taskarr[$k]['ttype'];
-            $rwid = $taskarr[$k]['tid'];
-            $rwret = \player\getplayertaskonce($sid,$rwid,$dblj);
-            $rwstate = $rwret[0]['tstate'];
-            $rwzt = $taskarr[$k]['tstate'];
-            
-            $rw_paras = explode(',',$taskarr[$k]['ttarget_obj']);
-            for($i=0;$i<@count($rw_paras);$i++){
-            $rw_para = explode('|',$rw_paras[$i]);
-            $rwtarget_id = $rw_para[0];
-            $rwcount = $rw_para[1];
-            
-            
-            if ($rwtarget_id==$npc->nid && $rwtype==1 && $rwstate!=2){
-                \player\changetask1($rwtype,$rwid,$rwtarget_id,1,$sid,$dblj);
-                $rwnowparas = explode(',',$taskarr[$k]['tnowcount']);
-                $rwnowcount = explode('|',$rwnowparas[$i])[1] + 1;
-                $rwts .= "任务：".$taskarr[$k]['tname']."<br/>{$npc->nname}".'('.$rwnowcount."/".$rwcount.')<br/>';
-                break;
-            }
-            }
-        }
-    }else{
-    $player =  player\getplayer($sid,$dblj);
-    if ($player->uhp <= 0){
-        $zdjg = 0;
+
+        $rwts_kill = \player\update_task($sid,$dblj,null,$alive_monster->nid,$alive_monster->nname);
+        $rwts .= $rwts_kill;
+
     }
-}
 }
 }
 
 $fight_arr = player\getfightpara($sid,$dblj);
+if(empty($fight_arr)){
+$zdjg = 1;
+}
+
+$player =  player\getplayer($sid,$dblj);
+if ($player->uhp <= 0){
+    $zdjg = 0;
+}
+
+
+
+
 if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
+    $dblj->exec("DELETE from player_temp_attr where obj_id = '$sid' and attr_name = 'busy'");
     switch ($zdjg){
         case 1:
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
@@ -257,8 +301,9 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
             \player\changeplayersx('ucmd','',$sid,$dblj);
             $fight_html = <<<HTML
             战斗胜利！<br/>
-            你打死了{$npc->nname}<br/>
+            你打死了{$alive_monster->nname}<br/>
             你生命：({$player->uhp}/{$player->umaxhp})<br/>
+            $pets
             $huode
             $rwts
             =========<br/>
@@ -273,12 +318,24 @@ HTML;
             \player\changeplayersx('uhp',0,$sid,$dblj);
             $player = \player\getplayer($sid,$dblj);
             $parents_cmd = 'gm_scene_new';
-            global_events_steps_change(8,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
+            $ret = global_event_data_get(8,$dblj);
+            if($ret){
+            global_events_steps_change(8,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
+            }
             \player\changeplayersx('ucmd','',$sid,$dblj);
+            $ret = global_event_data_get(30,$dblj);
+            if($ret){
+            global_events_steps_change(30,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
+            }
+            if($alive_monster->nwin_event_id!=0){
+            include_once 'class/events_steps_change.php';
+            events_steps_change($alive_monster->nwin_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
+            }
+            
             //战败事件
             $fight_html = <<<HTML
             战斗失败！<br/>
-            你被{$npc->nname} 狠狠地教训了一顿!<br/>
+            你被{$alive_monster->nname} 狠狠地教训了一顿!<br/>
             你生命：({$player->uhp}/{$player->umaxhp})<br/>
             =========<br/>
             <a href="?cmd=$gonowmid">返回游戏</a>
@@ -298,8 +355,8 @@ HTML;
 HTML;
             break;
     }
-}else{
 }
+
 for ($i=0;$i<count($get_main_page);$i++){
     $oid = 'npc';
     $main_id = $get_main_page[$i]['id'];
@@ -308,10 +365,12 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_show_cond = $get_main_page[$i]['show_cond'];
     if($main_show_cond!=''){
     $show_ret = \lexical_analysis\process_string($main_show_cond,$sid);
+    $show_ret = \lexical_analysis\color_string($show_ret);
+    
     }else{
     $show_ret = 1;
     }
-    //$show_ret = strip_tags($show_ret);
+    $show_ret = strip_tags($show_ret);
     @$ret = eval("return $show_ret;");
     if($ngid){
     $mid = $ngid;
@@ -331,14 +390,17 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_value =\lexical_analysis\color_string($main_value);
     }
     if($main_target_event !=0){
-        $main_target_event = $encode->encode("cmd=main_target_event&target_event=$main_target_event&parents_cmd=$cmd&parents_page=$parents_page&last_page_id=$main_id&sid=$sid");
+        $main_target_event = $encode->encode("cmd=main_target_event&ucmd=$cmid&target_event=$main_target_event&parents_cmd=$cmd&parents_page=$parents_page&last_page_id=$main_id&sid=$sid");
     }elseif ($main_target_event ==0) {
-        $main_target_event = $encode->encode("cmd=event_no_define&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
+        $main_target_event = $encode->encode("cmd=event_no_define&ucmd=$cmid&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
     }
     if($main_target_func !=0){
-        $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,10);
+        $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,10,$cmid);
+        if(!filter_var($main_target_func, FILTER_VALIDATE_URL,FILTER_FLAG_QUERY_REQUIRED)){
+        $main_target_func = \lexical_analysis\color_string($main_target_func);
+        }
     }elseif ($main_target_func ==0) {
-        $main_target_func = $encode->encode("cmd=func_no_define&parents_page=$parents_cmd=$cmd&parents_page&sid=$sid");
+        $main_target_func = $encode->encode("cmd=func_no_define&ucmd=$cmid&parents_page=$parents_cmd=$cmd&parents_page&sid=$sid");
     }
     try{
         $matches = array();
@@ -409,7 +471,11 @@ if($player->uauto_fight ==1 &&$look_canshu !=1){
     $default_id = $default_id ==0?1:$default_id;
     $quick_to = $encode->encode("cmd=pve_fighting&ucmd=$cmid&qtype=1&qtype_id=$default_id&sid=$sid");
     $quick_url = "?cmd=$quick_to"; // 构建完整的 URL
-    header("refresh:2;url={$quick_url}");//这里的2是默认间隔
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="2;URL=$quick_url">
+HTML;
+echo $refresh_html;
+    //header("refresh:2;url={$quick_url}");//这里的2是默认间隔
 }
 $all = <<<HTML
 <head>

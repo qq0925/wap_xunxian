@@ -69,12 +69,12 @@ for ($i=0;$i<count($get_main_page);$i++){
     $cdid[] = $cmid;
         $main_target_event = $encode->encode("cmd=main_target_event&mid=$mid&oid=$oid&ucmd=$cmid&target_event=$main_target_event&parents_cmd=$cmd&parents_page=$parents_page&last_page_id=$main_id&sid=$sid");
     }elseif ($main_target_event ==0) {
-        $main_target_event = $encode->encode("cmd=event_no_define&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
+        $main_target_event = $encode->encode("cmd=event_no_define&parents_cmd=$cmd&ucmd=$cmid&parents_page=$parents_page&sid=$sid");
     }
     if($main_target_func !=0){
         $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,7,$cmid);
     }elseif ($main_target_func ==0) {
-        $main_target_func = $encode->encode("cmd=func_no_define&parents_page=$parents_page&$parents_cmd=$cmd&sid=$sid");
+        $main_target_func = $encode->encode("cmd=func_no_define&parents_page=$parents_page&$parents_cmd=$cmd&ucmd=$cmid&sid=$sid");
     }
     switch ($main_type) {
         case '1':

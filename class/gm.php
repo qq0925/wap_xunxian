@@ -58,7 +58,8 @@ function calculateDistance($point1, $point2) {
     // 使用大圆距离公式计算距离
     $dlon = $y2 - $y1;
     $dlat = $x2 - $x1;
-    $a = sin($dlat/2) ** 2 + cos($x1) * cos($x2) * sin($dlon/2) ** 2;
+    $a = pow(sin($dlat/2), 2) + cos($x1) * cos($x2) * pow(sin($dlon/2), 2);
+    // $a = sin($dlat/2) ** 2 + cos($x1) * cos($x2) * sin($dlon/2) ** 2;
     $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
     $distance = $R * $c;
     // 考虑高度差
@@ -278,6 +279,14 @@ function get_npc_detail($dblj,$npc_id){
     $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);    
     return $ret;
 }
+
+function get_pet_list($dblj,$sid){
+    $sql = "select * from system_pet_player where psid = '$sid' ORDER BY pstate DESC";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
+    return $ret;
+}
+
 
 function get_map_out($dblj,$map_id){
     $sql = "select * from system_map where mid ='$map_id'";
@@ -613,6 +622,8 @@ function get_mysqldata_2($dblj, $data_type, $data_id){
             // 处理 s_attrs 字段
             $s_attrs = $evsRow['s_attrs'];
             $m_attrs = $evsRow['m_attrs'];
+            $a_skills = $evsRow['a_skills'];
+            $r_skills = $evsRow['r_skills'];
             $not_return_link = $evsRow['not_return_link'];
             $just_return = $evsRow['just_return'];
             $not_return_link = ($not_return_link == 0) ? "F" : "T";
@@ -658,6 +669,8 @@ function get_mysqldata_2($dblj, $data_type, $data_id){
             $evs[] = [
                 '#data_events_Mapping#' => [
                     'id' => $evsRow['id'],
+                    'a_skills' => $evsRow['a_skills'],
+                    'r_skills' => $evsRow['r_skills'],
                     'cond' => $evsRow['cond'],
                     'cmmt' => $evsRow['cmmt'],
                     'cmmt2' => $evsRow['cmmt2'],
@@ -674,6 +687,8 @@ function get_mysqldata_2($dblj, $data_type, $data_id){
             'id' => $evsRow['id'],
             's_attrs' => $s_attrs_2,
             'm_attrs' => $m_attrs_2,
+            'a_skills' => $evsRow['a_skills'],
+            'r_skills' => $evsRow['r_skills'],
             'cond' => $evsRow['cond'],
             'cmmt' => $evsRow['cmmt'],
             'cmmt2' => $evsRow['cmmt2'],

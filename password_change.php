@@ -1,6 +1,6 @@
 <?php
 include_once 'pdo.php';
-
+$dblj = DB::pdo();
 $Dcmd = $_SERVER['QUERY_STRING'];
 $result = array();
 parse_str($Dcmd, $result);

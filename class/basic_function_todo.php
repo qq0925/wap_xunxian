@@ -142,6 +142,9 @@ $value = $value?$value:$func_name;
         case '60':
             $enemy_url = enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $enemy_url;
+        case '61':
+            $player_attack_url = player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $player_attack_url;
         case '62':
             $enemy_attack_url = enemy_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $enemy_attack_url;
@@ -178,6 +181,12 @@ $value = $value?$value:$func_name;
         case '76':
             $pick_url = pick_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $pick_url;
+        case '77':
+            $mosaic_url = mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $mosaic_url;
+        case '78':
+            $equip_core_url = equip_core_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $equip_core_url;
         default:
             // code...
             break;
@@ -879,6 +888,12 @@ if ($clmid->mnpc_now !=""){
     $npc_list = explode(',',$clmid->mnpc_now);
     foreach ($npc_list as $npc_detail){
     $npc_para = explode('|',$npc_detail);
+    $npc_show_cond = urldecode($npc_para[2]);
+    $show_result = checkTriggerCondition($npc_show_cond,$dblj,$sid);
+    if(is_null($show_result)){
+    $show_result = true;
+    }
+    if($show_result){
     $npc_id = $npc_para[0];
     $npc_count = $npc_para[1];
     $sql = "select * from system_npc where nid = '$npc_id' and nkill = 0";//获取npc
@@ -950,6 +965,7 @@ HTML;
 }
 $npchtml .="<br/>";
 }
+}
     }
 }
 
@@ -958,11 +974,20 @@ $cxjg = $dblj->query($sql);
 $cxallguaiwu = $cxjg->fetchAll(PDO::FETCH_ASSOC);
 $gwhtml = '';
 for ($i = 0;$i<count($cxallguaiwu);$i++){
+    $guaiwu_creat_event = $cxallguaiwu[$i]['ncreat_event_id'];
+    $guaiwu_ngid = $cxallguaiwu[$i]['ngid'];
+    $guaiwu_nid = $cxallguaiwu[$i]['nid'];
+    $guaiwu_para = $guaiwu_nid ."|"."$guaiwu_ngid";
+
+    if($guaiwu_creat_event!=0){
+    include_once 'class/events_steps_change.php';
+    events_steps_change($guaiwu_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$guaiwu_para,$para);
+    }
     $br = "<br/>";
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $clj[] = $cmd;
-    $gwcmd = $encode->encode("cmd=npc_html&ucmd=$cmid&ngid=".$cxallguaiwu[$i]['ngid']."&nid=".$cxallguaiwu[$i]['nid']."&sid=$sid&nowmid=$nowmid");
+    $gwcmd = $encode->encode("cmd=npc_html&ucmd=$cmid&ngid=".$guaiwu_ngid."&nid=".$guaiwu_nid."&sid=$sid&nowmid=$nowmid");
 $npchtml .="<a href='?cmd=$gwcmd'>".$cxallguaiwu[$i]['nname']."</a>";
 }
 $npchtml .=$br;
@@ -1104,10 +1129,8 @@ if ($ltcxjg){
         $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
         if($uid){
             $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
-        }else{
-            $lthtml .="[<span style='color: orangered;'>$uname</span>]:{$umsg}<span class='txt-fade'>[{$send_time}]</span><br/>";
+            $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }
-        $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }elseif(!$uid && $chat_type == 0&&$minute <10){
             $lthtml .="[<span style='color: orangered;'>公共</span>]<div class='hpys' style='display: inline'>$uname:</div>$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
         }
@@ -1281,6 +1304,58 @@ HTML;
     return $quick_url;
 }
 
+function self_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
+    $sql = "SELECT * from game1 where sid = '$sid'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $player_list = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $player_id_root = $player_list['uid'];
+    $player_nowmid = $player_list['nowmid'];
+    $player_name = $player_list['uname'];
+    $player_hp = $player_list['uhp'];
+    $player_maxhp = $player_list['umaxhp'];
+    $player_text =<<<HTML
+[{$player_name}]:({$player_hp}/{$player_maxhp})<br/>
+HTML;
+    if($cmd =="pve_fighting"){
+    $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = :sid";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $cut_hp = $row['total_cut_hp'];
+
+    if($cut_hp!=''){
+    $cut_hp = $cut_hp >=0?"-".$cut_hp:"+".$cut_hp;
+    $player_text =<<<HTML
+[{$player_name}]:({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
+HTML;
+    }
+    }
+    $sql = "SELECT * from system_pet_player where psid = :sid and pstate = 1";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if($row){
+    $pet_name = $row['pname'];
+    $pet_hp = $row['php'];
+    $pet_maxhp = $row['pmaxhp'];
+    if($pet_hp <=0){
+    $player_text .=<<<HTML
+[{$pet_name}]已经战死！<br/>
+HTML;
+    }else{
+    $player_text .=<<<HTML
+[{$pet_name}]:({$pet_hp}/{$pet_maxhp}){$pcut_hp}<br/>
+HTML;
+}
+}
+    return $player_text;
+    
+}
+
 function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $sql = "SELECT * from system_npc_midguaiwu where nsid = '$sid'";
     $stmt = $dblj->prepare($sql);
@@ -1349,6 +1424,43 @@ function enemy_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     }
 }
     return $fight_omsg;
+    
+}
+
+function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
+    $sql = "SELECT * from system_npc_midguaiwu where nsid = '$sid'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $monster_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    for($i=0;$i<@count($monster_list);$i++){
+    $monster_id_root = $monster_list[$i]['nid'];
+    $monster_id = $monster_list[$i]['ngid'];
+    $monster_nowmid = $monster_list[$i]['nmid'];
+
+    if($cmd =="pve_fighting"){
+    $sql = "SELECT * from game2 where sid = :sid and gid = :gid AND pid = 0";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
+    $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if($row['fight_umsg']){
+    $fight_umsg .= $row['fight_umsg']."<br/>";
+    }
+    
+    $sql = "SELECT * from game2 where sid = :sid and gid = :gid AND pid != 0";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
+    $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if($row['fight_umsg']){
+    $fight_umsg .= $row['fight_umsg']."<br/>";
+    }
+    
+    }
+}
+    return $fight_umsg;
     
 }
 
@@ -1423,6 +1535,19 @@ HTML;
     return $look_url;
 }
 
+function pet_url($cmd,$page_id,$sid,$dblj,$value,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    global $encode;
+    $pet_url = $encode->encode("cmd=player_pet&ucmd=$cmid&sid=$sid");
+    $pet_url=<<<HTML
+        <a href="?cmd=$pet_url">{$value}</a>
+HTML;
+    return $pet_url;
+}
+
+
 function sail_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
@@ -1448,5 +1573,98 @@ function pick_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
 HTML;
     return $pick_url;
 }
+
+function mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    global $encode;
+    $mosaic_url = $encode->encode("cmd=mosaic_html&mid=$mid&ucmd=$cmid&sid=$sid");
+    $mosaic_url=<<<HTML
+        <a href="?cmd=$mosaic_url">{$value}</a>
+HTML;
+    return $mosaic_url;
+}
+
+function equip_core_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+global $encode;
+$sql = "select * from system_equip_def where type = '1'";
+$cxjg = $dblj->query($sql);
+$ret = $cxjg ? $cxjg->fetchAll(PDO::FETCH_ASSOC) : [];
+
+$equipbid = null;
+foreach ($ret as $row) {
+    $equiptypeid = $row['id'];
+    $equiptypename = $row['name'];
+    $sql = "select * from system_equip_user where eq_type = 1 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid'";
+    $cxjg = $dblj->query($sql);
+    if ($cxjg) {
+        $row = $cxjg->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $equipbid = $row['eq_true_id'];
+            break;
+        }
+    }
+}
+$equipitem = $encode->encode("cmd=equip_op_basic&eq_type=1&target_event=choose&ucmd=$cmid&sid=$sid");
+$equipbhtml = "无<a href='?cmd=$equipitem'>[装备]</a>";
+if ($equipbid) {
+    $sql = "select * from system_item_module where iid = (select iid from system_item where item_true_id = '$equipbid')";
+    $cxjg = $dblj->query($sql);
+    if ($cxjg) {
+        $row = $cxjg->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $equipbname = \lexical_analysis\color_string($row['iname']);
+            $removeitem = $encode->encode("cmd=equip_op_basic&target_event=remove&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
+            $ckequipbinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
+            $equipbhtml = "<a href='?cmd=$ckequipbinfo'>{$equipbname}</a><a href='?cmd=$removeitem'>[卸下]</a>";
+        }
+    }
+}
+
+$sql = "select * from system_equip_def WHERE type = 2";
+$cxjg = $dblj->query($sql);
+$ret = $cxjg ? $cxjg->fetchAll(PDO::FETCH_ASSOC) : [];
+
+$equipfhtml = '';
+foreach ($ret as $row) {
+    $equiptypeid = $row['id'];
+    $equiptypename = $row['name'];
+    $sql = "select * from system_equip_user where eq_type = 2 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid'";
+    $cxjg = $dblj->query($sql);
+    if ($cxjg) {
+        $row = $cxjg->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $equipfid = $row['eq_true_id'];
+            if ($equipfid) {
+                $sql = "select * from system_item_module where iid = (select iid from system_item where item_true_id = '$equipfid')";
+                $cxjg = $dblj->query($sql);
+                if ($cxjg) {
+                    $row = $cxjg->fetch(PDO::FETCH_ASSOC);
+                    if ($row) {
+                        $equipfname = \lexical_analysis\color_string($row['iname']);
+                    }
+                }
+            }
+            $removeitem = $encode->encode("cmd=equip_op_basic&target_event=remove&ucmd=$cmid&equip_true_id=$equipfid&sid=$sid");
+            $ckequipfinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_true_id=$equipfid&sid=$sid");
+            $equipfhtml .= "{$equiptypename}：<a href='?cmd=$ckequipfinfo'>{$equipfname}</a><a href='?cmd=$removeitem'>[卸下]</a><br/>";
+        }else{
+            $equipitem = $encode->encode("cmd=equip_op_basic&eq_type=2&equip_typename=$equiptypename&eq_subtype=$equiptypeid&target_event=choose&ucmd=$cmid&sid=$sid");
+            $equipfhtml .= "{$equiptypename}：无<a href='?cmd=$equipitem'>[装备]</a><br/>";
+        }
+    }
+}
+
+$bagequiphtml = <<<HTML
+【我的装备】<br/>
+兵器：{$equipbhtml}<br/>
+$equipfhtml
+<br/>
+HTML;
+return $bagequiphtml;
+}
+
+
 
 ?>

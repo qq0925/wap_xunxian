@@ -14,6 +14,8 @@ $npc_task = $cxnpc[0]['ntask_target'];
 $npc_ncreat_event = $cxnpc[0]['ncreat_event_id'];
 $nlook_event = $cxnpc[0]['nlook_event_id'];
 $nattack_event = $cxnpc[0]['nattack_event_id'];
+$nwin_event = $cxnpc[0]['nwin_event_id'];
+$ndefeat_event = $cxnpc[0]['ndefeat_event_id'];
 $npet_event = $cxnpc[0]['npet_event_id'];
 $nshop_event = $cxnpc[0]['nshop_event_id'];
 $nup_event = $cxnpc[0]['nup_event_id'];
@@ -22,6 +24,8 @@ $nminute_event = $cxnpc[0]['nminute_event_id'];
 $npc_event_count = ($npc_ncreat_event ? 1 : 0) +
                    ($nlook_event ? 1 : 0) +
                    ($nattack_event ? 1 : 0) +
+                   ($nwin_event ? 1 : 0) +
+                   ($ndefeat_event ? 1 : 0) +
                    ($npet_event ? 1 : 0) +
                    ($nshop_event ? 1 : 0) +
                    ($nup_event ? 1 : 0) +

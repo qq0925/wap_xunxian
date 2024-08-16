@@ -14,4 +14,4 @@ $text = $test_code_text;
             }
         }
     </script>
-  <button onclick="toggleText_2()">cmd表</button><div id="textDiv_2" style="display: block;"><?php echo $text; ?></div><br/>
+  <button onclick="toggleText_2()">cmd表</button><div id="textDiv_2" style="display: none;"><?php echo $text; ?></div><br/>

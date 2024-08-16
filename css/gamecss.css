@@ -1,7 +1,6 @@
 @charset "UTF-8";
 
 /* 此处是 CSS 样式规则 */
-
 #btn,#login,#register{
     display:inline-block;
     background: #ff7a01;

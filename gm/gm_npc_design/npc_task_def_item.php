@@ -59,7 +59,7 @@ HTML;
     }
 }
 $item_html = <<<HTML
-<p>定义场景“{$task_name}”的地上物品<br/>
+<p>定义“{$task_name}”的任务物品<br/>
 $item_list_html
 <a href="?cmd=$add_item">添加物品</a><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>
@@ -72,7 +72,7 @@ $item_name = $item_para ->iname;
 $last_page = $encode->encode("cmd=gm_type_npc&canshu=2&gm_post_canshu=4&task_id=$task_id&sid=$sid");
 $item_change = $encode->encode("cmd=gm_type_npc&canshu=2&gm_post_canshu=4&task_id=$task_id&sid=$sid");
 $item_html = <<<HTML
-<p>修改场景“{$item_name}”的地上物品<br/>
+<p>修改“{$item_name}”的任务物品表达式<br/>
 <form action="?cmd=$item_change" method="post">
 <input name="change_this_id" type="hidden" title="确定" value="{$change_id}">
 <input name="change_this_count" type="hidden" title="确定" value="{$change_old_count}">
@@ -92,7 +92,7 @@ if($post_canshu == -1){
     }
 $last_page = $encode->encode("cmd=gm_type_npc&canshu=2&gm_post_canshu=4&task_id=$task_id&sid=$sid");
 $item_html = <<<HTML
-[定义场景的地上物品]<br/>
+[定义任务条件物品]<br/>
 请选择物品的类型：<br/>
 <a href="?cmd={$add_item_type[0]}">消耗品</a><br/>
 <a href="?cmd={$add_item_type[1]}">兵器</a><br/>
@@ -161,7 +161,7 @@ $last_page = $encode->encode("cmd=gm_type_npc&canshu=2&gm_post_canshu=4&task_id=
 $item_change = $encode->encode("cmd=gm_type_npc&canshu=2&gm_post_canshu=4&task_id=$task_id&sid=$sid");
 $item_add = $encode->encode("cmd=gm_type_npc&canshu=2&gm_post_canshu=4&task_item_count=$task_item_count&task_id=$task_id&sid=$sid");
 $item_html = <<<HTML
-<p>新增场景“{$item_name}”的地上物品<br/>
+<p>新增任务“{$item_name}”的物品数量表达式<br/>
 <form action="?cmd=$item_add" method="post">
 <input name="add_this_id" type="hidden" title="确定" value="{$add_item_id}">
 数量表达式:<textarea name="add_count" maxlength="1024" rows="4" cols="40"></textarea><br/>
