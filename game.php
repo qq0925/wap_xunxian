@@ -91,6 +91,8 @@ if (isset($cmd)&&!isset($sid)){
     $parsedVariables = [];
         
     // 遍历所有变量，将 parse_str 解析结果与当前页面变量进行比较
+    $uis_designer = $player->uis_designer;
+    if($uis_designer ==1){
     foreach ($allVars as $name => $value) {
         if (isset($parsedVars[$name])) {
             $parsedVariables[$name] = $parsedVars[$name];
@@ -100,7 +102,7 @@ if (isset($cmd)&&!isset($sid)){
         $is_designer_parse_str .= "{$name}={$value}<br/>";
     }
     $designer_para_cmd = $cmd;
-    
+    }
 
 //3-4ms
 

@@ -108,6 +108,10 @@ body {
     user-select: none;
 }
 
+#textDiv_4 {
+    display: none !important;
+}
+
 #control button {
     display: inline-block;
     width: 45px;
