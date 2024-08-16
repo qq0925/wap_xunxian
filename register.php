@@ -2,6 +2,7 @@
 include 'pdo.php';
 require_once 'class/encode.php';
 require_once 'class/gm.php';
+
 $dblj = DB::pdo();
 $encode = new \encode\encode();
 $a = '';

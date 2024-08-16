@@ -6,10 +6,7 @@
 
 // 根据 $value 查询符合条件的 gm_game_attr 表中的数据
 
-$username='xunxian';
-$password='123456';
-$dbname='xunxian';
-$servername = "127.0.0.1";
+require_once 'pdo.php';
 
 try {
     // 获取POST表单数据
@@ -67,7 +64,7 @@ $item_main = $encode->encode("cmd=game_item_list&item_id=$item_id&sid=$sid");
 $gm_item_post = $encode->encode("cmd=gm_item_attr_submit&item_id=$item_id&sid=$sid");
 //$_SERVER['PHP_SELF'];
 // 建立连接
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = DB::conn();
 // 检查连接是否成功
 if (!$conn) {
     die("连接失败: " . mysqli_connect_error());

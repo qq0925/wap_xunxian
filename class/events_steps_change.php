@@ -3,7 +3,7 @@ require_once 'lexical_analysis.php';
 require_once 'data_lexical.php';
 require_once 'event_data_get.php';
 require_once 'pdo.php';
-$dblj = DB::pdo();
+
 $parents_cmd = \player\getplayer($sid,$dblj)->ulast_cmd;
 
 if(!$para){
@@ -122,9 +122,6 @@ HTML;
                             }elseif($step_triggle){
                             //注意，当上一步骤中带有“移动目标”或“是否返回游戏是”或“ct_”时，下面的所有步骤都是不会执行的！
                             if($step_exec_triggle){
-                                
-                                //这里可以进行输入非空判断
-                                
                             $ret = attrsetting($step_s_attrs,$sid,$oid,$mid,$para);
                             $ret_2 = attrchanging($step_m_attrs,$sid,$oid,$mid,$para);
                             $ret_3 = itemchanging($step_items,$sid);
@@ -140,6 +137,7 @@ HTML;
                             if($step_cmmt){
                             echo $step_cmmt."<br/>";
                             }
+                            
                             if($step_fight_npcs !=''){
                                 //$not_ret_canshu = 1;
                                 $retgw = explode(",",$step_fight_npcs);
@@ -160,24 +158,13 @@ HTML;
                                     // 构建动态插入语句
                                     $cols = implode(", ",$columns);
                                     $nowdate = date('Y-m-d H:i:s');
-                                    $sql = "INSERT INTO system_npc_midguaiwu ($cols, nsid, nmid, ncreate_time) 
-                                            SELECT $cols, :sid, :nmid, :nowdate 
-                                            FROM system_npc 
-                                            WHERE nid = :nid";
-                                    
-                                    // 准备语句
+                                    $sql = "INSERT INTO system_npc_midguaiwu ($cols,nsid, nmid,ncreate_time) SELECT $cols,:sid, :nmid ,:nowdate FROM system_npc WHERE nid = :nid;";
                                     $stmt = $dblj->prepare($sql);
-                                    
-                                    // 使用 bindParam 来绑定参数
                                     $stmt->bindParam(':nmid', $mid, PDO::PARAM_INT);
                                     $stmt->bindParam(':nid', $nid, PDO::PARAM_INT);
-                                    $stmt->bindParam(':sid', $sid, PDO::PARAM_STR);  // sid 是 text 类型
-                                    $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_STR);  // nowdate 是 date 类型
-                                    
-                                    // 执行语句
+                                    $stmt->bindParam(':sid', $sid, PDO::PARAM_INT);
+                                    $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_INT);
                                     $stmt->execute();
-                                    
-                                    // 获取插入的 ID
                                     $ngid = $dblj->lastInsertId();
                                     $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
                                     $dblj->exec($sql);

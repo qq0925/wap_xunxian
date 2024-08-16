@@ -2,8 +2,8 @@
 // 假设您已经连接到了数据库，并且设置了 $value 和 $mapDefId 的值
 
 // 根据 $value 查询符合条件的 gm_game_attr 表中的数据
-require_once 'pdo.php';
 
+require_once 'pdo.php';
 
 if($gm_map_canshu == "1"){
 $post_tishi = '修改成功';
