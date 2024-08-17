@@ -3,17 +3,16 @@ require_once 'lexical_analysis.php';
 require_once 'data_lexical.php';
 require_once 'event_data_get.php';
 require_once dirname(__DIR__) . '/pdo.php';
-
 $dblj = DB::pdo();
 
-$parents_cmd = \player\getplayer($sid, $dblj)->ulast_cmd;
-if (!$para) {
-    global_events_steps_change($target_event, $sid, $dblj, $just_page, $steps_page, $cmid, $parents_page, $oid, $mid, $para);
-} else {
+$parents_cmd = \player\getplayer($sid,$dblj)->ulast_cmd;
+if(!$para){
+global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$parents_page,$oid,$mid,$para);
+}else {
     $input_value = $_POST['value'];
     $sql = "insert into system_player_inputs(sid,event_id,id,value)values('$sid','$target_event','$id','$input_value')";
     $dblj->exec($sql);
-    global_events_steps_change($target_event, $sid, $dblj, $just_page, $steps_page, $cmid, $parents_page, null, null, $para);
+global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$parents_page,null,null,$para);
 }
 function global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$cmid,$parents_page,$oid=null,$mid=null,$para=null){
                 //事件逻辑
@@ -33,6 +32,7 @@ function global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_p
                     if(!$register_triggle){
                     $step_cmmt = html_entity_decode($step_cmmt);
                     $event_cmmt = \lexical_analysis\process_string($event_cmmt,$sid,$oid,$mid);
+                    $event_cmmt = \lexical_analysis\process_photoshow($event_cmmt);
                     $event_cmmt = \lexical_analysis\color_string(nl2br($event_cmmt));
                     echo $event_cmmt."<br/>";//不满足触发条件则输出cmmt
                     
@@ -87,6 +87,7 @@ HTML;
                             $dblj->exec($sql);
                             $step_cmmt2 = html_entity_decode($step_cmmt2);
                             $step_cmmt2 = \lexical_analysis\process_string($step_cmmt2,$sid,$oid,$mid);
+                            $step_cmmt2 = \lexical_analysis\process_photoshow($step_cmmt2);
                             $step_cmmt2 = \lexical_analysis\color_string(nl2br($step_cmmt2));
                             echo $step_cmmt2."<br/>";
                             $cmid = $cmid + 1;
@@ -108,6 +109,7 @@ HTML;
                             $ret_7 = taskschanging($step_r_tasks,$sid,2);
                             $step_cmmt = html_entity_decode($step_cmmt);
                             $step_cmmt = \lexical_analysis\process_string($step_cmmt,$sid,$oid,$mid);
+                            $step_cmmt = \lexical_analysis\process_photoshow($step_cmmt);
                             $step_cmmt = \lexical_analysis\color_string(nl2br($step_cmmt));
                             if($step_cmmt){
                             echo $step_cmmt."<br/>";
@@ -136,8 +138,8 @@ HTML;
                                     $stmt = $dblj->prepare($sql);
                                     $stmt->bindParam(':nmid', $mid, PDO::PARAM_INT);
                                     $stmt->bindParam(':nid', $nid, PDO::PARAM_INT);
-                                    $stmt->bindParam(':sid', $sid, PDO::PARAM_INT);
-                                    $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_INT);
+                                    $stmt->bindParam(':sid', $sid, PDO::PARAM_STR);
+                                    $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_STR);
                                     $stmt->execute();
                                     $ngid = $dblj->lastInsertId();
                                     $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";

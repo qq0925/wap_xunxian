@@ -14,7 +14,7 @@ switch($canshu){
         $player = new \player\player();
         $player = \player\getplayer($sid,$dblj);
         
-        $sql = "select * from system_skill_user WHERE jsid = '$sid'";
+        $sql = "select * from system_skill_user WHERE jsid = '$sid' and jpid = 0";
         $cxjg = $dblj->query($sql);
         if ($cxjg){
             $ret = $cxjg->fetchAll(PDO::FETCH_ASSOC);

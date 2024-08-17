@@ -158,6 +158,7 @@ $dblj->exec($sql);
 $sql = "update game2 set hurt_hp = '$hurt_cut' where gid = '$attack_gid'";
 $dblj->exec($sql);
 $j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc',$attack_gid_para);
+$j_umsg = str_replace(array("'", "\""), '', $j_umsg);
 $sql = "update game2 set fight_umsg = '$j_umsg' where sid = '$sid' and gid = '$attack_gid'";
 $cxjg = $dblj->exec($sql);
 }
@@ -368,6 +369,7 @@ $cxjg = $dblj->exec($sql);
 function evaluate_expression($expr, $db, $sid,$oid,$mid,$jid,$type,$para=null){
 $expr = preg_replace_callback('/\{eval\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     // /\{eval\(([^)]+)\)\}/
+    
     $eval_expr = $matches[1]; // 获取 eval 中的表达式
     $eval_result = @eval("return $eval_expr;"); // 计算 eval 表达式的结果
     if(is_float($eval_result) && !is_string($eval_result)){
@@ -393,6 +395,7 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     if (strpos($temp, '"') === false){
     $op = "\"".$temp."\"";
     }
+    $op = str_replace(array("'", "\"\""), '0', $op);
     // if($para =='cond_exp'){
     //     $op = "(bool)\"$op\"";
     // }
@@ -1268,7 +1271,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op .= $row["fight_umsg"];
                         }
                         if ($op === null||$op =='') {
-                            $op = "0"; // 或其他默认值
+                            $op = "\"\""; // 或其他默认值
                             }else{
                         $op = nl2br($op);
                             }
@@ -1290,7 +1293,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op .= $row["fight_omsg"];
                         }
                         if ($op === null||$op =='') {
-                            $op = "0"; // 或其他默认值
+                            $op = "\"\""; // 或其他默认值
                             }else{
                         $op = nl2br($op);
                             }
@@ -2219,6 +2222,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 }
                 $row = $cxjg->fetch_assoc();
                 $temp_sid = $row['sid'];
+                $op = str_replace(array("'", "\"\""), '0', $op);
                 $op = str_replace("f({$match})", "u", $input);
                 if($temp_sid){
                 $input = process_string($op, $temp_sid, $oid, $mid, $jid, $type, $para);
@@ -3650,7 +3654,6 @@ $input = evaluate_expression_3($input,$db,$sid,$oid,$mid,$jid,$type,$para);
 
 
 function color_string($input) {
-    $input = str_replace(array("'", "\""), '', $input);
     $pattern = '/@([^@]+)@([^@]+)@end@/'; // 匹配以 @ 开头和结尾的内容，括号内部为捕获组，表示颜色值和文本
     $matches = array();
     preg_match_all($pattern, $input, $matches, PREG_SET_ORDER);

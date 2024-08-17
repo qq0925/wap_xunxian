@@ -4,13 +4,13 @@
 
 if($set_default_id){
     echo "已经【{$default_name}】设为默认技能！<br/>";
-    $dblj->exec("update system_skill_user set jdefault = 0 where jsid = '$sid'");
-    $dblj->exec("update system_skill_user set jdefault = 1 where jsid = '$sid' and jid = '$set_default_id'");
+    $dblj->exec("update system_skill_user set jdefault = 0 where jsid = '$sid' and jpid = 0");
+    $dblj->exec("update system_skill_user set jdefault = 1 where jsid = '$sid' and jid = '$set_default_id' and jpid = 0");
 }
 
 // $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
-$sql = "select * from system_skill_user WHERE jsid = '$sid'";
+$sql = "select * from system_skill_user WHERE jsid = '$sid' and jpid = 0";
 $cxjg = $dblj->query($sql);
 if ($cxjg){
     $ret = $cxjg->fetchAll(PDO::FETCH_ASSOC);
