@@ -1907,18 +1907,6 @@ echo $refresh_html;
             }
             break;
         case 'lexical_post'://词法解析测试
-            if($_POST){
-            $ret = \lexical_analysis\process_string($lexical_text,$sid);
-            echo "解析结果：".$ret."<br/>";
-            // 将表达式结果转换为字符串输出
-            //$ret = $ret ? '为真' : '为假';
-            if(!$ret){
-                $ret = $ret ? '真' : '假';
-                echo "<br/>运算结果：返回了一个布尔值：".$ret."<br/><br/>";
-            }else{
-            echo "<br/>运算结果：".$ret."<br/><br/>";
-            }
-            }
             $ym = 'lexical_test.php';
             break;
         case 'global_value_design'://公共数据设计
