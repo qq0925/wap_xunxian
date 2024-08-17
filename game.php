@@ -106,14 +106,14 @@ if (isset($cmd)&&!isset($sid)){
 
 //3-4ms
 
-$up_ret = \player\upplayerlvl($sid,$dblj);
-if($up_ret ==1){
-$parents_cmd = 'gm_scene_new';
-$ret = global_event_data_get(22,$dblj);
-if($ret){
-global_events_steps_change(22,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
+while (\player\upplayerlvl($sid, $dblj) == 1) {
+    $parents_cmd = 'gm_scene_new';
+    $ret = $ret ?? global_event_data_get(22, $dblj);
+    if ($ret) {
+        global_events_steps_change(22, $sid, $dblj, $just_page, $steps_page, $cmid, 'module/gm_scene_new', null, null, $para);
+    }
 }
-}
+
 
 
 //10-11ms
