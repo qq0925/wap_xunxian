@@ -8,7 +8,7 @@ require 'class/basic_function_todo.php';
 // require_once 'class/gm.php';
 // include_once 'pdo.php';
 // // require_once 'class/lexical_analysis.php';
-//include_once 'class/global_event_step_change.php';
+// include_once 'class/global_event_step_change.php';
 include_once 'class/events_steps_change.php';
 
 $parents_page = $currentFilePath;
@@ -187,7 +187,7 @@ if (($clmid->mnpc!=''||$clmid->mitem!='') && $minute >= $clmid->mrefresh_time){
             $stmt = $dblj->prepare($sql);
             $stmt->bindParam(':nmid', $nmid, PDO::PARAM_INT);
             $stmt->bindParam(':nid', $nid, PDO::PARAM_INT);
-            $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_STR);
+            $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_INT);
             $stmt->execute();
         }
 }
@@ -253,14 +253,15 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_link_value = $get_main_page[$i]['link_value'];
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
-    $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
+    $main_value = \lexical_analysis\process_photoshow($main_value);
+    
     }else{
     $main_value = nl2br($main_value);
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
-    $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
+    $main_value = \lexical_analysis\process_photoshow($main_value);
     }
     try{
         $matches = array();

@@ -165,6 +165,7 @@ for ($i=0;$i<count($get_main_page);$i++){
     }else{
     $mid = $nid;
     }
+    
     $show_ret = \lexical_analysis\process_string($main_show_cond,$sid,$oid,$mid,null,null,null);
     // 替换运算符
     try{
@@ -188,6 +189,7 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
+    
     try{
         $matches = array();
                 $pattern = '/\[([^\[\]]*)\]/';
