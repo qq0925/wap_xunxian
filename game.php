@@ -565,14 +565,17 @@ echo $refresh_html;
                 \player\changeplayersx('uauto_fight',0,$sid,$dblj);
             }
             if($player->uis_pve ==0){
+                if(!$pid){
             $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
             $dblj->exec($sql);
             $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";
             $dblj->exec($sql);
+                }else{
             $sql = "insert into game2(sid,gid,pid) values ('$sid','$ngid','$pid')";
             $dblj->exec($sql);
             $sql = "insert into game3(sid,gid,pid) values ('$ngid','$sid','$pid')";
             $dblj->exec($sql);
+                }
             }
             \player\changeplayersx('uis_pve',1,$sid,$dblj);
             $sql = "update system_npc_midguaiwu set nsid = '$sid' WHERE ngid='$ngid'";
