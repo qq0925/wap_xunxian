@@ -187,7 +187,7 @@ if (($clmid->mnpc!=''||$clmid->mitem!='') && $minute >= $clmid->mrefresh_time){
             $stmt = $dblj->prepare($sql);
             $stmt->bindParam(':nmid', $nmid, PDO::PARAM_INT);
             $stmt->bindParam(':nid', $nid, PDO::PARAM_INT);
-            $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_INT);
+            $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_STR);
             $stmt->execute();
         }
 }
