@@ -5,16 +5,6 @@ if (!file_exists('db_configs.php')) {
 }
 $configs = include 'db_configs.php';
 
-if (!isset($db)) {
-    $db = new mysqli(
-        $configs['db_host'],
-        $configs['db_user'],
-        $configs['db_password'],
-        $configs['db_name']
-    );
-    $db->query('SET NAMES utf8mb4');
-}
-
 if (!class_exists('DB')) {
     class DB
     {

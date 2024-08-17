@@ -13,26 +13,25 @@ $area_main = $encode->encode("cmd=gm_npc_second&npc_id=$npc_id&sid=$sid");
 $gm_npc_post = $encode->encode("cmd=gm_npc_submit&npc_id=$npc_id&gm_npc_canshu=1&sid=$sid");
 //$_SERVER['PHP_SELF'];
 // 建立连接
-$conn = DB::conn();
+$conn = DB::pdo();
 
-// 检查连接是否成功
-if (!$conn) {
-    die("连接失败: " . mysqli_connect_error());
-}
 // 初始化数组
 // 获取system_npc中的数据
-$sql = "SELECT * FROM system_npc WHERE nid = '$npc_id'";
-$result = $conn->query($sql);
-$row = $result->fetch_assoc();
+$stmt = $conn->prepare("SELECT * FROM system_npc WHERE nid = ?");
+$stmt->execute([$npc_id]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 $area_name = $row['narea_name'];
 $sex = $row['nsex'];
 $shop_cond = $row['nshop_cond'];
+
 // 获取gm_game_attr中的数据
-$sql2 = "SELECT * FROM gm_game_attr where value_type = 3";
-$result2 = $conn->query($sql2);
+$stmt2 = $conn->prepare("SELECT * FROM gm_game_attr WHERE value_type = 3");
+$stmt2->execute();
+$result2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
 // 将gm_game_attr中的数据保存到一个数组中
 $attr_array = array();
-while ($row2 = $result2->fetch_assoc()) {
+foreach ($result2 as $row2) {
     $attr_array[$row2['id']] = $row2;
 }
 // 根据需要的数据生成HTML代码

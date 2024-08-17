@@ -6,20 +6,13 @@ $area_add = $encode->encode("cmd=area_post&gm_post_canshu=0&sid=$sid");
 $gm = $encode->encode("cmd=gm&sid=$sid");
 
 
-$conn = DB::conn();
-
-// 检查连接是否成功
-if (!$conn) {
-    die("连接失败: " . mysqli_connect_error());
-}
-
+$conn = DB::pdo();
 
 $sql = "SELECT id FROM system_area ORDER BY id DESC LIMIT 1";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    // 输出数据
-    $row = $result->fetch_assoc();
+$stmt = $conn->query($sql);
+if ($stmt->rowCount() > 0) {
+    // 获取数据
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $last_id = $row["id"] + 1;
 } else {
     echo "表中没有数据";

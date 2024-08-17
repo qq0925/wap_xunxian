@@ -15,26 +15,23 @@ $area_main = $encode->encode("cmd=gm_post_4&target_midid=$map_id&sid=$sid");
 $gm_map_post = $encode->encode("cmd=gm_map_submit&gm_map_canshu=1&sid=$sid");
 //$_SERVER['PHP_SELF'];
 // 建立连接
-$conn = DB::conn();
-
-// 检查连接是否成功
-if (!$conn) {
-    die("连接失败: " . mysqli_connect_error());
-}
-
+$conn = DB::pdo();
 
 
 // 初始化数组
 // 获取system_map中的数据
-$sql = "SELECT * FROM system_map WHERE mid = '$map_id'";
-$result = $conn->query($sql);
-$row = $result->fetch_assoc();
+$stmt = $conn->prepare("SELECT * FROM system_map WHERE mid = ?");
+$stmt->execute([$map_id]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+
 // 获取gm_game_attr中的数据
-$sql2 = "SELECT * FROM gm_game_attr where value_type = 5";
-$result2 = $conn->query($sql2);
+$stmt2 = $conn->prepare("SELECT * FROM gm_game_attr WHERE value_type = 5");
+$stmt2->execute();
+$result2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
 // 将gm_game_attr中的数据保存到一个数组中
 $attr_array = array();
-while ($row2 = $result2->fetch_assoc()) {
+foreach ($result2 as $row2) {
     $attr_array[$row2['id']] = $row2;
 }
 

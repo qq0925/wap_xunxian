@@ -558,7 +558,7 @@ echo $refresh_html;
         case 'pve_fight'://打怪事件,一次打一个
             $player = \player\getplayer($sid,$dblj);
             $pet = \player\getpet_fight($sid,$dblj);
-            $pid = $pet[0]['pid'];
+            $pid = $pet[0]['pid'] ?? 0;
             if($auto_canshu ==1){
                 \player\changeplayersx('uauto_fight',1,$sid,$dblj);
             }elseif($auto_canshu ==2){

@@ -14,32 +14,29 @@ $area_main = $encode->encode("cmd=gm_post_4&target_midid=$map_id&sid=$sid");
 
 //$_SERVER['PHP_SELF'];
 // 建立连接
-$conn = DB::conn();
-
-// 检查连接是否成功
-if (!$conn) {
-    die("连接失败: " . mysqli_connect_error());
-}
-
-
+$conn = DB::pdo();
 
 // 查询 system_map 表中的 mid 和 mname 字段
 // 获取所有value_type为5的数据
 $sql = "SELECT * FROM gm_game_attr WHERE value_type = 5";
-$result = $conn->query($sql);
+$stmt = $conn->query($sql);
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 初始化数组
 // 获取system_map中的数据
-$sql = "SELECT * FROM system_map WHERE mid = '$map_id'";
-$result = $conn->query($sql);
-$row = $result->fetch_assoc();
+$sql = "SELECT * FROM system_map WHERE mid = :map_id";
+$stmt = $conn->prepare($sql);
+$stmt->execute(['map_id' => $map_id]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+
 // 获取gm_game_attr中的数据
 $sql2 = "SELECT * FROM gm_game_attr";
-$result2 = $conn->query($sql2);
+$stmt2 = $conn->query($sql2);
+$result2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
 // 将gm_game_attr中的数据保存到一个数组中
 $attr_array = array();
-while ($row2 = $result2->fetch_assoc()) {
+foreach ($result2 as $row2) {
     $attr_array[$row2['id']] = $row2;
 }
 
@@ -68,7 +65,7 @@ HTML;
             break;
         case 'area_id':
             // 查询 system_area 表中的所有数据
-            $stmt = $dblj->prepare('SELECT * FROM system_area');
+            $stmt = $conn->prepare('SELECT * FROM system_area');
             $stmt->execute();
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             // 构建 select 元素的 HTML 代码
