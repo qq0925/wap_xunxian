@@ -365,8 +365,6 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_show_cond = $get_main_page[$i]['show_cond'];
     if($main_show_cond!=''){
     $show_ret = \lexical_analysis\process_string($main_show_cond,$sid);
-    $show_ret = \lexical_analysis\color_string($show_ret);
-    
     }else{
     $show_ret = 1;
     }
