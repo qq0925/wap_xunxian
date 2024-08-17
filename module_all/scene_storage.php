@@ -272,8 +272,8 @@ $itemid = $retitem['iid'];
 $itemname = $retitem['iname'];
 $item_bak_name = $itemname;
 $itemtype = $retitem['itype'];
-$itemname = \lexical_analysis\color_string($itemname);
 $itemname = \lexical_analysis\process_photoshow($itemname);
+$itemname = \lexical_analysis\color_string($itemname);
 
     if ($itemsum>0 &&$retitem && $canshu){
         $hangshu = $hangshu + 1;

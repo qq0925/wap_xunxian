@@ -136,8 +136,8 @@ $retitem = $cxjg->fetch(PDO::FETCH_ASSOC);
 $itemid = $retitem['iid'];
 $itemname = $retitem['iname'];
 $itemtype = $retitem['itype'];
-$itemname = \lexical_analysis\color_string($itemname);
 $itemname = \lexical_analysis\process_photoshow($itemname);
+$itemname = \lexical_analysis\color_string($itemname);
 
     if ($itemsum>0 &&$retitem && $canshu){
         $isale_text = $isale_state ==1?"(在售)":"";

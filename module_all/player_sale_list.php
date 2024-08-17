@@ -4,10 +4,12 @@
 if($sale_cancel){
 $nowcount = \player\getsaleitem_true_count($item_true_id,$sid,$dblj);
 if($nowcount >0){
+$item_name = \lexical_analysis\process_photoshow($item_name);
 $item_mod_name = \lexical_analysis\color_string($item_name);
 echo "你撤销了{$item_mod_name}的出售<br/>";
 $dblj->exec("update system_item set isale_state = 0,isale_price = '',isale_time ='',icreate_sale_time  = '' where item_true_id = '$item_true_id' and sid = '$sid';");
 }else{
+$item_name = \lexical_analysis\process_photoshow($item_name);
 $item_mod_name = \lexical_analysis\color_string($item_name);
 echo "{$item_mod_name}已销售完!<br/>";
 }
@@ -60,6 +62,7 @@ $minutes = 0;
 $seconds = 0;
 }
 $item_name = \player\getitem($item_iid,$dblj)->iname;
+$item_name = \lexical_analysis\process_photoshow($item_name);
 $item_mod_name = \lexical_analysis\color_string($item_name);
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
