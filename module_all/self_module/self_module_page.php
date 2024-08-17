@@ -4,6 +4,12 @@ $player = new \player\player();
 $game_main = new \gm\gm();
 
 
+if($reboot_id){
+$sql = "UPDATE system_self_define_module set call_sum = 0 where id = '$reboot_id'";
+$cxjg = $dblj->query($sql);
+echo "已清空调用次数！<br/>";
+}
+
 if($_POST['change_module_name']){
 $sql = "UPDATE system_self_define_module set name = '$change_name' where id = '$change_self_id'";
 $cxjg = $dblj->query($sql);
@@ -130,13 +136,14 @@ HTML;
 HTML;
 }
 }
+$reboot = $encode->encode("cmd=game_self_page&reboot_id=$self_id&self_id=$self_id&sid=$sid");
 $all = <<<HTML
 定义[{$self_name}]<form method="post">
 <input type="hidden" name="change_self_id" value="{$self_id}">
 <input name="change_name" placeholder="{$self_name}" size="20"">
 <input name="change_module_name" type="submit" title="更名" value="更名"/>
 </form><br/>
-模板：ct_{$self_id}[调用个数：{$page_count},调用次数：{$self_call_sum}]<br/>
+模板：ct_{$self_id}[调用个数：{$page_count},调用次数：{$self_call_sum}<a href="?cmd=$reboot">清空</a>]<br/>
 ============<br/>
 $game_main<br/>
 ============<br/>
