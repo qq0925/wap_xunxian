@@ -938,23 +938,18 @@ function useitem($sid,$iid,$icount,$dblj){
     $cxjg = $dblj->query($sql);
     $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
     $use_attr = $ret['iuse_attr'];
+    $u_attr = "u".$use_attr;
     $use_value = $ret['iuse_value'];
-    if ($ret){
-        $sql = "update game1 set $use_attr = $use_attr + $use_value where sid='$sid'";
-        $dblj->exec($sql);
-    }
     $sql = "select name from gm_game_attr where value_type = 1 and id = '$use_attr'";
     $cxjg = $dblj->query($sql);
     $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
     $attr_name = $ret['name'];
     if($use_value >0){
     $cmmt = $attr_name." + ".$use_value."<br/>";
-    $use_attr = "u".$use_attr;
-    \player\addplayersx($use_attr,$use_value,$sid,$dblj);
+    \player\addplayersx($u_attr,$use_value,$sid,$dblj);
     }elseif($use_value<0){
     $cmmt = $attr_name." - ".$use_value."<br/>";
-    $use_attr = "u".$use_attr;
-    \player\addplayersx($use_attr,$use_value,$sid,$dblj);
+    \player\addplayersx($u_attr,$use_value,$sid,$dblj);
     }else{
     $cmmt = "没有产生任何效果！<br/>";
     }

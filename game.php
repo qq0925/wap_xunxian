@@ -22,7 +22,6 @@ $encode = new \encode\encode();
 }
 if(!$player){
 $player = new \player\player();
-$player = \player\getplayer($sid,$dblj);
 }
 if(!$gm_post){
 $gm_post = new \gm\gm();
@@ -91,6 +90,7 @@ if (isset($cmd)&&!isset($sid)){
     $parsedVariables = [];
         
     // 遍历所有变量，将 parse_str 解析结果与当前页面变量进行比较
+    $player = \player\getplayer($sid,$dblj);
     $uis_designer = $player->uis_designer;
     if($uis_designer ==1){
     foreach ($allVars as $name => $value) {
@@ -106,7 +106,6 @@ if (isset($cmd)&&!isset($sid)){
 
 //3-4ms
 
-$player = \player\getplayer($sid,$dblj);
 $up_ret = \player\upplayerlvl($sid,$dblj);
 if($up_ret ==1){
 $parents_cmd = 'gm_scene_new';
