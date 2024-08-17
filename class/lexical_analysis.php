@@ -2185,8 +2185,9 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 if($op =='' || $op == "" || $op ==null){
                     $op = "\"\"";
                 }
-                // var_dump($match);
-                // var_dump($op);
+                $op = str_replace(array("'", "\""), '', $op);
+                //  var_dump($match);
+                //  var_dump($op);
                 // 替换字符串中的变量
                 $input = str_replace("v({$match})", $op, $input);
                 
