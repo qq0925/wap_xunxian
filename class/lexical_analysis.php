@@ -1223,16 +1223,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $total_cut_hp = $row["total_cut_hp"];
                         $total_cut_hp_2 = $row_2["total_cut_hp"];
                         
-                        $op = ($total_cut_hp <= 0 ? "+" : "-") . abs($total_cut_hp);
+                        $op = $total_cut_hp;
                         $op_2 = ($total_cut_hp_2 <= 0 ? "+" : "-") . abs($total_cut_hp_2);
-                        
-                        // 合并字符串
-                        if($total_cut_hp_2!=0){
-                        $op = $op . $op_2;
-                        }else{
-                        $op = $op;
-                        }
-                        
                         
                         if ($op === null||$op =='') {
                             $op = "\"\""; // 或其他默认值
@@ -1411,7 +1403,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                     $stmt2->execute();
                                     $result2 = $stmt2->get_result();
                                     $row2 = $result2->fetch_assoc();
-                                    $row_result .= "，" . $row2['jname'] ."_". "{$skill_lvl}";
+                                    $row_result .= "，" . $row2['jname'] ."(". "{$skill_lvl}".")";
                                     $op = ltrim($row_result, "，");
                                 }
                             }else{
@@ -1471,7 +1463,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                         $stmt->execute();
                                         $result = $stmt->get_result();
                                         $row = $result->fetch_assoc();
-                                        $row_result .= "，" . $row['jname'] ."_". "{$skill_lvl}";
+                                        $row_result .= "，" . $row['jname'] ."(". "{$skill_lvl}".")";
                                     }
                                     $row_result = ltrim($row_result, "，");
                                 }
@@ -2979,7 +2971,6 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db, $sid
     }
     return $op;
 }, $expr);
-//var_dump($expr);
 // 现在 $expr 中的 {eval(...)} 和 {...} 部分已经被替换成了对应的值
 $result = $expr;
 try{
