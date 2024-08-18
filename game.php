@@ -422,7 +422,7 @@ HTML;
                     }
                     
                     $userAgent = $_SERVER['HTTP_USER_AGENT'];
-                    $dblj->exec("insert into game4 (device_agent,sid)values($userAgent,$sid)");
+                    $dblj->exec("insert into game4 (device_agent,sid)values('$userAgent','$sid')");
                     //注册事件逻辑
                     $event_data = global_event_data_get(1,$dblj);
                     $event_cond = $event_data['system_event']['cond'];
