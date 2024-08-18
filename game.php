@@ -1100,9 +1100,10 @@ echo $refresh_html;
             $check_column_sql = "SELECT id FROM `gm_game_attr` WHERE value_type = :gm_post_canshu_2 and id = :gm_id";
             $stmt = $dblj->prepare($check_column_sql);
             $stmt->bindParam(':gm_post_canshu_2', $gm_post_canshu_2, PDO::PARAM_STR);
-            $stmt->bindParam(':gm_id', $gm_id, PDO::PARAM_INT);
+            $stmt->bindParam(':gm_id', $gm_id, PDO::PARAM_STR);
             $stmt->execute();
             $column_exists = $stmt->rowCount() > 0;
+            var_dump($stmt->rowCount());
             if ($column_exists) {
                 // 字段存在，报错
             echo "不能添加重复的属性标识！<br/>";
