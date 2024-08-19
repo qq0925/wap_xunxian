@@ -20,6 +20,7 @@ $upload_html = <<<HTML
 $select
 样式:<input name="photo_style" type="text" maxlength="100" value = "height: 4em"><br/>
 上传图片(5000k内):<input name="file" type="file"/><br/>
+压缩参数(0-100)：<input name="zip_level" type="text" maxlength="3" value = "100"><br/>
 <input name="submit" type="submit" title="上传" value="上传"/><input name="submit" type="hidden" title="上传" value="上传"/></form><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>
 <a href="?cmd=$last_page_2">返回类别列表</a><br/>

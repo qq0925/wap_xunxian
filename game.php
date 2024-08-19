@@ -2531,6 +2531,7 @@ echo $refresh_html;
             }
             
             $photo_style = $_POST['photo_style'];
+            $photo_zip_level = $_POST['zip_level'];
             $sql = "select * from system_photo_type where name ='$type'";
             $stmt = $dblj->prepare($sql);
             $stmt->execute();
@@ -2550,7 +2551,44 @@ echo $refresh_html;
                 echo '文件大小不能超过5000KB';
                 exit;
             }
+            if ($photo_zip_level < 0 ||$photo_zip_level >100) {
+                echo '压缩参数有误！';
+                exit;
+            }
             
+            
+            function compressImage($sourcePath, $destinationPath, $quality = 75, $compressionLevel = 6) {
+                // 获取图片的 MIME 类型
+                $imageInfo = getimagesize($sourcePath);
+                $mime = $imageInfo['mime'];
+            
+                switch ($mime) {
+                    case 'image/jpeg':
+                        $sourceImage = imagecreatefromjpeg($sourcePath);
+                        imagejpeg($sourceImage, $destinationPath, $quality);
+                        break;
+            
+                    case 'image/png':
+                        $sourceImage = imagecreatefrompng($sourcePath);
+                        imagepng($sourceImage, $destinationPath, $compressionLevel);
+                        break;
+            
+                    case 'image/gif':
+                        $sourceImage = imagecreatefromgif($sourcePath);
+                        imagegif($sourceImage, $destinationPath);
+                        break;
+            
+                    default:
+                        echo '不支持的图片类型';
+                        return;
+                }
+            
+                // 释放图像资源
+                imagedestroy($sourceImage);
+            
+                echo '图片压缩完成！';
+            }
+
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
             $fileName = $type."-"."$id"."-".$name.".".$extension;
             $targetDirectory = 'images/'.$type;
@@ -2562,6 +2600,9 @@ echo $refresh_html;
             $cxjg = $dblj->exec($sql);
             // 移动上传文件到目标路径
             if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                if($photo_zip_level!=100){
+                compressImage($targetPath, $targetPath,$photo_zip_level);
+                }
                 echo '文件上传成功<br/>';
                 $sql = "UPDATE system_photo_type set contains = contains + 1 where name = '$type'";
                 $cxjg = $dblj->exec($sql);
