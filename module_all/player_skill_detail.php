@@ -108,8 +108,10 @@ $cdid[] = $cmid;
 $goskilllist = $encode->encode("cmd=player_skill&ucmd=$cmid&sid=$sid");
 
 if($player->uis_designer ==1){
+$change_skill = $encode->encode("cmd=gm_skill_def&skill_post_canshu=2&skill_id=$skill_id&sid=$sid");
 $change_skillmodule = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=8&sid=$sid");
 $gm_html = <<<HTML
+<a href="?cmd=$change_skill">设计当前技能</a><br/>
 <a href="?cmd=$change_skillmodule">设计技能模板</a><br/>
 HTML;
 }
