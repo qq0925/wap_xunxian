@@ -314,7 +314,7 @@ $data = [
             'marea_id', 'mop_target', 'mtask_target', 'mcreat_event_id', 'mlook_event_id',
             'minto_event_id', 'mout_event_id', 'mminute_event_id', 'mshop', 'mhockshop',
             'mshop_item_id', 'mkill', 'mstorage', 'mtianqi', 'mdire', 'mis_tp', 'mtp_type',
-            'mis_rp', 'mrp_id', 'mis_shield', 'mis_signal_block'
+            'mis_rp', 'mrp_id', 'mis_shield', 'mis_signal_block','mhide'
         ];
     
         // 获取 system_map 表的所有字段
