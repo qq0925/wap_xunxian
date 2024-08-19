@@ -96,7 +96,7 @@ events_steps_change($task_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'modu
                         $cdid[] = $cmid;
                         if($npc_hide ==1){
                         $npc_url = $encode->encode("cmd=npc_html&ret_npc=1&ucmd=$cmid&nid=$nid&sid=$sid");
-                        $tcmmt2 = $nowrw->tcmmt2;
+                        $tcmmt2 = nl2br($nowrw->tcmmt2);
                         echo "$tcmmt2<br/>";
                         echo "<a href='?cmd=$npc_url'>返回{$nname}</a><br/>";
                         }

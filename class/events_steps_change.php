@@ -37,7 +37,7 @@ function events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$c
                     $step_cmmt = html_entity_decode($step_cmmt);
                     $event_cmmt = \lexical_analysis\process_string($event_cmmt,$sid,$oid,$mid);
                     $event_cmmt = \lexical_analysis\process_photoshow($event_cmmt);
-                    $event_cmmt = \lexical_analysis\color_string($event_cmmt);
+                    $event_cmmt = \lexical_analysis\color_string(nl2br($event_cmmt));
                     echo $event_cmmt."<br/>";//不满足触发条件则输出cmmt
                     
                     $cmid = $cmid + 1;
@@ -103,7 +103,7 @@ HTML;
                             $step_cmmt2 = html_entity_decode($step_cmmt2);
                             $step_cmmt2 = \lexical_analysis\process_string($step_cmmt2,$sid,$oid,$mid);
                             $step_cmmt2 = \lexical_analysis\process_photoshow($step_cmmt2);
-                            $step_cmmt2 = \lexical_analysis\color_string($step_cmmt2);
+                            $step_cmmt2 = \lexical_analysis\color_string(nl2br($step_cmmt2));
                             echo $step_cmmt2."<br/>";
                             $cmid = $cmid + 1;
                             $cdid[] = $cmid;
@@ -138,7 +138,7 @@ HTML;
                             $step_cmmt = html_entity_decode($step_cmmt);
                             $step_cmmt = \lexical_analysis\process_string($step_cmmt,$sid,$oid,$mid);
                             $step_cmmt = \lexical_analysis\process_photoshow($step_cmmt);
-                            $step_cmmt = \lexical_analysis\color_string($step_cmmt);
+                            $step_cmmt = \lexical_analysis\color_string(nl2br($step_cmmt));
                             
                             if($step_cmmt){
                             echo $step_cmmt."<br/>";
