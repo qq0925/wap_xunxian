@@ -74,6 +74,13 @@ function getdesigner($sid,$dblj){
     return $ret;
 }
 
+function get_gm_attr_info($value_type,$id,$dblj){
+    $sql = "select * from gm_game_attr where id = '$id' and value_type = '$value_type'";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    return $ret;
+}
+
 function gm_post($dblj){
    $gm_post = new gm();
    $sql = "select * from gm_game_basic where game_id = '19980925'";

@@ -80,17 +80,44 @@ if($cmd=='pve_fight'){
     \player\update_temp_attr($sid,'busy',1,$dblj,2,-1);
     echo "你不能动弹！预计还要{$busy}回合！<br/>";
     }else{
-    \lexical_analysis\hurt_calc($qtype_id,$sid,$ngid,1,$dblj);//你对怪的伤害
-    
+
     //这种加技能熟练度的方式是和出招次数挂钩而不是怪物数量。
-    $sql = "select jadd_point_exp from system_skill where jid = '$qtype_id'";
+    $sql = "select jadd_point_exp,jdeplete_attr,jdeplete_exp from system_skill where jid = '$qtype_id'";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
     $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
     $add_point = $ret['jadd_point_exp'];
+    $j_deplete_exp = $ret['jdeplete_exp'];
+    $j_deplete_attr = $ret['jdeplete_attr'];
+    $j_deplete_exp = \lexical_analysis\process_string($j_deplete_exp,$sid,'skill',$qtype_id,$qtype_id);
+    if($j_deplete_exp !=0){
+    $j_deplete_exp_final = @eval("return $j_deplete_exp;");
+    }else{
+    $j_deplete_exp_final = 0;
+    }
+    $u_skill_attr = "u".$j_deplete_attr;
+    $attr_name = \gm\get_gm_attr_info('1',$j_deplete_attr,$dblj)['name'];
+    $sql = "select `$u_skill_attr` from game1 where sid = '$sid'";
+    $cxjg = $dblj->query($sql);
+    if ($cxjg){
+    $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+    $j_attr = $ret[$u_skill_attr];
+    $u_attr = \player\getplayer($sid,$dblj)->$u_skill_attr;
+    if($u_attr - $j_deplete_exp_final <0){
+        echo "没有足够的{$attr_name}！<br/>";
+    }else{
+    \player\addplayertable('game1',$u_skill_attr,-$j_deplete_exp_final,$sid,$dblj);
+    \lexical_analysis\hurt_calc($qtype_id,$sid,$ngid,1,$dblj);//你对怪的伤害
+    }
+    }
+    
     }else{
     $add_point = 1;
+    $j_deplete_exp = 0;
     }
+    
+    
+    
     $sql = "select jpromotion,jname,jpromotion_cond from system_skill where jid = '$qtype_id'";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
@@ -368,7 +395,6 @@ for ($i=0;$i<count($get_main_page);$i++){
     }else{
     $show_ret = 1;
     }
-    $show_ret = strip_tags($show_ret);
     @$ret = eval("return $show_ret;");
     if($ngid){
     $mid = $ngid;

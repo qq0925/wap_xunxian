@@ -1315,8 +1315,12 @@ function self_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $player_name = $player_list['uname'];
     $player_hp = $player_list['uhp'];
     $player_maxhp = $player_list['umaxhp'];
+    $player_mp = $player_list['ump'];
+    $player_maxmp = $player_list['umaxmp'];
     $player_text =<<<HTML
-[{$player_name}]:({$player_hp}/{$player_maxhp})<br/>
+[{$player_name}]:<br/>
+生命：({$player_hp}/{$player_maxhp})<br/>
+法力：({$player_mp}/{$player_maxmp})<br/>
 HTML;
     if($cmd =="pve_fighting"){
     $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = :sid";
@@ -1329,7 +1333,9 @@ HTML;
     if($cut_hp!=''){
     $cut_hp = $cut_hp >=0?"-".$cut_hp:"+".$cut_hp;
     $player_text =<<<HTML
-[{$player_name}]:({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
+[{$player_name}]:<br/>
+生命：({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
+法力：({$player_mp}/{$player_maxmp}){$cut_mp}<br/>
 HTML;
     }
     }
