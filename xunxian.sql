@@ -4366,7 +4366,7 @@ CREATE TABLE `userinfo` (
 --
 
 INSERT INTO `userinfo` (`username`, `userpass`, `token`, `sid`, `designer`) VALUES
-('123456', 'lwd54088', '6153c573c2237ed0422c426d6786dc4f', NULL, 1),
+('123456', '123456', '6153c573c2237ed0422c426d6786dc4f', NULL, 1),
 ('7904169', 'lwd54088', 'e0eaeb7d19fcde3fbd6075c91a6e7039', NULL, 0),
 ('19980925', 'lwd54088', '8d85deb95ac222630170d467d3ebf9ef', NULL, 0),
 ('8888888888', '8888888888', 'b6526c6f92585d88c035022894633a46', NULL, 0),
