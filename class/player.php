@@ -27,7 +27,9 @@ class player
     var $uteam_invited_id;//被邀请的队伍id
     var $umaxexp;//经验上限
     var $uhp;//生命
-    var $umaxhp;//生命
+    var $umaxhp;//最大生命
+    var $ump;//法力
+    var $umaxmp;//最大法力
     var $ugj;//攻击
     var $ufy;//防御
     var $usex;//性别
@@ -54,6 +56,7 @@ class guaiwu{}
 class npcguaiwu{
     var $nid;
     var $nhp;
+    var $nmp;
     var $nname;
     var $ndrop_exp;
     var $ndrop_money;
@@ -105,6 +108,8 @@ function getplayer($sid,$dblj,$uid=null){
     $cxjg->bindColumn('uexp',$player->uexp);
     $cxjg->bindColumn('uhp',$player->uhp);
     $cxjg->bindColumn('umaxhp',$player->umaxhp);
+    $cxjg->bindColumn('ump',$player->ump);
+    $cxjg->bindColumn('umaxmp',$player->umaxmp);    
     $cxjg->bindColumn('ugj',$player->ugj);
     $cxjg->bindColumn('ufy',$player->ufy);
     $cxjg->bindColumn('usex',$player->usex);
@@ -568,11 +573,12 @@ function getnpcguaiwu($nid,$dblj){
 
 function getnpcguaiwu_attr($nid,$dblj){
     $npcguaiwu = new npcguaiwu();
-    $sql = "select nid,nname,nhp,nwin_event_id,ndefeat_event_id,ndrop_exp,ndrop_money,ndrop_item from system_npc_midguaiwu where ngid = '$nid'";
+    $sql = "select nid,nname,nhp,nmp,nwin_event_id,ndefeat_event_id,ndrop_exp,ndrop_money,ndrop_item from system_npc_midguaiwu where ngid = '$nid'";
     $cxjg = $dblj->query($sql);
     $cxjg->bindColumn('nid',$npcguaiwu->nid);
     $cxjg->bindColumn('nname',$npcguaiwu->nname);
     $cxjg->bindColumn('nhp',$npcguaiwu->nhp);
+    $cxjg->bindColumn('nmp',$npcguaiwu->nmp);
     $cxjg->bindColumn('nwin_event_id',$npcguaiwu->nwin_event_id);
     $cxjg->bindColumn('ndefeat_event_id',$npcguaiwu->ndefeat_event_id);
     $cxjg->bindColumn('ndrop_exp',$npcguaiwu->ndrop_exp);
@@ -1011,6 +1017,15 @@ function addplayersx($sx,$gaibian,$sid,$dblj,$db=null){
             $sql = "update game1 set uhp = uhp + '$gaibian' WHERE sid='$sid'";//增加玩家属性
             }
             break;
+        case 'ump':
+            $umaxmp = getplayer($sid,$dblj)->umaxmp;
+            $ump = getplayer($sid,$dblj)->ump;
+            if(($gaibian + $ump) >$umaxmp){
+            $sql = "update game1 set ump = $umaxmp WHERE sid='$sid'";//增加玩家属性
+            }else{
+            $sql = "update game1 set ump = ump + '$gaibian' WHERE sid='$sid'";//增加玩家属性
+            }
+            break;
         default:
             $sql = "update game1 set $sx = $sx + '$gaibian' WHERE sid='$sid'";//增加玩家属性
             break;
@@ -1342,7 +1357,7 @@ function getgameconfig($dblj){
 }
 
 function getfightpara($sid,$dblj){
-    $sql = "SELECT ngid,nname,nlvl,nhp,ndesc from system_npc_midguaiwu where nsid = '$sid' and nhp >0";
+    $sql = "SELECT ngid,nname,nlvl,nhp,nmp,ndesc from system_npc_midguaiwu where nsid = '$sid' and nhp >0";
     $result = $dblj->query($sql);
     $row = $result->fetchAll(\PDO::FETCH_ASSOC);
     return $row;

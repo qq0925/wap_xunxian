@@ -222,7 +222,12 @@ $dblj->exec($sql);
 }
 
 $map_detail = $encode->encode("cmd=map_detail&mid=$player->nowmid&sid=$sid");
+
+if($player->nowmid !=0){
 $change_nowmid = $encode->encode("cmd=gm_post_4&target_midid=$player->nowmid&sid=$sid");
+}else{
+$change_nowmid = $encode->encode("cmd=gm_map_2&sid=$sid");
+}
 
 //30-60ms
 
