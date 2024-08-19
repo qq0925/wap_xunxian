@@ -14,6 +14,20 @@
         $stmt->execute();
     }
 
+
+    // 检查表是否存在 mhide 字段
+    $sql = "SHOW COLUMNS FROM system_map LIKE 'mhide'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$column) {
+        // 如果 designer 字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE system_map ADD COLUMN mhide TINYINT(1) DEFAULT 0 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
     // 检查表是否存在 jpid 字段
     $sql = "SHOW COLUMNS FROM system_skill_user LIKE 'jpid'";
     $stmt = $dblj->prepare($sql);
