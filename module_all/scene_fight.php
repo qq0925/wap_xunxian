@@ -90,7 +90,7 @@ if($cmd=='pve_fight'){
     $j_deplete_exp = $ret['jdeplete_exp'];
     $j_deplete_attr = $ret['jdeplete_attr'];
     $j_deplete_exp = \lexical_analysis\process_string($j_deplete_exp,$sid,'skill',$qtype_id,$qtype_id);
-    if($j_deplete_exp !=0){
+    if($j_deplete_exp !=""){
     $j_deplete_exp_final = @eval("return $j_deplete_exp;");
     }else{
     $j_deplete_exp_final = 0;
