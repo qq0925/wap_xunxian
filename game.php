@@ -3136,11 +3136,11 @@ $a5 = $cmid;
 //将cmd最小最大值写入
 $end_time = microtime(true);
 $execution_time = ceil(($end_time - $start_time) * 1000);// 单位是毫秒
+echo "页面执行时间为：{$execution_time} 毫秒<br/>";
 if($player->uis_designer ==1){
     $gm_ret = $encode->encode("cmd=gm_scene_new&sid=$sid");
     $gm_other_code = <<<HTML
 <a href="?cmd={$gm_ret}">前往场景</a><br/>
-<br/>页面执行时间为：{$execution_time} 毫秒<br/>
 当前php路径：{$currentFilePath}<br/>
 a4的值赋值给xcmid：{$a4}<br/>
 cmid值赋值给a5的值赋值给dcmid：{$a5}<br/>
