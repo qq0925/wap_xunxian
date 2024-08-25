@@ -43,6 +43,7 @@ $userData = array();
 for($i=1;$i<@count($ret)+1;$i++){
 $user_sid = $ret[$i-1]['sid'];
 $user_exp = \lexical_analysis\process_string($rank_exp,$user_sid);
+$user_exp = \lexical_analysis\process_photoshow($user_exp);
 $user_show_cond = checkTriggerCondition($show_cond,$dblj,$user_sid);
 if(is_null($user_show_cond)){
     $user_show_cond =1;//若触发条件为空则默认true

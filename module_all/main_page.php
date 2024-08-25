@@ -350,7 +350,6 @@ $all = <<<HTML
     <link rel="stylesheet" href="css/gamecss.css">
 </head>
 $game_main<br/>
-<br/>
 $gm_html
 HTML;
 

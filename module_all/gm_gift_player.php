@@ -23,7 +23,7 @@ if($_POST['item_true_id']){
         \player\addplayersx('uburthen',$item_total_weight,$oid,$dblj);
         }
         echo "赠送成功，你向{$oplayer->uname}赠送了{$item_name}x{$count}!<br/>";
-        $send_time = $ret[$i]['send_time'];
+        $send_time = date('Y-m-d H:i:s');
         $ltmsg = "我向你赠送了{$item_bak_name}x{$count}!";
         $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','$ltmsg','$player->uid','{$oplayer->uid}',1,'$send_time')";
         $cxjg = $dblj->exec($sql);
