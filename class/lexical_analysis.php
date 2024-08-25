@@ -2261,9 +2261,16 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db, $sid
         
     // 在这里根据变量名获取对应的值，例如从数据库中查询
     // 假设你从数据库中获取了 $attr_value
-    if($para =='cond_exp'){
-        $op = "(bool)\"$op\"";
+    
+        $temp = $op;
+    if (strpos($temp, '"') === false){
+    $op = "\"".$temp."\"";
     }
+    $op = str_replace(array("'", "\"\""), '0', $op);
+    
+    // if($para =='cond_exp'){
+    //     $op = "(bool)\"$op\"";
+    // }
     return $op;
 }, $expr);
 //var_dump($expr);
@@ -2937,6 +2944,7 @@ function process_string_2($input, $sid, $oid = null, $mid = null, $jid = null, $
                 if($op =='' || $op == "" || $op ==null){
                     $op = "\"\"";
                 }
+                $op = str_replace(array("'", "\"\""), '0', $op);
                 // 替换字符串中的变量
                 $input = str_replace("v({$match})", $op, $input);
             }
