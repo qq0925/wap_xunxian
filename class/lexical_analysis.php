@@ -223,6 +223,7 @@ for($i=0;$i<@count($ngid);$i++){
         }
         }
         $j_omsg = \lexical_analysis\process_string_2($j_omsg,$sid,$attack_gid);
+        $j_omsg = str_replace(array("'", "\""), '', $j_omsg);
         $sql = "update game2 set fight_omsg = '$j_omsg' where gid = '$attack_gid'";
         $cxjg = $dblj->exec($sql);
 //这边是后续开发怪打人群攻
@@ -316,7 +317,7 @@ $sql = "update game2 set hurt_hp = hurt_hp + {$hurt_cut} where gid = '$attack_gi
 $dblj->exec($sql);
 
 $p_umsg = \lexical_analysis\process_string_3($p_umsg,$pid,$attack_gid,$pets_skills,$sid,null,1);
-
+$p_umsg = str_replace(array("'", "\""), '', $p_umsg);
 $sql = "update game2 set fight_umsg = '$p_umsg' where sid = '$sid' and gid = '$attack_gid' and pid = '$pid'";
 $cxjg = $dblj->exec($sql);
 
@@ -348,7 +349,7 @@ $sql = "update game2 set hurt_hp = hurt_hp + {$hurt_cut} where gid = '$attack_gi
 $dblj->exec($sql);
 
 $p_umsg = \lexical_analysis\process_string_3($p_umsg,$pid,$attack_gid,$pets_skills,$sid,null,1);
-
+$p_umsg = str_replace(array("'", "\""), '', $p_umsg);
 $sql = "update game2 set fight_umsg = '$p_umsg' where sid = '$sid' and gid = '$attack_gid' and pid = '$pid'";
 $cxjg = $dblj->exec($sql);
 
@@ -2914,7 +2915,8 @@ function process_attribute_2($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$par
                         $attr2 = "{".$attr2."}";
                     }
                     $attr2 = process_string_2($attr2,$sid,$oid,$mid,$jid,$type,$para);
-                    $op = rand(1,$attr2)-1;
+
+                    $op = rand(1,(int)$attr2)-1;
                     return $op;
                     break;
                 default:
