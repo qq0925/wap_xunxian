@@ -3710,11 +3710,7 @@ function generate_image_link($hashtag) {
     $para = explode("|",$hashtag);
     $para_1 = $para[0];
     $para_2 = $para[1];
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
     
     $sql = "SELECT photo_url from system_photo where id = '$para_2' and type = '$para_1'";
     $result = $db ->query($sql);
@@ -3730,11 +3726,7 @@ function generate_image_style($hashtag){
     $para = explode("|",$hashtag);
     $para_1 = $para[0];
     $para_2 = $para[1];
-    $servername = "127.0.0.1";
-    $username = "xunxian";
-    $password = "123456";
-    $dbname = "xunxian";
-    $db = new mysqli($servername, $username, $password, $dbname);
+    $db = DB::conn();
     
     $sql = "SELECT photo_style from system_photo where id = '$para_2' and type = '$para_1'";
     $result = $db ->query($sql);

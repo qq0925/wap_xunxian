@@ -2,7 +2,7 @@
 // require_once 'class/lexical_analysis.php';
 // include_once 'pdo.php';
 $map_id = $mid;
-$nowmid_arr = array('name'=>'','desc'=>'','tianqi'=>'','map_upper'=>'','map_left'=>'','map_right'=>'','map_lower'=>'');
+$nowmid_arr = array('name'=>'','desc'=>'','photo'=>'','tianqi'=>'','map_upper'=>'','map_left'=>'','map_right'=>'','map_lower'=>'');
 $nowmid_desc = '';
 function map_init($map_id,$dblj){
     global $nowmid_arr; // 声明 $nowmid_arr 为全局变量
@@ -14,6 +14,7 @@ function map_init($map_id,$dblj){
     $map_name = $map['mname'];
     $map_name = \lexical_analysis\color_string($map_name);
     $map_desc = $map['mdesc'];
+    $map_photo = $map['mphoto'];
     $map_desc = \lexical_analysis\color_string($map_desc);
     $map_tianqi = $map['mtianqi'];
     $next_map_name = $map['mup'];
@@ -27,6 +28,7 @@ function map_init($map_id,$dblj){
     $next_map_name = $map_id;
     $nowmid_arr['name'] = $map_name;
     $nowmid_arr['desc'] = $map_desc;
+    $nowmid_arr['photo'] = $map_photo;
     $nowmid_arr['tianqi'] = $map_tianqi;
     return $next_map_name;
 }
@@ -515,6 +517,13 @@ $map_check .= '</tr></table>';
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+
+if($nowmid_arr['photo']){
+$nowmid_photo = "#".$nowmid_arr['photo']."#";
+$nowmid_photo = \lexical_analysis\process_photoshow($nowmid_photo);
+$nowmid_photo = $nowmid_photo."<br/>";
+}
+
 if($nowmid_arr['desc']){
 $nowmid_arr['desc'] = \lexical_analysis\process_string($nowmid_arr['desc'],$sid);
 $nowmid_arr['desc'] =\lexical_analysis\color_string($nowmid_arr['desc']);
@@ -524,6 +533,7 @@ if($nowmid_arr['tianqi']){
 $nowmid_desc .="天气：".$nowmid_arr['tianqi']."<br/>";
 }
 $map_check .=<<<HTML
+$nowmid_photo
 $nowmid_desc
 <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
