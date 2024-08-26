@@ -523,23 +523,27 @@ echo $refresh_html;
             $attr_name = $_POST['attr_name'];
             $attr_value = $_POST['attr_value'];
             // 查询数据
-            $stmt = $dblj->prepare("SELECT * FROM game1 WHERE uid = :id AND $attr_name IS NOT NULL");
-            $stmt->bindParam(':id', $id);
-            $stmt->execute();
 
-            // 检查查询结果
-            if ($stmt->rowCount() === 0) {
-                // 返回错误信息
-                echo "错误：找不到匹配的数据。<br/>";
-            } else {
-                // 更新数据
-                $stmt = $dblj->prepare("UPDATE game1 SET $attr_name = :attr_value WHERE uid = :id");
-                $stmt->bindParam(':attr_value', $attr_value);
-                $stmt->bindParam(':id', $id);
-                $stmt->execute();
-    
-                echo "属性值更新成功。<br/>";
+            // 检查字段是否存在
+            $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$attr_name'");
+            $result_2 = $db->query("SELECT value from system_addition_attr where name = '$attr_name' and sid = '$sid'");
+            // 如果字段存在，则更新字段值
+            if ($result->num_rows > 0 ) {
+                $updateQuery = "UPDATE game1 SET $attr_name = '$attr_value' WHERE sid = '$sid'";
+                $db->query($updateQuery);
+                echo "标准属性值更新成功。<br/>";
                 $cmd = "gm_scene_new";
+            } elseif($result_2->num_rows > 0){
+                $updateQuery = "UPDATE system_addition_attr SET value = '$attr_value' WHERE sid = '$sid' and name = '$attr_name'";
+                $db->query($updateQuery);
+            echo "自定属性值更新成功。<br/>";
+            $cmd = "gm_scene_new";
+            } else{
+                // 字段不存在，添加新字段并更新值
+                $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$attr_name','$attr_value','$sid')";
+                $db->query($alterQuery);
+            echo "自定属性添加并更新成功。<br/>";
+            $cmd = "gm_scene_new";
             }
             $ym = 'module_all/main_page.php';
         }else{
@@ -1022,7 +1026,7 @@ echo $refresh_html;
             switch($gm_post_canshu){
                 case '1':
                     $delete_column = "u".$gm_game_attr_id;
-                    $sql = "ALTER TABLE system_player DROP COLUMN $delete_column;";
+                    $sql = "ALTER TABLE game1 DROP COLUMN $delete_column;";
                     break;
                 case '3':
                     $delete_column = "n".$gm_game_attr_id;
@@ -1108,7 +1112,6 @@ echo $refresh_html;
             $stmt->bindParam(':gm_id', $gm_id, PDO::PARAM_STR);
             $stmt->execute();
             $column_exists = $stmt->rowCount() > 0;
-            var_dump($stmt->rowCount());
             if ($column_exists) {
                 // 字段存在，报错
             echo "不能添加重复的属性标识！<br/>";
@@ -1135,7 +1138,9 @@ echo $refresh_html;
             switch($gm_post_canshu_2){
                 case '1':
                     $update_column = "u".$gm_id;
-                    $sql = "ALTER TABLE system_player ADD `$update_column` $add_type NOT NULL;";
+                    $sql = "ALTER TABLE game1 ADD `$update_column` $add_type NOT NULL;";
+                    $sql2 = "ALTER TABLE system_player ADD `$update_column` $add_type NOT NULL;";
+                    $cxjg =$dblj->exec($sql2);
                     break;
                 case '3':
                     $update_column = "n".$gm_id;

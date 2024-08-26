@@ -262,7 +262,6 @@ for($i=0;$i<@count($ngid);$i++){
 // }
 
 
-
 $hurt_cut = process_string_2($j_hurt_exp,$sid,$attack_gid,$random_number,$random_number,null,1);
 $hurt_cut = @eval("return $hurt_cut;"); // 计算 eval 表达式的结果
 $hurt_cut = (int)floor($hurt_cut);
@@ -2755,15 +2754,35 @@ function process_attribute_2($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$par
                             break;
                         default:
                             $attr3 = 'u'.$attr2;
-                            $sql = "SELECT * FROM game1 WHERE sid = ?";
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s",$sid);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-                            if (!$result) {
-                                die('查询失败: ' . $db->error);
+                            
+                            
+                            // 检查字段是否存在
+                            $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$attr3'");
+                            $result_2 = $db->query("SELECT value from system_addition_attr where name = '$attr3' and sid = '$sid'");
+                            // 如果字段存在，则更新字段值
+                            if ($result->num_rows > 0 ) {
+                                            $sql = "SELECT * FROM game1 WHERE sid = ?";
+                                            $stmt = $db->prepare($sql);
+                                            $stmt->bind_param("s",$sid);
+                                            $stmt->execute();
+                                            $result = $stmt->get_result();
+                                            if (!$result) {
+                                                die('查询失败: ' . $db->error);
+                                            }
+                                            $row = $result->fetch_assoc();
+                            } elseif($result_2->num_rows > 0){
+                                            $sql = "SELECT value FROM system_addition_attr WHERE sid = ? and name = ?";
+                                            $stmt = $db->prepare($sql);
+                                            $stmt->bind_param("ss",$sid,$attr3);
+                                            $stmt->execute();
+                                            $result = $stmt->get_result();
+                                            if (!$result) {
+                                                die('查询失败: ' . $db->error);
+                                            }
+                                            $row = $result->fetch_assoc();
+                                            $attr3 = "value";
                             }
-                            $row = $result->fetch_assoc();
+                            
                             if ($row === null) {
                                 $op = "\"\""; // 或其他默认值
                                 }else{
