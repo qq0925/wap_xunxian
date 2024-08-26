@@ -911,6 +911,11 @@ echo $refresh_html;
             if($gm_map_canshu == 1){
                 foreach ($_POST as $column_name => $column_value) {
                     $column_name = 'm' . $column_name;
+                    if (strpos($column_value, '"') !== false) {
+                        var_dump($column_value);
+                        $column_value = preg_replace('/"([^"]*)"/', '“${1}”', $column_value);
+                    }
+
                     $sql2 = "UPDATE system_map SET $column_name = '$column_value' WHERE mid ='$target_midid'";
                             $stmt = $dblj->exec($sql2);
                 }

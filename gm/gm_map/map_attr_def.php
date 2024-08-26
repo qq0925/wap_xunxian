@@ -3,9 +3,8 @@
 
 // 根据 $value 查询符合条件的 gm_game_attr 表中的数据
 
-require_once 'pdo.php';
 
-
+$conn = DB::conn();
 if($gm_map_canshu == "1"){
 $post_tishi = '修改成功';
 }
@@ -13,9 +12,6 @@ $map_id = $target_midid;//这里接受其他地方传来的map_id
 
 $area_main = $encode->encode("cmd=gm_post_4&target_midid=$map_id&sid=$sid");
 $gm_map_post = $encode->encode("cmd=gm_map_submit&gm_map_canshu=1&sid=$sid");
-//$_SERVER['PHP_SELF'];
-// 建立连接
-$conn = DB::conn();
 
 // 检查连接是否成功
 if (!$conn) {

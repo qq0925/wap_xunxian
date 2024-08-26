@@ -1,7 +1,7 @@
 <?php
-require_once 'lexical_analysis.php';
-require_once 'encode.php';
-require_once 'pdo.php';
+// require_once 'lexical_analysis.php';
+// require_once 'encode.php';
+// require_once 'pdo.php';
 // 在用户登录时，检查是否有其他设备已登录，并强制其下线
 
 
@@ -460,7 +460,7 @@ return 1;
 
 function itemchanging($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
-    $db = DB::conn();
+$db = DB::conn();
 
 //做负重判断
 
@@ -563,6 +563,7 @@ return 1;
 }
 
 function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = null){
+    // 创建数据库连接
     $db = DB::conn();
 
     // 使用逗号分割字符串
@@ -779,9 +780,10 @@ function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null
 function destsing($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
 global $encode;
-    $db = DB::conn();
+$db = DB::conn();
 
 $mid = \lexical_analysis\process_string($input,$sid);
+$mid = str_replace(array("'", "\""), '', $mid);
 $sql = "SELECT COUNT(*) AS count FROM system_map WHERE mid = ?";
 $stmt = $db->prepare($sql);
 
