@@ -416,7 +416,7 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     }
     $op = str_replace(array("'", "\"\""), '0', $op);
     if($para =='check_cond'){
-    $op = str_replace(array("\""), '', $op);
+    $op = str_replace(array("\'","\""," "), '', $op);
     }
     return $op;
 }, $expr);
