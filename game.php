@@ -132,7 +132,7 @@ if($cmd =='logout'){
 //logout($sid);
 $nowdate = date('Y-m-d H:i:s');
 echo $player->uname."已成功退出登陆！";
-$sql = "update game1 set endtime='$nowdate',sfzx=0,uis_pve=0 WHERE sid='$sid'";
+$sql = "update game1 set endtime='$nowdate',sfzx=0,uis_pve=0,ucmd='' WHERE sid='$sid'";
 $dblj->exec($sql);
 $sql = "update game4 set device_agent='' WHERE sid='$sid'";
 $dblj->exec($sql);
