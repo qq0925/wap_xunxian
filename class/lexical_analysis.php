@@ -137,7 +137,7 @@ $hurt_cut = (int)floor($hurt_cut);
 $hurt_cut = $hurt_cut <=0?1:$hurt_cut;
 $sql = "update system_npc_midguaiwu set nhp = nhp - {$hurt_cut},nsid = '$sid' WHERE ngid='$attack_gid'";
 $dblj->exec($sql);
-$sql = "update game2 set hurt_hp = '$hurt_cut',cut_mp = '$hurt_m_cut' where gid = '$attack_gid'";
+$sql = "update game2 set hurt_hp = '-$hurt_cut',cut_mp = '-$hurt_m_cut' where gid = '$attack_gid'";
 $dblj->exec($sql);
 $j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc',$attack_gid_para);
 $sql = "update game2 set fight_umsg = '$j_umsg' where sid = '$sid'";
@@ -174,7 +174,7 @@ $hurt_cut = (int)floor($hurt_cut);
 $hurt_cut = $hurt_cut <=0?1:$hurt_cut;
 $sql = "update system_npc_midguaiwu set nhp = nhp - {$hurt_cut},nsid = '$sid' WHERE ngid='$attack_gid'";
 $dblj->exec($sql);
-$sql = "update game2 set hurt_hp = '$hurt_cut',cut_mp = '$hurt_m_cut' where gid = '$attack_gid'";
+$sql = "update game2 set hurt_hp = '-$hurt_cut',cut_mp = '-$hurt_m_cut' where gid = '$attack_gid'";
 $dblj->exec($sql);
 $j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc',$attack_gid_para);
 $j_umsg = str_replace(array("'", "\""), '', $j_umsg);
@@ -291,7 +291,7 @@ $g_hurt_cut = 1;
 }
 $sql = "update game1 set uhp = uhp - '$g_hurt_cut' WHERE sid='$sid'";
 $dblj->exec($sql);
-$sql = "update game2 set cut_hp = '{$g_hurt_cut}' where sid = '$sid' and gid = '$attack_gid'";
+$sql = "update game2 set cut_hp = '-$g_hurt_cut' where sid = '$sid' and gid = '$attack_gid'";
 $dblj->exec($sql);
     }
 }
@@ -1207,6 +1207,29 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             // 用户正在使用桌面设备（电脑）
                             $op = 1;
                         }
+                            break;
+                        case 'fight_show_cut':
+                        $sql = "SELECT ucmd FROM game1 WHERE sid = ?";
+                        
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param("s", $sid);
+                        
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if($row){
+                        $ucmd = $row["ucmd"];
+                        }
+                            if($ucmd =="pve_fighting"){
+                                $op = 1;
+                            }else{
+                                $op = 0;
+                            }
+                            $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                             break;
                         case 'cut_hp':
                         // 构建 SQL 查询语句

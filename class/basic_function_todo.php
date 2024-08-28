@@ -1305,6 +1305,8 @@ HTML;
 }
 
 function self_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
+    $attr_hp_name = \gm\get_gm_attr_info('1','hp',$dblj)['name'];
+    $attr_mp_name = \gm\get_gm_attr_info('1','mp',$dblj)['name'];
     $sql = "SELECT * from game1 where sid = '$sid'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
@@ -1319,8 +1321,8 @@ function self_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $player_maxmp = $player_list['umaxmp'];
     $player_text =<<<HTML
 [{$player_name}]:<br/>
-生命：({$player_hp}/{$player_maxhp})<br/>
-法力：({$player_mp}/{$player_maxmp})<br/>
+{$attr_hp_name}：({$player_hp}/{$player_maxhp})<br/>
+{$attr_mp_name}：({$player_mp}/{$player_maxmp})<br/>
 HTML;
     if($cmd =="pve_fighting"){
     $sql = "SELECT SUM(cut_hp) AS total_cut_hp,cut_mp FROM game2 WHERE sid = :sid";
@@ -1330,15 +1332,15 @@ HTML;
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $cut_hp = $row['total_cut_hp'];
     $cut_mp = $row['cut_mp'];
-    if($cut_hp!=''||$cut_mp!=''){
-    $cut_hp = $cut_hp >=0?"-".$cut_hp:"+".$cut_hp;
-    $cut_mp = $cut_mp >=0?"-".$cut_mp:"+".$cut_mp;
+    
+    $cut_hp = $cut_hp >0?"+".$cut_hp:$cut_hp;
+    $cut_mp = $cut_mp >0?"+".$cut_mp:$cut_mp;
     $player_text =<<<HTML
 [{$player_name}]:<br/>
-生命：({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
-法力：({$player_mp}/{$player_maxmp}){$cut_mp}<br/>
+{$attr_hp_name}：({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
+{$attr_mp_name}：({$player_mp}/{$player_maxmp}){$cut_mp}<br/>
 HTML;
-    }
+    
     }
     $sql = "SELECT * from system_pet_player where psid = :sid and pstate = 1";
     $stmt = $dblj->prepare($sql);
@@ -1364,6 +1366,9 @@ HTML;
 }
 
 function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
+    $attr_hp_name = \gm\get_gm_attr_info('1','hp',$dblj)['name'];
+    $attr_mp_name = \gm\get_gm_attr_info('1','mp',$dblj)['name'];
+    
     $sql = "SELECT * from system_npc_midguaiwu where nsid = '$sid'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
@@ -1382,7 +1387,7 @@ function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $hurt_hp = $row['hurt_hp'];
     if($hurt_hp!=''){
-    $hurt_hp = $hurt_hp >=0?"-".$hurt_hp:"$hurt_hp";
+    $hurt_hp = $hurt_hp >0?"+".$hurt_hp:$hurt_hp;
     }
     }
     $sql = "SELECT * from system_npc_midguaiwu where nsid = :sid and ngid = :ngid";
@@ -1394,13 +1399,18 @@ function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $monster_name = $row['nname'];
     $monster_hp = $row['nhp'];
     $monster_maxhp = $row['nmaxhp'];
+    $monster_mp = $row['nmp'];
+    $monster_maxmp = $row['nmaxmp'];
     if($monster_hp <=0){
     $enemy_text .=<<<HTML
 [{$monster_name}]已经战死！<br/>
 HTML;
     }else{
+    $cut_hp = $hurt_hp."<br/>";
     $enemy_text .=<<<HTML
-[{$monster_name}]:({$monster_hp}/{$monster_maxhp}){$hurt_hp}<br/>
+[{$monster_name}]:<br/>
+{$attr_hp_name}：({$monster_hp}/{$monster_maxhp}){$cut_hp}
+{$attr_mp_name}：({$monster_mp}/{$monster_maxmp}){$cut_mp}<br/>
 HTML;
 }
 }

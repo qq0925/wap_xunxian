@@ -1079,7 +1079,7 @@ echo $refresh_html;
             switch($gm_post_type_2){
                 case '1':
                     $update_column = "u".$gm_id;
-                    $sql = "ALTER TABLE system_player ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $sql = "ALTER TABLE game1 ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
                     break;
                 case '3':
                     $update_column = "n".$gm_id;
@@ -3034,13 +3034,13 @@ echo $refresh_html;
             echo '<meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">';
             echo "【哎呀！你好像进入了虚无领域!】<br/>".$player->uname."离线时间过长，请重新登陆";
             //logout($sid);
-            $sql = "update game1 set endtime='$nowdate',sfzx=0 WHERE sid='$sid'";
+            $sql = "update game1 set endtime='$nowdate',sfzx=0,ucmd='' WHERE sid='$sid'";
             $dblj->exec($sql);
             header("refresh:1;url=index.php");
             exit();
         }else{
             \player\put_system_message_sql($player->uid,$dblj);
-            $sql = "update game1 set endtime='$nowdate',sfzx=1 WHERE sid='$sid'";
+            $sql = "update game1 set endtime='$nowdate',sfzx=1,ucmd='$cmd' WHERE sid='$sid'";
             $dblj->exec($sql);
         }
     }

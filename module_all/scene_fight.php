@@ -171,13 +171,23 @@ if($cmd=='pve_fight'){
     $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
     $use_item_name = $ret['iname'];
     $use_item_iweight = $ret['iweight'];
+    $use_attr = $ret['iuse_attr'];
+    $use_value = (int)$ret['iuse_value'];
     $use_item_name = \lexical_analysis\color_string($use_item_name);
     echo "使用了{$use_item_name}<br/>";
     $use_cmmt = \player\useitem($sid,$qtype_id,1,$dblj);
-    $player = \player\getplayer($sid,$dblj);
-    //这里要更新game3中的伤害值
     $use_cmmt = \lexical_analysis\color_string($use_cmmt);
     echo $use_cmmt;
+    $player = \player\getplayer($sid,$dblj);
+    //这里要更新game3中的伤害值
+    switch($use_attr){
+        case 'hp':
+            //$dblj->exec("update game2 set cut_hp = cut_hp + $use_value where sid = '$sid'");
+            break;
+        case 'mp':
+            $dblj->exec("update game2 set cut_mp = '$use_value' where sid = '$sid'");
+            break;
+    }
     $item_true_id = \player\getplayeritem_attr('item_true_id',$sid,$qtype_id,$dblj)['item_true_id'];
     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
     \player\addplayersx('uburthen',-$use_item_iweight,$sid,$dblj);
@@ -515,6 +525,9 @@ HTML;
 }
 
 if($look_canshu==1){
+$attr_lvl_name = \gm\get_gm_attr_info('1','lvl',$dblj)['name'];
+$attr_hp_name = \gm\get_gm_attr_info('1','hp',$dblj)['name'];
+$attr_mp_name = \gm\get_gm_attr_info('1','mp',$dblj)['name'];
 $goback_fight = $encode->encode("cmd=pve_fight&ucmd=$cmid&sid=$sid");
 $fight_arr = player\getfightpara($sid,$dblj);
 $all = "";
@@ -522,11 +535,13 @@ for($i=1;$i<@count($fight_arr) +1;$i++){
     $guai_name = $fight_arr[$i-1]['nname'];
     $guai_lvl = $fight_arr[$i-1]['nlvl'];
     $guai_hp = $fight_arr[$i-1]['nhp'];
+    $guai_mp = $fight_arr[$i-1]['nmp'];
     $guai_desc = $fight_arr[$i-1]['ndesc'];
     $all .= <<<HTML
 [$i]名称：{$guai_name}<br/>
-等级：{$guai_lvl}<br/>
-生命：{$guai_hp}<br/>
+{$attr_lvl_name}：{$guai_lvl}<br/>
+{$attr_hp_name}：{$guai_hp}<br/>
+{$attr_mp_name}：{$guai_mp}<br/>
 简介：{$guai_desc}<br/>
 HTML;
 }
