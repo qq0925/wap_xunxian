@@ -1,8 +1,9 @@
 <?php
-require 'lexical_analysis.php';
-require 'data_lexical.php';
-require 'event_data_get.php';
-include 'pdo.php';
+require 'class/lexical_analysis.php';
+require 'class/data_lexical.php';
+require 'class/event_data_get.php';
+require 'pdo.php';
+$dblj = DB::pdo();
 $sid = '2be824d1d1eaf47b51176faf90a5b8c9';
 $event_data = global_event_data_get(52,$dblj);
 $event_cond = $event_data['system_event']['cond'];

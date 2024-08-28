@@ -14,6 +14,33 @@
         $stmt->execute();
     }
 
+    // 检查 game2 是否存在 hurt_mp 字段
+    $sql = "SHOW COLUMNS FROM game2 LIKE 'hurt_mp'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE game2 ADD COLUMN hurt_mp TEXT NOT NULL, ADD COLUMN cut_mp TEXT NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+    
+    // 检查 game3 是否存在 hurt_mp 字段
+    $sql = "SHOW COLUMNS FROM game3 LIKE 'hurt_mp'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE game3 ADD COLUMN hurt_mp TEXT NOT NULL, ADD COLUMN cut_mp TEXT NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
+
 
     // 检查表是否存在 mhide 字段
     $sql = "SHOW COLUMNS FROM system_map LIKE 'mhide'";
