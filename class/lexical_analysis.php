@@ -40,6 +40,7 @@ $result = $db->query($sql);
 if ($result) {
     $row = $result->fetch_assoc();
     $j_hurt_exp = $row['jhurt_exp'];
+    $j_deplete_exp = $row['jdeplete_exp'];
     $j_group_attack = $row['jgroup_attack'];
     $j_umsg = $row['jeffect_cmmt'];
     $j_event_use_id = $row['jevent_use_id'];
@@ -122,13 +123,21 @@ global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_
 
 global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
 
+if(!is_numeric($j_deplete_exp)){
+    $hurt_m_cut = process_string($j_deplete_exp,$sid,'npc',$attack_gid_para,$jid,'fight');
+    $hurt_m_cut = @eval("return $hurt_m_cut;"); // 计算 eval 表达式的结果
+}else{
+    $hurt_m_cut = $j_deplete_exp;
+}
+$hurt_m_cut = (int)floor($hurt_m_cut);
+
 $hurt_cut = process_string($j_hurt_exp,$sid,'npc',$attack_gid_para,$jid,'fight');
 $hurt_cut = @eval("return $hurt_cut;"); // 计算 eval 表达式的结果
 $hurt_cut = (int)floor($hurt_cut);
 $hurt_cut = $hurt_cut <=0?1:$hurt_cut;
 $sql = "update system_npc_midguaiwu set nhp = nhp - {$hurt_cut},nsid = '$sid' WHERE ngid='$attack_gid'";
 $dblj->exec($sql);
-$sql = "update game2 set hurt_hp = '$hurt_cut' where gid = '$attack_gid'";
+$sql = "update game2 set hurt_hp = '$hurt_cut',cut_mp = '$hurt_m_cut' where gid = '$attack_gid'";
 $dblj->exec($sql);
 $j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc',$attack_gid_para);
 $sql = "update game2 set fight_umsg = '$j_umsg' where sid = '$sid'";
@@ -149,13 +158,23 @@ events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'mod
 global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
 
 global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+
+if(!is_numeric($j_deplete_exp)){
+    $hurt_m_cut = process_string($j_deplete_exp,$sid,'npc',$attack_gid_para,$jid,'fight');
+    $hurt_m_cut = @eval("return $hurt_m_cut;"); // 计算 eval 表达式的结果
+}else{
+    $hurt_m_cut = $j_deplete_exp;
+}
+$hurt_m_cut = (int)floor($hurt_m_cut);
+
+
 $hurt_cut = process_string($j_hurt_exp,$sid,'npc',$attack_gid_para,$jid,'fight');
 $hurt_cut = @eval("return $hurt_cut;"); // 计算 eval 表达式的结果
 $hurt_cut = (int)floor($hurt_cut);
 $hurt_cut = $hurt_cut <=0?1:$hurt_cut;
 $sql = "update system_npc_midguaiwu set nhp = nhp - {$hurt_cut},nsid = '$sid' WHERE ngid='$attack_gid'";
 $dblj->exec($sql);
-$sql = "update game2 set hurt_hp = '$hurt_cut' where gid = '$attack_gid'";
+$sql = "update game2 set hurt_hp = '$hurt_cut',cut_mp = '$hurt_m_cut' where gid = '$attack_gid'";
 $dblj->exec($sql);
 $j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc',$attack_gid_para);
 $j_umsg = str_replace(array("'", "\""), '', $j_umsg);
@@ -1225,6 +1244,51 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         // 获取总和并处理结果
                         $total_cut_hp = $row["total_cut_hp"];
                         $total_cut_hp_2 = $row_2["total_cut_hp"];
+                        
+                        $op = $total_cut_hp;
+                        $op_2 = ($total_cut_hp_2 <= 0 ? "+" : "-") . abs($total_cut_hp_2);
+                        
+                        if ($op === null||$op =='') {
+                            $op = "\"\""; // 或其他默认值
+                            }
+                        $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                        break;
+                        case 'cut_mp':
+                        // 构建 SQL 查询语句
+                        $sql = "SELECT cut_mp FROM game2 WHERE sid = ? and gid != ''";
+                        $sql_2 = "SELECT cut_mp FROM game2 WHERE sid = ? and gid = ''";
+                        
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param("s", $sid);
+                        
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        
+                        // 关闭第一个查询的结果集
+                        $stmt->close();
+                        
+                        // 使用预处理语句
+                        $stmt_2 = $db->prepare($sql_2);
+                        $stmt_2->bind_param("s", $sid);
+                        
+                        // 执行查询
+                        $stmt_2->execute();
+                        
+                        // 获取查询结果
+                        $result_2 = $stmt_2->get_result();
+                        $row_2 = $result_2->fetch_assoc();
+                        
+                        // 关闭第二个查询的结果集
+                        $stmt_2->close();
+                        
+                        // 获取总和并处理结果
+                        $total_cut_hp = $row["cut_mp"];
+                        $total_cut_hp_2 = $row_2["cut_mp"];
                         
                         $op = $total_cut_hp;
                         $op_2 = ($total_cut_hp_2 <= 0 ? "+" : "-") . abs($total_cut_hp_2);

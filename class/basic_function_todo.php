@@ -1323,15 +1323,16 @@ function self_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
 法力：({$player_mp}/{$player_maxmp})<br/>
 HTML;
     if($cmd =="pve_fighting"){
-    $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = :sid";
+    $sql = "SELECT SUM(cut_hp) AS total_cut_hp,cut_mp FROM game2 WHERE sid = :sid";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $cut_hp = $row['total_cut_hp'];
-
-    if($cut_hp!=''){
+    $cut_mp = $row['cut_mp'];
+    if($cut_hp!=''||$cut_mp!=''){
     $cut_hp = $cut_hp >=0?"-".$cut_hp:"+".$cut_hp;
+    $cut_mp = $cut_mp >=0?"-".$cut_mp:"+".$cut_mp;
     $player_text =<<<HTML
 [{$player_name}]:<br/>
 生命：({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
