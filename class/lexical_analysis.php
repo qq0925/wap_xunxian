@@ -415,9 +415,9 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     $op = "\"".$temp."\"";
     }
     $op = str_replace(array("'", "\"\""), '0', $op);
-    // if($para =='cond_exp'){
-    //     $op = "(bool)\"$op\"";
-    // }
+    if($para =='check_cond'){
+    $op = str_replace(array("\""), '', $op);
+    }
     return $op;
 }, $expr);
 // 现在 $expr 中的 {eval(...)} 和 {...} 部分已经被替换成了对应的值

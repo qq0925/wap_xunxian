@@ -20,7 +20,7 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_type = $get_main_page[$i]['type'];
     $main_value = $get_main_page[$i]['value'];
     $main_show_cond = $get_main_page[$i]['show_cond'];
-    $show_ret = \lexical_analysis\process_string($main_show_cond,$sid,null,$mid);
+    $show_ret = \lexical_analysis\process_string($main_show_cond, $sid, $oid, $mid, null, null, "check_cond");
     @$ret = eval("return $show_ret;");
     $ret_bool = $ret ? '0' : '1';
     if(is_null($ret)){
