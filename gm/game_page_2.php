@@ -145,6 +145,7 @@ $delete_ele = $encode->encode("cmd=delete_ele&delete_value=$main_value&delete_id
 if($main_value ==''){
     $main_value = "未命名";
 }
+$main_value = '&#8203;' . $main_value;
 if($link_value ==''){
     $link_value = "http://";
 }
@@ -157,7 +158,7 @@ switch($main_type){
 <input type="hidden" name="add_id" value="$max_id">
 <input type="hidden" name="main_type" value="$main_type"> 
 <input type="hidden" name="op_type" value="$op_type"> 
-元素名称:<textarea name="text" maxlength="1024" rows="4" cols="40 value = "未命名">$main_value</textarea><br/>
+元素名称:<textarea style="white-space: pre-wrap" name="text" maxlength="1024" rows="4" cols="40 value = "未命名">$main_value</textarea><br/>
 显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">$main_cond</textarea><br/>
 位置:<input name="position" maxlength="3" value="$last_pos" size="5"><br/>
 <input name="submit" type="submit" title="确定" value="确定"/>

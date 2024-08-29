@@ -916,12 +916,19 @@ echo $refresh_html;
                 foreach ($_POST as $column_name => $column_value) {
                     $column_name = 'm' . $column_name;
                     if (strpos($column_value, '"') !== false) {
-                        var_dump($column_value);
                         $column_value = preg_replace('/"([^"]*)"/', '“${1}”', $column_value);
                     }
+                    if (strpos($column_value, "'") !== false) {
+                        $column_value = str_replace("'", "", $column_value);
+                    }
 
-                    $sql2 = "UPDATE system_map SET $column_name = '$column_value' WHERE mid ='$target_midid'";
-                            $stmt = $dblj->exec($sql2);
+
+
+                $sql2 = "UPDATE system_map SET $column_name = :column_value WHERE mid = :mid";
+                $stmt = $dblj->prepare($sql2);
+                $stmt->bindParam(':column_value', $column_value);
+                $stmt->bindParam(':mid', $target_midid);
+                $stmt->execute();
                 }
                 $sql = "UPDATE system_map SET marea_name = '$area_name' WHERE mid ='$target_midid'";
                 $stmt = $dblj->exec($sql);
