@@ -2550,15 +2550,15 @@ echo $refresh_html;
             $fileType = $file['type'];
             $fileSize = $file['size'];
             // 验证文件类型为图片
-            $allowedTypes = ['image/jpeg','image/jpg', 'image/png', 'image/gif'];
+            $allowedTypes = ['image/jpeg','image/jpg','image/webp', 'image/png', 'image/gif'];
             if (!in_array($fileType, $allowedTypes)) {
-                echo '只允许上传图片文件(jpeg,jpg,png,gif)';
+                echo '只允许上传图片文件(jpeg,jpg,webp,png,gif)';
                 exit;
             }
             // 验证文件大小在5000KB以下
             $maxSize = 5000 * 1024; // 5000KB
             if ($fileSize > $maxSize) {
-                echo '文件大小不能超过5000KB';
+                echo '图片大小不能超过5M';
                 exit;
             }
             if ($photo_zip_level < 0 ||$photo_zip_level >100) {
@@ -2587,7 +2587,10 @@ echo $refresh_html;
                         $sourceImage = imagecreatefromgif($sourcePath);
                         imagegif($sourceImage, $destinationPath);
                         break;
-            
+                    case 'image/webp':
+                        $sourceImage = imagecreatefromgif($sourcePath);
+                        imagewebp($sourceImage, $destinationPath, $quality);
+                        break;
                     default:
                         echo '不支持的图片类型';
                         return;
