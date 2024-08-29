@@ -248,7 +248,7 @@ for ($i=0;$i<count($get_main_page);$i++){
     //由于.在php中会被识别为函数省略
     // 将 . 替换为 。
         
-    $show_ret = str_replace('.', '。', $show_ret);
+    $show_ret = str_replace(['.',',','?'], ['。','。', '？'], $show_ret);
     $ret = @eval("return $show_ret;");
     $ret_bool = ($ret !== false && $ret !== null) ? 0 : 1;
     if($ret_bool ==0){
