@@ -32,6 +32,27 @@ for ($i=0;$i<count($cxallqy);$i++){
     $qyname = $cxallqy[$i]['name'];
     $qy_id = $cxallqy[$i]['id'];
     $qy_pos = $cxallqy[$i]['pos'];
+    $qy_belong = $cxallqy[$i]['belong'];
+    switch ($qy_belong) {
+        case '1':
+            $qy_belong_name = "日出之地";
+            break;
+        case '2':
+            $qy_belong_name = "灼热之地";
+            break;
+        case '3':
+            $qy_belong_name = "日落之地";
+            break;
+        case '4':
+            $qy_belong_name = "极寒之地";
+            break;
+        case '5':
+            $qy_belong_name = "湿热之地";
+            break;
+        default:
+            $qy_belong_name = "失落之地";
+            break;
+    }
 if (isset($_POST['kw'])) {
     $keyword = $_POST['kw'];
     // 构建查询语句，使用过滤条件
@@ -44,13 +65,34 @@ if (isset($_POST['kw'])) {
     $qyname = $cxallqy[$i]['name'];
     $qy_id = $cxallqy[$i]['id'];
     $qy_pos = $cxallqy[$i]['pos'];
+    $qy_belong = $cxallqy[$i]['belong'];
+    switch ($qy_belong) {
+        case '1':
+            $qy_belong_name = "日出之地";
+            break;
+        case '2':
+            $qy_belong_name = "灼热之地";
+            break;
+        case '3':
+            $qy_belong_name = "日落之地";
+            break;
+        case '4':
+            $qy_belong_name = "极寒之地";
+            break;
+        case '5':
+            $qy_belong_name = "湿热之地";
+            break;
+        default:
+            $qy_belong_name = "失落之地";
+            break;
+    }
 }
   if($qy_id ==0){
       $cxallmaps = \gm\getmid_detail($dblj,0);
       $qy_map_count = @count($cxallmaps);
       $target_mid = $encode->encode("cmd=gm_map_2&post_canshu=1&qy_id=0&sid=$sid");
         $no_area =<<<HTML
-        <a href="?cmd=$target_mid" >未分区($qy_map_count)</a><br/>
+        [失落之地]<a href="?cmd=$target_mid" >未分区($qy_map_count)</a><br/>
 HTML;
   }elseif($qy_id !=0){
         $cxallmaps = \gm\getmid_detail($dblj,$qy_id);
@@ -61,13 +103,13 @@ HTML;
     $next_pos = $cxallqy[2]['pos'];
     $move_next = $encode->encode("cmd=gm_map_2&now_pos=$qy_pos&next_pos=$next_pos&sid=$sid");
     $map .=<<<HTML
-    <a href="?cmd=$target_mid" >{$hangshu}.{$qyname}(a{$qy_id})($qy_map_count)</a>[ <font color ="red">上移</font> <a href="?cmd=$move_next">下移</a> ]<br/>
+    [{$qy_belong_name}]<a href="?cmd=$target_mid" >{$hangshu}.{$qyname}(a{$qy_id})($qy_map_count)</a>[ <font color ="red">上移</font> <a href="?cmd=$move_next">下移</a> ]<br/>
 HTML;
 }elseif ($hangshu ==count($cxallqy)-1 && count($cxallqy)>2) {
     $next_pos = $cxallqy[$hangshu -1]['pos'];
     $move_last = $encode->encode("cmd=gm_map_2&now_pos=$qy_pos&next_pos=$next_pos&sid=$sid");
     $map .=<<<HTML
-    <a href="?cmd=$target_mid" >{$hangshu}.{$qyname}(a{$qy_id})($qy_map_count)</a>[ <a href="?cmd=$move_last">上移</a> <font color ="red">下移</font> ]<br/>
+    [{$qy_belong_name}]<a href="?cmd=$target_mid" >{$hangshu}.{$qyname}(a{$qy_id})($qy_map_count)</a>[ <a href="?cmd=$move_last">上移</a> <font color ="red">下移</font> ]<br/>
 HTML;
 }elseif($hangshu !=1 && $hangshu !=count($cxallqy)-1 && count($cxallqy)>2){
     $last_pos = $cxallqy[$hangshu -1]['pos'];
@@ -75,11 +117,11 @@ HTML;
     $move_last = $encode->encode("cmd=gm_map_2&now_pos=$qy_pos&next_pos=$last_pos&sid=$sid");
     $move_next = $encode->encode("cmd=gm_map_2&now_pos=$qy_pos&next_pos=$next_pos&sid=$sid");
     $map .=<<<HTML
-    <a href="?cmd=$target_mid" >{$hangshu}.{$qyname}(a{$qy_id})($qy_map_count)</a>[ <a href="?cmd=$move_last">上移</a> <a href="?cmd=$move_next">下移</a> ]<br/>
+    [{$qy_belong_name}]<a href="?cmd=$target_mid" >{$hangshu}.{$qyname}(a{$qy_id})($qy_map_count)</a>[ <a href="?cmd=$move_last">上移</a> <a href="?cmd=$move_next">下移</a> ]<br/>
 HTML;
 }else{
     $map .=<<<HTML
-    <a href="?cmd=$target_mid" >{$hangshu}.{$qyname}(a{$qy_id})($qy_map_count)</a>[ <font color ="red">上移 下移</font> ]<br/>
+    [{$qy_belong_name}]<a href="?cmd=$target_mid" >{$hangshu}.{$qyname}(a{$qy_id})($qy_map_count)</a>[ <font color ="red">上移 下移</font> ]<br/>
 HTML;
 }
   }}
