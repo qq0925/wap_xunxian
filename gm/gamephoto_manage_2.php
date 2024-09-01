@@ -20,6 +20,28 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     $format_type = $row['format_type'];
     $image_url = "$photo_type"."-"."$identifier"."-"."$name".".$format_type";
     $imageSrc = "images/"."$photo_type"."/".$image_url;
+
+
+
+// 检查文件是否存在
+if (file_exists($imageSrc)) {
+    // 获取文件大小（以字节为单位）
+    $fileSize = filesize($imageSrc);
+
+    // 如果大于 1 MB
+    if ($fileSize >= 1024 * 1024) {
+        $fileSizeMB = $fileSize / (1024 * 1024); // 转换为 MB
+        $fileSizeShow = round($fileSizeMB, 1) . " MB"; // 保留1位小数
+    } else {
+        $fileSizeKB = $fileSize / 1024; // 转换为 KB
+        $fileSizeShow = round($fileSizeKB, 0) . " KB";; // 显示为整数 KB
+    }
+} else {
+    echo "文件不存在";
+}
+
+
+
     $photo_change = $encode->encode("cmd=photo_change&id=$identifier&sid=$sid");
     $index += 1;
 $photo_detail_list .= <<<HTML
@@ -28,6 +50,7 @@ $photo_detail_list .= <<<HTML
         <td><a href="?cmd=$photo_change">{$identifier}</a></td>
         <td>{$name}</td>
         <td style="height:50px;"><img style="width:160px;height:80px;" src="{$imageSrc}" /></td>
+        <td>{$fileSizeShow}</td>
     </tr>
 HTML;
 }
@@ -37,13 +60,14 @@ $photo_html = <<<HTML
 <!-- Start generating the HTML table -->
 <table border="1" cellspacing="0" cellpadding="0" border-color="#b6ff00" style="text-align:center;">
 <tr>
-<td colspan="4" style="text-align:center;"><font color="orange" size="5px"><b>{$photo_type}</b></font></td>
+<td colspan="5" style="text-align:center;"><font color="orange" size="5px"><b>{$photo_type}</b></font></td>
 </tr>
 <tr>
 <td>序号</td>
 <td>标识</td>
 <td>名称</td>
 <td style="width:200px;">图片</td>
+<td>大小</td>
 </tr>
 $photo_detail_list
 </table>

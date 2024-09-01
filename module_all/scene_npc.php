@@ -166,7 +166,10 @@ for ($i=0;$i<count($get_main_page);$i++){
     $mid = $nid;
     }
     
-    $show_ret = \lexical_analysis\process_string($main_show_cond,$sid,$oid,$mid,null,null,null);
+    $show_ret = $main_show_cond !== '' 
+        ? \lexical_analysis\process_string($main_show_cond, $sid, $oid, $mid, null, null, "check_cond") 
+        : 1;
+    $show_ret = str_replace(['.',',','?','-','(',')'], ['。','。', '？','——','（','）'], $show_ret);
     // 替换运算符
     try{
         @$ret = eval("return $show_ret;");

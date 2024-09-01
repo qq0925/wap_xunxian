@@ -12,6 +12,23 @@ $image_style = $row['photo_style'];
 $image_url = "$type"."-"."$id"."-"."$name".".$format_type";
 $imageSrc = "images/"."$type"."/".$image_url;
 
+// 检查文件是否存在
+if (file_exists($imageSrc)) {
+    // 获取文件大小（以字节为单位）
+    $fileSize = filesize($imageSrc);
+
+    // 如果大于 1 MB
+    if ($fileSize >= 1024 * 1024) {
+        $fileSizeMB = $fileSize / (1024 * 1024); // 转换为 MB
+        $fileSizeShow = round($fileSizeMB, 1) . " MB"; // 保留1位小数
+    } else {
+        $fileSizeKB = $fileSize / 1024; // 转换为 KB
+        $fileSizeShow = round($fileSizeKB, 0) . " KB";; // 显示为整数 KB
+    }
+} else {
+    echo "文件不存在";
+}
+
 $select = '图片类别:<select name="type">';
 foreach ($gm_photo_type_list as $gm_photo_type) {
     $selected = ($gm_photo_type['name'] == $type) ? ' selected' : '';
@@ -44,6 +61,7 @@ $upload_html = <<<HTML
 <input name="format_type" type="hidden" value="{$format_type}">
 <input name="old_url" type="hidden" value="{$imageSrc}">
 标识:{$id}<br/>
+大小:{$fileSizeShow}<br/>
 名称:<input name="name" type="text" maxlength="20" value = "$name"><br/>
 $select
 样式:<input name="photo_style" id="photo_style" type="text" maxlength="100" value = "{$image_style}"><br/>

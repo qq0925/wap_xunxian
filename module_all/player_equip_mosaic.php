@@ -197,6 +197,7 @@ $player_equip_html
 $diss_html
 <form method = "POST">
 <input type="text" name="kw" placeholder="请输入装备名">
+<input name="ucmd" type="hidden" value="{$cmid}">
  <button type="submit">搜索</button><br/>
  </form>
  <a href="?cmd=$gonowmid">返回游戏</a><br/>
@@ -245,6 +246,7 @@ $mosaic_html_1 = <<<HTML
 $player_equip_html
 <form method = "POST">
 <input type="text" name="kw" placeholder="请输入装备名">
+<input name="ucmd" type="hidden" value="{$cmid}">
  <button type="submit">搜索</button><br/>
  </form>
  <a href="?cmd=$gonowmid">返回游戏</a><br/>
