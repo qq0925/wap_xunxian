@@ -43,7 +43,7 @@ $map_left_name = $map_out_ret[0]['mname'];
 $map_out_ret =  \gm\get_map_out($dblj,$map_right);
 $map_right_name = $map_out_ret[0]['mname'];
 
-if($map_right ==''){
+if($map_right == 0){
     $map_out .=<<<HTML
 东：<a href = "?cmd=$map_right_choose">选择</a><a href="?cmd=$map_right_link">创建</a><a href="?cmd=$map_right_link_copy">复制</a><br/>
 HTML;
@@ -53,7 +53,7 @@ HTML;
 HTML;
 }
 
-if($map_down ==''){
+if($map_down == 0){
     $map_out .=<<<HTML
 南：<a href = "?cmd=$map_down_choose">选择</a><a href="?cmd=$map_down_link">创建</a><a href="?cmd=$map_down_link_copy">复制</a><br/>
 HTML;
@@ -63,7 +63,7 @@ HTML;
 HTML;
 }
 
-if($map_left ==''){
+if($map_left == 0){
     $map_out .=<<<HTML
 西：<a href = "?cmd=$map_left_choose">选择</a><a href="?cmd=$map_left_link">创建</a><a href="?cmd=$map_left_link_copy">复制</a><br/>
 HTML;
@@ -73,7 +73,7 @@ HTML;
 HTML;
 }
 
-if($map_up ==''){
+if($map_up == 0){
     $map_out .=<<<HTML
 北：<a href = "?cmd=$map_up_choose">选择</a><a href="?cmd=$map_up_link">创建</a><a href="?cmd=$map_up_link_copy">复制</a><br/>
 HTML;
