@@ -245,11 +245,15 @@ for ($i=0;$i<count($get_main_page);$i++){
     $show_ret = $main_show_cond !== '' 
         ? \lexical_analysis\process_string($main_show_cond, $sid, $oid, $mid, null, null, "check_cond") 
         : 1;
-    //由于.在php中会被识别为函数省略
-    // 将 . 替换为 。
-        
-    $show_ret = str_replace(['.',',','?','-','(',')'], ['。','。', '？','——','（','）'], $show_ret);
-    $ret = @eval("return $show_ret;");
+    try{
+        @$ret = eval("return $show_ret;");
+    }
+    catch (ParseError $e){
+    print("语法错误: ". $e->getMessage());
+}
+    catch (Error $e){
+    print("执行错误: ". $e->getMessage());
+}
     $ret_bool = ($ret !== false && $ret !== null) ? 0 : 1;
     if($ret_bool ==0){
     $main_value = nl2br($main_value);

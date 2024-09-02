@@ -39,8 +39,18 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_type = $get_main_page[$i]['type'];
     $main_value = $get_main_page[$i]['value'];
     $main_show_cond = $get_main_page[$i]['show_cond'];
-    $show_ret = \lexical_analysis\process_string($main_show_cond,$sid);
-    @$ret = eval("return $show_ret;");
+    $show_ret = $main_show_cond !== '' 
+        ? \lexical_analysis\process_string($main_show_cond, $sid, $oid, $mid, null, null, "check_cond") 
+        : 1;
+    try{
+        @$ret = eval("return $show_ret;");
+    }
+    catch (ParseError $e){
+    print("语法错误: ". $e->getMessage());
+}
+    catch (Error $e){
+    print("执行错误: ". $e->getMessage());
+}
     $ret_bool = $ret ? '0' : '1';
     if(is_null($ret)){
         $ret_bool = 0;
