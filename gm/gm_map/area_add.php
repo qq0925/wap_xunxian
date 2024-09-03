@@ -1,7 +1,5 @@
 <?php
 
-require_once 'pdo.php';
-
 $area_add = $encode->encode("cmd=area_post&gm_post_canshu=0&sid=$sid");
 $gm = $encode->encode("cmd=gm&sid=$sid");
 
@@ -24,6 +22,9 @@ if ($result->num_rows > 0) {
 } else {
     echo "表中没有数据";
 }
+
+// 关闭连接
+$conn->close();
 
 //进行重复区域名称检测
 

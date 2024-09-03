@@ -1,12 +1,6 @@
 <?php
-// 假设您已经连接到了数据库，并且设置了 $value 和 $npcDefId 的值
-
 // 根据 $value 查询符合条件的 gm_game_attr 表中的数据
 
-$username='xunxian';
-$password='123456';
-$dbname='xunxian';
-$servername = "127.0.0.1";
 
 if($gm_npc_canshu == "1"){
 $post_tishi = '修改成功';
@@ -16,7 +10,7 @@ $area_main = $encode->encode("cmd=gm_npc_second&npc_id=$npc_id&sid=$sid");
 $gm_npc_post = $encode->encode("cmd=gm_npc_submit&npc_id=$npc_id&gm_npc_canshu=1&sid=$sid");
 //$_SERVER['PHP_SELF'];
 // 建立连接
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = DB::conn();
 
 // 检查连接是否成功
 if (!$conn) {

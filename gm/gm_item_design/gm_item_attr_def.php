@@ -1,13 +1,12 @@
-
-
-
 <?php
-// 假设您已经连接到了数据库，并且设置了 $value 和 $itemDefId 的值
 
 // 根据 $value 查询符合条件的 gm_game_attr 表中的数据
 
-require_once 'pdo.php';
-
+$conn = DB::conn();
+// 检查连接是否成功
+if (!$conn) {
+    die("连接失败: " . mysqli_connect_error());
+}
 try {
     // 获取POST表单数据
     if ($_SERVER["REQUEST_METHOD"] == "POST" &&$_POST['id'] !='') {
@@ -56,19 +55,8 @@ try {
     echo "连接失败: " . $e->getMessage();
 }
 
-
-
-
-
 $item_main = $encode->encode("cmd=game_item_list&item_id=$item_id&sid=$sid");
 $gm_item_post = $encode->encode("cmd=gm_item_attr_submit&item_id=$item_id&sid=$sid");
-//$_SERVER['PHP_SELF'];
-// 建立连接
-$conn = DB::conn();
-// 检查连接是否成功
-if (!$conn) {
-    die("连接失败: " . mysqli_connect_error());
-}
 
 // 初始化数组
 // 获取system_item中的数据
