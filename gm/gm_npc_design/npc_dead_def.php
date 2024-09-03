@@ -77,7 +77,7 @@ HTML;
 }elseif ($canshu ==2) {
 
 if($_POST){
-    $dblj->exec("update system_npc set ndrop_exp = '$exp',ndrop_money = '$money',ndrop_item_type = '$drop_type' where nid = '$npc_id'");
+    $dblj->exec("update system_npc set ndrop_item_type = '$drop_type' where nid = '$npc_id'");
 }
 
 
