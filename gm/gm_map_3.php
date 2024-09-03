@@ -69,7 +69,7 @@ $nowdate = date('Y-m-d H:i:s');
 if ($update ==1){
     echo "更新成功！<br/>";
     //$excludeFields = ['mname', 'mop_target', 'mid', 'mup', 'mdown', 'mleft', 'mright'];
-    $sql = "update system_map set mgtime='$nowdate' WHERE mid='$player->nowmid'";
+    $sql = "update system_map set mgtime='$nowdate' WHERE mid='$target_midid'";
     $dblj->exec($sql);
     if($clmid->mnpc!=''){
 
@@ -91,19 +91,19 @@ if ($update ==1){
     }
     // 将处理后的数据重新组合成字符串
     $clmid_npc_count = implode(",", $npc_s);
-    $clmid = player\getmid($player->nowmid,$dblj);
+    $clmid = player\getmid($target_midid,$dblj);
     $retgw = explode(",",$clmid_npc_count);
     foreach ($retgw as $itemgw){
         $gwinfo = explode("|",$itemgw);
         $guaiwu = \player\getnpc($gwinfo[0],$dblj);
         $guaiwu->nid = $gwinfo[0];
         if($guaiwu->nkill ==1){
-        $sql = " delete from system_npc_midguaiwu where nid = '$guaiwu->nid' and nmid = '$player->nowmid' and nsid = ''";
+        $sql = " delete from system_npc_midguaiwu where nid = '$guaiwu->nid' and nmid = '$target_midid' and nsid = ''";
         $cxjg =$dblj->exec($sql);
         for ($n=0;$n<$gwinfo[1];$n++){
             // 要复制的数据行id
             $nid = $guaiwu->nid;
-            $nmid = $player->nowmid;
+            $nmid = $target_midid;
             // 获取旧表字段列表
             $stmt = $dblj->prepare("SHOW COLUMNS FROM system_npc");
             $stmt->execute();
@@ -139,7 +139,7 @@ if ($update ==1){
     }
     // 将处理后的数据重新组合成字符串
     $clmid_item_count = implode(",", $items);
-    $sql = "update system_map set mitem_now = '$clmid_item_count' WHERE mid='$player->nowmid'";
+    $sql = "update system_map set mitem_now = '$clmid_item_count' WHERE mid='$target_midid'";
     $dblj->exec($sql);
     }
 }
