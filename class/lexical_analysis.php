@@ -418,7 +418,7 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     if($para =='check_cond'){
     // 使用正则表达式，去掉内部的单引号
     $op = preg_replace("/'(.*?)'/", '$1', $op);
-    $op = str_replace(array("\""," "), '\'', $op);
+    $op = str_replace(array("\""), '\'', $op);
     }
     return $op;
 }, $expr);
@@ -3842,5 +3842,4 @@ function process_photoshow($input) {
 
     return $input;
 }
-
 ?>
