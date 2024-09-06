@@ -2684,6 +2684,9 @@ echo $refresh_html;
         case 'photo_change'://照片更新
             $ym = 'gm/gamephoto_manage_3.php';
             break;
+        case 'photo_choose'://照片选择
+            $ym = 'gm/gamephoto_manage_5.php';
+            break;
         case 'target_mid'://区域设计
             $ym = 'gm/gm_map.php';
             break;

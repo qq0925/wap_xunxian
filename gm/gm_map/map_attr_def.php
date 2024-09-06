@@ -1,14 +1,21 @@
 <?php
 // 假设您已经连接到了数据库，并且设置了 $value 和 $mapDefId 的值
-
 // 根据 $value 查询符合条件的 gm_game_attr 表中的数据
-
-
+$photo_choose_path = $encode->encode("cmd=photo_choose&ret_canshu=map&ret_id=$target_midid&sid=$sid");
 $conn = DB::conn();
 if($gm_map_canshu == "1"){
 $post_tishi = '修改成功';
 }
+
 $map_id = $target_midid;//这里接受其他地方传来的map_id
+
+if ($photo_post&&!$_POST) {
+    echo "更新照片成功！<br/>";
+    $stmt = $conn->prepare("UPDATE system_map SET mphoto = ? WHERE mid = ?");
+    $stmt->bind_param('si', $photo_post, $map_id);  // 'si' 表示字符串和整数
+    $stmt->execute();
+    unset($photo_post);
+}
 
 $area_main = $encode->encode("cmd=gm_post_4&target_midid=$map_id&sid=$sid");
 $gm_map_post = $encode->encode("cmd=gm_map_submit&gm_map_canshu=1&sid=$sid");
@@ -77,7 +84,8 @@ HTML;
                 break;
             case 'photo':
             $map_mid_page .= <<<HTML
-            $name:<input name="$id" type="text" value="$value" maxlength="200"/><br/>
+            $name:<input name="$id" type="text" value="$value" maxlength="200"/>
+<a href="?cmd=$photo_choose_path">选择照片</a><br/>
 HTML;
                 break;
             case 'refresh_time':

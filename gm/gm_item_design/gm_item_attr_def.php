@@ -1,12 +1,20 @@
 <?php
-
 // 根据 $value 查询符合条件的 gm_game_attr 表中的数据
-
+$photo_choose_path = $encode->encode("cmd=photo_choose&ret_canshu=item&ret_id=$item_id&sid=$sid");
 $conn = DB::conn();
 // 检查连接是否成功
 if (!$conn) {
     die("连接失败: " . mysqli_connect_error());
 }
+
+if ($photo_post&&!$_POST) {
+    echo "更新照片成功！<br/>";
+    $stmt = $conn->prepare("UPDATE system_item_module SET iimage = ? WHERE iid = ?");
+    $stmt->bind_param('si', $photo_post, $item_id);  // 'si' 表示字符串和整数
+    $stmt->execute();
+    unset($photo_post);
+}
+
 try {
     // 获取POST表单数据
     if ($_SERVER["REQUEST_METHOD"] == "POST" &&$_POST['id'] !='') {
@@ -120,7 +128,8 @@ HTML;
                 break;
             case 'image':
             $item_mid_page .= <<<HTML
-            $name:<input name="$id" type="text" value="$value" maxlength="200"><br/>
+            $name:<input name="$id" type="text" value="$value" maxlength="200">
+<a href="?cmd=$photo_choose_path">选择照片</a><br/>
 HTML;
                 break;
             case 'desc':

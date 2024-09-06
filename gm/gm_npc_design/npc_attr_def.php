@@ -1,7 +1,6 @@
 <?php
 // 根据 $value 查询符合条件的 gm_game_attr 表中的数据
-
-
+$photo_choose_path = $encode->encode("cmd=photo_choose&ret_canshu=npc&ret_id=$npc_id&sid=$sid");
 if($gm_npc_canshu == "1"){
 $post_tishi = '修改成功';
 }
@@ -16,6 +15,15 @@ $conn = DB::conn();
 if (!$conn) {
     die("连接失败: " . mysqli_connect_error());
 }
+
+if ($photo_post&&!$_POST) {
+    echo "更新照片成功！<br/>";
+    $stmt = $conn->prepare("UPDATE system_npc SET nimage = ? WHERE nid = ?");
+    $stmt->bind_param('si', $photo_post, $npc_id);  // 'si' 表示字符串和整数
+    $stmt->execute();
+    unset($photo_post);
+}
+
 // 初始化数组
 // 获取system_npc中的数据
 $sql = "SELECT * FROM system_npc WHERE nid = '$npc_id'";
@@ -80,7 +88,8 @@ HTML;
                 break;
             case 'image':
             $npc_mid_page .= <<<HTML
-            $name:<input name="$id" type="text" value="$value" maxlength="200"/><br/>
+            $name:<input name="$id" type="text" value="$value" maxlength="200"/>
+<a href="?cmd=$photo_choose_path">选择照片</a><br/>
 HTML;
                 break;
             case 'refresh_time':
