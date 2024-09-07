@@ -2288,8 +2288,10 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
     }
     
     $matches_2 = [];
-    preg_match_all('/f\(([\w.]+)\)/', $input, $matches_2);
+    //preg_match_all('/f\(([\w.]+)\)/', $input, $matches_2);
+    preg_match_all('/\{f\((.*?)\).*?\}/', $input, $matches_2);
     if (!empty($matches_2[1])) {
+        $f_temp = $matches_2[0][0];
         foreach ($matches_2[1] as $match) {
             $firstDotPosition = strpos($match, '.');
             if (!empty($firstDotPosition)) {
@@ -2312,11 +2314,11 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 $row = $cxjg->fetch_assoc();
                 $temp_sid = $row['sid'];
                 $op = str_replace(array("'", "\"\""), '0', $op);
-                $op = str_replace("f({$match})", "u", $input);
+                $op = str_replace("f({$match})", "u", $f_temp);
                 if($temp_sid){
-                $input = process_string($op, $temp_sid, $oid, $mid, $jid, $type, $para);
+                $f_input = process_string($op, $temp_sid, $oid, $mid, $jid, $type, $para);
                 }
-                
+                $input = str_replace($f_temp, $f_input, $input);
             }
         }
     }
