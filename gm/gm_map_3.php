@@ -145,7 +145,7 @@ if ($update ==1){
 }
     
     $data = $clmid->mitem;
-    $items = explode(",", $clmid_item_count); // 使用逗号分隔字符串，得到每个项
+    $items = explode(",", $data); // 使用逗号分隔字符串，得到每个项
     foreach ($items as &$item) {
         $parts = explode("|", $item); // 使用竖线分隔每个项
         if (count($parts) === 2||count($parts) === 3) {
@@ -163,6 +163,9 @@ if ($update ==1){
     $clmid_item_count = implode(",", $items);
     $sql = "update system_map set mgtime='$nowdate',mitem_now = '$clmid_item_count',mnpc_now = '$clmid_npc_count' WHERE mid='$target_midid'";
     $dblj->exec($sql);
+    
+    
+    
 }
 $br = 0;
 $map_name = $cxamap[0]['mname'];
