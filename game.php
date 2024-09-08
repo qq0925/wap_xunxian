@@ -1146,8 +1146,8 @@ echo $refresh_html;
                 case '1':
                     $update_column = "u".$gm_id;
                     $sql = "ALTER TABLE game1 ADD `$update_column` $add_type NOT NULL;";
-                    $sql2 = "ALTER TABLE system_player ADD `$update_column` $add_type NOT NULL;";
-                    $cxjg =$dblj->exec($sql);
+                    //$sql2 = "ALTER TABLE system_player ADD `$update_column` $add_type NOT NULL;";
+                    //$cxjg =$dblj->exec($sql);
                     break;
                 case '3':
                     $update_column = "n".$gm_id;
