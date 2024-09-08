@@ -763,17 +763,16 @@ HTML;
 
 function task($cmd,$page_id,$sid,$dblj,$value,&$cmid){
     global $encode;
-    $sql = "select * from system_task_user WHERE sid='$sid' AND tstate !=2";
-    $cxjg = $dblj->query($sql);
-    $wtjrw = $cxjg->fetchAll(PDO::FETCH_ASSOC);
-    $taskcount = count($wtjrw);
-    
+    // $sql = "select * from system_task_user WHERE sid='$sid' AND tstate !=2";
+    // $cxjg = $dblj->query($sql);
+    // $wtjrw = $cxjg->fetchAll(PDO::FETCH_ASSOC);
+    // $taskcount = count($wtjrw);
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $clj[] = $cmd;
     $task_url = "cmd=mytask_2&ucmd=$cmid&sid=$sid";
     $main_target_func = $encode->encode("$task_url");
-    $task_url = "<a href='?cmd=$main_target_func' >{$value}({$taskcount})</a>";
+    $task_url = "<a href='?cmd=$main_target_func' >{$value}</a>";
     return $task_url;
 }
 

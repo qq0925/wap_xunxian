@@ -687,9 +687,13 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     
                     }elseif(strpos($attr2, "tasks.") === 0){
                     $attr3 = substr($attr2, 6); // 提取 "tasks." 后面的部分
-                    if (strpos($attr3, 't') === 0) {
-                        $attr3 = substr($attr3, 1); // 去掉开头的 "t"
-                    }
+                    if (strpos($attr3, "count") === 0){
+                    $sql = "select * from system_task_user WHERE sid='$sid' AND tstate !=2";
+                    $cxjg = $db->query($sql);
+                    $wtjrw = $cxjg->fetch_all(MYSQLI_ASSOC);
+                    $op = count($wtjrw);
+                    }elseif (strpos($attr3, 't') === 0) {
+                    $attr3 = substr($attr3, 1); // 去掉开头的 "t"
                     $tid = $attr3;
                     $sql = "SELECT ttype from system_task where tid = ?";
                     $stmt = $db->prepare($sql);
@@ -712,6 +716,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $result = $stmt->get_result();
                     $row = $result->fetch_assoc();
                     $op = $row["tstate"];
+                    }
                     if(is_null($op)){
                         $op = "\"\"";
                     }else{
