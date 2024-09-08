@@ -1311,7 +1311,7 @@ echo $refresh_html;
               `id` int(255) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
               `type` varchar(255) DEFAULT '1',
               `show_cond` varchar(255) DEFAULT NULL,
-              `value` varchar(255) DEFAULT '未命名',
+              `value` text,
               `target_tasks` varchar(255) DEFAULT NULL,
               `target_event` varchar(255) DEFAULT '0',
               `target_func` varchar(255) DEFAULT '0',

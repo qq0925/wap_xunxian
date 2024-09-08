@@ -1,6 +1,38 @@
 <?php
 //数据库更新补丁
 
+try {
+    // 查询 game_main_page 表中 value 字段的类型
+    $stmt = $dblj->prepare("SHOW COLUMNS FROM game_main_page LIKE 'value'");
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // 检查 value 字段的类型是否为 VARCHAR
+    if ($column && strpos($column['Type'], 'varchar') !== false) {
+        // 查询所有以 game_ 开头的数据表
+        $stmt = $dblj->prepare("SHOW TABLES LIKE 'game_%'");
+        $stmt->execute();
+        $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        // 遍历每个表，检查并修改 value 字段的类型
+        foreach ($tables as $table) {
+            // 检查表中的 value 字段
+            $stmt = $dblj->prepare("SHOW COLUMNS FROM $table LIKE 'value'");
+            $stmt->execute();
+            $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // 如果 value 字段存在并且是 VARCHAR 类型，则修改为 TEXT
+            if ($column && strpos($column['Type'], 'varchar') !== false) {
+                // 修改字段类型为 TEXT
+                $alterStmt = $dblj->prepare("ALTER TABLE $table MODIFY COLUMN value TEXT");
+                $alterStmt->execute();
+            }
+        }
+    }
+} catch (PDOException $e) {
+    echo "数据库错误: " . $e->getMessage();
+}
+
     // 检查表是否存在 designer 字段
     $sql = "SHOW COLUMNS FROM userinfo LIKE 'designer'";
     $stmt = $dblj->prepare($sql);

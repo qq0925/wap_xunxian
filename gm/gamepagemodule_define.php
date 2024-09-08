@@ -748,7 +748,7 @@ for ($i=0;$i<count($get_main_page);$i++){
     $self_name = $get_main_page[$i]['name'];
     $main_position = $get_main_page[$i]['pos'];
     if($main_position !=$hangshu){
-        $sql = "UPDATE system_self_define_module SET pos = '$hangshu' where id = $self_id;";
+        $sql = "UPDATE system_self_define_module SET pos = '$hangshu' where id = '$self_id';";
         $cxjg =$dblj->exec($sql);
     }
     $module_url = $encode->encode("cmd=game_self_page&self_id=$self_id&sid=$sid");
