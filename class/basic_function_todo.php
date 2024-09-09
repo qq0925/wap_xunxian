@@ -979,11 +979,15 @@ for ($i = 0;$i<count($cxallguaiwu);$i++){
     $guaiwu_para = $guaiwu_nid ."|"."$guaiwu_ngid";
     if($guaiwu_creat_event!=0){
     include_once 'class/events_steps_change.php';
-    events_steps_change($guaiwu_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$guaiwu_para,$para);
+    events_steps_change($guaiwu_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc',$guaiwu_para,$para);
     // 重新查询，确保数据刷新
     $sql = "select * from system_npc_midguaiwu where nmid='$nowmid' AND nsid = ''";
     $cxjg = $dblj->query($sql);
     $cxallguaiwu = $cxjg->fetchAll(PDO::FETCH_ASSOC);
+    }
+    $ret = global_event_data_get(26,$dblj);
+    if($ret){
+    global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc',$guaiwu_para,$para);
     }
     $br = "<br/>";
     $cmid = $cmid + 1;
