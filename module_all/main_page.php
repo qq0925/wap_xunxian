@@ -60,7 +60,7 @@ if($u_sailing ==1){
     $cmd = 'sailing_html';
     include 'module_all/sailing.php';
 }elseif($u_pve ==1 &&$player->uhp >0){
-    $cmd = 'pve_fighting';
+    $cmd = 'pve_fight';
     include 'module_all/scene_fight.php';
 }else{
 if($player->tpsmid!=0){

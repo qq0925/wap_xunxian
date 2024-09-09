@@ -816,8 +816,12 @@ echo $refresh_html;
                 $key = $_POST['key'];
                 $exp_type = $_POST['exp_type'];
                 $exp = $_POST['exp'];
+                if($key){
                 $sql = "INSERT INTO system_exp_def(id, type, value) VALUES ('$key', '$exp_type', '$exp')";
                 $cxjg = $dblj->exec($sql);
+                }else{
+                echo "ID不能为空！<br/>";
+                }
                 $ym = 'gm/gameexp_define.php';
             }elseif($def_post_canshu ==4){
             $def_post_canshu =2;

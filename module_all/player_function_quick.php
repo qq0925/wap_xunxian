@@ -6,6 +6,10 @@ include_once 'pdo.php';
 // require_once 'class/lexical_analysis.php';
 require_once 'class/basic_function_todo.php';
 
+if($cancel){
+    echo "取消成功！<br/>";
+    $dblj->exec("update system_fight_quick set quick_value = '' where sid = '$sid' and quick_pos = '$cancel'");
+}
 
 $sql = "select * from system_fight_quick where sid = '$sid'";
 $stmt = $dblj->prepare($sql);
@@ -20,6 +24,8 @@ $quick_para = explode('|',$quick_values);
 $quick_type = $quick_para[0];
 $quick_detail = $quick_para[1];
 if($quick_type){
+$cancel_url = $encode->encode("cmd=function_quick_html&cancel=$i&ucmd=$cmid&sid=$sid");
+$quick_cancel = "<a href='?cmd=$cancel_url'>取消</a>";
 switch($quick_type){
     case '1':
         $quick_sql = "select * from system_skill where jid = '$quick_detail'";
@@ -51,7 +57,7 @@ switch($quick_type){
 $quick_text = \lexical_analysis\color_string($quick_text);
 $quick_url = $encode->encode("cmd=function_quick_html&canshu=1&pos=$i&ucmd=$cmid&sid=$sid");
     $quick_main .=<<<HTML
-快捷键{$i}:<a href="?cmd=$quick_url">{$quick_text}</a><br/>
+快捷键{$i}:<a href="?cmd=$quick_url">{$quick_text}</a>{$quick_cancel}<br/>
 HTML;
 }
 
