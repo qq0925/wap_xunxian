@@ -13,14 +13,55 @@ if($sure_new_mosaic_canshu){
     ////未有镶嵌物
     $sure_insert_para = \player\get_player_equip_mosaic_once($insert_true_canshu,$sid,$dblj);
     if($sure_insert_para['equip_mosaic']){
-        $add = $sure_insert_para['equip_mosaic'] . "|" .$insert_true_mosaic;
+        $add = $sure_insert_para['equip_mosaic'] . "|" .$insert_mosaic;
     }else{
-        $add = $insert_true_mosaic;
+        $add = $insert_mosaic;
     }
     $dblj->exec("insert into player_equip_mosaic (equip_id,equip_root,belong_sid,equip_mosaic)values('$insert_true_canshu','$insert_canshu','$sid','$add') ");
     echo "镶嵌成功！<br/>";
-    $out = changeplayeritem($insert_true_canshu,-1,$sid,$dblj);
-    $iweight = \player\getitem_true($insert_true_canshu,$dblj)->iweight;
+    
+    $event_data = global_event_data_get(42,$dblj);
+    $event_cond = $event_data['system_event']['cond'];
+    $event_cmmt = $event_data['system_event']['cmmt'];
+    $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$insert_mosaic);
+    if(is_null($register_triggle)){
+        $register_triggle =1;
+    }
+    if(!$register_triggle){
+    }elseif($register_triggle){
+    if(!empty($event_data['system_event']['link_evs'])){
+        $system_event_evs = $event_data["system_event_evs"];
+        foreach ($system_event_evs as $index => $event) {
+        $step_cond = $event['cond'];
+        $step_cmmt = $event['cmmt'];
+        $step_cmmt2 = $event['cmmt2'];
+        $step_s_attrs = $event['s_attrs'];
+        $step_m_attrs = $event['m_attrs'];
+        $step_items = $event['items'];
+        $step_a_skills = $event['a_skills'];
+        $step_r_skills = $event['r_skills'];
+        $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$insert_mosaic);
+        if(is_null($step_triggle)){
+        $step_triggle =1;
+            }
+        if(!$step_triggle){
+            echo $step_cmmt2."<br/>";
+            }elseif($step_triggle){
+            echo $step_cmmt."<br/>";
+            $ret = attrsetting($step_s_attrs,$sid,'item',$insert_mosaic);
+            $ret = attrchanging($step_m_attrs,$sid,'item',$insert_mosaic);
+            $ret = itemchanging($step_items,$sid,'item',$insert_mosaic);
+            $ret = skillschanging($step_a_skills,$sid,1,'item',$insert_mosaic);
+            $ret = skillschanging($step_r_skills,$sid,2,'item',$insert_mosaic);
+            }
+        }
+                
+    }
+    }
+    
+    
+    \player\changeplayeritem($insert_true_mosaic,-1,$sid,$dblj);
+    $iweight = \player\getitem($insert_mosaic,$dblj)->iweight;
     \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
 }
 
@@ -28,14 +69,55 @@ if($sure_old_mosaic_canshu){
     //已有镶嵌物
     $sure_insert_para = \player\get_player_equip_mosaic_once($insert_true_canshu,$sid,$dblj);
     if($sure_insert_para['equip_mosaic']){
-        $add = $sure_insert_para['equip_mosaic'] . "|" .$insert_true_mosaic;
+        $add = $sure_insert_para['equip_mosaic'] . "|" .$insert_mosaic;
     }else{
-        $add = $insert_true_mosaic;
+        $add = $insert_mosaic;
     }
     $dblj->exec("update player_equip_mosaic set equip_mosaic = '$add' where equip_id = '$insert_true_canshu' and equip_root = '$insert_canshu'");
     echo "镶嵌成功！<br/>";
-    $out = \player\changeplayeritem($insert_true_mosaic,-1,$sid,$dblj);
-    $iweight = \player\getitem_true($insert_true_mosaic,$dblj)->iweight;
+    
+    $event_data = global_event_data_get(42,$dblj);
+    $event_cond = $event_data['system_event']['cond'];
+    $event_cmmt = $event_data['system_event']['cmmt'];
+    $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$insert_mosaic);
+    if(is_null($register_triggle)){
+        $register_triggle =1;
+    }
+    if(!$register_triggle){
+    }elseif($register_triggle){
+    if(!empty($event_data['system_event']['link_evs'])){
+        $system_event_evs = $event_data["system_event_evs"];
+        foreach ($system_event_evs as $index => $event) {
+        $step_cond = $event['cond'];
+        $step_cmmt = $event['cmmt'];
+        $step_cmmt2 = $event['cmmt2'];
+        $step_s_attrs = $event['s_attrs'];
+        $step_m_attrs = $event['m_attrs'];
+        $step_items = $event['items'];
+        $step_a_skills = $event['a_skills'];
+        $step_r_skills = $event['r_skills'];
+        $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$insert_mosaic);
+        if(is_null($step_triggle)){
+        $step_triggle =1;
+            }
+        if(!$step_triggle){
+            echo $step_cmmt2."<br/>";
+            }elseif($step_triggle){
+            echo $step_cmmt."<br/>";
+            $ret = attrsetting($step_s_attrs,$sid,'item',$insert_mosaic);
+            $ret = attrchanging($step_m_attrs,$sid,'item',$insert_mosaic);
+            $ret = itemchanging($step_items,$sid,'item',$insert_mosaic);
+            $ret = skillschanging($step_a_skills,$sid,1,'item',$insert_mosaic);
+            $ret = skillschanging($step_r_skills,$sid,2,'item',$insert_mosaic);
+            }
+        }
+                
+    }
+    }
+    
+    
+    \player\changeplayeritem($insert_true_mosaic,-1,$sid,$dblj);
+    $iweight = \player\getitem($insert_mosaic,$dblj)->iweight;
     \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
 }
 
@@ -70,9 +152,48 @@ if ($row) {
         $delete_stmt->execute([':sid' => $sid, ':equip_id' => $diss_this_canshu]);
 }
 echo "拆卸成功!<br/>";
-    $out = \player\changeplayeritem($equip_mosaic,-1,$sid,$dblj);
-    $iweight = \player\getitem_true($equip_mosaic,$dblj)->iweight;
-    \player\addplayersx('uburthen',$iweight,$sid,$dblj);
+
+
+    $event_data = global_event_data_get(43,$dblj);
+    $event_cond = $event_data['system_event']['cond'];
+    $event_cmmt = $event_data['system_event']['cmmt'];
+    $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$insert_mosaic);
+    if(is_null($register_triggle)){
+        $register_triggle =1;
+    }
+    if(!$register_triggle){
+    }elseif($register_triggle){
+    if(!empty($event_data['system_event']['link_evs'])){
+        $system_event_evs = $event_data["system_event_evs"];
+        foreach ($system_event_evs as $index => $event) {
+        $step_cond = $event['cond'];
+        $step_cmmt = $event['cmmt'];
+        $step_cmmt2 = $event['cmmt2'];
+        $step_s_attrs = $event['s_attrs'];
+        $step_m_attrs = $event['m_attrs'];
+        $step_items = $event['items'];
+        $step_a_skills = $event['a_skills'];
+        $step_r_skills = $event['r_skills'];
+        $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$insert_mosaic);
+        if(is_null($step_triggle)){
+        $step_triggle =1;
+            }
+        if(!$step_triggle){
+            echo $step_cmmt2."<br/>";
+            }elseif($step_triggle){
+            echo $step_cmmt."<br/>";
+            $ret = attrsetting($step_s_attrs,$sid,'item',$insert_mosaic);
+            $ret = attrchanging($step_m_attrs,$sid,'item',$insert_mosaic);
+            $ret = itemchanging($step_items,$sid,'item',$insert_mosaic);
+            $ret = skillschanging($step_a_skills,$sid,1,'item',$insert_mosaic);
+            $ret = skillschanging($step_r_skills,$sid,2,'item',$insert_mosaic);
+            }
+        }
+                
+    }
+    }
+
+    \player\additem($sid,$equip_mosaic,1,$dblj);
         }
     }
 } else {
@@ -87,12 +208,12 @@ if($diss_all){
     $stmt = $dblj->prepare($sql);
     $stmt->execute([':sid' => $sid]);
     $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $mosaic_iid = \player\getitem_true($equip_mosaic,$dblj)->iid;
-    \player\additem($sid,$mosaic_iid,1,$dblj);
+    \player\additem($sid,$equip_mosaic,1,$dblj);
     
     echo "全部拆卸成功!<br/>";
     $dblj->exec("delete from player_equip_mosaic where belong_sid = '$sid'");
 }
+
 if($diss_canshu){
     
     // 查找符合条件的记录
@@ -136,13 +257,13 @@ for($i=1;$i<count($player_equip_mosaic) +1;$i++){
     }
     $player_equip_html .= "{$i}.{$player_equip_name}";
     if($equip_mosaic_list){
-        $equip_mosaic_list_para = explode('|',$equip_mosaic_list);
+        $equip_mosaic_list_para = explode("|",$equip_mosaic_list);
         $equip_mosaic_list_count = count($equip_mosaic_list_para);
     }
         for($j=0;$j<$equip_mosaic_list_count;$j++){
             $equip_mosaic_detail_id = $equip_mosaic_list_para[$j];
-            $equip_mosaic_detail = \player\get_player_equip_detail($equip_mosaic_detail_id,$sid,$dblj);
-            $equip_mosaic_detail_name = \lexical_analysis\color_string($equip_mosaic_detail['iname']);
+            $equip_mosaic_detail = \player\getitem($equip_mosaic_detail_id,$dblj);
+            $equip_mosaic_detail_name = \lexical_analysis\color_string($equip_mosaic_detail->iname);
             $cmid = $cmid + 1;
             $cdid[] = $cmid;
             $diss_this = $encode->encode("cmd=mosaic_html&diss_this_canshu=$equip_mosaic_id&diss_this_mosaic_id=$equip_mosaic_detail_id&ucmd=$cmid&mid=$mid&sid=$sid");
@@ -157,7 +278,9 @@ for($i=1;$i<count($player_equip_mosaic) +1;$i++){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $diss_this_all = $encode->encode("cmd=mosaic_html&diss_canshu=$equip_mosaic_id&ucmd=$cmid&mid=$mid&sid=$sid");
-    $player_equip_html .=" <a href='?cmd=$gotomosaic'>去镶嵌</a>|<a href='?cmd=$diss_this_all'>一键卸下</a><br/>";
+    $player_equip_html .=" <a href='?cmd=$gotomosaic'>去镶嵌</a><br/>";
+    // $player_equip_html .=" <a href='?cmd=$gotomosaic'>去镶嵌</a>|<a href='?cmd=$diss_this_all'>一键卸下</a><br/>";
+    
     $player_equip_html .="$equip_mosaic_html";
 }elseif($equip_mosaic_list_count==$player_equip_embed_count && $equip_mosaic_list_count>0){
     $cmid = $cmid + 1;
@@ -166,7 +289,8 @@ for($i=1;$i<count($player_equip_mosaic) +1;$i++){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $diss_this_all = $encode->encode("cmd=mosaic_html&diss_canshu=$equip_mosaic_id&ucmd=$cmid&mid=$mid&sid=$sid");
-    $player_equip_html .=" <a href='?cmd=$diss_this_all'>一键卸下</a><br/>";
+    // $player_equip_html .=" <a href='?cmd=$diss_this_all'>一键卸下</a><br/>";
+    $player_equip_html .=" <br/>";
     $player_equip_html .="$equip_mosaic_html";
 }elseif($equip_mosaic_list_count ==0 && $equip_mosaic_list_count<$player_equip_embed_count){
     $cmid = $cmid + 1;
@@ -203,7 +327,6 @@ $diss_html
  <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
 }else{
-    
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $gojustnow = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$mid&sid=$sid");
@@ -274,10 +397,11 @@ $mosaic_list = \player\get_player_all_mosaic($equip_type,$sid,$dblj);
 for($i=1;$i<count($mosaic_list)+1;$i++){
 $mosaic_name = $mosaic_list[$i-1]['iname'];
 $mosaic_count = $mosaic_list[$i-1]['icount'];
+$mosaic_id = $mosaic_list[$i-1]['iid'];
 $mosaic_true_id = $mosaic_list[$i-1]['item_true_id'];
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$gotomosaic = $encode->encode("cmd=mosaic_html&sure_new_mosaic_canshu=1&ucmd=$cmid&insert_canshu=$insert_canshu&insert_true_canshu=$insert_true_canshu&insert_true_mosaic=$mosaic_true_id&mid=$mid&sid=$sid");
+$gotomosaic = $encode->encode("cmd=mosaic_html&sure_new_mosaic_canshu=1&ucmd=$cmid&insert_canshu=$insert_canshu&insert_true_canshu=$insert_true_canshu&insert_mosaic=$mosaic_id&insert_true_mosaic=$mosaic_true_id&mid=$mid&sid=$sid");
 $mosaic_list_html .=<<<HTML
 {$i} .  {$mosaic_name} * {$mosaic_count}<a href="?cmd=$gotomosaic">去镶嵌</a><br/>
 HTML;
@@ -299,7 +423,7 @@ $equip_embed_count = $insert_para['iembed_count'];
 $equip_type= $insert_para['itype'];
 
 $old_equip_para = \player\get_player_equip_mosaic_once($insert_true_canshu,$sid,$dblj)['equip_mosaic'];
-$old_equip_arr_para = explode('|',$old_equip_para);
+$old_equip_arr_para = explode("|",$old_equip_para);
 $mosaic_count_total = count($old_equip_arr_para);
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
@@ -311,10 +435,11 @@ $mosaic_list = \player\get_player_all_mosaic($equip_type,$sid,$dblj);
 for($i=1;$i<count($mosaic_list)+1;$i++){
 $mosaic_name = $mosaic_list[$i-1]['iname'];
 $mosaic_count = $mosaic_list[$i-1]['icount'];
+$mosaic_id = $mosaic_list[$i-1]['iid'];
 $mosaic_true_id = $mosaic_list[$i-1]['item_true_id'];
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$gotomosaic = $encode->encode("cmd=mosaic_html&sure_old_mosaic_canshu=1&ucmd=$cmid&insert_canshu=$insert_canshu&insert_true_canshu=$insert_true_canshu&insert_true_mosaic=$mosaic_true_id&mid=$mid&sid=$sid");
+$gotomosaic = $encode->encode("cmd=mosaic_html&sure_old_mosaic_canshu=1&ucmd=$cmid&insert_canshu=$insert_canshu&insert_true_canshu=$insert_true_canshu&insert_mosaic=$mosaic_id&insert_true_mosaic=$mosaic_true_id&mid=$mid&sid=$sid");
 $mosaic_list_html .=<<<HTML
 {$i} .  {$mosaic_name} * {$mosaic_count}<a href="?cmd=$gotomosaic">去镶嵌</a> <br/>
 HTML;

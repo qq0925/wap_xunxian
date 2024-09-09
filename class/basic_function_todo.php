@@ -1338,9 +1338,9 @@ HTML;
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $cut_hp = $row['total_cut_hp'];
     $cut_mp = $row['cut_mp'];
-    
     $cut_hp = $cut_hp >0?"+".$cut_hp:$cut_hp;
     $cut_mp = $cut_mp >0?"+".$cut_mp:$cut_mp;
+    $cut_hp = $cut_hp ==0?'':$cut_hp;
     $player_text =<<<HTML
 [{$player_name}]:<br/>
 {$attr_hp_name}：({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
