@@ -199,7 +199,19 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($updateQuery);
                 }
                 }
-                else{
+                elseif($oid =='npc'){
+                if(!is_numeric($mid)){
+                    $guai_id = explode("|",$mid)[1];
+                }
+                $reg = "n".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_npc_midguaiwu LIKE '$reg'");
+
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = '$ele_2' WHERE ngid = '$guai_id' and nsid = ''";
+                    $db->query($updateQuery);
+                }
+                }else{
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
 
                 // 如果字段存在，则更新字段值
@@ -387,6 +399,19 @@ $sid = $old_sid;
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
                     $updateQuery = "UPDATE system_pet_player SET $reg = $reg + '$ele_2' WHERE psid = '$sid' and pid = $mid";
+                    $db->query($updateQuery);
+                }
+                }
+                elseif($oid =='npc'){
+                if(!is_numeric($mid)){
+                    $guai_id = explode("|",$mid)[1];
+                }
+                $reg = "n".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_npc_midguaiwu LIKE '$reg'");
+
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = $reg + '$ele_2' WHERE ngid = '$guai_id' and nsid = ''";
                     $db->query($updateQuery);
                 }
                 }
