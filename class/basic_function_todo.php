@@ -1558,7 +1558,7 @@ function pet_url($cmd,$page_id,$sid,$dblj,$value,&$cmid){
     global $encode;
     $pet_url = $encode->encode("cmd=player_pet&ucmd=$cmid&sid=$sid");
     $pet_url=<<<HTML
-        <a href="?cmd=$pet_url">{$value}</a>
+<a href="?cmd=$pet_url">{$value}</a>
 HTML;
     return $pet_url;
 }

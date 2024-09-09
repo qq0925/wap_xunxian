@@ -349,10 +349,6 @@ $gm_html = <<<HTML
 HTML;
 }
 $all = <<<HTML
-<head>
-    <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
-    <link rel="stylesheet" href="css/gamecss.css">
-</head>
 $game_main<br/>
 $gm_html
 HTML;
