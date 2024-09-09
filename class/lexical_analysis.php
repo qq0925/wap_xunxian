@@ -2310,20 +2310,72 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 // var_dump($match);
                 // var_dump($op);
                 // 替换字符串中的变量
-                
-                $sql = "SELECT sid FROM game1 where uid = '$op'";
-                $cxjg = $db->query($sql);
-                if (!$cxjg) {
-                die('查询失败: ' . $db->error);
+                switch ($op[0]) {
+                    case 's':
+                        $remain = substr($op, 1);
+                        $sql = "SELECT mid FROM system_map where mid = '$remain'";
+                        $cxjg = $db->query($sql);
+                        if (!$cxjg) {
+                        die('查询失败: ' . $db->error);
+                        }
+                        $row = $cxjg->fetch_assoc();
+                        $temp_mid = $row['mid'];
+                        $op = str_replace(array("'", "\"\""), '0', $op);
+                        $op = str_replace("f({$match})", "o", $f_temp);
+                        if($temp_mid){
+                        $f_input = process_string($op, $sid, 'scene', $temp_mid, $jid, $type, $para);
+                        }
+                        $input = str_replace($f_temp, $f_input, $input);
+                        break;
+                    case 'i':
+                        $remain = substr($op, 1);
+                        $sql = "SELECT mid FROM system_item_module where iid = '$remain'";
+                        $cxjg = $db->query($sql);
+                        if (!$cxjg) {
+                        die('查询失败: ' . $db->error);
+                        }
+                        $row = $cxjg->fetch_assoc();
+                        $temp_iid = $row['iid'];
+                        $op = str_replace(array("'", "\"\""), '0', $op);
+                        $op = str_replace("f({$match})", "o", $f_temp);
+                        if($temp_iid){
+                        $f_input = process_string($op, $sid, 'item', $temp_iid, $jid, $type, $para);
+                        }
+                        $input = str_replace($f_temp, $f_input, $input);
+                        break;
+                    case 'n':
+                        $remain = substr($op, 1);
+                        $sql = "SELECT nid FROM system_npc where nid = '$remain'";
+                        $cxjg = $db->query($sql);
+                        if (!$cxjg) {
+                        die('查询失败: ' . $db->error);
+                        }
+                        $row = $cxjg->fetch_assoc();
+                        $temp_nid = $row['nid'];
+                        $op = str_replace(array("'", "\"\""), '0', $op);
+                        $op = str_replace("f({$match})", "o", $f_temp);
+                        if($temp_nid){
+                        $f_input = process_string($op, $sid, 'npc', $temp_nid, $jid, $type, $para);
+                        }
+                        $input = str_replace($f_temp, $f_input, $input);
+                        break;
+                        break;
+                    default:
+                        $sql = "SELECT sid FROM game1 where uid = '$op'";
+                        $cxjg = $db->query($sql);
+                        if (!$cxjg) {
+                        die('查询失败: ' . $db->error);
+                        }
+                        $row = $cxjg->fetch_assoc();
+                        $temp_sid = $row['sid'];
+                        $op = str_replace(array("'", "\"\""), '0', $op);
+                        $op = str_replace("f({$match})", "u", $f_temp);
+                        if($temp_sid){
+                        $f_input = process_string($op, $temp_sid, $oid, $mid, $jid, $type, $para);
+                        }
+                        $input = str_replace($f_temp, $f_input, $input);
+                        break;
                 }
-                $row = $cxjg->fetch_assoc();
-                $temp_sid = $row['sid'];
-                $op = str_replace(array("'", "\"\""), '0', $op);
-                $op = str_replace("f({$match})", "u", $f_temp);
-                if($temp_sid){
-                $f_input = process_string($op, $temp_sid, $oid, $mid, $jid, $type, $para);
-                }
-                $input = str_replace($f_temp, $f_input, $input);
             }
         }
     }
