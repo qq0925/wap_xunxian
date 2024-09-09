@@ -202,7 +202,7 @@ j=jineng=skills
 
 14、定义字符串类型的属性
 如：u.name={u.name}.{u.added_gongji}
-其中{u.added_gongji}假设是一个整数，如1234，那么这个人的名字就会被设置为如“吼天怪1234”，特别的，若是非变量值和eval复合运算需要加""比如u.name={u.name}."头号玩家"，u.name="{eval(v(u.name))}"."头号玩家"注意：使用+将会报错！。
+其中{u.added_gongji}假设是一个整数，如1234，那么这个人的名字就会被设置为如“吼天怪1234”，特别的，若是非变量值和eval复合运算需要加""比如u.name={u.name}."头号玩家"，u.name="{eval(v(u.name))}"."头号玩家",u.wb_id="n".{f(u.wb_id).id},注意：使用+将会报错！。
 
 15、表达式中的两个符号含义
 &&：并且

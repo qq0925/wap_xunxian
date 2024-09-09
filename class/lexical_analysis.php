@@ -1639,6 +1639,28 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             // 替换字符串中的变量
                             //$input = str_replace("{{$match}}", $op, $input);
                             break;
+                        case 'item_module':
+                            $attr3 = 'i'.$attr2;
+                            $sql = "SELECT * FROM system_item_module WHERE iid = ?";
+                            $stmt = $db->prepare($sql);
+                            $stmt->bind_param("s", $mid);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            
+                            if (!$result) {
+                                die('查询失败: ' . $db->error);
+                            }
+                            $row = $result->fetch_assoc();
+                            $row_result = $row[$attr3];
+                            if ($row_result === null ||$row_result ==='') {
+                                $op = "\"\""; // 或其他默认值
+                                }else{
+                            $op = nl2br($row_result);
+                                }
+                            $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                            // 替换字符串中的变量
+                            //$input = str_replace("{{$match}}", $op, $input);
+                            break;
                         case 'scene_oplayer':
                             if (strpos($attr2, "env.") === 0) {
                                 $attr3 = substr($attr2, 4); // 提取 "env." 后面的部分
@@ -2329,7 +2351,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         break;
                     case 'i':
                         $remain = substr($op, 1);
-                        $sql = "SELECT mid FROM system_item_module where iid = '$remain'";
+                        $sql = "SELECT iid FROM system_item_module where iid = '$remain'";
                         $cxjg = $db->query($sql);
                         if (!$cxjg) {
                         die('查询失败: ' . $db->error);
@@ -2339,7 +2361,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         $op = str_replace(array("'", "\"\""), '0', $op);
                         $op = str_replace("f({$match})", "o", $f_temp);
                         if($temp_iid){
-                        $f_input = process_string($op, $sid, 'item', $temp_iid, $jid, $type, $para);
+                        $f_input = process_string($op, $sid, 'item_module', $temp_iid, $jid, $type, $para);
                         }
                         $input = str_replace($f_temp, $f_input, $input);
                         break;
