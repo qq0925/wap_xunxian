@@ -63,6 +63,9 @@ if (!empty($text)){
         case '11':
             $module_type = 'game_main_page';
             break;
+        case '14':
+            $module_type = 'game_equip_detail_page';
+            break;
         default:
             break;
     }
@@ -112,6 +115,9 @@ if (!empty($text)){
         case '11':
             $module_type = 'game_main_page';
             break;
+        case '14':
+            $module_type = 'game_equip_detail_page';
+            break;
         default:
             break;
     }
@@ -155,6 +161,7 @@ $gm_game_pagemoduledefine_10 = $encode->encode("cmd=gm_game_pagemoduledefine&gm_
 $gm_game_pagemoduledefine_11 = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=11&sid=$sid");
 $gm_game_pagemoduledefine_12 = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=12&sid=$sid");
 $gm_game_pagemoduledefine_13 = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=13&sid=$sid");
+$gm_game_pagemoduledefine_14 = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=14&sid=$sid");
 $gm_game_pagemoduledefine_change_function_name = $encode->encode("cmd=gm_function_change&sid=$sid");
 
 if($gm_post_canshu == 0){
@@ -165,7 +172,8 @@ $gm_html = <<<HTML
 <a href="?cmd=$gm_game_pagemoduledefine_3">定义查看宠物页面模板</a><br/>
 <a href="?cmd=$gm_game_pagemoduledefine_4">定义查看物品页面模板</a><br/>
 <a href="?cmd=$gm_game_pagemoduledefine_5">定义查看玩家页面模板</a><br/>
-<a href="?cmd=$gm_game_pagemoduledefine_6">定义查看我的装备模板</a><br/>
+<a href="?cmd=$gm_game_pagemoduledefine_6">定义查看装备列表模板</a><br/>
+<a href="?cmd=$gm_game_pagemoduledefine_14">定义查看装备页面模板</a><br/>
 <a href="?cmd=$gm_game_pagemoduledefine_7">定义查看自己状态页面模板</a><br/>
 <a href="?cmd=$gm_game_pagemoduledefine_8">定义查看技能页面模板</a><br/>
 <a href="?cmd=$gm_game_pagemoduledefine_9">定义功能页面模板</a><br/>
@@ -449,7 +457,7 @@ HTML;
 }
 }
 $all = <<<HTML
-<p>定义查我的装备模板<br/>
+<p>定义查看装备列表模板<br/>
 ============<br/>
 $game_main<br/>
 ============<br/>
@@ -457,6 +465,59 @@ $game_main<br/>
 <a href="?cmd=$game_page_6_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_6_3">添加功能元素</a><br/>
 <a href="?cmd=$game_page_6_4">添加链接元素</a><br/><br/>
+HTML;
+}elseif ($gm_post_canshu == 14) {
+$encode = new \encode\encode();
+$player = new \player\player();
+$game_main = new \gm\gm();
+$game_page_14_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=14&main_type=1&sid=$sid");
+$game_page_14_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=14&main_type=2&sid=$sid");
+$game_page_14_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=14&main_type=3&sid=$sid");
+$game_page_14_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=14&main_type=4&sid=$sid");
+$player = \player\getplayer($sid,$dblj);
+$game_main = '';
+$get_main_page = \gm\get_equip_detail_page($dblj);
+$hangshu = 0;
+for ($i=0;$i<count($get_main_page);$i++){
+    $hangshu +=1;
+    $main_id = $get_main_page[$i]['id'];
+    $main_position = $get_main_page[$i]['position'];
+        if($main_position !=$hangshu){
+        $sql = "UPDATE game_equip_detail_page SET position = '$hangshu' where id = $main_id;";
+        $cxjg =$dblj->exec($sql);
+    }
+    $main_type = $get_main_page[$i]['type'];
+    $main_value = $get_main_page[$i]['value'];
+    $main_text = $get_main_page[$i]['target_text'];
+    $main_target_event = $get_main_page[$i]['target_event'];
+    $main_target_func = $get_main_page[$i]['target_func'];
+    $main_link_value = $get_main_page[$i]['link_value'];
+    $attr_url = $encode->encode("cmd=game_page_2&main_id=$main_id&gm_post_canshu=$gm_post_canshu&main_type=$main_type&target_func=$main_target_func&sid=$sid");
+    $order = array("\r\n", "\n", "\r");
+    $replace = "↓<br/>";
+    $original_value = $main_value; // 保存原始值
+    $main_value=str_replace($order, $replace, $main_value);
+    if ($original_value !== $main_value) {
+    // 替换发生了
+        $game_main .=<<<HTML
+<a href="?cmd=$attr_url" >$hangshu.$main_value</a>
+HTML;
+} else {
+    // 没有发生替换
+        $game_main .=<<<HTML
+<a href="?cmd=$attr_url" >$hangshu.$main_value</a>
+HTML;
+}
+}
+$all = <<<HTML
+<p>定义查看装备页面模板<br/>
+============<br/>
+$game_main<br/>
+============<br/>
+<a href="?cmd=$game_page_14_1">添加文本元素</a><br/>
+<a href="?cmd=$game_page_14_2">添加操作元素</a><br/>
+<a href="?cmd=$game_page_14_3">添加功能元素</a><br/>
+<a href="?cmd=$game_page_14_4">添加链接元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 7) {
 $encode = new \encode\encode();

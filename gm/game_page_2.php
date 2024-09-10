@@ -38,6 +38,9 @@ switch($gm_post_canshu){
     case '11':
         $get_main_page = \gm\get_main_page($dblj);
         break;
+    case '14':
+        $get_main_page = \gm\get_equip_detail_page($dblj);
+        break;
 }
 
 
@@ -81,6 +84,9 @@ if(!empty($main_id)){
             break; 
         case '11':
             $sql="select * from game_main_page where id='$main_id'";
+            break;
+        case '14':
+            $sql="select * from game_equip_detail_page where id='$main_id'";
             break;
     }
 $cxjg = $dblj->query($sql);
@@ -134,6 +140,9 @@ $op_type = 1;
             break;
         case '11':
             $sql = "SELECT MAX(id) AS max_id FROM game_main_page;";
+            break;
+        case '14':
+            $sql = "SELECT MAX(id) AS max_id FROM game_equip_detail_page;";
             break;
     }
     $cxjg = $dblj->query($sql);

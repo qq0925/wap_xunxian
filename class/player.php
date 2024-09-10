@@ -655,48 +655,19 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['iattack_value']);
-                \player\addplayersx('ugj',$sub_value,$sid,$dblj);
-                \player\addplayersx('ugj',$equip_add_canshu,$sid,$dblj);
+                $final = $equip_add_canshu + $sub_value;
+                \player\addplayersx('ugj',$final,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
-                $event_data = global_event_data_get(41,$dblj);
-                $event_cond = $event_data['system_event']['cond'];
-                $event_cmmt = $event_data['system_event']['cmmt'];
-                $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$eq_true_id);
-                if(is_null($register_triggle)){
-                    $register_triggle =1;
-                }
-                if(!$register_triggle){
-                }elseif($register_triggle){
-                if(!empty($event_data['system_event']['link_evs'])){
-                    $system_event_evs = $event_data["system_event_evs"];
-                    foreach ($system_event_evs as $index => $event) {
-                    $step_cond = $event['cond'];
-                    $step_cmmt = $event['cmmt'];
-                    $step_cmmt2 = $event['cmmt2'];
-                    $step_s_attrs = $event['s_attrs'];
-                    $step_m_attrs = $event['m_attrs'];
-                    $step_items = $event['items'];
-                    $step_a_skills = $event['a_skills'];
-                    $step_r_skills = $event['r_skills'];
-                    $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$eq_true_id);
-                    if(is_null($step_triggle)){
-                    $step_triggle =1;
-                        }
-                    if(!$step_triggle){
-                        echo $step_cmmt2."<br/>";
-                        }elseif($step_triggle){
-                        if($step_cmmt){
-                        echo $step_cmmt."<br/>";
-                        }
-                        $ret = attrsetting($step_s_attrs,$sid,'item',$eq_true_id);
-                        $ret = attrchanging($step_m_attrs,$sid,'item',$eq_true_id);
-                        $ret = itemchanging($step_items,$sid,'item',$eq_true_id);
-                        $ret = skillschanging($step_a_skills,$sid,1,'item',$eq_true_id);
-                        $ret = skillschanging($step_r_skills,$sid,2,'item',$eq_true_id);
-                        }
+                
+                $mosaic_list = \player\get_player_equip_mosaic_once($item_true_id,$sid,$dblj)['$eq_true_id'];
+                if($mosaic_list){
+                    $mosaic_ones = explode("|",$mosaic_list);
+                    foreach ($mosaic_ones as $mosaic_one){
+                    \player\exec_global_event(42,'item_module',$mosaic_one,$sid,$dblj);
                     }
                 }
-                }
+                
+                \player\exec_global_event(41,'item',$eq_true_id,$sid,$dblj);//卸装事件
             } else {
                 // 记录不存在，插入新记录
                 $sql = "INSERT INTO system_equip_user (eqsid, eq_true_id, eq_type, equiped_pos_id) VALUES (?, ?, 1, ?)";
@@ -748,46 +719,19 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['irecovery_value']);
-                \player\addplayersx('ufy',$sub_value,$sid,$dblj);
-                \player\addplayersx('ufy',$equip_add_canshu,$sid,$dblj);
+                $final = $equip_add_canshu + $sub_value;
+                \player\addplayersx('ufy',$final,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
-                $event_data = global_event_data_get(41,$dblj);
-                $event_cond = $event_data['system_event']['cond'];
-                $event_cmmt = $event_data['system_event']['cmmt'];
-                $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$eq_true_id);
-                if(is_null($register_triggle)){
-                    $register_triggle =1;
-                }
-                if(!$register_triggle){
-                }elseif($register_triggle){
-                if(!empty($event_data['system_event']['link_evs'])){
-                    $system_event_evs = $event_data["system_event_evs"];
-                    foreach ($system_event_evs as $index => $event) {
-                    $step_cond = $event['cond'];
-                    $step_cmmt = $event['cmmt'];
-                    $step_cmmt2 = $event['cmmt2'];
-                    $step_s_attrs = $event['s_attrs'];
-                    $step_m_attrs = $event['m_attrs'];
-                    $step_items = $event['items'];
-                    $step_a_skills = $event['a_skills'];
-                    $step_r_skills = $event['r_skills'];
-                    $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$eq_true_id);
-                    if(is_null($step_triggle)){
-                    $step_triggle =1;
-                        }
-                    if(!$step_triggle){
-                        echo $step_cmmt2."<br/>";
-                        }elseif($step_triggle){
-                        echo $step_cmmt."<br/>";
-                        $ret = attrsetting($step_s_attrs,$sid,'item',$eq_true_id);
-                        $ret = attrchanging($step_m_attrs,$sid,'item',$eq_true_id);
-                        $ret = itemchanging($step_items,$sid,'item',$eq_true_id);
-                        $ret = skillschanging($step_a_skills,$sid,1,'item',$eq_true_id);
-                        $ret = skillschanging($step_r_skills,$sid,2,'item',$eq_true_id);
-                        }
+                
+                $mosaic_list = \player\get_player_equip_mosaic_once($item_true_id,$sid,$dblj)['$eq_true_id'];
+                if($mosaic_list){
+                    $mosaic_ones = explode("|",$mosaic_list);
+                    foreach ($mosaic_ones as $mosaic_one){
+                    \player\exec_global_event(42,'item_module',$mosaic_one,$sid,$dblj);
                     }
                 }
-                }
+                
+                \player\exec_global_event(41,'item',$eq_true_id,$sid,$dblj);//卸装事件
             } else {
                 // 记录不存在，插入新记录
                 $sql = "INSERT INTO system_equip_user (eqsid, eq_true_id, eq_type, equiped_pos_id) VALUES (?, ?, 2, ?)";

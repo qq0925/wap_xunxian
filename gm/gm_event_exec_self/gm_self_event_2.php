@@ -46,6 +46,9 @@ switch ($gm_post_canshu) {
     case '11':
         $module_type = 'game_main_page';
         break;
+    case '14':
+        $module_type = 'game_equip_detail_page';
+        break;
     case 'skill_default_use':
         $module_type = 'system_skill_module';
         break;
@@ -169,7 +172,7 @@ if($add_event ==1){
     $max_id = $row['max_id'] +1;
     $sql = "insert into system_event_self(`belong`,`id`,`desc`,`module_id`)values('$main_id','$max_id','$add_value','$gm_post_canshu')";
     $cxjg = $dblj->exec($sql);
-    if($gm_post_canshu >=1 &&$gm_post_canshu <=11){
+    if($gm_post_canshu >=1 &&$gm_post_canshu <=11||$gm_post_canshu ==14){
     $sql = "update `$module_type` set target_event = '$max_id' where id = '$main_id'";
     }elseif($gm_post_canshu =='skill_default_use' ||$gm_post_canshu =='skill_use'){
     $sql = "update `$module_type` set jevent_use_id = '$max_id' where jid = '$main_id'";
@@ -233,7 +236,7 @@ $main_id = $rows[0]['belong'];
 $gm_post_canshu = $rows[0]['module_id'];
 
 
-if($gm_post_canshu >=1 &&$gm_post_canshu <=11){
+if($gm_post_canshu >=1 &&$gm_post_canshu <=11||$gm_post_canshu ==14){
 $gm_main = $encode->encode("cmd=game_page_2&main_id=$main_id&gm_post_canshu=$gm_post_canshu&sid=$sid");
 }elseif($gm_post_canshu =='skill_default_use'||$gm_post_canshu =='skill_default_up'){
 $gm_main = $encode->encode("cmd=gm_skill_def&skill_post_canshu=5&sid=$sid");

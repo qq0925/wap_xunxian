@@ -1221,6 +1221,9 @@ echo $refresh_html;
                     case '11':
                         $sql = "DELETE FROM game_main_page WHERE id = '$delete_sure_id'";
                         break;
+                    case '14':
+                        $sql = "DELETE FROM game_equip_detail_page WHERE id = '$delete_sure_id'";
+                        break;
                 }
             $cxjg =$dblj->exec($sql);
             $sql = "SELECT id from system_event_self where belong = '$delete_sure_id' and module_id = '$gm_post_canshu'";
@@ -2916,7 +2919,7 @@ echo $noticeContent;
     $gm_cheat = $encode->encode("cmd=gm_cheat&sid=$sid");
     if($player->uis_designer ==1){
     $gm_cheat_html .=<<<HTML
-<br/><a href="?cmd=$gm_cheat">GM修改器</a><br/>
+<a href="?cmd=$gm_cheat">GM修改器</a><br/>
 HTML;
 }
 echo $gm_cheat_html;
@@ -2933,14 +2936,12 @@ $a5 = $cmid;
 //将cmd最小最大值写入
 $end_time = microtime(true);
 $execution_time = ceil(($end_time - $start_time) * 1000);// 单位是毫秒
-if($player->uis_designer ==0){
 echo "页面执行时间为：{$execution_time} 毫秒<br/>";
-}
+echo 'Memory usage: ' . memory_get_usage() . ' bytes';
 if($player->uis_designer ==1){
     $gm_ret = $encode->encode("cmd=gm_scene_new&sid=$sid");
     $gm_other_code = <<<HTML
 <a href="?cmd={$gm_ret}">前往场景</a><br/>
-页面执行时间为：{$execution_time} 毫秒<br/>
 当前php路径：{$currentFilePath}<br/>
 a4的值赋值给xcmid：{$a4}<br/>
 cmid值赋值给a5的值赋值给dcmid：{$a5}<br/>
@@ -2967,9 +2968,4 @@ $iniFile->addItem('超链接值', [$q3 => $q4]);
 // echo '<pre>';
 // print_r(get_defined_vars());
 // echo '</pre>';
-
-echo 'Memory usage: ' . memory_get_usage() . ' bytes';
-
-
-
 ?>

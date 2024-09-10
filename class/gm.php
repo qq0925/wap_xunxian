@@ -224,6 +224,13 @@ function get_equip_page($dblj){
     return $ret;
 }
 
+function get_equip_detail_page($dblj){
+    $sql = "select * from `game_equip_detail_page` ORDER BY position ASC;";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
+    return $ret;    
+}
+
 function get_skill_page($dblj){
     $sql = "select * from `game_skill_page` ORDER BY position ASC;";
     $cxjg = $dblj->query($sql);

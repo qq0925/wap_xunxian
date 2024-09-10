@@ -33,6 +33,19 @@ try {
     echo "数据库错误: " . $e->getMessage();
 }
 
+
+// 检查是否存在 game_equip_detail_page 表
+$query = "SHOW TABLES LIKE 'game_equip_detail_page'";
+$stmt = $dblj->prepare($query);
+$stmt->execute();
+
+if ($stmt->rowCount() == 0) {
+    // 表不存在，复制 game_equip_page 表的结构
+    $createTableQuery = "CREATE TABLE game_equip_detail_page LIKE game_equip_page";
+    $dblj->exec($createTableQuery);
+}
+
+
     // 检查表是否存在 designer 字段
     $sql = "SHOW COLUMNS FROM userinfo LIKE 'designer'";
     $stmt = $dblj->prepare($sql);

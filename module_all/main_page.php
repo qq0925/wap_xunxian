@@ -349,7 +349,7 @@ $gm_html = <<<HTML
 HTML;
 }
 $all = <<<HTML
-$game_main<br/>
+$game_main
 $gm_html
 HTML;
 

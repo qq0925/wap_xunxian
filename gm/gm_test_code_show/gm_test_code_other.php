@@ -15,4 +15,4 @@ $text = $test_code_text;
             }
         }
     </script>
-  <button onclick="toggleText_4()">尾部信息</button><div id="textDiv_4" style="display: block;"><?php echo($text); ?></div><br/>
+  <button onclick="toggleText_4()">尾部信息</button><div id="textDiv_4" style="display: none;"><?php echo($text); ?></div><br/>
