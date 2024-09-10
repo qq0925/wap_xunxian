@@ -16,6 +16,7 @@ $stmt = $dblj->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 for($i=1;$i<@count($result) +1;$i++){
+unset($quick_cancel);
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
