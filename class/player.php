@@ -659,11 +659,11 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 \player\addplayersx('ugj',$final,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
                 
-                $mosaic_list = \player\get_player_equip_mosaic_once($item_true_id,$sid,$dblj)['$eq_true_id'];
+                $mosaic_list = \player\get_player_equip_mosaic_once($eq_true_id,$sid,$dblj)['equip_mosaic'];
                 if($mosaic_list){
                     $mosaic_ones = explode("|",$mosaic_list);
                     foreach ($mosaic_ones as $mosaic_one){
-                    \player\exec_global_event(42,'item_module',$mosaic_one,$sid,$dblj);
+                    \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                     }
                 }
                 
@@ -723,11 +723,11 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 \player\addplayersx('ufy',$final,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
                 
-                $mosaic_list = \player\get_player_equip_mosaic_once($item_true_id,$sid,$dblj)['$eq_true_id'];
+                $mosaic_list = \player\get_player_equip_mosaic_once($eq_true_id,$sid,$dblj)['equip_mosaic'];
                 if($mosaic_list){
                     $mosaic_ones = explode("|",$mosaic_list);
                     foreach ($mosaic_ones as $mosaic_one){
-                    \player\exec_global_event(42,'item_module',$mosaic_one,$sid,$dblj);
+                    \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                     }
                 }
                 
