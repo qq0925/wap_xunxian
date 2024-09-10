@@ -148,7 +148,7 @@ $itemname = \lexical_analysis\color_string($itemname);
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $useitem = $encode->encode("cmd=item_op_basic&target_event=use&canshu=$canshu&list_page=$list_page&ucmd=$cmid&item_true_id=$item_true_id&iid=$itemid&parents_cmd=iteminfo_new&sid=$sid");
-        $removeitem = $encode->encode("cmd=item_op_basic&target_event=remove&ucmd=$cmid&item_true_id=$item_true_id&iid=$itemid&parents_cmd=iteminfo_new&sid=$sid");
+        $removeitem = $encode->encode("cmd=item_op_basic&target_event=remove&canshu=$canshu&list_page=$list_page&ucmd=$cmid&item_true_id=$item_true_id&iid=$itemid&parents_cmd=iteminfo_new&sid=$sid");
         $sale_state = \player\getitem_sale_state($item_true_id,$sid,$dblj);
         if($item_iequiped ==1&&$sale_state==0){
         $itemhtml .="{$isale_text}[$hangshu]<a href='?cmd=$chakanitem'>{$itemname}x{$itemsum}</a> [装] <a href='?cmd=$removeitem'>卸下</a><br/>";

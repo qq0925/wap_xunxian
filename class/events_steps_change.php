@@ -198,7 +198,7 @@ HTML;
                             
                             if($step_dests !=''){
                             $return_canshu = 1;
-                            $ret_5 = destsing($step_dests,$sid);
+                            $ret_5 = destsing($step_dests,$sid,$oid,$mid);
                             $cmd = 'gm_scene_new';
                             if(is_numeric($ret_5)){
                             $tps_newmid = $ret_5;

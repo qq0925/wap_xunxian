@@ -2165,7 +2165,7 @@ echo $refresh_html;
                                 \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                                 }
                             }
-                            \player\exec_global_event(42,'item',$item_true_id,$sid,$dblj);
+                            \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
                         break;
                     case '防具':
                         \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
@@ -2179,7 +2179,7 @@ echo $refresh_html;
                                     
                                 }
                             }
-                        \player\exec_global_event(42,'item',$item_true_id,$sid,$dblj);
+                        \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
                         break;
                     }
                     break;

@@ -1582,11 +1582,11 @@ if(!empty($event_data['system_event']['link_evs'])){
             if($step_cmmt){
         echo $step_cmmt."<br/>";
             }
-        $ret = attrsetting($step_s_attrs,$sid,'item_module',$mosaic_one);
-        $ret = attrchanging($step_m_attrs,$sid,'item_module',$mosaic_one);
-        $ret = itemchanging($step_items,$sid,'item_module',$mosaic_one);
-        $ret = skillschanging($step_a_skills,$sid,1,'item_module',$mosaic_one);
-        $ret = skillschanging($step_r_skills,$sid,2,'item_module',$mosaic_one);
+        $ret = attrsetting($step_s_attrs,$sid,$event_type,$event_obj);
+        $ret = attrchanging($step_m_attrs,$sid,$event_type,$event_obj);
+        $ret = itemchanging($step_items,$sid,$event_type,$event_obj);
+        $ret = skillschanging($step_a_skills,$sid,1,$event_type,$event_obj);
+        $ret = skillschanging($step_r_skills,$sid,2,$event_type,$event_obj);
         }
     }
 }

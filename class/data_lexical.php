@@ -103,6 +103,7 @@ foreach ($keyValuePairs as $pair) {
         //     }
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
+        $ele_2 = str_replace(array("'", "\""), '', $ele_2);
         switch ($ele_1_1) {
             case 'u':
                 if(strpos($ele_1_2, "c_msg") === 0){
@@ -345,9 +346,10 @@ $sid = $old_sid;
         //     $ele_1_2 = $parts[1];// 小数点右边的内容
         //     } else {
         //     echo "无法匹配到小数点 '.'<br/>";
-        //     }
+        //     };
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
+        $ele_2 = str_replace(array("'", "\""), '', $ele_2);
         switch ($ele_1_1) {
             case 'u':
                 $sql = "select name,if_show from gm_game_attr where value_type =1 and id = '$ele_1_2'";
@@ -807,9 +809,13 @@ function destsing($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
 global $encode;
 $db = DB::conn();
-
-$mid = \lexical_analysis\process_string($input,$sid);
+$mid = \lexical_analysis\process_string($input,$sid,$oid,$mid);
 $mid = str_replace(array("'", "\""), '', $mid);
+
+if(!is_numeric($mid)){
+    $mid = ltrim($mid,'s');
+}
+
 $sql = "SELECT COUNT(*) AS count FROM system_map WHERE mid = ?";
 $stmt = $db->prepare($sql);
 

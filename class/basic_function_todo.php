@@ -802,7 +802,7 @@ HTML;
 
 function near_exit($cmd,$page_id,$sid,$dblj,$value,$para,&$cmid){
     global $encode;
-    $exit_list = get_exit_list($sid,$dblj,$para,$cmid);
+    $exit_list = get_exit_list($sid,$dblj,$para,$value,$cmid);
     return $exit_list;
 }
 
@@ -1146,7 +1146,7 @@ return $lthtml;
 }
 
 
-function get_exit_list($sid,$dblj,$para,&$cmid){
+function get_exit_list($sid,$dblj,$para,$value,&$cmid){
 global $encode;
 $player = player\getplayer($sid,$dblj);
 $sql = "SELECT nowmid FROM game1 WHERE sid = :sid";
@@ -1167,13 +1167,15 @@ $downmid = player\getmid($clmid->mdown,$dblj);
 $leftmid = player\getmid($clmid->mleft,$dblj);
 $rightmid = player\getmid($clmid->mright,$dblj);
 
+
+if(!$value){
 if ($upmid->mname!='' && $para ==4){
     $upmid_mname =\lexical_analysis\color_string($upmid->mname);
     $cmid = $cmid + 1;
     $cdid[] = $cmid;    
     $clj[] = $cmd;
     $lukouhtml .= <<<HTML
-    北:<a href="?cmd=$upmidlj">$upmid_mname ↑</a><br/>
+北:<a href="?cmd=$upmidlj">$upmid_mname ↑</a><br/>
 HTML;
 }
 
@@ -1183,7 +1185,7 @@ if ($leftmid->mname!='' && $para ==3){
     $cdid[] = $cmid;    
     $clj[] = $cmd;    
     $lukouhtml .= <<<HTML
-    西:<a href="?cmd=$leftmidlj">$leftmid_mname ←</a><br/>
+西:<a href="?cmd=$leftmidlj">$leftmid_mname ←</a><br/>
 HTML;
 }
 
@@ -1193,7 +1195,7 @@ if ($rightmid->mname!='' && $para ==1){
     $cdid[] = $cmid;    
     $clj[] = $cmd;    
     $lukouhtml .= <<<HTML
-    东:<a href="?cmd=$rightmidlj">$rightmid_mname →</a><br/>
+东:<a href="?cmd=$rightmidlj">$rightmid_mname →</a><br/>
 HTML;
 }
 
@@ -1203,8 +1205,49 @@ if ($downmid->mname!='' && $para ==2){
     $cdid[] = $cmid;    
     $clj[] = $cmd;    
     $lukouhtml .= <<<HTML
-    南:<a href="?cmd=$downmidlj">$downmid_mname ↓</a><br/>
+南:<a href="?cmd=$downmidlj">$downmid_mname ↓</a><br/>
 HTML;
+}
+}
+else{
+if ($upmid->mname!='' && $para ==4){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    $lukouhtml .= <<<HTML
+<a href="?cmd=$upmidlj">{$value}</a>
+HTML;
+}
+
+if ($leftmid->mname!='' && $para ==3){
+    $leftmid_mname =\lexical_analysis\color_string($leftmid->mname);
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    $lukouhtml .= <<<HTML
+<a href="?cmd=$leftmidlj">{$value}</a>
+HTML;
+}
+
+if ($rightmid->mname!='' && $para ==1){
+    $rightmid_mname =\lexical_analysis\color_string($rightmid->mname);
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;    
+    $clj[] = $cmd;    
+    $lukouhtml .= <<<HTML
+<a href="?cmd=$rightmidlj">{$value}</a>
+HTML;
+}
+
+if ($downmid->mname!='' && $para ==2){
+    $downmid_mname =\lexical_analysis\color_string($downmid->mname);
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;    
+    $clj[] = $cmd;    
+    $lukouhtml .= <<<HTML
+<a href="?cmd=$downmidlj">{$value}</a>
+HTML;
+}
 }
 return $lukouhtml;
 }
@@ -1652,7 +1695,7 @@ if ($equipbid) {
         if ($row) {
             $equipbname = \lexical_analysis\color_string($row['iname']);
             $removeitem = $encode->encode("cmd=equip_op_basic&target_event=remove&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
-            $ckequipbinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&mid=$equipbid&sid=$sid");
+            $ckequipbinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
             $equipbhtml = "<a href='?cmd=$ckequipbinfo'>{$equipbname}</a><a href='?cmd=$removeitem'>[卸下]</a>";
         }
     }

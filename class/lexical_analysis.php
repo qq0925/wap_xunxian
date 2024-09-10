@@ -1459,6 +1459,51 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                 case 'o':
                     switch($oid){
                         case 'scene':
+                            // 匹配字符串格式 exit_x.xx，不限制.xx的具体值
+                            // 匹配字符串格式 exit_x.xx
+                            if (preg_match('/exit_([nswe])\.(.+)/', $attr2, $matches)) {
+                                $exitType = $matches[1];  // 匹配到的x (n, s, w, e)
+                                $xxValue = 'm' . $matches[2];   // 匹配到的.xx的值加上'm'前缀
+                                // 将x映射到对应的字段
+                                $fieldMapping = [
+                                    'n' => 'mup',
+                                    's' => 'mdown',
+                                    'w' => 'mleft',
+                                    'e' => 'mright',
+                                ];
+                            
+                                $field = $fieldMapping[$exitType];  // 获取对应字段名称
+                            
+                                // 查询system_map表，获取对应字段（up, down, left, right）对应的mid
+                                $sql = "SELECT $field FROM system_map WHERE mid = ?";
+                                $stmt = $db->prepare($sql);
+                                $stmt->bind_param('i', $mid);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                
+                                if ($result && $row = $result->fetch_assoc()) {
+                                    $targetMid = $row[$field];
+                            
+                                    // 根据targetMid获取.xx字段的值
+                                    $sql2 = "SELECT $xxValue FROM system_map WHERE mid = ?";
+                                    $stmt2 = $db->prepare($sql2);
+                                    $stmt2->bind_param('i', $targetMid);
+                                    $stmt2->execute();
+                                    $result2 = $stmt2->get_result();
+                            
+                                    if ($result2 && $row2 = $result2->fetch_assoc()) {
+                                        if($xxValue =='mid'){
+                                        $op = 's'.$row2[$xxValue];
+                                        }else{
+                                        $op = $row2[$xxValue];
+                                        }
+                                    }
+                                }
+                                if ($op === null||$op =='') {
+                            $op = "\"\""; // 或其他默认值
+                            }
+                            }
+                            else{
                             $attr3 = 'm'.$attr2;
                             $sql = "SELECT * FROM system_map WHERE mid = ?";
                             $stmt = $db->prepare($sql);
@@ -1473,6 +1518,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                 $op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
+                                }
                             if ($op === null||$op =='') {
                             $op = "\"\""; // 或其他默认值
                             }
@@ -2329,7 +2375,6 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 if($op =='' || $op == "" || $op ==null){
                     $op = "\"\"";
                 }
-                // var_dump($match);
                 // var_dump($op);
                 // 替换字符串中的变量
                 switch ($op[0]) {
