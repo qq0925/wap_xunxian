@@ -23,7 +23,7 @@ if($sure_new_mosaic_canshu){
     $event_data = global_event_data_get(42,$dblj);
     $event_cond = $event_data['system_event']['cond'];
     $event_cmmt = $event_data['system_event']['cmmt'];
-    $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$insert_mosaic);
+    $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item_module',$insert_mosaic);
     if(is_null($register_triggle)){
         $register_triggle =1;
     }
@@ -40,7 +40,7 @@ if($sure_new_mosaic_canshu){
         $step_items = $event['items'];
         $step_a_skills = $event['a_skills'];
         $step_r_skills = $event['r_skills'];
-        $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$insert_mosaic);
+        $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item_module',$insert_mosaic);
         if(is_null($step_triggle)){
         $step_triggle =1;
             }
@@ -48,11 +48,11 @@ if($sure_new_mosaic_canshu){
             echo $step_cmmt2."<br/>";
             }elseif($step_triggle){
             echo $step_cmmt."<br/>";
-            $ret = attrsetting($step_s_attrs,$sid,'item',$insert_mosaic);
-            $ret = attrchanging($step_m_attrs,$sid,'item',$insert_mosaic);
-            $ret = itemchanging($step_items,$sid,'item',$insert_mosaic);
-            $ret = skillschanging($step_a_skills,$sid,1,'item',$insert_mosaic);
-            $ret = skillschanging($step_r_skills,$sid,2,'item',$insert_mosaic);
+            $ret = attrsetting($step_s_attrs,$sid,'item_module',$insert_mosaic);
+            $ret = attrchanging($step_m_attrs,$sid,'item_module',$insert_mosaic);
+            $ret = itemchanging($step_items,$sid,'item_module',$insert_mosaic);
+            $ret = skillschanging($step_a_skills,$sid,1,'item_module',$insert_mosaic);
+            $ret = skillschanging($step_r_skills,$sid,2,'item_module',$insert_mosaic);
             }
         }
                 
@@ -79,7 +79,7 @@ if($sure_old_mosaic_canshu){
     $event_data = global_event_data_get(42,$dblj);
     $event_cond = $event_data['system_event']['cond'];
     $event_cmmt = $event_data['system_event']['cmmt'];
-    $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$insert_mosaic);
+    $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item_module',$insert_mosaic);
     if(is_null($register_triggle)){
         $register_triggle =1;
     }
@@ -96,7 +96,7 @@ if($sure_old_mosaic_canshu){
         $step_items = $event['items'];
         $step_a_skills = $event['a_skills'];
         $step_r_skills = $event['r_skills'];
-        $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$insert_mosaic);
+        $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item_module',$insert_mosaic);
         if(is_null($step_triggle)){
         $step_triggle =1;
             }
@@ -104,11 +104,11 @@ if($sure_old_mosaic_canshu){
             echo $step_cmmt2."<br/>";
             }elseif($step_triggle){
             echo $step_cmmt."<br/>";
-            $ret = attrsetting($step_s_attrs,$sid,'item',$insert_mosaic);
-            $ret = attrchanging($step_m_attrs,$sid,'item',$insert_mosaic);
-            $ret = itemchanging($step_items,$sid,'item',$insert_mosaic);
-            $ret = skillschanging($step_a_skills,$sid,1,'item',$insert_mosaic);
-            $ret = skillschanging($step_r_skills,$sid,2,'item',$insert_mosaic);
+            $ret = attrsetting($step_s_attrs,$sid,'item_module',$insert_mosaic);
+            $ret = attrchanging($step_m_attrs,$sid,'item_module',$insert_mosaic);
+            $ret = itemchanging($step_items,$sid,'item_module',$insert_mosaic);
+            $ret = skillschanging($step_a_skills,$sid,1,'item_module',$insert_mosaic);
+            $ret = skillschanging($step_r_skills,$sid,2,'item_module',$insert_mosaic);
             }
         }
                 
@@ -157,7 +157,7 @@ echo "拆卸成功!<br/>";
     $event_data = global_event_data_get(43,$dblj);
     $event_cond = $event_data['system_event']['cond'];
     $event_cmmt = $event_data['system_event']['cmmt'];
-    $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item',$insert_mosaic);
+    $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,'item_module',$diss_this_mosaic_id);
     if(is_null($register_triggle)){
         $register_triggle =1;
     }
@@ -174,7 +174,7 @@ echo "拆卸成功!<br/>";
         $step_items = $event['items'];
         $step_a_skills = $event['a_skills'];
         $step_r_skills = $event['r_skills'];
-        $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item',$insert_mosaic);
+        $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,'item_module',$diss_this_mosaic_id);
         if(is_null($step_triggle)){
         $step_triggle =1;
             }
@@ -182,18 +182,18 @@ echo "拆卸成功!<br/>";
             echo $step_cmmt2."<br/>";
             }elseif($step_triggle){
             echo $step_cmmt."<br/>";
-            $ret = attrsetting($step_s_attrs,$sid,'item',$insert_mosaic);
-            $ret = attrchanging($step_m_attrs,$sid,'item',$insert_mosaic);
-            $ret = itemchanging($step_items,$sid,'item',$insert_mosaic);
-            $ret = skillschanging($step_a_skills,$sid,1,'item',$insert_mosaic);
-            $ret = skillschanging($step_r_skills,$sid,2,'item',$insert_mosaic);
+            $ret = attrsetting($step_s_attrs,$sid,'item_module',$diss_this_mosaic_id);
+            $ret = attrchanging($step_m_attrs,$sid,'item_module',$diss_this_mosaic_id);
+            $ret = itemchanging($step_items,$sid,'item_module',$diss_this_mosaic_id);
+            $ret = skillschanging($step_a_skills,$sid,1,'item_module',$diss_this_mosaic_id);
+            $ret = skillschanging($step_r_skills,$sid,2,'item_module',$diss_this_mosaic_id);
             }
         }
                 
     }
     }
 
-    \player\additem($sid,$equip_mosaic,1,$dblj);
+    \player\additem($sid,$diss_this_mosaic_id,1,$dblj);
         }
     }
 } else {
