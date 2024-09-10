@@ -243,9 +243,9 @@ return $row;
 
 function get_player_all_mosaic($type,$sid,$dblj){
     if($type =="兵器"){
-$sql = "SELECT m.iname,m.iid,i.item_true_id,i.iequiped,i.icount FROM system_item_module m JOIN system_item i ON m.iid = i.iid WHERE i.sid = '$sid' and i.iequiped =0 and m.itype = '兵器镶嵌物' and i.icount >0";
+$sql = "SELECT m.iname,m.iid,i.item_true_id,i.iequiped,i.icount FROM system_item_module m JOIN system_item i ON m.iid = i.iid WHERE i.sid = '$sid' and i.isale_state !=1 and m.itype = '兵器镶嵌物' and i.icount >0";
 }else{
-$sql = "SELECT m.iname,m.iid,i.item_true_id,i.iequiped,i.icount FROM system_item_module m JOIN system_item i ON m.iid = i.iid WHERE i.sid = '$sid' and i.iequiped =0 and m.itype = '防具镶嵌物' and i.icount >0";
+$sql = "SELECT m.iname,m.iid,i.item_true_id,i.iequiped,i.icount FROM system_item_module m JOIN system_item i ON m.iid = i.iid WHERE i.sid = '$sid' and i.isale_state !=1 and m.itype = '防具镶嵌物' and i.icount >0";
 }
 $cxjg = $dblj->query($sql);
 $row = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
@@ -1602,4 +1602,50 @@ function getlp_detail($lp_id,$dblj){
     $retl->bindColumn("lp_desc",$lp->lp_desc);
     $retl->fetch(\PDO::FETCH_ASSOC);
     return $lp;
+    
 }
+
+function exec_global_event($event_id,$event_type,$event_obj,$sid,$dblj){
+$event_data = global_event_data_get($event_id,$dblj);
+$event_cond = $event_data['system_event']['cond'];
+$event_cmmt = $event_data['system_event']['cmmt'];
+$register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,$event_type,$event_obj);
+if(is_null($register_triggle)){
+    $register_triggle =1;
+}
+if(!$register_triggle){
+}elseif($register_triggle){
+if(!empty($event_data['system_event']['link_evs'])){
+    $system_event_evs = $event_data["system_event_evs"];
+    foreach ($system_event_evs as $index => $event) {
+    $step_cond = $event['cond'];
+    $step_cmmt = $event['cmmt'];
+    $step_cmmt2 = $event['cmmt2'];
+    $step_s_attrs = $event['s_attrs'];
+    $step_m_attrs = $event['m_attrs'];
+    $step_items = $event['items'];
+    $step_a_skills = $event['a_skills'];
+    $step_r_skills = $event['r_skills'];
+    $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,$event_type,$event_obj);
+    if(is_null($step_triggle)){
+    $step_triggle =1;
+        }
+    if(!$step_triggle){
+        if($step_cmmt2){
+        echo $step_cmmt2."<br/>";
+        }
+        }elseif($step_triggle){
+            if($step_cmmt){
+        echo $step_cmmt."<br/>";
+            }
+        $ret = attrsetting($step_s_attrs,$sid,'item_module',$mosaic_one);
+        $ret = attrchanging($step_m_attrs,$sid,'item_module',$mosaic_one);
+        $ret = itemchanging($step_items,$sid,'item_module',$mosaic_one);
+        $ret = skillschanging($step_a_skills,$sid,1,'item_module',$mosaic_one);
+        $ret = skillschanging($step_r_skills,$sid,2,'item_module',$mosaic_one);
+        }
+    }
+}
+}
+}
+

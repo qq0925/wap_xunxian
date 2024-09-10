@@ -350,10 +350,11 @@ $sid = $old_sid;
         @$ele_2 = eval("return $ele_2;");
         switch ($ele_1_1) {
             case 'u':
-                $sql = "select name from gm_game_attr where value_type =1 and id = '$ele_1_2'";
+                $sql = "select name,if_show from gm_game_attr where value_type =1 and id = '$ele_1_2'";
                 $result = $db->query($sql);
                 $row = $result->fetch_assoc();
                 $attr_name = $row['name'];
+                $attr_show = $row['if_show'];
                 $ele_1_2 = $ele_1_1.$ele_1_2;
                 // 检查字段是否存在
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
@@ -372,19 +373,19 @@ $sid = $old_sid;
                 }
                 include "pdo.php";
                 if($echo_type !="self"){
-                if($ele_2 >=0 && $attr_name){
+                if($ele_2 >=0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
                 \player\update_message_sql($sid,$dblj,$echo_mess);
-                }elseif($ele_2 <0 && $attr_name){
+                }elseif($ele_2 <0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}{$ele_2}";
                 \player\update_message_sql($sid,$dblj,$echo_mess);
                 }
                 }else{
-                if($ele_2 >=0 && $attr_name){
+                if($ele_2 >=0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
                 echo $echo_mess."<br/>";
                 \player\update_message_sql($sid,$dblj,$echo_mess,1);
-                }elseif($ele_2 <0 && $attr_name){
+                }elseif($ele_2 <0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}{$ele_2}";
                 echo $echo_mess."<br/>";
                 \player\update_message_sql($sid,$dblj,$echo_mess,1);
