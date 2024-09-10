@@ -655,8 +655,8 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['iattack_value']);
-                $final = $equip_add_canshu + $sub_value;
-                \player\addplayersx('ugj',$final,$sid,$dblj);
+                \player\addplayersx('ugj',$sub_value,$sid,$dblj);
+                \player\addplayersx('ugj',$equip_add_canshu,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
                 
                 $mosaic_list = \player\get_player_equip_mosaic_once($eq_true_id,$sid,$dblj)['equip_mosaic'];
@@ -719,8 +719,8 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['irecovery_value']);
-                $final = $equip_add_canshu + $sub_value;
-                \player\addplayersx('ufy',$final,$sid,$dblj);
+                \player\addplayersx('ufy',$sub_value,$sid,$dblj);
+                \player\addplayersx('ufy',$equip_add_canshu,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
                 
                 $mosaic_list = \player\get_player_equip_mosaic_once($eq_true_id,$sid,$dblj)['equip_mosaic'];
