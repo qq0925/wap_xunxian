@@ -1,6 +1,6 @@
 <?php
 include 'pdo.php';
-$out_book = $encode->encode("cmd=item_html&ucmd=$cmid&sid=$sid");
+$out_book = $encode->encode("cmd=item_html&canshu=书籍&ucmd=$cmid&sid=$sid");
 
 if(!function_exists('mb_str_split')){
 function mb_str_split($string, $length = 1) {

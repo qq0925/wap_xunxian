@@ -2013,14 +2013,23 @@ echo $refresh_html;
             $iname = $item->iname;
             $ino_out = $item->ino_out;
             $iweight = $item->iweight;
-            if($canshu =="全部" || !$canshu){
-            $canshu = "全部";
+            // 确定$canshu的值
+            if($canshu!="全部"||!$canshu){
+            if ($itype == "消耗品") {
+                $canshu = "药品";
+            } elseif ($itype == "兵器" || $itype == "防具") {
+                $canshu = "装备";
+            } elseif ($itype == "兵器镶嵌物" || $itype == "防具镶嵌物") {
+                $canshu = "镶物";
+            } elseif ($itype == "书籍") {
+                $canshu = "书籍";
+            } elseif ($itype == "任务物品") {
+                $canshu = "任务";
+            } elseif ($itype == "其它") {
+                $canshu = "其它";
+            }
             }else{
-            $canshu = ($itype == "消耗品") ? "消耗品" : (
-                ($itype == "兵器" || $itype == "防具") ? "装备" : (
-                    ($itype == "书籍" || $itype == "任务物品" || $itype == "兵器镶嵌物" || $itype == "防具镶嵌物" || $itype == "其它") ? "其它" : "全部"
-                )
-            );
+                $canshu = "全部";
             }
             $iname = \lexical_analysis\color_string($iname);
             switch($target_event){

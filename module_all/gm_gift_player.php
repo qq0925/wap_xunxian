@@ -56,18 +56,35 @@ $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 
 $itemhtml = '';
 $hangshu = 0;
+
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $item_choose_url_1 = $encode->encode("cmd=player_gift&oid=$oid&canshu=全部&ucmd=$cmid&sid=$sid");
+
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$item_choose_url_2 = $encode->encode("cmd=player_gift&oid=$oid&canshu=消耗品&ucmd=$cmid&sid=$sid");
+$item_choose_url_2 = $encode->encode("cmd=player_gift&oid=$oid&canshu=装备&ucmd=$cmid&sid=$sid");
+
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$item_choose_url_3 = $encode->encode("cmd=player_gift&oid=$oid&canshu=装备&ucmd=$cmid&sid=$sid");
+$item_choose_url_3 = $encode->encode("cmd=player_gift&oid=$oid&canshu=镶物&ucmd=$cmid&sid=$sid");
+
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$item_choose_url_4 = $encode->encode("cmd=player_gift&oid=$oid&canshu=其它&ucmd=$cmid&sid=$sid");
+$item_choose_url_4 = $encode->encode("cmd=player_gift&oid=$oid&canshu=药品&ucmd=$cmid&sid=$sid");
+
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$item_choose_url_5 = $encode->encode("cmd=player_gift&oid=$oid&canshu=书籍&ucmd=$cmid&sid=$sid");
+
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$item_choose_url_6 = $encode->encode("cmd=player_gift&oid=$oid&canshu=任务&ucmd=$cmid&sid=$sid");
+
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$item_choose_url_7 = $encode->encode("cmd=player_gift&oid=$oid&canshu=其它&ucmd=$cmid&sid=$sid");
+
 $sqlCount = '';
 if(!$canshu){
     $canshu = '全部';
@@ -83,74 +100,100 @@ if ($list_page) {
 // 计算偏移量
 $offset = ($currentPage - 1) * $list_row;
 
-switch($canshu){
-        case '全部':
-        $sql = "select * from system_item WHERE iid in (select iid from system_item_module where iname like :keyword) and sid = '$sid' ORDER BY iequiped DESC limit $offset,$list_row";
-        // 计算总行数
-        $sqlCount = "SELECT COUNT(*) as total FROM system_item where iid in (select iid from system_item_module where iname like :keyword) and sid ='$sid'";
-            
-        $item_choose_url = <<<HTML
-全部 <a href="?cmd=$item_choose_url_2">消耗品</a> <a href="?cmd=$item_choose_url_3">装备</a> <a href="?cmd=$item_choose_url_4">其它</a><br/>
-<br/>
-HTML;
-            break;
-        case '消耗品':
-        $sql = "select * from system_item WHERE sid = '$sid' and iid in(select iid from system_item_module where itype = '消耗品' and iname like :keyword) limit $offset,$list_row";
-        // 计算总行数
-        $sqlCount = "SELECT COUNT(*) as total FROM system_item where sid ='$sid' and iid in(select iid from system_item_module where itype = '消耗品' and iname like :keyword)";
-            
-        $item_choose_url = <<<HTML
-<a href="?cmd=$item_choose_url_1">全部</a> 消耗品 <a href="?cmd=$item_choose_url_3">装备</a> <a href="?cmd=$item_choose_url_4">其它</a><br/>
-<br/>
-HTML;
-            break;
-        case '装备':
-        $sql = "select * from system_item WHERE sid = '$sid' and iid in(select iid from system_item_module where  (itype = '兵器' || itype = '防具') and iname like :keyword) ORDER BY iequiped DESC limit $offset,$list_row";
-        // 计算总行数
-        $sqlCount = "SELECT COUNT(*) as total FROM system_item where sid ='$sid' and iid in(select iid from system_item_module where (itype = '兵器' || itype = '防具') and iname like :keyword)";
-        $item_choose_url = <<<HTML
-<a href="?cmd=$item_choose_url_1">全部</a> <a href="?cmd=$item_choose_url_2">消耗品</a> 装备 <a href="?cmd=$item_choose_url_4">其它</a><br/>
-<br/>
-HTML;
-            break;
-        case '其它':
-        $sql = "select * from system_item WHERE sid = '$sid' and iid in(select iid from system_item_module where (itype != '消耗品' and itype != '兵器' and itype != '防具') and iname like :keyword) limit $offset,$list_row";
-        // 计算总行数
-        $sqlCount = "SELECT COUNT(*) as total FROM system_item where sid ='$sid' and iid in(select iid from system_item_module where (itype != '消耗品' and itype != '兵器' and itype != '防具') and iname like :keyword)";
-            
-        $item_choose_url = <<<HTML
-<a href="?cmd=$item_choose_url_1">全部</a> <a href="?cmd=$item_choose_url_2">消耗品</a> <a href="?cmd=$item_choose_url_3">装备</a> 其它<br/>
-<br/>
-HTML;
-            break;
+// 条件和 URL 映射
+$conditions = [
+    '全部' => "(iname like :keyword)",
+    '装备' => "((itype = '兵器' OR itype = '防具') and iname like :keyword)",
+    '镶物' => "((itype = '兵器镶嵌物' OR itype = '防具镶嵌物') and iname like :keyword)",
+    '药品' => "(itype = '消耗品' and iname like :keyword)",
+    '书籍' => "(itype = '书籍' and iname like :keyword)",
+    '任务' => "(itype = '任务物品' and iname like :keyword)",
+    '其它' => "(itype = '其它' and iname like :keyword)",
+    
+];
+
+
+
+$urls = [
+    '全部' =>"<a href=\"?cmd=$item_choose_url_1\">全部</a>",
+    '装备' =>"<a href=\"?cmd=$item_choose_url_2\">装备</a>",
+    '镶物' => "<a href=\"?cmd=$item_choose_url_3\">镶物</a>",
+    '药品' => "<a href=\"?cmd=$item_choose_url_4\">药品</a>",
+    '书籍' => "<a href=\"?cmd=$item_choose_url_5\">书籍</a>",
+    '任务' => "<a href=\"?cmd=$item_choose_url_6\">任务</a>",
+    '其它' => "<a href=\"?cmd=$item_choose_url_7\">其它</a>"
+];
+
+// 处理链接和文本替换
+$links = [];
+foreach ($urls as $key => $url) {
+    if ($key === $canshu) {
+        // 替换被点击的分类链接为文本
+        $links[] = "{$key}";
+    } else {
+        $links[] = $url;
     }
+}
 
-if (isset($_POST['kw'])) {
-    $keyword = $_POST['kw'];
-    // 构建查询语句，使用过滤条件
-    $cxjg = $dblj->prepare($sql);
-    $cxjg->bindValue(':keyword', "%$keyword%", PDO::PARAM_STR);
-    $countResult = $dblj->prepare($sqlCount);
-    $countResult->bindValue(':keyword', "%$keyword%", PDO::PARAM_STR);
+// 将链接用 '|' 隔开，并每三项后换行
+$formatted_links = '';
+$chunks = array_chunk($links, 3);
+foreach ($chunks as $chunk) {
+    $formatted_links .= implode(' | ', $chunk) . "<br/>";
+}
+
+
+
+// 默认是'全部'
+$condition = $conditions['全部'];
+$item_choose_url = implode(" ", $urls) . "<br/>";
+
+// 替换 switch case
+if (isset($conditions[$canshu])) {
+    $condition = $conditions[$canshu];
+    $item_choose_url = str_replace($urls[$canshu], $urls[$canshu] , $formatted_links);
+}
+
+if (isset($kw)) {
+
+if($_POST['kw']){
+$currentPage = 1;
+// 计算偏移量
+$offset = ($currentPage - 1) * $list_row;
+}
+// 构建 SQL 查询
+$ret = getitem_all($sid,$offset,$list_row,$condition,$dblj,$kw);
+$totalRows =getitem_count($sid,$offset,$list_row,$condition,$dblj,$kw);
 }else{
-    $keyword = "%";
-    // 构建查询语句，使用过滤条件
-    $cxjg = $dblj->prepare($sql);
-    $cxjg->bindValue(':keyword', "%$keyword%", PDO::PARAM_STR);
-    $countResult = $dblj->prepare($sqlCount);
-    $countResult->bindValue(':keyword', "%$keyword%", PDO::PARAM_STR);
+$kw = "%";
+$ret = getitem_all($sid,$offset,$list_row,$condition,$dblj,$kw);
+$totalRows = getitem_count($sid,$offset,$list_row,$condition,$dblj,$kw);
 }
-
-$cxjg->execute();
-if ($cxjg){
-    $ret = $cxjg->fetchAll(PDO::FETCH_ASSOC);
-}
-$countResult->execute();
-$countRow = $countResult->fetch(PDO::FETCH_ASSOC);
-$totalRows = $countRow['total'];
 
 // 计算总页数
 $totalPages = ceil($totalRows / $list_row);
+
+if($currentPage > $totalPages&&$totalPages>0){
+    $currentPage = $totalPages;
+// 重新计算偏移量
+$offset = ($currentPage - 1) * $list_row;
+if (isset($kw)) {
+
+if($_POST['kw']){
+// 计算偏移量
+$offset = ($currentPage - 1) * $list_row;
+}
+// 构建 SQL 查询
+$ret = getitem_all($sid,$offset,$list_row,$condition,$dblj,$kw);
+$totalRows =getitem_count($sid,$offset,$list_row,$condition,$dblj,$kw);
+}else{
+$kw = "%";
+$ret = getitem_all($sid,$offset,$list_row,$condition,$dblj,$kw);
+$totalRows = getitem_count($sid,$offset,$list_row,$condition,$dblj,$kw);
+}
+// 计算总页数
+$totalPages = ceil($totalRows / $list_row);
+}
 
 $item_type_sum = 0;
 if($ret){
@@ -162,20 +205,17 @@ for ($i=0;$i<@$totalRows;$i++){
     $isale_state = $ret[$i]['isale_state'];
     $ibind = $ret[$i]['ibind'];
     $item_type_sum +=$itemsum;
-    switch($canshu){
-        case '全部':
-            $sql = "select * from system_item_module WHERE iid = '$itemid' ";
-            break;
-        case '消耗品':
-            $sql = "select * from system_item_module WHERE iid = '$itemid' and itype = '消耗品'";
-            break;
-        case '装备':
-            $sql = "select * from system_item_module WHERE iid = '$itemid' and (itype = '兵器' || itype = '防具') ";
-            break;
-        case '其它':
-            $sql = "select * from system_item_module WHERE iid = '$itemid' and itype != '消耗品' and itype != '兵器' and itype != '防具'";
-            break;
-    }
+    $conditions = [
+    '全部' => "iid = '$itemid'",
+    '装备' => "iid = '$itemid' and (itype = '兵器' || itype = '防具')",  
+    '镶物' => "iid = '$itemid' and (itype = '兵器镶嵌物' || itype = '防具镶嵌物')",
+    '药品' => "iid = '$itemid' and itype = '消耗品'",
+    '书籍' => "iid = '$itemid' and itype = '书籍'",
+    '任务' => "iid = '$itemid' and itype = '任务物品'",
+    '其它' => "iid = '$itemid' and itype = '其它'",
+];
+
+$sql = "SELECT * FROM system_item_module WHERE " . ($conditions[$canshu] ?? $conditions['全部']);
 
 
 $cxjg = $dblj->query($sql);
@@ -184,24 +224,23 @@ $itemid = $retitem['iid'];
 $itemname = $retitem['iname'];
 $itemtype = $retitem['itype'];
 $item_ino_give = $retitem['ino_give'];
-$itemname = \lexical_analysis\color_string($itemname);
 $itemname = \lexical_analysis\process_photoshow($itemname);
-
+$itemname = \lexical_analysis\color_string($itemname);
     if ($itemsum>0 &&$retitem && $canshu){
-        $hangshu = $hangshu + 1;
+        $hangshu = $offset + $i + 1;
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $chakanitem = $encode->encode("cmd=player_gift_info&oid=$oid&list_page=$list_page&canshu=$canshu&ucmd=$cmid&item_true_id=$item_true_id&itemid=$itemid&uid=$player->uid&sid=$sid");
 
         $sale_state = \player\getitem_sale_state($item_true_id,$sid,$dblj);
         if($item_iequiped ==1){
-        $itemhtml .="[$hangshu]{$itemname}x{$itemsum} [装] <br/>";
+        $itemhtml .="$hangshu.{$itemname}x{$itemsum} [装] <br/>";
         }elseif($sale_state==1){
-        $itemhtml .="[$hangshu]{$itemname}x{$itemsum} [售] <br/>";
+        $itemhtml .="$hangshu.{$itemname}x{$itemsum} [售] <br/>";
         }elseif($ibind ==1||$item_ino_give==1){
-        $itemhtml .="[$hangshu]{$itemname}x{$itemsum} [绑] <br/>";
+        $itemhtml .="$hangshu.{$itemname}x{$itemsum} [绑] <br/>";
         }else{
-        $itemhtml .="{$isale_text}[$hangshu]<a href='?cmd=$chakanitem'>{$itemname}x{$itemsum}</a><br/>";
+        $itemhtml .="{$isale_text}<a href='?cmd=$chakanitem'>$hangshu.{$itemname}x{$itemsum}</a><br/>";
         }
     }
 }
@@ -276,4 +315,35 @@ $page_html
 <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
 echo $gift_html;
+
+function getitem_all($sid,$offset,$list_row,$condition,$dblj,$kw=null){
+
+$sql = "SELECT * FROM system_item WHERE sid = '$sid' AND iid IN (SELECT iid FROM system_item_module WHERE $condition) ORDER BY iequiped DESC LIMIT $offset,$list_row";
+if($kw){
+    $keyword = $kw;
+}
+    // 构建查询语句，使用过滤条件
+    $cxjg = $dblj->prepare($sql);
+    $cxjg->bindValue(':keyword', "%$keyword%", PDO::PARAM_STR);
+$cxjg->execute();
+if ($cxjg){
+    $ret = $cxjg->fetchAll(PDO::FETCH_ASSOC);
+}
+return $ret;
+}
+
+function getitem_count($sid,$offset,$list_row,$condition,$dblj,$kw=null){
+$sqlCount = "SELECT COUNT(*) as total FROM system_item WHERE sid = '$sid' AND iid IN (SELECT iid FROM system_item_module WHERE $condition)";
+if($kw){
+    $keyword = $kw;
+}
+    $countResult = $dblj->prepare($sqlCount);
+    $countResult->bindValue(':keyword', "%$keyword%", PDO::PARAM_STR);
+    $countResult->execute();
+    $countRow = $countResult->fetch(PDO::FETCH_ASSOC);
+    $totalRows = $countRow['total'];
+    return $totalRows;
+}
+
+
 ?>
