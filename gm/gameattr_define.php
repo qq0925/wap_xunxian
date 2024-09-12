@@ -170,7 +170,10 @@ case '7':
         break;
 }
 
-    
+    if($gm_id =='money' &&$gm_post_type_2 ==1){
+        $dblj->exec("update gm_game_basic set money_name = '$gm_name' where game_id = '19980925'");
+    }
+
     $gm_game_attr_name = $gm_ret[0]['name'];
     $gm_game_default_value = $gm_ret[0]['default_value'];
     $gm_game_show = $gm_ret[0]['if_show'];

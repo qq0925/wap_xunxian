@@ -881,6 +881,10 @@ function removesceneitem($mid,$iid,$icount,$maxpick=null,$dblj,$para=null){
     
 }
 
+function getgm_attr(){
+    
+}
+
 
 function useitem($sid,$iid,$icount,$dblj){
     $player = getplayer($sid,$dblj);
@@ -890,10 +894,7 @@ function useitem($sid,$iid,$icount,$dblj){
     $use_attr = $ret['iuse_attr'];
     $u_attr = "u".$use_attr;
     $use_value = $ret['iuse_value'];
-    $sql = "select name from gm_game_attr where value_type = 1 and id = '$use_attr'";
-    $cxjg = $dblj->query($sql);
-    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
-    $attr_name = $ret['name'];
+    $attr_name = \gm\get_gm_attr_info(1,$use_attr,$dblj)['name'];
     if($use_value >0){
     $cmmt = $attr_name." + ".$use_value."<br/>";
     \player\addplayersx($u_attr,$use_value,$sid,$dblj);

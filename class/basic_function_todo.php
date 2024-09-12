@@ -552,7 +552,7 @@ $attack_attack = $encode->encode("cmd=pve_fight&nid=$attack_id&ucmd=$cmid&ngid=$
 $op_html .=<<<HTML
 <a href="?cmd=$attack_attack">攻击{$nname}</a><br/>
 HTML;
-}else{
+}elseif($nkill ==1 && $nnot_dead ==1){
 $attack_id = $mid;
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
@@ -973,7 +973,7 @@ if ($clmid->mnpc_now !=""){
         $npccmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$nid&sid=$sid");
         for ($j=0;$j < $npc_count;$j++){
         $npchtml.=<<<HTML
-<a href="?cmd=$npccmd">$nname</a>
+<a href="?cmd=$npccmd">{$nname}</a> 
 HTML;
 }
 $npchtml .="<br/>";

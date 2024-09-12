@@ -18,6 +18,8 @@ $sql = "update system_money_type set rname='$money_name',runit='$money_unit' whe
 $cxjg = $dblj->exec($sql);
 $sql = "update gm_game_basic set money_name='$money_name',money_measure='$money_unit' where game_id='19980925'";
 $cxjg = $dblj->exec($sql);
+$sql = "update gm_game_attr set name = '$money_name' where id = 'money' and value_type = 1";
+$cxjg = $dblj->exec($sql);
 }
 
 $sql = "select * from system_money_type";

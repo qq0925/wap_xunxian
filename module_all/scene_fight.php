@@ -290,16 +290,19 @@ if($cmd=='pve_fight'){
         }
         }
         if($drop_exp!=""){
+            $exp_name = \gm\get_gm_attr_info(1,'exp',$dblj)['name'];
             $drop_exp = @eval("return $drop_exp;");
             \player\addplayersx('uexp',$drop_exp,$sid,$dblj);
             $drop_exp = $drop_exp>=0?"+".$drop_exp:$drop_exp;
-            $huode .= "经验{$drop_exp} <br/>";
+            $huode .= "{$exp_name}{$drop_exp} <br/>";
         }
         if($drop_money!=""){
+            $money_measure = \gm\gm_post($dblj)->money_measure;
+            $money_name = \gm\gm_post($dblj)->money_name;
             $drop_money = @eval("return $drop_money;");
             \player\addplayersx('umoney',$drop_money,$sid,$dblj);
             $drop_money = $drop_money>=0?"+".$drop_money:$drop_money;
-            $huode .= "信用币{$drop_money}枚 <br/>";
+            $huode .= "{$money_name}{$drop_money}{$money_measure} <br/>";
         }
 
         $rwts_kill = \player\update_task($sid,$dblj,null,$alive_monster->nid,$alive_monster->nname);
@@ -315,11 +318,20 @@ $zdjg = 1;
 }
 
 $player =  player\getplayer($sid,$dblj);
+while (\player\upplayerlvl($sid, $dblj) == 1) {
+    $parents_cmd = 'gm_scene_new';
+    $ret = $ret ?? global_event_data_get(22, $dblj);
+    if ($ret) {
+        global_events_steps_change(22, $sid, $dblj, $just_page, $steps_page, $cmid, 'module/gm_scene_new', null, null, $para);
+    }
+}
 if ($player->uhp <= 0){
     $zdjg = 0;
 }
 
-
+if($rwts){
+    $rwts .="<br/>";
+}
 
 
 if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
@@ -337,15 +349,14 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
             }
             \player\changeplayersx('ucmd','',$sid,$dblj);
             $fight_html = <<<HTML
-            战斗胜利！<br/>
-            你打死了{$alive_monster->nname}<br/>
-            你生命：({$player->uhp}/{$player->umaxhp})<br/>
-            $pets
-            $huode
-            $rwts
-            =========<br/>
-            <a href="?cmd=$goplayer_state">状态</a> <a href="?cmd=$goplayer_item">物品</a><br/>
-            <a href="?cmd=$gonowmid">返回游戏</a>
+战斗胜利！<br/>
+你打死了{$alive_monster->nname}<br/>
+你生命：({$player->uhp}/{$player->umaxhp})<br/>
+$pets
+$huode
+$rwts
+<a href="?cmd=$goplayer_state">状态</a> <a href="?cmd=$goplayer_item">物品</a><br/>
+<a href="?cmd=$gonowmid">返回游戏</a>
 HTML;
             break;
         case 0:
@@ -371,11 +382,10 @@ HTML;
             
             //战败事件
             $fight_html = <<<HTML
-            战斗失败！<br/>
-            你被{$alive_monster->nname} 狠狠地教训了一顿!<br/>
-            你生命：({$player->uhp}/{$player->umaxhp})<br/>
-            =========<br/>
-            <a href="?cmd=$gonowmid">返回游戏</a>
+战斗失败！<br/>
+你被{$alive_monster->nname} 狠狠地教训了一顿!<br/>
+你生命：({$player->uhp}/{$player->umaxhp})<br/>
+<a href="?cmd=$gonowmid">返回游戏</a>
 HTML;
             \player\changeplayersx('uhp',1,$sid,$dblj);
             $player = \player\getplayer($sid,$dblj);
@@ -384,11 +394,10 @@ HTML;
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
             \player\changeplayersx('ucmd','',$sid,$dblj);
             $fight_html = <<<HTML
-            你已经重伤，无法再次进行战斗！<br/>
-            你生命：({$player->uhp}/{$player->umaxhp})<br/>
-            请恢复之后重来<br/>
-            =========<br/>
-            <a href="?cmd=$gonowmid">返回游戏</a>
+你已经重伤，无法再次进行战斗！<br/>
+你生命：({$player->uhp}/{$player->umaxhp})<br/>
+请恢复之后重来<br/>
+<a href="?cmd=$gonowmid">返回游戏</a>
 HTML;
             break;
     }

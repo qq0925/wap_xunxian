@@ -34,8 +34,10 @@ function global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_p
                     $event_cmmt = \lexical_analysis\process_string($event_cmmt,$sid,$oid,$mid);
                     $event_cmmt = \lexical_analysis\process_photoshow($event_cmmt);
                     $event_cmmt = \lexical_analysis\color_string(nl2br($event_cmmt));
-                    echo $event_cmmt."<br/>";//不满足触发条件则输出cmmt
                     
+                    if($event_cmmt){
+                    echo $event_cmmt."<br/>";//不满足触发条件则输出cmmt
+                    }
                     $cmid = $cmid + 1;
                     $cdid[] = $cmid;
                     
@@ -89,7 +91,9 @@ HTML;
                             $step_cmmt2 = \lexical_analysis\process_string($step_cmmt2,$sid,$oid,$mid);
                             $step_cmmt2 = \lexical_analysis\process_photoshow($step_cmmt2);
                             $step_cmmt2 = \lexical_analysis\color_string(nl2br($step_cmmt2));
+                            if($step_cmmt2){
                             echo $step_cmmt2."<br/>";
+                            }
                             $cmid = $cmid + 1;
                             $cdid[] = $cmid;
                             if($parents_cmd!="iteminfo_new"||$step_not_return_link ==0){
