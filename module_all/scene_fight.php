@@ -41,8 +41,6 @@ $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
 $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
-$goplayer_state = $encode->encode("cmd=player_state&ucmd=$cmid&sid=$sid");
-$goplayer_item = $encode->encode("cmd=item_html&ucmd=$cmid&sid=$sid");
 $get_main_page = \gm\get_pve_page($dblj);
 $br = 0;
 $cmid = $cmid + 1;
@@ -355,7 +353,6 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
 $pets
 $huode
 $rwts
-<a href="?cmd=$goplayer_state">状态</a> <a href="?cmd=$goplayer_item">物品</a><br/>
 <a href="?cmd=$gonowmid">返回游戏</a>
 HTML;
             break;

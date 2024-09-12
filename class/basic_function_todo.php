@@ -1127,8 +1127,6 @@ if ($ltcxjg){
             $umsg = mb_substr($umsg, 0, $maxChars, 'utf-8') . "...";
         }
         $umsg = lexical_analysis\color_string($umsg);
-        $timestamp = strtotime($send_time); // 将日期时间字符串转换为时间戳
-        $send_time = date("m-d H:i", $timestamp); // 使用date函数提取出时间部分
         if ($uid &&  $chat_type ==0 && $minute <10){
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
@@ -1140,7 +1138,7 @@ if ($ltcxjg){
             $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$sid");
         }
         
-        $lthtml .="[<span style='color: orangered;'>公共</span>]<a href='?cmd=$u_cmd''>$uname</a>:$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
+        $lthtml .="[<span style='color: orangered;'>公共</span>]<a href='?cmd=$u_cmd''>$uname</a>:$umsg<span class='txt-fade'></span><br/>";
         
         }elseif($imuid == $player->uid && $chat_type == 1 && $viewed == 0){
         $cmid = $cmid + 1;
@@ -1148,11 +1146,11 @@ if ($ltcxjg){
         $clj[] = $cmd;
         $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
         if($uid){
-            $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
+            $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'></span><br/>";
             $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }
         }elseif(!$uid && $chat_type == 0&&$minute <10){
-            $lthtml .="[<span style='color: orangered;'>公共</span>]<div class='hpys' style='display: inline'>$uname:</div>$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
+            $lthtml .="[<span style='color: orangered;'>公共</span>]<div class='hpys' style='display: inline'>$uname:</div>$umsg<span class='txt-fade'></span><br/>";
         }
     }
 }
