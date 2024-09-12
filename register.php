@@ -2,7 +2,6 @@
 include 'pdo.php';
 require_once 'class/encode.php';
 require_once 'class/gm.php';
-
 $dblj = DB::pdo();
 $encode = new \encode\encode();
 $a = '';
@@ -43,11 +42,10 @@ $gm_post = \gm\gm_post($dblj);
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <title><?php echo $gm_post->game_name ?></title>
-
     <link rel="stylesheet" href="css/gamecss.css">
 </head>
 <body>
-<img src="images/11.png" width="320" height="200">
+<img src="images/login.png" width="320" height="200">
 <?php echo "<div id='mainfont'>".nl2br($gm_post->game_desc)."</div>"?>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
     账号：<br/>

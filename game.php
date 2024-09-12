@@ -2901,7 +2901,7 @@ echo "Connection info: " . $connInfo . "<br>";
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <title><?php echo $gm_post->game_name ?></title>
     <link rel="stylesheet" href="css/gamecss.css">
-    <link rel="icon" href="images/favicons.ico">
+    <link rel="icon" href="favicon.ico">
 </head>
 <body>
 <?php

@@ -42,10 +42,9 @@ echo $refresh_html;
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport" />
     <title><?php echo $gm_post->game_name ?></title>
     <link rel="stylesheet" href="css/gamecss.css">
-    <link rel="shortcut icon" href="images/favicons.ico"/>
 </head>
 <body>
-<img src="images/11.png" width="320" height="200"><br/>
+<img src="images/login.png" width="320" height="200"><br/>
 <?php echo "<div id='mainfont'>".nl2br($gm_post->game_desc)."</div>"?>
 <form action=<?php echo $_SERVER['PHP_SELF']; ?> method="post">
     账号：<br/>
