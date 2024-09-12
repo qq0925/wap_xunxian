@@ -98,8 +98,10 @@ if ($update ==1){
         $guaiwu = \player\getnpc($gwinfo[0],$dblj);
         $guaiwu->nid = $gwinfo[0];
         if($guaiwu->nkill ==1){
-        $sql = " delete from system_npc_midguaiwu where nid = '$guaiwu->nid' and nmid = '$target_midid' and nsid = ''";
+        $sql = " delete from system_npc_midguaiwu where nid = '$guaiwu->nid' and nmid = '$player->nowmid' and nsid = ''";
         $cxjg =$dblj->exec($sql);
+        }
+        if($guaiwu->nkill ==1&&$guaiwu->nnot_dead ==0){
         for ($n=0;$n<$gwinfo[1];$n++){
             // 要复制的数据行id
             $nid = $guaiwu->nid;

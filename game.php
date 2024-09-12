@@ -569,6 +569,24 @@ echo $refresh_html;
                 \player\changeplayersx('uauto_fight',0,$sid,$dblj);
             }
             if($player->uis_pve ==0){
+            
+            if($nnot_dead ==1){
+            $nmid = $player->nowmid;
+            // 获取旧表字段列表
+            $stmt = $dblj->prepare("SHOW COLUMNS FROM system_npc");
+            $stmt->execute();
+            $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            // 构建动态插入语句
+            $cols = implode(", ",$columns);
+            $nowdate = date('Y-m-d H:i:s');
+            $sql = "INSERT INTO system_npc_midguaiwu ($cols, nmid,ncreate_time) SELECT $cols, :nmid ,:nowdate FROM system_npc WHERE nid = :nid;";
+            $stmt = $dblj->prepare($sql);
+            $stmt->bindParam(':nmid', $nmid, PDO::PARAM_INT);
+            $stmt->bindParam(':nid', $nid, PDO::PARAM_INT);
+            $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_INT);
+            $stmt->execute();
+            $ngid = $dblj->lastInsertId();
+            }
                 if(!$pid){
             $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
             $dblj->exec($sql);
@@ -587,7 +605,7 @@ echo $refresh_html;
             $player_nowmid = $player->nowmid;
             //$npc_para = player\getnpcguaiwu($ngid,$dblj);
             $clmid = player\getmid($player_nowmid,$dblj);
-            if ($clmid->mnpc_now !=""){
+            if ($clmid->mnpc_now !=""&& $nnot_dead ==0){
                 $npc_list = explode(',',$clmid->mnpc_now);
                 foreach ($npc_list as &$npc_detail){
                     $npc_para = explode('|',$npc_detail);
@@ -602,7 +620,7 @@ echo $refresh_html;
                 $dblj->exec($sql);
             }
             //$npc->nid是原id；
-            //这里做:是否可杀死，是否战败死亡（mnpc_now-1）
+
             $ym = 'module_all/scene_fight.php';
             break;
         case 'pve_fighting'://打怪事件
@@ -2817,10 +2835,11 @@ echo $refresh_html;
         $system_offline_time = $gameconfig->offline_time;
         while(floor((strtotime($player->endtime)-strtotime($player->minutetime))/60 >0) &&$cmd!='login' && $cmd!='cjplayer' &&$cmd !='cj'){
         $parents_cmd = $cmd;
-        $ret = global_event_data_get(24,$dblj);
-        if($ret){
-        global_events_steps_change(24,$sid,$dblj,$just_page,$steps_page,$cmid,$currentFilePath,null,null,$para);
-        }
+        \player\exec_global_event(24,'null',null,$sid,$dblj);
+        // $ret = global_event_data_get(24,$dblj);
+        // if($ret){
+        // global_events_steps_change(24,$sid,$dblj,$just_page,$steps_page,$cmid,$currentFilePath,null,null,$para);
+        // }
         $player->minutetime = date('Y-m-d H:i:s', strtotime($player->minutetime) + 60); // 增加 60 秒
         $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
         $dblj->exec($sql);
@@ -2925,10 +2944,12 @@ echo $noticeContent;
     <?php 
     $player = \player\getplayer($sid,$dblj);
     $now_time = date('H:i:s');
-    $gm_cheat = $encode->encode("cmd=gm_cheat&sid=$sid");
     if($player->uis_designer ==1){
+    $gm_ret = $encode->encode("cmd=gm_scene_new&sid=$sid");
+    $gm_cheat = $encode->encode("cmd=gm_cheat&sid=$sid");
     $gm_cheat_html .=<<<HTML
-<a href="?cmd=$gm_cheat">GM修改器</a><br/>
+<a href="?cmd={$gm_cheat}">GM修改器</a><br/>
+<a href="?cmd={$gm_ret}">前往场景</a><br/>
 HTML;
 }
 echo $gm_cheat_html;
@@ -2948,9 +2969,7 @@ $execution_time = ceil(($end_time - $start_time) * 1000);// 单位是毫秒
 echo "页面执行时间为：{$execution_time} 毫秒<br/>";
 echo 'Memory usage: ' . memory_get_usage() . ' bytes';
 if($player->uis_designer ==1){
-    $gm_ret = $encode->encode("cmd=gm_scene_new&sid=$sid");
     $gm_other_code = <<<HTML
-<a href="?cmd={$gm_ret}">前往场景</a><br/>
 当前php路径：{$currentFilePath}<br/>
 a4的值赋值给xcmid：{$a4}<br/>
 cmid值赋值给a5的值赋值给dcmid：{$a5}<br/>

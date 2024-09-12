@@ -528,22 +528,36 @@ $op_html .="<br/>";
 }
 }
 
-$sql = "SELECT nkill,nname FROM system_npc WHERE nid = :mid";
+if(!is_numeric($mid)){
+    $mid_m = explode("|",$mid);
+    $mid = $mid_m[0];
+}
+
+$sql = "SELECT nkill,nname,nnot_dead FROM system_npc WHERE nid = :mid";
 $stmt = $dblj->prepare($sql);
 $stmt->bindParam(':mid', $mid,PDO::PARAM_STR);
 $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 $nkill = $result['nkill'];
 $nname = $result['nname'];
-if($nkill ==1){
-$data_id = explode("|",$mid);
-$attack_id = $data_id[0];
-$attack_gid = $data_id[1];
+$nnot_dead = $result['nnot_dead'];
+if($nkill ==1 && $nnot_dead ==0){
+$attack_id = $mid;
+$attack_gid = $mid_m[1];
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
 $attack_attack = $encode->encode("cmd=pve_fight&nid=$attack_id&ucmd=$cmid&ngid=$attack_gid&sid=$sid");
+$op_html .=<<<HTML
+<a href="?cmd=$attack_attack">攻击{$nname}</a><br/>
+HTML;
+}else{
+$attack_id = $mid;
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+$attack_attack = $encode->encode("cmd=pve_fight&nid=$attack_id&ucmd=$cmid&nnot_dead=1&sid=$sid");
 $op_html .=<<<HTML
 <a href="?cmd=$attack_attack">攻击{$nname}</a><br/>
 HTML;
@@ -895,7 +909,7 @@ if ($clmid->mnpc_now !=""){
     if($show_result){
     $npc_id = $npc_para[0];
     $npc_count = $npc_para[1];
-    $sql = "select * from system_npc where nid = '$npc_id' and nkill = 0";//获取npc
+    $sql = "select * from system_npc where nid = '$npc_id' and (nkill = 0 || nnot_dead = 1)";//获取npc
     $cxjg = $dblj->query($sql);
     $cxnpcall = $cxjg->fetchAll(PDO::FETCH_ASSOC);
     for ($i=0;$i < count($cxnpcall);$i++){
