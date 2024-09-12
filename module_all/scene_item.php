@@ -282,8 +282,8 @@ if($keyword =="%"){
 
 //里面要加入自定义币种
 $bagitemhtml =<<<HTML
-{$gm_post->money_name}:{$player->umoney}{$gm_post->money_measure}<br/>
-负重：({$player->uburthen}|{$player->umax_burthen})<br/>
+{$gm_post->money_name}：{$player->umoney}{$gm_post->money_measure}<br/>
+总负重：{$player->uburthen}|{$player->umax_burthen}<br/>
 $item_choose_url<br/>
 <form method="post">
 <input name="ucmd" type="hidden" value="{$cmid}">

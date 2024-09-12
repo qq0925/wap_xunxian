@@ -2491,6 +2491,9 @@ echo $refresh_html;
         case 'photo_choose'://照片选择
             $ym = 'gm/gamephoto_manage_5.php';
             break;
+        case 'login_photo'://登录页图片
+            $ym = 'gm/gamephoto_manage_6.php';
+            break;
         case 'target_mid'://区域设计
             $ym = 'gm/gm_map.php';
             break;
