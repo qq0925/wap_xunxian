@@ -916,9 +916,10 @@ if ($clmid->mnpc_now !=""){
         $nname = $cxnpcall[$i]['nname'];
         $nid = $cxnpcall[$i]['nid'];
         $nkill = $cxnpcall[$i]['nkill'];
+        $nnot_dead = $cxnpcall[$i]['nnot_dead'];
         $ntaskid = $cxnpcall[$i]['ntask_target'];
         $ntaskarr = explode(',',$ntaskid);
-        if ($ntaskid!='' && $nkill ==0){
+        if ($ntaskid!=''){
             for ($l=0;$l<@count($ntaskarr);$l++){
                 $nowrw = \player\gettask($ntaskarr[$l],$dblj);
                 $rwret = \player\getplayertaskonce($sid,$ntaskarr[$l],$dblj);
@@ -972,9 +973,18 @@ if ($clmid->mnpc_now !=""){
         $clj[] = $cmd;
         $npccmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$nid&sid=$sid");
         for ($j=0;$j < $npc_count;$j++){
+            
+if($nnot_dead ==0){
         $npchtml.=<<<HTML
 <a href="?cmd=$npccmd">{$nname}</a> 
 HTML;
+}else{
+        $npchtml.=<<<HTML
+<a href="?cmd=$npccmd">*{$nname}</a> 
+HTML;
+}
+
+
 }
 $npchtml .="<br/>";
 }
@@ -1008,7 +1018,7 @@ for ($i = 0;$i<count($cxallguaiwu);$i++){
     $cdid[] = $cmid;
     $clj[] = $cmd;
     $gwcmd = $encode->encode("cmd=npc_html&ucmd=$cmid&ngid=".$guaiwu_ngid."&nid=".$guaiwu_nid."&sid=$sid&nowmid=$nowmid");
-$npchtml .="<a href='?cmd=$gwcmd'>".$cxallguaiwu[$i]['nname']."</a>";
+$npchtml .="<a href='?cmd=$gwcmd'>*".$cxallguaiwu[$i]['nname']."</a>";
 }
 $npchtml .=$br;
 return $npchtml;
@@ -1122,12 +1132,13 @@ if ($ltcxjg){
         $viewed = $ret[count($ret) - $i-1]['viewed'];
         $maxChars = $gameconfig->game_max_char; // 最大字符数量
         $nowdate = date('Y-m-d H:i:s');
-        $minute=floor((strtotime($nowdate)-strtotime($send_time))/60);
         if (mb_strlen($umsg, 'utf-8') > $maxChars) {
             $umsg = mb_substr($umsg, 0, $maxChars, 'utf-8') . "...";
         }
         $umsg = lexical_analysis\color_string($umsg);
-        if ($uid &&  $chat_type ==0 && $minute <10){
+        if ($uid &&  $chat_type ==0 && $player->allchattime < $send_time){
+        $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
+        $stmt = $dblj->exec($sql);
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $clj[] = $cmd;
@@ -1149,7 +1160,9 @@ if ($ltcxjg){
             $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'></span><br/>";
             $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }
-        }elseif(!$uid && $chat_type == 0&&$minute <10){
+        }elseif(!$uid && $chat_type == 6&&$player->allchattime < $send_time){
+            $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
+            $stmt = $dblj->exec($sql);
             $lthtml .="[<span style='color: orangered;'>公共</span>]<div class='hpys' style='display: inline'>$uname:</div>$umsg<span class='txt-fade'></span><br/>";
         }
     }

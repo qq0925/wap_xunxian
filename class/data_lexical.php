@@ -247,7 +247,7 @@ foreach ($keyValuePairs as $pair) {
             case 'c':
                 if(strpos($ele_1_2, "c_msg") === 0){
                     $send_time = date('Y-m-d H:i:s');
-                    $sql = "insert into system_chat_data (name,msg,send_time,uid)values('系统通知','$ele_2','$send_time','')";
+                    $sql = "insert into system_chat_data (name,msg,send_time,uid,chat_type)values('系统通知','$ele_2','$send_time',0,6)";
                     // 使用预处理语句
                     $stmt = $db->prepare($sql);
                     // 执行查询

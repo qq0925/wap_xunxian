@@ -404,6 +404,16 @@ function getyuanguaiwu($gyuanid,$dblj){//获取怪物库怪物
     return $guaiwu;
 }
 
+function insertsystemmsg($name,$msg,$uid,$dblj){
+        $date_time = date('Y-m-d H:i:s');
+        $stmt = $dblj->prepare("insert into system_chat_data (name,msg,sendtime,chat_type,uid)values(:name,:msg,:sendtime,:uid,6)");
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':msg', $msg);
+        $stmt->bindParam(':date_time', $date_time);
+        $stmt->bindParam(':uid', $uid);
+        $stmt->execute();
+}
+
 
 function get_mysqldata($dblj, $data_type, $data_id){
     switch ($data_type) {

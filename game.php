@@ -481,12 +481,9 @@ echo $refresh_html;
                     //header("refresh:1;url=index.php");
                     }elseif($register_triggle){
                     echo $username.","."欢迎来到".$gameconfig->game_name."<br/>";
-                    $nowdate = date('Y-m-d H:i:s');
-                    $sql = "insert into system_chat_data(name,msg,uid,send_time) values(?,?,?,?)";
-                    $stmt = $dblj->prepare($sql);
+                    \gm\insertsystemmsg('系统通知',"万中无一的{$username}踏上了旅途",$uid,$dblj);
                     $sql = "update game1 set endtime='$nowdate',minutetime = '$nowdate',sfzx=1 WHERE sid='$sid'";
                     $cxjg = $dblj->exec($sql);
-                    $stmt->execute(array('系统通知',"万中无一的{$username}踏上了旅途",'',"$nowdate"));
                     for($i = 1;$i <8;$i++){
                     $sql = "insert into system_fight_quick(sid,quick_pos) values(?,?)";
                     $stmt = $dblj->prepare($sql);
@@ -2807,76 +2804,15 @@ echo $refresh_html;
     
 //$usersession = \player\getplayersession($sid,$dblj,$_SESSION['sessionID']);
 
-if($usersession['session_id'] && $usersession['session_id'] !=$_SESSION['sessionID']){
+//if($usersession['session_id'] && $usersession['session_id'] !=$_SESSION['sessionID']){
 //$nowdate = date('Y-m-d H:i:s');
 //echo $player->uname."已下线！原因：顶号登录！";
 //$sql = "update game1 set endtime='$nowdate',sfzx=0 WHERE sid='$sid'";
 //$dblj->exec($sql);
 //header("refresh:1;url=index.php");
 //exit();
-}
-    
-    
-    
-    if (!isset($sid) || $sid=='' ){
-        if ($cmd!='cj' && $cmd!=='cjplayer'){
-$refresh_html =<<<HTML
-<meta http-equiv="refresh" content="0;URL=index.php">
-HTML;
-echo $refresh_html;
-            //header("refresh:0;url=index.php");
-            exit();
-        }
-        }else{
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
-        $dblj->exec("update game4 set device_agent = '$userAgent' where sid = '$sid'");
-        $player = \player\getplayer($sid,$dblj);
-        $nowdate = date('Y-m-d H:i:s');
-        $gameconfig = \player\getgameconfig($dblj);
-        $system_now_minute_time = $gameconfig->game_player_regular_minute;
-        $minute=floor((strtotime($nowdate)-strtotime($player->endtime))/60);//获取刷新分钟间隔
-        $system_offline_time = $gameconfig->offline_time;
-        while(floor((strtotime($player->endtime)-strtotime($player->minutetime))/60 >0) &&$cmd!='login' && $cmd!='cjplayer' &&$cmd !='cj'){
-        $parents_cmd = $cmd;
-        \player\exec_global_event(24,'null',null,$sid,$dblj);
-        // $ret = global_event_data_get(24,$dblj);
-        // if($ret){
-        // global_events_steps_change(24,$sid,$dblj,$just_page,$steps_page,$cmid,$currentFilePath,null,null,$para);
-        // }
-        $player->minutetime = date('Y-m-d H:i:s', strtotime($player->minutetime) + 60); // 增加 60 秒
-        $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
-        $dblj->exec($sql);
-        // ob_flush();
-        // flush();
-        }
-        
-        if ($minute>=$system_offline_time &&$player->uis_designer==0 &&$system_offline_time !=0||$player->sfzx==0){
-            //单位是秒
-            echo '<meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">';
-            echo "【哎呀！你好像进入了虚无领域!】<br/>".$player->uname."离线时间过长，请重新登陆";
-            //logout($sid);
-            $sql = "update game1 set endtime='$nowdate',sfzx=0,ucmd='' WHERE sid='$sid'";
-            $dblj->exec($sql);
-            header("refresh:1;url=index.php");
-            exit();
-        }else{
-            \player\put_system_message_sql($player->uid,$dblj);
-            $sql = "update game1 set endtime='$nowdate',sfzx=1,ucmd='$cmd' WHERE sid='$sid'";
-            $dblj->exec($sql);
-        }
-    }
-}else{
-    //如果一切都不符合条件，就跳转到注册界面。
-    echo "出错了！你可能正常尝试进行跨域访问！系统已记录此次行为！<br/>";
-$refresh_html =<<<HTML
-<meta http-equiv="refresh" content="2;URL=index.php">
-HTML;
-echo $refresh_html;
-    //header("refresh:2;url=index.php");
-    exit();
-}
+// }
 
-$system_detail_time_page = $encode->encode("cmd=get_system_time&sid=$sid");
 /*$stmt = $dblj->query("SHOW OPEN TABLES");
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 foreach($results as $row) {
@@ -2936,7 +2872,72 @@ echo $noticeContent;
     if (!$ym==''){
         
         //23-27ms
-        include "$ym";
+    if (!isset($sid) || $sid=='' ){
+        if ($cmd!='cj' && $cmd!=='cjplayer'){
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="0;URL=index.php">
+HTML;
+echo $refresh_html;
+            //header("refresh:0;url=index.php");
+            exit();
+        }
+        }else{
+        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $dblj->exec("update game4 set device_agent = '$userAgent' where sid = '$sid'");
+        $player = \player\getplayer($sid,$dblj);
+        $nowdate = date('Y-m-d H:i:s');
+        $gameconfig = \player\getgameconfig($dblj);
+        $system_now_minute_time = $gameconfig->game_player_regular_minute;
+        $minute=floor((strtotime($nowdate)-strtotime($player->endtime))/60);//获取刷新分钟间隔
+        $system_offline_time = $gameconfig->offline_time;
+        while(floor((strtotime($player->endtime)-strtotime($player->minutetime))/60 >0) &&$cmd!='login' && $cmd!='cjplayer' &&$cmd !='cj'){
+        $parents_cmd = $cmd;
+        \player\exec_global_event(24,'null',null,$sid,$dblj);
+        // $ret = global_event_data_get(24,$dblj);
+        // if($ret){
+        // global_events_steps_change(24,$sid,$dblj,$just_page,$steps_page,$cmid,$currentFilePath,null,null,$para);
+        // }
+        $player->minutetime = date('Y-m-d H:i:s', strtotime($player->minutetime) + 60); // 增加 60 秒
+        $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
+        $dblj->exec($sql);
+        // ob_flush();
+        // flush();
+        }
+        
+        if ($minute>=$system_offline_time &&$player->uis_designer==0 &&$system_offline_time !=0||$player->sfzx==0){
+            //单位是秒
+            echo '<meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">';
+            echo "【哎呀！你好像进入了虚无领域!】<br/>".$player->uname."离线时间过长，请重新登陆";
+            //logout($sid);
+            $sql = "update game1 set endtime='$nowdate',sfzx=0,ucmd='' WHERE sid='$sid'";
+            $dblj->exec($sql);
+            header("refresh:1;url=index.php");
+            exit();
+        }else{
+            include "$ym";
+            \player\put_system_message_sql($player->uid,$dblj);
+            $sql = "update game1 set endtime='$nowdate',sfzx=1,ucmd='$cmd' WHERE sid='$sid'";
+            $dblj->exec($sql);
+        }
+    }
+    
+}else{
+    
+    if($cmd !='login'){
+    
+    //如果一切都不符合条件，就跳转到注册界面。
+    echo "出错了！你可能正常尝试进行跨域访问！系统已记录此次行为！<br/>";
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="2;URL=index.php">
+HTML;
+echo $refresh_html;
+    //header("refresh:2;url=index.php");
+    exit();
+    }
+}
+
+//$system_detail_time_page = $encode->encode("cmd=get_system_time&sid=$sid");
+
         //这里的include是吃性能大户
         //80-599ms
     }?>
