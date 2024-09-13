@@ -567,57 +567,55 @@ echo $refresh_html;
             }
             if($player->uis_pve ==0){
             
-            if($nnot_dead ==1){
             $nmid = $player->nowmid;
             // 获取旧表字段列表
             $stmt = $dblj->prepare("SHOW COLUMNS FROM system_npc");
             $stmt->execute();
             $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            // 需要排除的字段
+            $exclude_columns = ['ncid']; // 需要排除的字段
+            // 使用 array_diff 排除不需要的字段
+            $columns = array_diff($columns, $exclude_columns);
             // 构建动态插入语句
             $cols = implode(", ",$columns);
             $nowdate = date('Y-m-d H:i:s');
-            $sql = "INSERT INTO system_npc_midguaiwu ($cols, nmid,ncreate_time) SELECT $cols, :nmid ,:nowdate FROM system_npc WHERE nid = :nid;";
+            $sql = "INSERT INTO system_npc_midguaiwu ($cols, nmid,ncreate_time,nsid) SELECT $cols, :nmid ,:nowdate ,:nsid FROM system_npc_scene WHERE ncid = :ncid;";
             $stmt = $dblj->prepare($sql);
             $stmt->bindParam(':nmid', $nmid, PDO::PARAM_INT);
-            $stmt->bindParam(':nid', $nid, PDO::PARAM_INT);
-            $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_INT);
-            $stmt->execute();
-            $ngid = $dblj->lastInsertId();
-            }
-                if(!$pid){
-            $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
-            $dblj->exec($sql);
-            $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";
-            $dblj->exec($sql);
-                }else{
-            $sql = "insert into game2(sid,gid,pid) values ('$sid','$ngid','$pid')";
-            $dblj->exec($sql);
-            $sql = "insert into game3(sid,gid,pid) values ('$ngid','$sid','$pid')";
-            $dblj->exec($sql);
-                }
-            }
-            \player\changeplayersx('uis_pve',1,$sid,$dblj);
-            $sql = "update system_npc_midguaiwu set nsid = '$sid' WHERE ngid='$ngid'";
-            $dblj->exec($sql);
-            $player_nowmid = $player->nowmid;
-            //$npc_para = player\getnpcguaiwu($ngid,$dblj);
-            $clmid = player\getmid($player_nowmid,$dblj);
-            if ($clmid->mnpc_now !=""&& $nnot_dead ==0){
-                $npc_list = explode(',',$clmid->mnpc_now);
-                foreach ($npc_list as &$npc_detail){
-                    $npc_para = explode('|',$npc_detail);
-                    $npc_id = $npc_para[0];
-                    if($npc_id ==$nid){
-                    $npc_count = $npc_para[1]-1;
-                    $npc_detail = $npc_id . '|' . $npc_count;
+            $stmt->bindParam(':ncid', $ncid, PDO::PARAM_INT);
+            $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_STR);
+            $stmt->bindParam(':nsid', $sid, PDO::PARAM_STR);
+            // 执行SQL
+            if ($stmt->execute()) {
+                // 获取受影响的行数
+                $rowCount = $stmt->rowCount();
+                
+                // 检查是否有插入的行
+                if ($rowCount > 0) {
+                    $ngid = $dblj->lastInsertId();  // 获取最后插入的ID
+                    
+                    if($not_dead ==0){
+                        $dblj->exec("DELETE FROM system_npc_scene where ncid = '$ncid'");
                     }
+                        if(!$pid){
+                    $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
+                    $dblj->exec($sql);
+                    $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";
+                    $dblj->exec($sql);
+                        }else{
+                    $sql = "insert into game2(sid,gid,pid) values ('$sid','$ngid','$pid')";
+                    $dblj->exec($sql);
+                    $sql = "insert into game3(sid,gid,pid) values ('$ngid','$sid','$pid')";
+                    $dblj->exec($sql);
+                        }
+                    
+                    \player\changeplayersx('uis_pve',1,$sid,$dblj);
+                    $ym = 'module_all/scene_fight.php';
+                }else{
+                $be_feat = 1;
                 }
-                $mnpc_now_updated = implode(',', $npc_list);
-                $sql = "update system_map set mnpc_now = '$mnpc_now_updated' WHERE mid='$player_nowmid'";
-                $dblj->exec($sql);
+}
             }
-            //$npc->nid是原id；
-
             $ym = 'module_all/scene_fight.php';
             break;
         case 'pve_fighting'://打怪事件
@@ -1059,6 +1057,8 @@ echo $refresh_html;
                     $sql = "ALTER TABLE system_npc DROP COLUMN $delete_column;";
                     $sql2 = "ALTER TABLE system_npc_midguaiwu DROP COLUMN $delete_column;";
                     $cxjg =$dblj->exec($sql2);
+                    $sql3 = "ALTER TABLE system_npc_scene DROP COLUMN $delete_column;";
+                    $cxjg =$dblj->exec($sql3);
                     break;
                 case '4':
                     $delete_column = "i".$gm_game_attr_id;
@@ -1112,6 +1112,8 @@ echo $refresh_html;
                     $sql = "ALTER TABLE system_npc ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
                     $sql2 = "ALTER TABLE system_npc_midguaiwu ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
                     $cxjg =$dblj->exec($sql2);
+                    $sql3 = "ALTER TABLE system_npc_scene ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $cxjg =$dblj->exec($sql3);
                     break;
                 case '4':
                     $update_column = "i".$gm_id;
@@ -1173,6 +1175,8 @@ echo $refresh_html;
                     $sql = "ALTER TABLE system_npc ADD `$update_column` $add_type NOT NULL;";
                     $sql2 = "ALTER TABLE system_npc_midguaiwu ADD `$update_column` $add_type NOT NULL;";
                     $cxjg =$dblj->exec($sql2);
+                    $sql3 = "ALTER TABLE system_npc_scene ADD `$update_column` $add_type NOT NULL;";
+                    $cxjg =$dblj->exec($sql3);
                     break;
                 case '4':
                     $update_column = "i".$gm_id;
@@ -2915,9 +2919,9 @@ echo $refresh_html;
             exit();
         }else{
             \player\put_system_message_sql($player->uid,$dblj);
+            $dblj->exec("update game1 set ucmd = '$cmd' where sid = '$sid'");
             include "$ym";
-            $sql = "update game1 set endtime='$nowdate',sfzx=1,ucmd='$cmd' WHERE sid='$sid'";
-            $dblj->exec($sql);
+            $dblj->exec("update game1 set endtime='$nowdate',sfzx=1 WHERE sid='$sid'");
         }
     }
     

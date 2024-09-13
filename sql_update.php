@@ -1,6 +1,85 @@
 <?php
 //数据库更新补丁
 
+
+try {
+    // 1. 查询表是否存在
+    $query = $dblj->prepare("SHOW TABLES LIKE 'system_npc_scene'");
+    $query->execute();
+    $table_exists = $query->fetch();
+
+    if (!$table_exists) {
+        // 2. 表不存在，复制 system_npc 表的结构
+        $create_table = $dblj->prepare("CREATE TABLE `system_npc_scene` LIKE `system_npc`");
+        $create_table->execute();
+        
+        // 使用事务来保证所有操作的原子性
+        $dblj->beginTransaction();
+
+        // 3. 移除主键
+        // 先检查是否有主键存在
+        $stmt = $dblj->prepare("SHOW KEYS FROM `system_npc_scene` WHERE Key_name = 'PRIMARY'");
+        $stmt->execute();
+        $primary_key = $stmt->fetch();
+
+        // 移除 `AUTO_INCREMENT` 属性
+        $dblj->exec("ALTER TABLE `system_npc_scene` MODIFY `nid` INT(11)");
+
+        if ($primary_key) {
+            // 移除主键
+            $dblj->exec("ALTER TABLE `system_npc_scene` DROP PRIMARY KEY");
+        }
+
+
+        // 添加 `nmid` 列
+        $dblj->exec("ALTER TABLE `system_npc_scene` ADD COLUMN `nmid` INT(11) NOT NULL");
+
+        // 添加 `ncreat_time` 列
+        $dblj->exec("ALTER TABLE `system_npc_scene` ADD COLUMN `ncreat_time` DATETIME NOT NULL");
+
+        // 添加 `ncid` 列，设置为 `AUTO_INCREMENT` 和主键
+        $dblj->exec("ALTER TABLE `system_npc_scene` ADD COLUMN `ncid` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY");
+
+        // 提交事务
+        $dblj->commit();
+    }
+} catch (PDOException $e) {
+    // 回滚事务（如果有进行事务处理）
+    if ($dblj->inTransaction()) {
+        $dblj->rollBack();
+    }
+    echo "操作时出错: " . $e->getMessage();
+}
+
+try {
+    // 1. 查询表是否存在
+    $query = $dblj->prepare("SHOW TABLES LIKE 'system_map_cache'");
+    $query->execute();
+    $table_exists = $query->fetch();
+
+    if (!$table_exists) {
+        // 2. 表不存在，复制 system_npc 表的结构
+        $create_table = $dblj->prepare("CREATE TABLE `system_map_cache` LIKE `system_map`");
+        $create_table->execute();
+        
+        // 使用事务来保证所有操作的原子性
+        $dblj->beginTransaction();
+
+
+        // 提交事务
+        $dblj->commit();
+    }
+} catch (PDOException $e) {
+    // 回滚事务（如果有进行事务处理）
+    if ($dblj->inTransaction()) {
+        $dblj->rollBack();
+    }
+    echo "操作时出错: " . $e->getMessage();
+}
+
+
+
+
 try {
     // 查询 game_main_page 表中 value 字段的类型
     $stmt = $dblj->prepare("SHOW COLUMNS FROM game_main_page LIKE 'value'");

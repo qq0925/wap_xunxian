@@ -216,6 +216,15 @@ foreach ($keyValuePairs as $pair) {
                 if ($result->num_rows > 0) {
                     $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = '$ele_2' WHERE ngid = '$guai_id' and nsid = ''";
                     $db->query($updateQuery);
+                }}
+                elseif($oid =='npc_scene'){
+                $reg = "n".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_npc_scene LIKE '$reg'");
+
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_npc_scene SET $reg = '$ele_2' WHERE ncid = '$mid'";
+                    $db->query($updateQuery);
                 }
                 }else{
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
@@ -427,6 +436,16 @@ $sid = $old_sid;
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
                     $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = $reg + '$ele_2' WHERE ngid = '$guai_id' and nsid = ''";
+                    $db->query($updateQuery);
+                }
+                }
+                elseif($oid =='npc_scene'){
+                $reg = "n".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_npc_scene LIKE '$reg'");
+
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = $reg + '$ele_2' WHERE ngid = '$mid'";
                     $db->query($updateQuery);
                 }
                 }

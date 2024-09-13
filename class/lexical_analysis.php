@@ -34,7 +34,7 @@ $ngid = explode(',',$gid);
 
 $db = DB::conn();
 //这段是处理伤害公式的获取
-if($jid){
+
 $sql = "SELECT * from system_skill where jid = '$jid'";
 $result = $db->query($sql);
 if ($result) {
@@ -54,7 +54,6 @@ if ($result_2) {
 }
 if(!$j_hurt_exp){
     $j_hurt_exp = 1;
-}
 }
 }
 
@@ -109,29 +108,25 @@ if($j_group_attack =='-1'){
 $ngid_count = count($ngid);
 
 for($i=0;$i<$ngid_count;$i++){
-$attack_gid_root = "";
 $attack_gid = $ngid[$i];
-$attack_gid_root = \player\getguaiwu_alive($attack_gid,$dblj)->nid;
-
-if($attack_gid_root){
-$attack_gid_para = $attack_gid_root."|".$attack_gid;
+if($attack_gid){
 if($j_event_use_id!=0){
 include_once 'class/events_steps_change.php';
-events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc_monster',$attack_gid,$para);
 }
-global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc_monster',$attack_gid,$para);
 
-global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc_monster',$attack_gid,$para);
 
 if(!is_numeric($j_deplete_exp)){
-    $hurt_m_cut = process_string($j_deplete_exp,$sid,'npc',$attack_gid_para,$jid,'fight');
+    $hurt_m_cut = process_string($j_deplete_exp,$sid,'npc_monster',$attack_gid,$jid,'fight');
     $hurt_m_cut = @eval("return $hurt_m_cut;"); // 计算 eval 表达式的结果
 }else{
     $hurt_m_cut = $j_deplete_exp;
 }
 $hurt_m_cut = (int)floor($hurt_m_cut);
 
-$hurt_cut = process_string($j_hurt_exp,$sid,'npc',$attack_gid_para,$jid,'fight');
+$hurt_cut = process_string($j_hurt_exp,$sid,'npc_monster',$attack_gid,$jid,'fight');
 $hurt_cut = @eval("return $hurt_cut;"); // 计算 eval 表达式的结果
 $hurt_cut = (int)floor($hurt_cut);
 $hurt_cut = $hurt_cut <=0?1:$hurt_cut;
@@ -139,28 +134,25 @@ $sql = "update system_npc_midguaiwu set nhp = nhp - {$hurt_cut},nsid = '$sid' WH
 $dblj->exec($sql);
 $sql = "update game2 set hurt_hp = '-$hurt_cut',cut_mp = '-$hurt_m_cut' where gid = '$attack_gid'";
 $dblj->exec($sql);
-$j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc',$attack_gid_para);
+$j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc_monster',$attack_gid);
 $sql = "update game2 set fight_umsg = '$j_umsg' where sid = '$sid'";
 $cxjg = $dblj->exec($sql);
 }
 }
 }else{
 for($i=0;$i<$j_group_attack;$i++){
-$attack_gid_root = "";
 $attack_gid = $ngid[$i];
-$attack_gid_root = \player\getguaiwu_alive($attack_gid,$dblj)->nid;
-$attack_gid_para = $attack_gid_root."|".$attack_gid;
-if($attack_gid_root){
+if($attack_gid){
 if($j_event_use_id!=0){
 include_once 'class/events_steps_change.php';
-events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc_monster',$attack_gid,$para);
 }
-global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc_monster',$attack_gid,$para);
 
-global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc_monster',$attack_gid,$para);
 
 if(!is_numeric($j_deplete_exp)){
-    $hurt_m_cut = process_string($j_deplete_exp,$sid,'npc',$attack_gid_para,$jid,'fight');
+    $hurt_m_cut = process_string($j_deplete_exp,$sid,'npc_monster',$attack_gid,$jid,'fight');
     $hurt_m_cut = @eval("return $hurt_m_cut;"); // 计算 eval 表达式的结果
 }else{
     $hurt_m_cut = $j_deplete_exp;
@@ -168,7 +160,7 @@ if(!is_numeric($j_deplete_exp)){
 $hurt_m_cut = (int)floor($hurt_m_cut);
 
 
-$hurt_cut = process_string($j_hurt_exp,$sid,'npc',$attack_gid_para,$jid,'fight');
+$hurt_cut = process_string($j_hurt_exp,$sid,'npc_monster',$attack_gid,$jid,'fight');
 $hurt_cut = @eval("return $hurt_cut;"); // 计算 eval 表达式的结果
 $hurt_cut = (int)floor($hurt_cut);
 $hurt_cut = $hurt_cut <=0?1:$hurt_cut;
@@ -176,28 +168,23 @@ $sql = "update system_npc_midguaiwu set nhp = nhp - {$hurt_cut},nsid = '$sid' WH
 $dblj->exec($sql);
 $sql = "update game2 set hurt_hp = '-$hurt_cut',cut_mp = '-$hurt_m_cut' where gid = '$attack_gid'";
 $dblj->exec($sql);
-$j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc',$attack_gid_para);
+
+$j_umsg = \lexical_analysis\process_string($j_umsg,$sid,'npc_monster',$attack_gid,$jid);
 $j_umsg = str_replace(array("'", "\""), '', $j_umsg);
 $sql = "update game2 set fight_umsg = '$j_umsg' where sid = '$sid' and gid = '$attack_gid'";
 $cxjg = $dblj->exec($sql);
 }
 }
 }
-
-
-
-
 }elseif($type ==2){
 for($i=0;$i<@count($ngid);$i++){
     $monster_skills = '';
     $monster_skills_arr = [];
     $attack_gid = $ngid[$i];
-    $attack_gid_root = \player\getguaiwu_alive($attack_gid,$dblj)->nid;
-    $attack_gid_para = $attack_gid_root."|".$attack_gid;
-    $guai_busy = \player\get_temp_attr($attack_gid_para,'busy',2,$dblj);
+    $guai_busy = \player\get_temp_attr($attack_gid,'busy',2,$dblj);
     if($guai_busy >0){
     $dblj->exec("update game2 set cut_hp = '',fight_omsg = '正忙，不能出招！' where gid = '$attack_gid'");
-    \player\update_temp_attr($attack_gid_para,'busy',2,$dblj,2,-1);
+    \player\update_temp_attr($attack_gid,'busy',2,$dblj,2,-1);
     }else{
     $sql = "select * from system_npc_midguaiwu where ngid = '$attack_gid' and nhp >0";
     $cxjg = $dblj->query($sql);
@@ -295,7 +282,7 @@ $sql = "update game2 set cut_hp = '-$g_hurt_cut' where sid = '$sid' and gid = '$
 $dblj->exec($sql);
     }
 }
-else{
+    else{
     $sql = "update game2 set cut_hp = '' where gid = '$attack_gid'";
     $cxjg = $dblj->exec($sql);
 }
@@ -309,19 +296,16 @@ if($p_group_attack =='-1'){
 $ngid_count = count($ngid);
 
 for($i=0;$i<$ngid_count;$i++){
-$attack_gid_root = "";
 $attack_gid = $ngid[$i];
-$attack_gid_root = \player\getguaiwu_alive($attack_gid,$dblj)->nid;
 
-if($attack_gid_root){
-$attack_gid_para = $attack_gid_root."|".$attack_gid;
+if($attack_gid){
 // if($p_event_use_id!=0){
 // include_once 'class/events_steps_change.php';
-// events_steps_change($p_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+// events_steps_change($p_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid,$para);
 // }
-// global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+// global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid,$para);
 
-// global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+// global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid,$para);
 
 $hurt_cut = process_string_3($p_hurt_exp,$pid,$attack_gid,$pets_skills,$sid,null,1);
 
@@ -347,15 +331,15 @@ for($i=0;$i<$p_group_attack;$i++){
 $attack_gid_root = "";
 $attack_gid = $ngid[$i];
 $attack_gid_root = \player\getguaiwu_alive($attack_gid,$dblj)->nid;
-$attack_gid_para = $attack_gid_root."|".$attack_gid;
+$attack_gid = $attack_gid_root."|".$attack_gid;
 if($attack_gid_root){
 // if($j_event_use_id!=0){
 // include_once 'class/events_steps_change.php';
-// events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+// events_steps_change($j_event_use_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid,$para);
 // }
-// global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+// global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid,$para);
 
-// global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid_para,$para);
+// global_events_steps_change(28,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$attack_gid,$para);
 
 $hurt_cut = process_string_3($p_hurt_exp,$pid,$attack_gid,$pets_skills,$sid,null,1);
 $hurt_cut = @eval("return $hurt_cut;"); // 计算 eval 表达式的结果
@@ -1471,7 +1455,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                     'w' => 'mleft',
                                     'e' => 'mright',
                                 ];
-                            
+                                
                                 $field = $fieldMapping[$exitType];  // 获取对应字段名称
                             
                                 // 查询system_map表，获取对应字段（up, down, left, right）对应的mid
@@ -1586,6 +1570,122 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             $stmt = $db->prepare($sql);
                             $stmt->bind_param("s", $mid2);
                             }
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            if (!$result) {
+                                die('查询失败: ' . $db->error);
+                            }
+                            $row = $result->fetch_assoc();
+                            if ($attr2 == "skills_cmmt") {
+                                $skills_cmmt = $row['nskills'];
+                                $skill_cmmt = explode(',', $skills_cmmt);
+                                if ($skills_cmmt) {
+                                    foreach ($skill_cmmt as $skill_cmmt_detail) {
+                                        $skill_para = explode('|', $skill_cmmt_detail);
+                                        $skill_id = $skill_para[0];
+                                        $skill_lvl = $skill_para[1];
+                                        $sql = "SELECT * FROM system_skill WHERE jid = ?";
+                                        $stmt = $db->prepare($sql);
+                                        $stmt->bind_param("s", $skill_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $row = $result->fetch_assoc();
+                                        $row_result .= "，" . $row['jname'] ."(". "{$skill_lvl}".")";
+                                    }
+                                    $row_result = ltrim($row_result, "，");
+                                }
+                            } elseif ($attr2 == "equips_cmmt") {
+                                $equips_cmmt = $row['nequips'];
+                                $equip_cmmt = explode(',', $equips_cmmt);
+                                if ($equips_cmmt) {
+                                    foreach ($equip_cmmt as $equips_cmmt_para) {
+                                        $equips_cmmt_id = explode('_',$equips_cmmt_para)[2];
+                                        $sql = "SELECT * FROM system_item_module WHERE iid = ?";
+                                        $stmt = $db->prepare($sql);
+                                        $stmt->bind_param("s", $equips_cmmt_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $row = $result->fetch_assoc();
+                                        $row_result .= "，" . $row['iname'];
+                                    }
+                                    $row_result = ltrim($row_result, "，");
+                                }
+                            } else {
+                                $row_result = $row[$attr3];
+}
+
+                            if ($row_result === null ||$row_result ==='') {
+                                $op = "\"\""; // 或其他默认值
+                                }else{
+                            $op = nl2br($row_result);
+                                }
+                            $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                            // 替换字符串中的变量
+                            //$input = str_replace("{{$match}}", $op, $input);
+                            break;
+                        case 'npc_monster':
+                            $attr3 = 'n'.$attr2;
+                            $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = ?";
+                            $stmt = $db->prepare($sql);
+                            $stmt->bind_param("s", $mid);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            if (!$result) {
+                                die('查询失败: ' . $db->error);
+                            }
+                            $row = $result->fetch_assoc();
+                            if ($attr2 == "skills_cmmt") {
+                                $skills_cmmt = $row['nskills'];
+                                $skill_cmmt = explode(',', $skills_cmmt);
+                                if ($skills_cmmt) {
+                                    foreach ($skill_cmmt as $skill_cmmt_detail) {
+                                        $skill_para = explode('|', $skill_cmmt_detail);
+                                        $skill_id = $skill_para[0];
+                                        $skill_lvl = $skill_para[1];
+                                        $sql = "SELECT * FROM system_skill WHERE jid = ?";
+                                        $stmt = $db->prepare($sql);
+                                        $stmt->bind_param("s", $skill_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $row = $result->fetch_assoc();
+                                        $row_result .= "，" . $row['jname'] ."(". "{$skill_lvl}".")";
+                                    }
+                                    $row_result = ltrim($row_result, "，");
+                                }
+                            } elseif ($attr2 == "equips_cmmt") {
+                                $equips_cmmt = $row['nequips'];
+                                $equip_cmmt = explode(',', $equips_cmmt);
+                                if ($equips_cmmt) {
+                                    foreach ($equip_cmmt as $equips_cmmt_para) {
+                                        $equips_cmmt_id = explode('_',$equips_cmmt_para)[2];
+                                        $sql = "SELECT * FROM system_item_module WHERE iid = ?";
+                                        $stmt = $db->prepare($sql);
+                                        $stmt->bind_param("s", $equips_cmmt_id);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $row = $result->fetch_assoc();
+                                        $row_result .= "，" . $row['iname'];
+                                    }
+                                    $row_result = ltrim($row_result, "，");
+                                }
+                            } else {
+                                $row_result = $row[$attr3];
+}
+
+                            if ($row_result === null ||$row_result ==='') {
+                                $op = "\"\""; // 或其他默认值
+                                }else{
+                            $op = nl2br($row_result);
+                                }
+                            $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                            // 替换字符串中的变量
+                            //$input = str_replace("{{$match}}", $op, $input);
+                            break;
+                        case 'npc_scene':
+                            $attr3 = 'n'.$attr2;
+                            $sql = "SELECT * FROM system_npc_scene WHERE ncid = ?";
+                            $stmt = $db->prepare($sql);
+                            $stmt->bind_param("s", $mid);
                             $stmt->execute();
                             $result = $stmt->get_result();
                             if (!$result) {
@@ -1927,9 +2027,9 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             break;
                         default:
                             $attr3 = 'n'.$attr2;
-                            $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = ? and nsid = ?";
+                            $sql = "SELECT * FROM system_npc_scene WHERE ncid = ?";
                             $stmt = $db->prepare($sql);
-                            $stmt->bind_param("ss", $oid,$sid);
+                            $stmt->bind_param("s", $mid);
                             $stmt->execute();
                             $result = $stmt->get_result();
                             if (!$result) {
@@ -2897,17 +2997,9 @@ function process_attribute_2($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$par
                             break;
                         case 'npc':
                             $attr3 = 'n'.$attr2;
-                            if (is_numeric($mid)){
-                            $sql = "SELECT * FROM system_npc WHERE nid = ?";
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            }else{
-                            $data_mid = explode("|",$mid);
-                            $mid2 = $data_mid[1];
                             $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = ?";
                             $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid2);
-                            }
+                            $stmt->bind_param("s", $mid);
                             $stmt->execute();
                             $result = $stmt->get_result();
                             if (!$result) {

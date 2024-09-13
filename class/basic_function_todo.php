@@ -478,21 +478,22 @@ $op_html .="<br/>";
 }
         break;
         case '2':
-$sql = "SELECT nshop FROM system_npc WHERE nid = :nid";
+$sql = "SELECT nshop,nid FROM system_npc_scene WHERE ncid = :ncid";
 $stmt = $dblj->prepare($sql);
-$stmt->bindParam(':nid', $mid,PDO::PARAM_STR);
+$stmt->bindParam(':ncid', $mid,PDO::PARAM_STR);
 $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 $nshop = $result['nshop'];
+$nid = $result['nid'];
 if($nshop ==1){
-$npc_buy = $encode->encode("cmd=gm_shop_npc&nid=$mid&ucmd=$cmid&sid=$sid");
+$npc_buy = $encode->encode("cmd=gm_shop_npc&ncid=$mid&ucmd=$cmid&sid=$sid");
 $op_html .=<<<HTML
 <a href="?cmd=$npc_buy">买东西</a><br/>
 HTML;
 }
 $sql = "SELECT * FROM system_npc_op WHERE belong = :mid order by id asc";
 $stmt = $dblj->prepare($sql);
-$stmt->bindParam(':mid', $mid,PDO::PARAM_STR);
+$stmt->bindParam(':mid', $nid,PDO::PARAM_STR);
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $sql = "SELECT npc_op_br FROM gm_game_basic";
@@ -510,8 +511,8 @@ $op_link_task = $result[$i]['link_task'];
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$oid = 'npc';
-$register_triggle = checkTriggerCondition($op_show_cond,$dblj,$sid,$oid);//显示条件
+$oid = 'npc_scene';
+$register_triggle = checkTriggerCondition($op_show_cond,$dblj,$sid,$oid,$mid);//显示条件
 if(is_null($register_triggle)){
     $register_triggle =1;//若触发条件为空则默认true
 }
@@ -528,12 +529,7 @@ $op_html .="<br/>";
 }
 }
 
-if(!is_numeric($mid)){
-    $mid_m = explode("|",$mid);
-    $mid = $mid_m[0];
-}
-
-$sql = "SELECT nkill,nname,nnot_dead FROM system_npc WHERE nid = :mid";
+$sql = "SELECT nkill,nname,nnot_dead FROM system_npc_scene WHERE ncid = :mid";
 $stmt = $dblj->prepare($sql);
 $stmt->bindParam(':mid', $mid,PDO::PARAM_STR);
 $stmt->execute();
@@ -542,22 +538,18 @@ $nkill = $result['nkill'];
 $nname = $result['nname'];
 $nnot_dead = $result['nnot_dead'];
 if($nkill ==1 && $nnot_dead ==0){
-$attack_id = $mid;
-$attack_gid = $mid_m[1];
-
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$attack_attack = $encode->encode("cmd=pve_fight&nid=$attack_id&ucmd=$cmid&ngid=$attack_gid&sid=$sid");
+$attack_attack = $encode->encode("cmd=pve_fight&ucmd=$cmid&ncid=$mid&sid=$sid");
 $op_html .=<<<HTML
 <a href="?cmd=$attack_attack">攻击{$nname}</a><br/>
 HTML;
 }elseif($nkill ==1 && $nnot_dead ==1){
-$attack_id = $mid;
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$attack_attack = $encode->encode("cmd=pve_fight&nid=$attack_id&ucmd=$cmid&nnot_dead=1&sid=$sid");
+$attack_attack = $encode->encode("cmd=pve_fight&ucmd=$cmid&ncid=$mid&nnot_dead=1&sid=$sid");
 $op_html .=<<<HTML
 <a href="?cmd=$attack_attack">攻击{$nname}</a><br/>
 HTML;
@@ -896,6 +888,7 @@ $stmt->execute();
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $nowmid = $row['nowmid'];
 $clmid = player\getmid($nowmid,$dblj);
+
 $npc_list = '';
 if ($clmid->mnpc_now !=""){
     $npc_list = explode(',',$clmid->mnpc_now);
@@ -908,13 +901,13 @@ if ($clmid->mnpc_now !=""){
     }
     if($show_result){
     $npc_id = $npc_para[0];
-    $npc_count = $npc_para[1];
-    $sql = "select * from system_npc where nid = '$npc_id' and (nkill = 0 || nnot_dead = 1)";//获取npc
+    $sql = "select * from system_npc_scene where nid = '$npc_id' and nmid = '$nowmid'";//获取场景npc
     $cxjg = $dblj->query($sql);
     $cxnpcall = $cxjg->fetchAll(PDO::FETCH_ASSOC);
     for ($i=0;$i < count($cxnpcall);$i++){
         $nname = $cxnpcall[$i]['nname'];
         $nid = $cxnpcall[$i]['nid'];
+        $ncid = $cxnpcall[$i]['ncid'];
         $nkill = $cxnpcall[$i]['nkill'];
         $nnot_dead = $cxnpcall[$i]['nnot_dead'];
         $ntaskid = $cxnpcall[$i]['ntask_target'];
@@ -967,60 +960,25 @@ if ($clmid->mnpc_now !=""){
                 }
             }
         }
-        
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $clj[] = $cmd;
-        $npccmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$nid&sid=$sid");
-        for ($j=0;$j < $npc_count;$j++){
-            
-if($nnot_dead ==0){
-        $npchtml.=<<<HTML
+        $npccmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$nid&mid=$ncid&sid=$sid");
+
+        if($nkill ==0){
+                $npchtml.=<<<HTML
 <a href="?cmd=$npccmd">{$nname}</a> 
 HTML;
-}else{
-        $npchtml.=<<<HTML
+        }else{
+                $npchtml.=<<<HTML
 <a href="?cmd=$npccmd">*{$nname}</a> 
 HTML;
+        }
 }
-
-
-}
-$npchtml .="<br/>";
-}
+    $npchtml .="<br/>";
 }
     }
 }
-
-$sql = "select * from system_npc_midguaiwu where nmid='$nowmid' AND nsid = ''";//获取当前地图怪物
-$cxjg = $dblj->query($sql);
-$cxallguaiwu = $cxjg->fetchAll(PDO::FETCH_ASSOC);
-$gwhtml = '';
-for ($i = 0;$i<count($cxallguaiwu);$i++){
-    $guaiwu_creat_event = $cxallguaiwu[$i]['ncreat_event_id'];
-    $guaiwu_ngid = $cxallguaiwu[$i]['ngid'];
-    $guaiwu_nid = $cxallguaiwu[$i]['nid'];
-    $guaiwu_para = $guaiwu_nid ."|"."$guaiwu_ngid";
-    if($guaiwu_creat_event!=0){
-    include_once 'class/events_steps_change.php';
-    events_steps_change($guaiwu_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc',$guaiwu_para,$para);
-    // 重新查询，确保数据刷新
-    $sql = "select * from system_npc_midguaiwu where nmid='$nowmid' AND nsid = ''";
-    $cxjg = $dblj->query($sql);
-    $cxallguaiwu = $cxjg->fetchAll(PDO::FETCH_ASSOC);
-    }
-    $ret = global_event_data_get(26,$dblj);
-    if($ret){
-    global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc',$guaiwu_para,$para);
-    }
-    $br = "<br/>";
-    $cmid = $cmid + 1;
-    $cdid[] = $cmid;
-    $clj[] = $cmd;
-    $gwcmd = $encode->encode("cmd=npc_html&ucmd=$cmid&ngid=".$guaiwu_ngid."&nid=".$guaiwu_nid."&sid=$sid&nowmid=$nowmid");
-$npchtml .="<a href='?cmd=$gwcmd'>*".$cxallguaiwu[$i]['nname']."</a>";
-}
-$npchtml .=$br;
 return $npchtml;
 }
 
@@ -1431,7 +1389,6 @@ HTML;
 {$attr_hp_name}：({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
 {$attr_mp_name}：({$player_mp}/{$player_maxmp}){$cut_mp}<br/>
 HTML;
-    
     }
     $sql = "SELECT * from system_pet_player where psid = :sid and pstate = 1";
     $stmt = $dblj->prepare($sql);

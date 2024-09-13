@@ -6,3 +6,4 @@ return [
     'db_user' => 'xunxian',
     'db_password' => '123456',
 ];
+?>

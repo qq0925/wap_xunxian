@@ -923,13 +923,18 @@ $totalPages = ceil($totalRows / $list_row);
                 $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$player->sid");
                 }
                 $delete_msg = $encode->encode("cmd=liaotian&ucmd=$cmid&ltlx=system&delete_msid=$msg_id&sid=$player->sid");
-                $lthtml .="[<span style='color: orangered;'>{系统}</span>]<a href='?cmd=$u_cmd'>$uname</a>:$umsg<span class='txt-fade'>[{$send_time}]</span>";
+                $lthtml .="[<span style='color: orangered;'>系统</span>]<a href='?cmd=$u_cmd'>$uname</a>:$umsg<span class='txt-fade'>[{$send_time}]</span>";
                 if($player->uis_designer ==1){
                 $lthtml .="<a href='?cmd=$delete_msg'>删除</a>";
                 }
                 $lthtml .="<br/>";
             }else{
-                $lthtml .="<div class='hpys' style='display: inline; color: orangered'>[系统]</div>$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
+                $delete_msg = $encode->encode("cmd=liaotian&ucmd=$cmid&ltlx=system&delete_msid=$msg_id&sid=$player->sid");
+                $lthtml .="<div class='hpys' style='display: inline; color: orangered'>[系统]</div>$umsg<span class='txt-fade'>[{$send_time}]</span>";
+                if($player->uis_designer ==1){
+                $lthtml .="<a href='?cmd=$delete_msg'>删除</a>";
+                }
+                $lthtml .="<br/>";
             }
 
         }

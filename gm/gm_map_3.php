@@ -69,66 +69,97 @@ $nowdate = date('Y-m-d H:i:s');
 if ($update ==1){
     echo "更新成功！<br/>";
     //$excludeFields = ['mname', 'mop_target', 'mid', 'mup', 'mdown', 'mleft', 'mright'];
-    $sql = "update system_map set mgtime='$nowdate' WHERE mid='$target_midid'";
-    $dblj->exec($sql);
-    if($clmid->mnpc!=''){
-
-    $data = $clmid->mnpc;
-    $npc_s = explode(",", $data); // 使用逗号分隔字符串，得到每个项
-    foreach ($npc_s as &$npc_a) {
-        $parts = explode("|", $npc_a); // 使用竖线分隔每个项
-        if (count($parts) === 2||count($parts) === 3) {
-            $id = $parts[0];
-            $npc_count = $parts[1];
-            $npc_show_cond = $parts[2];
-            $npc_count = \lexical_analysis\process_string($npc_count,$sid);
-            $npc_count = \lexical_analysis\process_string($npc_count,$sid);
-            @$npc_count = eval("return $npc_count;");
-            
-            // 更新处理后的值
-            $npc_a = "$id|$npc_count|$npc_show_cond";
+    $dblj->exec("update system_map set mgtime='$nowdate' WHERE mid='$target_midid'");
+    
+if($clmid->mnpc!=''){
+        $dblj->exec("delete from system_npc_scene where nmid = '$target_midid'");
+        $data = $clmid->mnpc;
+        $npc_s = explode(",", $data); // 使用逗号分隔字符串
+        
+        foreach ($npc_s as &$npc_a) {
+            $parts = explode("|", $npc_a); // 使用竖线分隔每个项
+            if (count($parts) >= 3) {
+                list($id, $npc_count, $npc_show_cond) = $parts;
+        
+                // 对 npc_count 进行处理
+                $npc_count = \lexical_analysis\process_string($npc_count, $sid);//考虑传入更多参数
+                
+                // 安全地处理表达式解析，避免 eval（如有安全风险，考虑使用其他解析工具）
+                if (is_numeric($npc_count)) {
+                    $npc_count = (int) $npc_count; // 如果是数字，直接转换为整型
+                } else {
+                    @$npc_count = eval("return $npc_count;"); // eval 要特别小心
+                }
+        
+                // 更新处理后的值
+                $npc_a = "{$id}|{$npc_count}|{$npc_show_cond}";
+            }
         }
-    }
-    // 将处理后的数据重新组合成字符串
-    $clmid_npc_count = implode(",", $npc_s);
-    $clmid = player\getmid($target_midid,$dblj);
-    $retgw = explode(",",$clmid_npc_count);
+        
+        // 将处理后的数据重新组合成字符串
+        $clmid_npc_count = implode(",", $npc_s);
+        
+        // 获取 mid 数据
+        $clmid = player\getmid($target_midid, $dblj);
+        
+        // 分割处理后的数据
+        $retgw = explode(",", $clmid_npc_count);
+
     foreach ($retgw as $itemgw){
         $gwinfo = explode("|",$itemgw);
-        $guaiwu = \player\getnpc($gwinfo[0],$dblj);
-        $guaiwu->nid = $gwinfo[0];
-        if($guaiwu->nkill ==1){
-        $sql = " delete from system_npc_midguaiwu where nid = '$guaiwu->nid' and nmid = '$player->nowmid' and nsid = ''";
-        $cxjg =$dblj->exec($sql);
-        }
-        if($guaiwu->nkill ==1&&$guaiwu->nnot_dead ==0){
+        $npc_para = \player\getnpc($gwinfo[0],$dblj);
+        $npc_id = $gwinfo[0];
+        
         for ($n=0;$n<$gwinfo[1];$n++){
             // 要复制的数据行id
-            $nid = $guaiwu->nid;
-            $nmid = $target_midid;
-            // 获取旧表字段列表
-            $stmt = $dblj->prepare("SHOW COLUMNS FROM system_npc");
-            $stmt->execute();
-            $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-            // 构建动态插入语句
-            $cols = implode(", ",$columns);
-            $nowdate = date('Y-m-d H:i:s');
-            $sql = "INSERT INTO system_npc_midguaiwu ($cols, nmid,ncreate_time) SELECT $cols, :nmid ,:nowdate FROM system_npc WHERE nid = :nid;";
+            $nid = $npc_para->nid;
+            // 1. 查询列名并缓存结果以减少重复查询
+            if (empty($columns)) {
+                $stmt = $dblj->query("SHOW COLUMNS FROM system_npc");
+                $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            }
+            // 2. 移除不必要的列（如果有）
+            $cols = implode(", ", $columns);
+            
+            // 3. 动态构建 SQL 语句
+            $sql = "INSERT INTO system_npc_scene ($cols, nmid) 
+                    SELECT $cols, :nmid 
+                    FROM system_npc 
+                    WHERE nid = :nid;";
+            
+            // 4. 预编译 SQL 语句
             $stmt = $dblj->prepare($sql);
-            $stmt->bindParam(':nmid', $nmid, PDO::PARAM_INT);
+            
+            // 5. 绑定参数并执行
+            $stmt->bindParam(':nmid', $target_midid, PDO::PARAM_INT);
             $stmt->bindParam(':nid', $nid, PDO::PARAM_INT);
-            $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_INT);
             $stmt->execute();
+            // 获取最后插入记录的自增 ID
+            $lastInsertId = $dblj->lastInsertId();
+            
+            $npc_scene_creat_event = $npc_para->ncreat_event_id;
+            if($npc_scene_creat_event!=0){
+            include_once 'class/events_steps_change.php';
+            events_steps_change($npc_scene_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
+            
+                $ret = global_event_data_get(26,$dblj);
+                if($ret){
+                global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
+                }
+            }
         }
-}
+
     }
-    
-    if($clmid->mitem!=''){
+    $sql = "update system_map set mnpc_now = '$clmid_npc_count' WHERE mid='$target_midid'";
+    $dblj->exec($sql);
+}
+
+if($clmid->mitem!=''){
     $data = $clmid->mitem;
     $items = explode(",", $data); // 使用逗号分隔字符串，得到每个项
     foreach ($items as &$item) {
         $parts = explode("|", $item); // 使用竖线分隔每个项
-        if (count($parts) === 2||count($parts) === 3) {
+        if (count($parts) >= 2) {
             $id = $parts[0];
             $item_count = $parts[1];
             $item_count = \lexical_analysis\process_string($item_count,$sid);
@@ -144,30 +175,6 @@ if ($update ==1){
     $sql = "update system_map set mitem_now = '$clmid_item_count' WHERE mid='$target_midid'";
     $dblj->exec($sql);
     }
-}
-    
-    $data = $clmid->mitem;
-    $items = explode(",", $data); // 使用逗号分隔字符串，得到每个项
-    foreach ($items as &$item) {
-        $parts = explode("|", $item); // 使用竖线分隔每个项
-        if (count($parts) === 2||count($parts) === 3) {
-            $id = $parts[0];
-            $item_count = $parts[1];
-            $item_count = \lexical_analysis\process_string($item_count,$sid);
-            $item_count = \lexical_analysis\process_string($item_count,$sid);
-            @$item_count = eval("return $item_count;");
-            
-            // 更新处理后的值
-            $item = "$id|$item_count";
-        }
-    }
-    // 将处理后的数据重新组合成字符串
-    $clmid_item_count = implode(",", $items);
-    $sql = "update system_map set mgtime='$nowdate',mitem_now = '$clmid_item_count',mnpc_now = '$clmid_npc_count' WHERE mid='$target_midid'";
-    $dblj->exec($sql);
-    
-    
-    
 }
 $br = 0;
 $map_name = $cxamap[0]['mname'];

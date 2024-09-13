@@ -136,12 +136,12 @@ if ($cxjg){
     }
 }
 
-
 $nowdate = date('Y-m-d H:i:s');
 $minute=floor((strtotime($nowdate)-strtotime($clmid->mgtime))/60);//获取刷新分钟间隔
-if (($clmid->mnpc!=''||$clmid->mitem!='') && $minute >= $clmid->mrefresh_time){
-    $sql = "update system_map set mgtime='$nowdate' WHERE mid='$player->nowmid'";
-    $dblj->exec($sql);
+
+if($minute >= $clmid->mrefresh_time){
+
+if ($clmid->mnpc!=''){
     if($clmid->mnpc!=''){
     $data = $clmid->mnpc;
     $npc_s = explode(",", $data); // 使用逗号分隔字符串，得到每个项
@@ -152,9 +152,7 @@ if (($clmid->mnpc!=''||$clmid->mitem!='') && $minute >= $clmid->mrefresh_time){
             $npc_count = $parts[1];
             $npc_show_cond = $parts[2];
             $npc_count = \lexical_analysis\process_string($npc_count,$sid);
-            $npc_count = \lexical_analysis\process_string($npc_count,$sid);
             @$npc_count = eval("return $npc_count;");
-            
             // 更新处理后的值
             $npc_a = "$id|$npc_count|$npc_show_cond";
         }
@@ -167,43 +165,80 @@ if (($clmid->mnpc!=''||$clmid->mitem!='') && $minute >= $clmid->mrefresh_time){
     $retgw = explode(",",$clmid->mnpc_now);
     foreach ($retgw as $itemgw){
         $gwinfo = explode("|",$itemgw);
-        $guaiwu = \player\getnpc($gwinfo[0],$dblj);
-        $guaiwu->nid = $gwinfo[0];
+        $npc_id = $gwinfo[0];
+        $npc_count = $gwinfo[1];
+        $npc_para = \player\getnpc($npc_id,$dblj);
         
-        if($guaiwu->nkill ==1){
-        $sql = " delete from system_npc_midguaiwu where nid = '$guaiwu->nid' and nmid = '$player->nowmid' and nsid = ''";
-        $cxjg =$dblj->exec($sql);
-        }
+        // 准备 SQL 查询
+        $sql = "SELECT * FROM system_npc_scene WHERE nid = :npc_id AND nmid = :nowmid";
         
-        if($guaiwu->nkill ==1 && $guaiwu->nnot_dead =0){
-        for ($n=0;$n<$gwinfo[1];$n++){
+        // 预处理查询语句
+        $stmt = $dblj->prepare($sql);
+        
+        // 绑定参数
+        $stmt->bindParam(':npc_id', $npc_id, PDO::PARAM_INT);
+        $stmt->bindParam(':nowmid', $player->nowmid, PDO::PARAM_INT);
+        
+        // 执行查询
+        $stmt->execute();
+        
+        // 获取所有记录
+        $cxnpcall = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // 获取记录数量
+        $npc_temp_count = count($cxnpcall);
+        $diff =  $npc_count - $npc_temp_count;
+if($diff >0){
+        for ($n=0;$n<$diff;$n++){
             // 要复制的数据行id
-            $nid = $guaiwu->nid;
+            $nid = $npc_para->nid;
             $nmid = $player->nowmid;
-            // 获取旧表字段列表
-            $stmt = $dblj->prepare("SHOW COLUMNS FROM system_npc");
-            $stmt->execute();
-            $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-            // 构建动态插入语句
-            $cols = implode(", ",$columns);
-            $nowdate = date('Y-m-d H:i:s');
-            $sql = "INSERT INTO system_npc_midguaiwu ($cols, nmid,ncreate_time) SELECT $cols, :nmid ,:nowdate FROM system_npc WHERE nid = :nid;";
+            // 1. 查询列名并缓存结果以减少重复查询
+            if (empty($columns)) {
+                $stmt = $dblj->query("SHOW COLUMNS FROM system_npc");
+                $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            }
+            // 2. 移除不必要的列（如果有）
+            $cols = implode(", ", $columns);
+            
+            // 3. 动态构建 SQL 语句
+            $sql = "INSERT INTO system_npc_scene ($cols, nmid) 
+                    SELECT $cols, :nmid 
+                    FROM system_npc 
+                    WHERE nid = :nid;";
+            
+            // 4. 预编译 SQL 语句
             $stmt = $dblj->prepare($sql);
+            
+            // 5. 绑定参数并执行
             $stmt->bindParam(':nmid', $nmid, PDO::PARAM_INT);
             $stmt->bindParam(':nid', $nid, PDO::PARAM_INT);
-            $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_INT);
             $stmt->execute();
-        }
+            // 获取最后插入记录的自增 ID
+            $lastInsertId = $dblj->lastInsertId();
+            
+            $npc_scene_creat_event = $npc_para->ncreat_event_id;
+            if($npc_scene_creat_event!=0){
+            include_once 'class/events_steps_change.php';
+            events_steps_change($npc_scene_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
+            
+                $ret = global_event_data_get(26,$dblj);
+                if($ret){
+                global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
+                }
+            }
+
+    }
 }
     }
-    }
-    
-    if($clmid->mitem!=''){
+}
+
+if($clmid->mitem!=''){
     $data = $clmid->mitem;
     $items = explode(",", $data); // 使用逗号分隔字符串，得到每个项
     foreach ($items as &$item) {
         $parts = explode("|", $item); // 使用竖线分隔每个项
-        if (count($parts) === 2||count($parts) === 3) {
+        if (count($parts) >= 2) {
             $id = $parts[0];
             $item_count = $parts[1];
             $item_count = \lexical_analysis\process_string($item_count,$sid);
@@ -219,12 +254,11 @@ if (($clmid->mnpc!=''||$clmid->mitem!='') && $minute >= $clmid->mrefresh_time){
     $sql = "update system_map set mitem_now = '$climb_item_count' WHERE mid='$player->nowmid'";
     $dblj->exec($sql);
     }
-}
-elseif($minute >= $clmid->mrefresh_time){
+
 $sql = "update system_map set mgtime='$nowdate' WHERE mid='$player->nowmid'";
 $dblj->exec($sql);
 }
-
+}
 $map_detail = $encode->encode("cmd=map_detail&mid=$player->nowmid&sid=$sid");
 
 if($player->nowmid !=0){

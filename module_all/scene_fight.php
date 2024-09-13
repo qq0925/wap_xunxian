@@ -15,6 +15,12 @@ $pet = \player\getpet_fight($sid,$dblj);
 $clmid = player\getmid($player->nowmid,$dblj);
 $fight_arr = player\getfightpara($sid,$dblj);
 
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+
+if(!$be_feat){
 
 $npid = "";
 //此变量用于获取你所战斗的仍然活着的宠物基本属性
@@ -37,27 +43,12 @@ $scene_npc = explode(',',$clmid ->mnpc_now);
 $huode = '';
 $rwts = '';
 $game_main = '';
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$clj[] = $cmd;
-$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+
 $get_main_page = \gm\get_pve_page($dblj);
 $br = 0;
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-
-// while(@count(explode(',',$ngid)>0)){
-// $alive_monster = player\getnpcguaiwu($ngid,$dblj);
-// if (!empty($alive_monster->nsid)&&$alive_monster->nsid !=$sid){
-//         $html = <<<HTML
-//         对方已经被其他人攻击了！<br/>
-//         <br/>
-//         <a href="?cmd=$gonowmid">返回游戏</a>
-// HTML;
-//         exit($html);
-// }
-// }
 
 if($cmd=='pve_fight'){
     if ($player->uhp <=0){
@@ -401,7 +392,7 @@ HTML;
 }
 
 for ($i=0;$i<count($get_main_page);$i++){
-    $oid = 'npc';
+    $oid = 'npc_monster';
     $main_id = $get_main_page[$i]['id'];
     $main_type = $get_main_page[$i]['type'];
     $main_value = $get_main_page[$i]['value'];
@@ -553,6 +544,11 @@ HTML;
 }
 $all .="<a href='?cmd=$goback_fight'>返回战斗</a>";
 }
-
+}else{
+$all = <<<HTML
+对方已经被其他人攻击了！<br/>
+<a href="?cmd=$gonowmid">返回游戏</a>
+HTML;
+}
 echo $all;
 ?>

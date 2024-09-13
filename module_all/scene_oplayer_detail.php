@@ -34,7 +34,7 @@ $send_msg.=<<<HTML
 <input type="hidden" name="ltlx" value="im">
 <input type="hidden" name="sid" value="$sid">
 <input type="hidden" name="imuid" value="$imoid">
-<textarea name="ltmsg" maxlength="200" rows="4" cols="20""></textarea>
+<input name="ltmsg" maxlength="200"></input>
 <input type="submit" value="发送私聊">
 </form>
 

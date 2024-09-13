@@ -60,17 +60,17 @@ $gm_html = <<<HTML
 <a href="?cmd=$gm_game_itemdesign">设计物品({$game_data->item_count})</a><br/>
 <a href="?cmd=$gm_game_npcdesign">设计电脑人物({$game_data->npc_count})</a><br/>
 <a href="?cmd=$gm_game_taskdesign">设计任务({$game_data->task_count})</a><br/>
-<a href="?cmd=$gm_game_buffdesign">设计BUFF({$game_data->buff_count})</a><br/>
+<a href="?cmd=$gm_game_buffdesign">设计BUFF({$game_data->buff_count})</a>!!!<br/>
 ---</br>
-<a href="?cmd=$gm_game_bossdesign">设计世界BOSS({$game_data->boss_count})</a><br/>
-<a href="?cmd=$gm_game_fbdesign">设计副本({$game_data->fb_count})</a><br/>
+<a href="?cmd=$gm_game_bossdesign">设计世界BOSS({$game_data->boss_count})</a>!!!<br/>
+<a href="?cmd=$gm_game_fbdesign">设计副本({$game_data->fb_count})</a>!!!<br/>
 <a href="?cmd=$gm_game_lpdesign">设计生活职业({$game_data->lp_count})</a><br/>
-<a href="?cmd=$gm_game_mkdesign">设计制造系统({$game_data->mk_count})</a><br/>
+<a href="?cmd=$gm_game_mkdesign">设计制造系统({$game_data->mk_count})</a>!!!<br/>
 <a href="?cmd=$gm_game_rpdesign">设计资源点({$game_data->rp_count})</a><br/>
 ---</br>
 <a href="?cmd=$gm_game_photomanage">管理图片({$game_data->photo_count})</a><br/>
 <a href="?cmd=$gm_game_othersetting">功能设置</a><br/>
-<a href="?cmd=$gm_game_timerdesign">设计定时器</a><br/>
+<a href="?cmd=$gm_game_timerdesign">设计定时器</a>!!!<br/>
 <a href="?cmd=$gm_global_notice">发布临时公告</a><br/>
 ---</br>
 <a href="?cmd=$lexical_test">词法解析</a><br/>

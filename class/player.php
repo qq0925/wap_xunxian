@@ -49,6 +49,8 @@ class clmid{}
 
 class npc{}
 
+class npc_scene{}
+
 class midguai{}
 
 class guaiwu{}
@@ -414,6 +416,21 @@ function getnpc($nid,$dblj){
         $npc->{$propertyName} = $propertyValue;
     }
     return $npc;
+}
+
+function getnpc_scene($nid,$dblj){
+    $npc_scene = new npc_scene();
+    $sql = "select * from system_npc_scene where nid = '$nid'";
+    $cxjg = $dblj->query($sql);
+    $data = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    // 循环遍历数组，动态生成类的属性并赋值
+    if(is_bool($data)){
+        return;
+    }
+    foreach ($data as $propertyName => $propertyValue) {
+        $npc_scene->{$propertyName} = $propertyValue;
+    }
+    return $npc_scene;
 }
 
 function getmidguai($mid,$dblj){
@@ -1302,7 +1319,7 @@ function getgameconfig($dblj){
 }
 
 function getfightpara($sid,$dblj){
-    $sql = "SELECT ngid,nname,nlvl,nhp,nmp,ndesc from system_npc_midguaiwu where nsid = '$sid' and nhp >0";
+    $sql = "SELECT ngid,nid,nname,nlvl,nhp,nmp,ndesc from system_npc_midguaiwu where nsid = '$sid' and nhp >0";
     $result = $dblj->query($sql);
     $row = $result->fetchAll(\PDO::FETCH_ASSOC);
     return $row;
