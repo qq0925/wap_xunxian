@@ -894,8 +894,12 @@ $totalPages = ceil($totalRows / $list_row);
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $clj[] = $cmd;
+        $systemliaotian = $encode->encode("cmd=liaotian&ucmd=$cmid&ltlx=system&sid=$sid");
+        $cmid = $cmid + 1;
+        $cdid[] = $cmid;
+        $clj[] = $cmd;
         $area_post = $encode->encode("cmd=sendliaotian&ucmd=$cmid&sid=$sid");
-        $lthtml = "【聊天频道：「系统」】<a href='?cmd=$teamliaotian'>刷新</a> <br/>
+        $lthtml = "【聊天频道：「系统」】<a href='?cmd=$systemliaotian'>刷新</a> <br/>
         【<a href='?cmd=$goliaotian'>公共</a>|<a href='?cmd=$imliaotian'>私聊</a>|<a href='?cmd=$cityliaotian'>城聊</a>|<a href='?cmd=$arealiaotian'>区聊</a>|<a href='?cmd=$teamliaotian'>队聊</a>|系统】<br/>
         <span style='font-weight : bold ; color: red'>请勿发表有关辱骂、政治、色情、赌博等相关言论！请确保您的言论符合游戏规则和道德准则。违反规则将导致相应的惩罚措施，包括禁言、封号等。</span><br/>";
         for ($i=0;$i < count($ret);$i++){
@@ -918,7 +922,7 @@ $totalPages = ceil($totalRows / $list_row);
                 }elseif($send_type==1){
                 $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$player->sid");
                 }
-                $delete_msg = $encode->encode("cmd=liaotian&ucmd=$cmid&ltlx=clan&delete_msid=$msg_id&sid=$player->sid");
+                $delete_msg = $encode->encode("cmd=liaotian&ucmd=$cmid&ltlx=system&delete_msid=$msg_id&sid=$player->sid");
                 $lthtml .="[<span style='color: orangered;'>{系统}</span>]<a href='?cmd=$u_cmd'>$uname</a>:$umsg<span class='txt-fade'>[{$send_time}]</span>";
                 if($player->uis_designer ==1){
                 $lthtml .="<a href='?cmd=$delete_msg'>删除</a>";
