@@ -414,16 +414,16 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     if (strpos($temp, '"') === false){
     $op = "\"".$temp."\"";
     }
-    $op = str_replace(array("\'", "\"\""), '0', $op);
-    if($para =='check_cond'){
+    $op = str_replace(array("'", "\"\""), '0', $op);
     // 使用正则表达式，去掉内部的单引号
     $op = preg_replace("/'(.*?)'/", '$1', $op);
     $op = str_replace(array("\""), '\'', $op);
-    }
     return $op;
 }, $expr);
+
 // 现在 $expr 中的 {eval(...)} 和 {...} 部分已经被替换成了对应的值
 $result = $expr;
+//var_dump($result);
 try{
 
 //$result = eval("return $expr;");
@@ -887,7 +887,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }else{
                         $mosaic_id = $mosaic_para[$mosaic_pos];
                         $xid = "i".$attr6;
-                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mosaic_id')";
+                        $sql = "SELECT * FROM system_item_module WHERE iid = '$mosaic_id'";
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
                         // 执行查询
@@ -1005,7 +1005,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }else{
                         $mosaic_id = $mosaic_para[$mosaic_pos];
                         $xid = "i".$attr6;
-                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mosaic_id')";
+                        $sql = "SELECT * FROM system_item_module WHERE iid = '$mosaic_id'";
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
                         // 执行查询
@@ -1647,6 +1647,42 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                 $stmt->bind_param("ss", $mid,$sid);
                                 $stmt->execute();
                                 $result = $stmt->get_result();
+                            }elseif(strpos($attr3, 'iembed.') === 0){
+                        //镶物属性相关
+                        $attr4 = substr($attr3, 7); // 提取 "embed." 后面的部分
+                        if(preg_match('/^(\d+\.)?(.*)/', $attr4, $matches)){
+                        $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
+                        $mosaic_pos = rtrim($prefix, ".");
+                        
+                        $attr5 = $matches[2]; // 匹配到的剩余部分
+                        }
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$mid'";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        $mosaic_list = $row['equip_mosaic'];
+                        $mosaic_para = explode('|',$mosaic_list);
+                        if(!$mosaic_para[$mosaic_pos]){
+                            $op = "\"\"";
+                        }else{
+                        $mosaic_id = $mosaic_para[$mosaic_pos];
+                        $xid = "i".$attr5;
+                        $sql = "SELECT * FROM system_item_module WHERE iid = '$mosaic_id'";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $attr3 = $xid;
+                        }
+                        //镶物属性相关
                             }else{
                                 $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = ? and sid = ?)";
                                 $stmt = $db->prepare($sql);
@@ -2337,6 +2373,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
 function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $type = null, $para = null) {
     $db = DB::conn();
 
+
     $matches = [];
     preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
     if (!empty($matches[1])) {
@@ -2450,6 +2487,15 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
     // 进行其他逻辑处理
     // ...
 $input = evaluate_expression($input,$db,$sid,$oid,$mid,$jid,$type,$para);
+// 使用 preg_replace_callback 进行匹配和替换
+$input = preg_replace_callback('/#"(.*?)"/', function ($matches) use ($sid, $oid, $mid, $jid, $type, $db, $para) {
+    // 获取原内容
+    //var_dump($matches);
+   $op = str_replace(array("'"), '', $matches[1]);
+   $op = "'".$op."'";
+   return $op;
+}, $input);
+
     return $input;
 }
 
