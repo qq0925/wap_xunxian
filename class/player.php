@@ -147,16 +147,16 @@ function update_message_sql($sid,$dblj,$input,$view_type=null){
     
     $input = htmlspecialchars($input);
     if($view_type){
-    $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time,viewed) values('系统信息','$input',0,{$imuid},1,'$nowdate',1)";
+    $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time,viewed) values('系统','$input',0,{$imuid},6,'$nowdate',1)";
     }else{
-    $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('系统信息','$input',0,{$imuid},1,'$nowdate')";
+    $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('系统','$input',0,{$imuid},6,'$nowdate')";
     }
     $dblj->exec($sql);
 
 }
 
 function put_system_message_sql($uid,$dblj){
-$sql = "SELECT msg,id FROM system_chat_data where uid = 0 and imuid = '$uid' and viewed = 0  ORDER BY id DESC";//系统未读信息获取
+$sql = "SELECT msg,id FROM system_chat_data where uid = 0 and imuid = '$uid' and viewed = 0 and chat_type = 6  ORDER BY id DESC";//系统未读信息获取
 $ltcxjg = $dblj->query($sql);
 $lthtml='';
 if ($ltcxjg){

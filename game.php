@@ -629,18 +629,18 @@ echo $refresh_html;
        case 'sendliaotian'://发送聊天功能
             $player = player\getplayer($sid,$dblj);
             $nowdate = date('Y-m-d H:i:s');
-            $msg_interval = \player\getgameconfig($dblj)->player_send_global_msg_interval;
+            //$msg_interval = \player\getgameconfig($dblj)->player_send_global_msg_interval;
             if (isset($ltlx) && isset($ltmsg)&&$ltmsg!=""){
                 switch ($ltlx){
                     case 'all':
-                        $second=floor((strtotime($nowdate)-strtotime($player->allchattime))%86400);//获取刷新间隔
-                        if ($player->uname!='' && $second > $msg_interval){//间隔公共聊天
+                        //$second=floor((strtotime($nowdate)-strtotime($player->allchattime))%86400);//获取刷新间隔&& $second > $msg_interval
+                        if ($player->uname!=''){//间隔公共聊天
                             $ltmsg = htmlspecialchars($ltmsg);
                             $sql = "insert into system_chat_data(name,msg,uid,send_time) values(?,?,?,?)";
                             $stmt = $dblj->prepare($sql);
                             $exeres = $stmt->execute(array($player->uname,$ltmsg,$player->uid,$nowdate));
-                            $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
-                            $stmt = $dblj->exec($sql);
+                            // $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
+                            // $stmt = $dblj->exec($sql);
                             $ltmsg = \lexical_analysis\color_string($ltmsg);
                             echo "你对大家说：".$ltmsg."<br/>";
                         }else{
@@ -666,8 +666,8 @@ echo $refresh_html;
                         }
                         break;
                     case "city":
-                        $second=floor((strtotime($nowdate)-strtotime($player->citychattime))%86400);//获取刷新间隔
-                        if ($player->uname!='' && $second > $msg_interval){
+                        //$second=floor((strtotime($nowdate)-strtotime($player->citychattime))%86400);//获取刷新间隔 && $second > $msg_interval
+                        if ($player->uname!=''){
                         if ($player->uname!=''){
                             $ltmsg = htmlspecialchars($ltmsg);
                                 $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','$ltmsg',$player->uid,{$imuid},2,'$nowdate')";
@@ -688,8 +688,8 @@ echo $refresh_html;
                         $ym = 'module_all/liaotian.php';
                         break;
                     case "area":
-                        $second=floor((strtotime($nowdate)-strtotime($player->areachattime))%86400);//获取刷新间隔
-                        if ($player->uname!='' && $second > $msg_interval){
+                        //$second=floor((strtotime($nowdate)-strtotime($player->areachattime))%86400);//获取刷新间隔&& $second > $msg_interval
+                        if ($player->uname!='' ){
                         if ($player->uname!=''){
                             $ltmsg = htmlspecialchars($ltmsg);
                                 $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','$ltmsg',$player->uid,{$imuid},3,'$nowdate')";
@@ -2914,8 +2914,8 @@ echo $refresh_html;
             header("refresh:1;url=index.php");
             exit();
         }else{
-            include "$ym";
             \player\put_system_message_sql($player->uid,$dblj);
+            include "$ym";
             $sql = "update game1 set endtime='$nowdate',sfzx=1,ucmd='$cmd' WHERE sid='$sid'";
             $dblj->exec($sql);
         }

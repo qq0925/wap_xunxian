@@ -71,15 +71,20 @@ foreach ($keyValuePairs as $pair) {
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
             $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
-                $sql = "SELECT sid FROM game1 where uid = '$prefix_value'";
+                $sql = "SELECT sid FROM game1 where uid = $prefix_value";
                 $cxjg = $db->query($sql);
                 if (!$cxjg) {
                 die('查询失败: ' . $db->error);
                 }
                 $row = $cxjg->fetch_assoc();
-                $ele_1 = str_replace("$matches[0]", "u", $ele_1);
                 $temp_sid = $row['sid'];
-                $sid = $temp_sid;
+                if($temp_sid ==$sid){
+                $ele_1 = str_replace("$matches[0]", "u", $ele_1);
+                }else{
+                $ele_1 = str_replace("$matches[0]", "o", $ele_1);
+                $oid = "scene_oplayer";
+                $mid = $temp_sid;
+                }
             }
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
@@ -114,7 +119,7 @@ foreach ($keyValuePairs as $pair) {
                     $player_uid = $row['uid'];
                     
                     $send_time = date('Y-m-d H:i:s');
-                    $sql = "insert into system_chat_data (name,msg,send_time,uid)values('$player_name','$ele_2','$send_time','$player_uid')";
+                    $sql = "insert into system_chat_data (name,msg,send_time,uid,chat_type)values('$player_name','$ele_2','$send_time','$player_uid',6)";
                     // 使用预处理语句
                     $stmt = $db->prepare($sql);
                     // 执行查询
@@ -128,7 +133,7 @@ foreach ($keyValuePairs as $pair) {
                     $player_uid = $row['uid'];
                     
                     $send_time = date('Y-m-d H:i:s');
-                    $sql = "insert into system_chat_data (name,msg,send_time,uid,imuid,chat_type)values('系统通知','$ele_2','$send_time','0','$player_uid','1')";
+                    $sql = "insert into system_chat_data (name,msg,send_time,uid,imuid,chat_type)values('系统','$ele_2','$send_time','0','$player_uid','1')";
                     // 使用预处理语句
                     $stmt = $db->prepare($sql);
                     // 执行查询
@@ -169,7 +174,7 @@ foreach ($keyValuePairs as $pair) {
                     $player_uid = $row['uid'];
                     
                     $send_time = date('Y-m-d H:i:s');
-                    $sql = "insert into system_chat_data (name,msg,send_time,uid)values('$player_name','$ele_2','$send_time','$player_uid')";
+                    $sql = "insert into system_chat_data (name,msg,send_time,uid,chat_type)values('$player_name','$ele_2','$send_time','$player_uid',6)";
                     // 使用预处理语句
                     $stmt = $db->prepare($sql);
                     // 执行查询
@@ -183,7 +188,7 @@ foreach ($keyValuePairs as $pair) {
                     $player_uid = $row['uid'];
                     
                     $send_time = date('Y-m-d H:i:s');
-                    $sql = "insert into system_chat_data (name,msg,send_time,uid,imuid,chat_type)values('系统通知','$ele_2','$send_time','0','$player_uid','1')";
+                    $sql = "insert into system_chat_data (name,msg,send_time,uid,imuid,chat_type)values('系统','$ele_2','$send_time','0','$player_uid','1')";
                     // 使用预处理语句
                     $stmt = $db->prepare($sql);
                     // 执行查询
@@ -316,7 +321,7 @@ $sid = $old_sid;
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
             $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
-                $sql = "SELECT sid FROM game1 where uid = '$prefix_value'";
+                $sql = "SELECT sid FROM game1 where uid = $prefix_value";
                 $cxjg = $db->query($sql);
                 if (!$cxjg) {
                 die('查询失败: ' . $db->error);
@@ -325,6 +330,13 @@ $sid = $old_sid;
                 $ele_1 = str_replace("$matches[0]", "u", $ele_1);
                 $temp_sid = $row['sid'];
                 $sid = $temp_sid;
+                if($temp_sid ==$sid){
+                $ele_1 = str_replace("$matches[0]", "u", $ele_1);
+                }else{
+                $ele_1 = str_replace("$matches[0]", "o", $ele_1);
+                $oid = "scene_oplayer";
+                $mid = $temp_sid;
+                }
             }
             if($old_sid ==$sid){
                 $echo_type = "self";

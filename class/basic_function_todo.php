@@ -1159,11 +1159,28 @@ if ($ltcxjg){
         if($uid){
             $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'></span><br/>";
             $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
+        }else{
+            $lthtml .="[系统]:{$umsg}<span class='txt-fade'></span><br/>";
+            $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }
-        }elseif(!$uid && $chat_type == 6&&$player->allchattime < $send_time){
+        
+        }elseif(!$uid && $imuid == 0 && $chat_type == 6&&$player->allchattime < $send_time){
             $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
             $stmt = $dblj->exec($sql);
-            $lthtml .="[<span style='color: orangered;'>公共</span>]<div class='hpys' style='display: inline'>$uname:</div>$umsg<span class='txt-fade'></span><br/>";
+            $lthtml .="[<span style='color: orangered;'>系统</span>]:{$umsg}<span class='txt-fade'></span><br/>";
+        }elseif($uid && $chat_type == 6&&$player->allchattime < $send_time){
+            $cmid = $cmid + 1;
+            $cdid[] = $cmid;
+            $clj[] = $cmd;
+            
+            if($send_type==0){
+                $u_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
+            }elseif($send_type==1){
+                $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$sid");
+            }
+            $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
+            $stmt = $dblj->exec($sql);
+            $lthtml .="[<span style='color: orangered;'>系统</span>]:<a href='?cmd=$u_cmd''>$uname</a>:{$umsg}<span class='txt-fade'></span><br/>";
         }
     }
 }
