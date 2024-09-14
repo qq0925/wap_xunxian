@@ -767,7 +767,7 @@ echo $refresh_html;
             $ym = 'module_all/scene_storage.php';
             break;
         case 'gm_shop_npc'://npc商店
-            $npc = player\getnpc($nid,$dblj);
+            $npc = player\getnpc_scene($mid,$dblj);
             $npc_name = $npc ->nname;
             $npc_shop_cond = $npc ->nshop_cond;
             $shop_triggle = checkTriggerCondition($npc_shop_cond,$dblj,$sid,$nid);

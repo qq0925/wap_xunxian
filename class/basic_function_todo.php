@@ -486,7 +486,7 @@ $result = $stmt->fetch(PDO::FETCH_ASSOC);
 $nshop = $result['nshop'];
 $nid = $result['nid'];
 if($nshop ==1){
-$npc_buy = $encode->encode("cmd=gm_shop_npc&ncid=$mid&ucmd=$cmid&sid=$sid");
+$npc_buy = $encode->encode("cmd=gm_shop_npc&mid=$mid&ucmd=$cmid&sid=$sid");
 $op_html .=<<<HTML
 <a href="?cmd=$npc_buy">买东西</a><br/>
 HTML;

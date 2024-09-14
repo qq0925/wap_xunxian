@@ -16,11 +16,13 @@ $get_main_page = \gm\get_npc_page($dblj);
 $br = 0;
 $nowmid = $player->nowmid;
 // 预处理 SQL 查询
-$sql = "SELECT * FROM system_npc_scene WHERE nid = :nid AND ncid = :mid AND nmid = :nowmid";
+
+
+
+$sql = "SELECT * FROM system_npc_scene WHERE ncid = :mid AND nmid = :nowmid";
 $stmt = $dblj->prepare($sql);
 
 // 绑定参数
-$stmt->bindParam(':nid', $nid, PDO::PARAM_INT);
 $stmt->bindParam(':mid', $mid, PDO::PARAM_INT);
 $stmt->bindParam(':nowmid', $nowmid, PDO::PARAM_STR);
 

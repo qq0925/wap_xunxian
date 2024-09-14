@@ -418,9 +418,9 @@ function getnpc($nid,$dblj){
     return $npc;
 }
 
-function getnpc_scene($nid,$dblj){
+function getnpc_scene($ncid,$dblj){
     $npc_scene = new npc_scene();
-    $sql = "select * from system_npc_scene where nid = '$nid'";
+    $sql = "select * from system_npc_scene where ncid = '$ncid'";
     $cxjg = $dblj->query($sql);
     $data = $cxjg->fetch(\PDO::FETCH_ASSOC);
     // 循环遍历数组，动态生成类的属性并赋值
