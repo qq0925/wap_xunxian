@@ -73,7 +73,7 @@ if($_POST&&$reboot == 1){
         $gameSelfPageTables = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         // 其他需要清空的表
-        $otherTables = ['forum_res', 'forum_text', 'game1', 'game2', 'game3', 'game4', 'global_data','player_temp_attr','player_equip_mosaic','system_addition_attr','system_chat_data','system_auc','system_auc_data','system_draw','system_equip_user','system_event_evs','system_event_evs_npc','system_event_evs_self','system_event_self','system_exp_def','system_fight_quick','system_item','system_item_module','system_item_op','system_lp','system_map','system_map_op','system_mk','system_money_type','system_npc','system_npc_midguaiwu','system_npc_op','system_photo','system_photo_type','system_player_black','system_player_boat','system_player_friend','system_player_inputs','system_rank','system_rp','system_self_define_module','system_skill','system_skill_module','system_skill_user','system_storage','system_storage_locked','system_task','system_task_user','system_team_user'];
+        $otherTables = ['forum_res', 'forum_text', 'game1', 'game2', 'game3', 'game4', 'global_data','player_temp_attr','player_equip_mosaic','system_addition_attr','system_chat_data','system_auc','system_auc_data','system_draw','system_equip_user','system_event_evs','system_event_evs_npc','system_event_evs_self','system_event_self','system_exp_def','system_fight_quick','system_item','system_item_module','system_item_op','system_lp','system_map','system_map_op','system_mk','system_money_type','system_npc','system_npc_midguaiwu','system_npc_scene','system_npc_op','system_photo','system_photo_type','system_player_black','system_player_boat','system_player_friend','system_player_inputs','system_rank','system_rp','system_self_define_module','system_skill','system_skill_module','system_skill_user','system_storage','system_storage_locked','system_task','system_task_user','system_team_user'];
         // 合并所有需要清空的表
         $tablesToTruncate = array_merge($gamePageTables, $otherTables);
     
@@ -224,7 +224,12 @@ $data = [
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
         echo "表 system_area 已插入未分区初始值。<br>";
-
+        
+        $sql = "INSERT INTO system_money_type (rid,rname,runit, rif_default) VALUES ('money','信用币','张', '1')";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        echo "表 system_money_type 已插入初始值。<br>";
+        
         // 清空 system_equip_def 表
         $sql = "TRUNCATE TABLE system_equip_def";
         $stmt = $dblj->prepare($sql);

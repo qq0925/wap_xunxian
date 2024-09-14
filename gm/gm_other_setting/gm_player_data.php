@@ -1,7 +1,7 @@
 <?php
 
 if($delete_id !=0){
-    $sql = "DELETE FROM game1 WHERE uid = '$delete_id';";
+    $sql = "DELETE FROM game1 WHERE uid = '$delete_id' or (imuid = '$delete_id' and send_type = 0);";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_chat_data WHERE uid = '$delete_id';";
     $dblj->exec($sql);
@@ -19,40 +19,46 @@ if($delete_id !=0){
     $dblj->exec($sql);
     $sql = "DELETE FROM game4 WHERE sid = '$u_sid';";
     $dblj->exec($sql);
+    $sql = "DELETE FROM player_equip_mosaic WHERE belong_sid = '$u_sid';";
+    $dblj->exec($sql);
+    $sql = "DELETE FROM player_temp_attr WHERE obj_id = '$u_sid';";
+    $dblj->exec($sql);
     $sql = "DELETE FROM system_addition_attr WHERE sid = '$u_sid';";
+    $dblj->exec($sql);
+    $sql = "DELETE FROM system_designer_assist WHERE sid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_equip_user WHERE eqsid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_npc_midguaiwu WHERE nsid = '$u_sid';";
     $dblj->exec($sql);
-    $sql = "DELETE FROM system_player_black WHERE usid = '$u_sid';";
+    $sql = "DELETE FROM system_player_black WHERE usid = '$u_sid' or osid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_player_boat WHERE sid = '$u_sid';";
+    $dblj->exec($sql);
+    $sql = "DELETE FROM system_pet_player WHERE psid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_player_friend WHERE usid = '$u_sid' or osid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_player_inputs WHERE sid = '$u_sid';";
     $dblj->exec($sql);
+    $sql = "DELETE FROM system_player_setting WHERE sid = '$u_sid';";
+    $dblj->exec($sql);
     $sql = "DELETE FROM system_skill_user WHERE jsid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_storage WHERE sid = '$u_sid';";
     $dblj->exec($sql);
+    $sql = "DELETE FROM system_storage_locked WHERE sid = '$u_sid';";
+    $dblj->exec($sql);
     $sql = "DELETE FROM system_task_user WHERE sid = '$u_sid';";
     $dblj->exec($sql);
+//组队删除未设定
     echo "已删除[ID:{$delete_id}]的玩家数据！<br/>";
 }
 
 if($refresh_id !=0){
-    $sql = "select * from game1 where uid = '$refresh_id'";
-    $cxjg = $dblj->query($sql);
-    $cxjg->bindColumn('uid',$uid);
-    $cxjg->bindColumn('uis_designer',$uis_designer);
-    $cxjg->bindColumn('sid',$u_sid);
-    $cxjg->bindColumn('token',$token);
-    $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
-    $sql = "DELETE FROM game1 WHERE uid = '$uid';";
+    $sql = "DELETE FROM game1 WHERE uid = '$delete_id' or (imuid = '$delete_id' and send_type = 0);";
     $dblj->exec($sql);
-    $sql = "DELETE FROM system_chat_data WHERE (uid = '$delete_id' or (imuid = '$delete_id' and chat_type = 1)) ;";
+    $sql = "DELETE FROM system_chat_data WHERE uid = '$delete_id';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_fight_quick WHERE sid = '$u_sid';";
     $dblj->exec($sql);
@@ -68,37 +74,82 @@ if($refresh_id !=0){
     $dblj->exec($sql);
     $sql = "DELETE FROM game4 WHERE sid = '$u_sid';";
     $dblj->exec($sql);
+    $sql = "DELETE FROM player_equip_mosaic WHERE belong_sid = '$u_sid';";
+    $dblj->exec($sql);
+    $sql = "DELETE FROM player_temp_attr WHERE obj_id = '$u_sid';";
+    $dblj->exec($sql);
     $sql = "DELETE FROM system_addition_attr WHERE sid = '$u_sid';";
+    $dblj->exec($sql);
+    $sql = "DELETE FROM system_designer_assist WHERE sid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_equip_user WHERE eqsid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_npc_midguaiwu WHERE nsid = '$u_sid';";
     $dblj->exec($sql);
-    $sql = "DELETE FROM system_player_black WHERE usid = '$u_sid';";
+    $sql = "DELETE FROM system_player_black WHERE usid = '$u_sid' or osid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_player_boat WHERE sid = '$u_sid';";
+    $dblj->exec($sql);
+    $sql = "DELETE FROM system_pet_player WHERE psid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_player_friend WHERE usid = '$u_sid' or osid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_player_inputs WHERE sid = '$u_sid';";
     $dblj->exec($sql);
+    $sql = "DELETE FROM system_player_setting WHERE sid = '$u_sid';";
+    $dblj->exec($sql);
     $sql = "DELETE FROM system_skill_user WHERE jsid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_storage WHERE sid = '$u_sid';";
     $dblj->exec($sql);
+    $sql = "DELETE FROM system_storage_locked WHERE sid = '$u_sid';";
+    $dblj->exec($sql);
     $sql = "DELETE FROM system_task_user WHERE sid = '$u_sid';";
     $dblj->exec($sql);
+//组队删除未设定
     $sql = "insert into game1(uid,uis_designer,sid,token) value('$uid','$uis_designer','$sid','$token')";
     $dblj->exec($sql);
     echo "已清空{$u_name}[ID:{$refresh_id}]的玩家数据！<br/>";
 }
 
 if($delete_all !=0){
-    $sql = "DELETE FROM game1";
-    $dblj->exec($sql);
-    $sql = "ALTER TABLE game1 AUTO_INCREMENT = 1;";
-    $dblj->exec($sql);
+$tables = [
+    "game1",
+    "system_chat_data",
+    "system_fight_quick",
+    "system_item",
+    "forum_text",
+    "forum_res",
+    "game2",
+    "game3",
+    "game4",
+    "player_equip_mosaic",
+    "player_temp_attr",
+    "system_addition_attr",
+    "system_designer_assist",
+    "system_equip_user",
+    "system_npc_midguaiwu",
+    "system_player_black",
+    "system_player_boat",
+    "system_pet_player",
+    "system_player_friend",
+    "system_player_inputs",
+    "system_player_setting",
+    "system_skill_user",
+    "system_storage",
+    "system_storage_locked",
+    "system_task_user"
+];
+
+try {
+    foreach ($tables as $table) {
+        $sql = "TRUNCATE TABLE $table";
+        $dblj->exec($sql);
+    }
     echo "已清空所有玩家数据！<br/>";
+} catch (PDOException $e) {
+    echo "清空所有玩家数据失败: " . $e->getMessage()."<br/>";
+}
 }
 
 $sql = "select * from game1";
