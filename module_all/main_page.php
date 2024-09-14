@@ -188,7 +188,7 @@ if ($clmid->mnpc!=''){
         // 获取记录数量
         $npc_temp_count = count($cxnpcall);
         $diff =  $npc_count - $npc_temp_count;
-if($diff >0){
+        if($diff >0){
         for ($n=0;$n<$diff;$n++){
             // 要复制的数据行id
             $nid = $npc_para->nid;
@@ -221,11 +221,11 @@ if($diff >0){
             if($npc_scene_creat_event!=0){
             include_once 'class/events_steps_change.php';
             events_steps_change($npc_scene_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
-            
-                $ret = global_event_data_get(26,$dblj);
-                if($ret){
-                global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
-                }
+            }
+
+            $ret = global_event_data_get(26,$dblj);
+            if($ret){
+            global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
             }
 
     }

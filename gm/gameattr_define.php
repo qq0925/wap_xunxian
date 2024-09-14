@@ -183,6 +183,24 @@ case '7':
     }else {
         $gm_select_2 = "selected";
     }
+    
+
+    if($gm_game_attr_type=="逻辑值型"){
+        
+    if($gm_game_default_value=="0"){
+        $gm_select_3 = "selected";
+    }else {
+        $gm_select_4 = "selected";
+    }
+        
+        $default_value = "<select name='gm_default_value' value='$gm_game_default_value'>
+    <option value='0' $gm_select_3>否</option>
+    <option value='1' $gm_select_4>是</option>
+    </select>";
+    }else{
+        $default_value = "<input name='gm_default_value' type='text' value='$gm_game_default_value' maxlength='50'>";
+    }
+    
     if($gm_post_canshu_3!=0){
 $post_tishi = '修改成功';
 }
@@ -203,7 +221,7 @@ $gm_if_basic_html
 <input name="gm_id" type="hidden" value="$gm_game_attr_id">属性标识:$gm_game_attr_id<br/>
 <input name="gm_attr_type" type="hidden" value="$gm_game_attr_type">类型:$gm_game_attr_type<br/>
 属性名称:<input name="gm_name" type="text" value="$gm_game_attr_name" maxlength="50"><br/>
-初始值:<input name="gm_default_value" type="text" maxlength="200" value = "$gm_game_default_value"><br/>
+初始值:$default_value<br/>
 是否显示:<select name="gm_attr_hidden" value="$gm_game_show">
 <option value="0" $gm_select_1>隐藏</option>
 <option value="1" $gm_select_2>显示</option>

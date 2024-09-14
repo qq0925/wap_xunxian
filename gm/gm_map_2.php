@@ -229,12 +229,13 @@ if ($update ==2){
             if($npc_scene_creat_event!=0){
             include_once 'class/events_steps_change.php';
             events_steps_change($npc_scene_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
-            
-                $ret = global_event_data_get(26,$dblj);
-                if($ret){
-                global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
-                }
             }
+            
+            $ret = global_event_data_get(26,$dblj);
+            if($ret){
+            global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
+            }
+            
         }
 
     }
