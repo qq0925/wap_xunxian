@@ -398,7 +398,7 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     if (strpos($temp, '"') === false){
     $op = "\"".$temp."\"";
     }
-    $op = str_replace(array("'", "\"\""), '0', $op);
+    $op = str_replace(array("''", "\"\""), '0', $op);
     // 使用正则表达式，去掉内部的单引号
     $op = preg_replace("/'(.*?)'/", '$1', $op);
     $op = str_replace(array("\""), '\'', $op);
@@ -2487,7 +2487,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 if($op =='' || $op == "" || $op ==null){
                     $op = "\"\"";
                 }
-                $op = str_replace(array("'", "\"\""), '0', $op);
+                $op = str_replace(array("''", "\"\""), '0', $op);
                 //  var_dump($match);
                 //  var_dump($op);
                 // 替换字符串中的变量
