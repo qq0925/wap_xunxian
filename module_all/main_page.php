@@ -141,8 +141,10 @@ $minute=floor((strtotime($nowdate)-strtotime($clmid->mgtime))/60);//获取刷新
 
 if($minute >= $clmid->mrefresh_time){
 
-if ($clmid->mnpc!=''){
-    if($clmid->mnpc!=''){
+
+$sql = "update system_map set mgtime='$nowdate' WHERE mid='$player->nowmid'";
+$dblj->exec($sql);
+if($clmid->mnpc!=''){
     $data = $clmid->mnpc;
     $npc_s = explode(",", $data); // 使用逗号分隔字符串，得到每个项
     foreach ($npc_s as &$npc_a) {
@@ -232,7 +234,6 @@ if ($clmid->mnpc!=''){
 }
     }
 }
-
 if($clmid->mitem!=''){
     $data = $clmid->mitem;
     $items = explode(",", $data); // 使用逗号分隔字符串，得到每个项
@@ -255,9 +256,6 @@ if($clmid->mitem!=''){
     $dblj->exec($sql);
     }
 
-$sql = "update system_map set mgtime='$nowdate' WHERE mid='$player->nowmid'";
-$dblj->exec($sql);
-}
 }
 $map_detail = $encode->encode("cmd=map_detail&mid=$player->nowmid&sid=$sid");
 
