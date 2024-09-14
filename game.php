@@ -593,8 +593,7 @@ echo $refresh_html;
                 // 检查是否有插入的行
                 if ($rowCount > 0) {
                     $ngid = $dblj->lastInsertId();  // 获取最后插入的ID
-                    
-                    if($not_dead ==0){
+                    if($nnot_dead ==0){
                         $dblj->exec("DELETE FROM system_npc_scene where ncid = '$ncid'");
                     }
                         if(!$pid){
