@@ -295,7 +295,7 @@ function get_npc_detail($dblj,$npc_id){
 }
 
 function get_pet_list($dblj,$sid){
-    $sql = "select * from system_pet_player where psid = '$sid' ORDER BY pstate DESC";
+    $sql = "select * from system_pet_scene where nsid = '$sid' ORDER BY nstate DESC";
     $cxjg = $dblj->query($sql);
     $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
     return $ret;

@@ -73,14 +73,15 @@ if ($update ==1){
     
 if($clmid->mnpc!=''){
         $dblj->exec("delete from system_npc_scene where nmid = '$target_midid'");
+        
         $data = $clmid->mnpc;
         $npc_s = explode(",", $data); // 使用逗号分隔字符串
         
         foreach ($npc_s as &$npc_a) {
             $parts = explode("|", $npc_a); // 使用竖线分隔每个项
-            if (count($parts) >= 3) {
+            if (count($parts) >= 2) {
                 list($id, $npc_count, $npc_show_cond) = $parts;
-        
+                
                 // 对 npc_count 进行处理
                 $npc_count = \lexical_analysis\process_string($npc_count, $sid);//考虑传入更多参数
                 
@@ -131,6 +132,7 @@ if($clmid->mnpc!=''){
             $stmt = $dblj->prepare($sql);
             
             // 5. 绑定参数并执行
+            
             $stmt->bindParam(':nmid', $target_midid, PDO::PARAM_INT);
             $stmt->bindParam(':nid', $nid, PDO::PARAM_INT);
             $stmt->execute();

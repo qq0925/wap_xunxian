@@ -20,6 +20,26 @@ try {
         // 去除SET部分末尾多余的逗号和空格
         $setClause = rtrim($setClause, ', ');
         // 构建完整的UPDATE SQL语句
+        
+
+        $jid = 2; // 查询的 jid 值
+        // 查询是否存在 jid = '2' 的记录
+        $query = "SELECT COUNT(*) FROM system_skill_module WHERE jid = :jid";
+        $stmt = $dblj->prepare($query);
+        $stmt->bindParam(':jid', $jid, PDO::PARAM_INT);
+        $stmt->execute();
+        $count = $stmt->fetchColumn();
+        
+        if ($count == 0) {
+            // 如果不存在，则插入一条新记录
+            $insertQuery = "INSERT INTO system_skill_module (jid) VALUES (:jid)"; // ... 替换为其他需要插入的字段
+            $insertStmt = $dblj->prepare($insertQuery);
+            $insertStmt->bindParam(':jid', $jid, PDO::PARAM_INT);
+            // 如果有其他字段需要绑定，继续添加 bindParam 语句
+            $insertStmt->execute();
+        }
+
+        
         $sql = "UPDATE system_skill_module SET $setClause where jid = '2'";
         // 使用预处理语句
         $stmt = $dblj->prepare($sql);
@@ -141,6 +161,7 @@ $skill_html = <<<HTML
 使用事件：<a href="?cmd=$skill_use_event">定义事件</a><br/>
 升级事件：<a href="?cmd=$skill_up_event">定义事件</a><br/>
 <input type="submit" title="确定" value="确定"/><br/><br/>
+</form>
 <a href="?cmd=$skill_default">还原为默认值</a><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>

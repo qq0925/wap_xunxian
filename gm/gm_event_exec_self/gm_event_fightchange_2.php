@@ -1,5 +1,5 @@
 <?php
-if(!$qy_id){
+if($npc_count){
 $gm_game_selfeventdefine_fight_last = $encode->encode("cmd=game_event_fightchange_self&event_id=$event_id&step_id=$step_id&sid=$sid");
 $fight_post = $encode->encode("cmd=game_event_fightchange_self&change=1&event_id=$event_id&step_id=$step_id&sid=$sid");
 }else{

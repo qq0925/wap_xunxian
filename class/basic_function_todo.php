@@ -653,6 +653,82 @@ $op_html .="<br/>";
 }
 }
         break;
+case '4':
+
+$sql = "select pstate from system_pet_player where psid = '$sid' and pid = '$mid'";
+$cxjg = $dblj->query($sql);
+$wtjrw = $cxjg->fetch(PDO::FETCH_ASSOC);
+$fight_state = $wtjrw['pstate'];
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+if($fight_state ==0){
+    $fight_url = $encode->encode("cmd=player_petinfo&ucmd=$cmid&fight_canshu=1&pet_id=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$fight_url">出战</a>|
+HTML;
+}else{
+    $back_url = $encode->encode("cmd=player_petinfo&ucmd=$cmid&fight_canshu=2&pet_id=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$back_url">收回</a>|
+HTML;
+}
+
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+    $pet_sale = $encode->encode("cmd=player_petinfo&ucmd=$cmid&pet_id=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$pet_sale">挂售</a>|
+HTML;
+
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+    $pet_sale = $encode->encode("cmd=player_petinfo&ucmd=$cmid&pet_id=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$pet_sale">赶走</a>|
+HTML;
+
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+    $pet_sale = $encode->encode("cmd=player_petinfo&ucmd=$cmid&oid=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$pet_sale">技能</a><br/>
+HTML;
+
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+    $pet_sale = $encode->encode("cmd=player_petinfo&ucmd=$cmid&oid=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$pet_sale">装备</a>|
+HTML;
+
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+    $pet_sale = $encode->encode("cmd=player_petinfo&ucmd=$cmid&oid=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$pet_sale">培养</a>|
+HTML;
+
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+    $pet_sale = $encode->encode("cmd=player_petinfo&ucmd=$cmid&oid=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$pet_sale">清洁</a>|
+HTML;
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+    $pet_sale = $encode->encode("cmd=player_petinfo&ucmd=$cmid&oid=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$pet_sale">喂食</a><br/>
+HTML;
+    break;
 case '5':
 
 $cmid = $cmid + 1;
@@ -978,6 +1054,38 @@ HTML;
     $npchtml .="<br/>";
 }
     }
+}
+
+    $sql = "select * from system_pet_scene where nmid = '$nowmid' and nstate = 1";//获取场景宠物
+    $cxjg = $dblj->query($sql);
+    $cxpetall = $cxjg->fetchAll(PDO::FETCH_ASSOC);
+    if($cxpetall){
+for ($i=0;$i < count($cxpetall);$i++){
+        $nname = $cxpetall[$i]['nname'];
+        $nid = $cxpetall[$i]['nid'];
+        $npid = $cxpetall[$i]['npid'];
+        $nkill = $cxpetall[$i]['nkill'];
+        $nnot_dead = $cxpetall[$i]['nnot_dead'];
+        $cmid = $cmid + 1;
+        $cdid[] = $cmid;
+        $clj[] = $cmd;
+        $petcmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$nid&mid=$ncid&sid=$sid");
+//         if($nkill ==0){
+//                 $npchtml.=<<<HTML
+// <a href="?cmd=$npccmd">{$nname}</a> 
+// HTML;
+//         }else{
+//                 $npchtml.=<<<HTML
+// <a href="?cmd=$npccmd">*{$nname}</a> 
+// HTML;
+//         }
+
+                $npchtml.=<<<HTML
+$nname 
+HTML;
+
+}
+$npchtml .="<br/>";
 }
 return $npchtml;
 }
@@ -1374,7 +1482,8 @@ function self_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
 {$attr_mp_name}：({$player_mp}/{$player_maxmp})<br/>
 HTML;
     if($cmd =="pve_fighting"){
-    $sql = "SELECT SUM(cut_hp) AS total_cut_hp,cut_mp FROM game2 WHERE sid = :sid";
+    $round = \player\getnowround($sid,$dblj);
+    $sql = "SELECT SUM(cut_hp) AS total_cut_hp,cut_mp FROM game2 WHERE sid = :sid and pid = 0 and round = '$round'";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->execute();
@@ -1390,15 +1499,28 @@ HTML;
 {$attr_mp_name}：({$player_mp}/{$player_maxmp}){$cut_mp}<br/>
 HTML;
     }
-    $sql = "SELECT * from system_pet_player where psid = :sid and pstate = 1";
+    $sql = "SELECT * from system_pet_scene where nsid = :sid and nstate = 1";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
     if($row){
-    $pet_name = $row['pname'];
-    $pet_hp = $row['php'];
-    $pet_maxhp = $row['pmaxhp'];
+        
+    for($i=0;$i<count($row);$i++){
+    $pet_id = $row[$i]['npid'];
+    $pet_name = $row[$i]['nname'];
+    $pet_hp = $row[$i]['nhp'];
+    $pet_maxhp = $row[$i]['nmaxhp'];
+    $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = :sid and pid = :pid and round = '$round'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
+    $stmt->bindParam(':pid', $pet_id,PDO::PARAM_INT);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $pcut_hp = $row['total_cut_hp'];
+    $pcut_hp = $pcut_hp >0?"+".$pcut_hp:$pcut_hp;
+    $pcut_hp = $pcut_hp ==0?'':$pcut_hp;
+    
     if($pet_hp <=0){
     $player_text .=<<<HTML
 [{$pet_name}]已经战死！<br/>
@@ -1408,6 +1530,7 @@ HTML;
 [{$pet_name}]:({$pet_hp}/{$pet_maxhp}){$pcut_hp}<br/>
 HTML;
 }
+    }
 }
     return $player_text;
     
@@ -1425,16 +1548,17 @@ function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $monster_id_root = $monster_list[$i]['nid'];
     $monster_id = $monster_list[$i]['ngid'];
     $monster_nowmid = $monster_list[$i]['nmid'];
-
     if($cmd =="pve_fighting"){
-    $sql = "SELECT * from game2 where sid = :sid and gid = :gid";
+    $round = \player\getnowround($sid,$dblj);
+    $sql = "SELECT SUM(hurt_hp) as total_hurt_hp from game2 where sid = :sid and gid = :gid and round = '$round'";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $hurt_hp = $row['hurt_hp'];
-    if($hurt_hp!=''){
+    $hurt_hp = $row['total_hurt_hp'];
+    $hurt_hp = $hurt_hp ==0?'':$hurt_hp;
+    if($hurt_hp){
     $hurt_hp = $hurt_hp >0?"+".$hurt_hp:$hurt_hp;
     }
     }
@@ -1477,15 +1601,33 @@ function enemy_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $monster_nowmid = $monster_list[$i]['nmid'];
 
     if($cmd =="pve_fighting"){
-    $sql = "SELECT * from game2 where sid = :sid and gid = :gid";
+    $round = \player\getnowround($sid,$dblj);
+    $sql = "SELECT fight_omsg from game2 where sid = :sid and gid = :gid and pid = 0 and round = :round and type = 2";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid, PDO::PARAM_STR);
+    $stmt->bindParam(':gid', $monster_id, PDO::PARAM_STR);
+    $stmt->bindParam(':round', $round, PDO::PARAM_INT);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $fight_user_omsg = $row['fight_omsg'];
+    if($fight_user_omsg){
+    $fight_omsg .= $fight_user_omsg."<br/>";
+    }
+    
+    $sql = "SELECT fight_omsg from game2 where sid = :sid and gid = :gid AND pid != 0 and round = :round and type = 3";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
+    $stmt->bindParam(':round', $round, PDO::PARAM_INT);
     $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    if($row['fight_omsg']){
-    $fight_omsg .= $row['fight_omsg']."<br/>";
+    $pet_row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    for($j=0;$j<@count($pet_row);$j++){
+    $pet_osmg = $pet_row[$j]['fight_omsg'];
+    if($pet_osmg){
+    $fight_omsg .= $pet_osmg."<br/>";
     }
+    }
+    
     }
 }
     return $fight_omsg;
@@ -1503,7 +1645,8 @@ function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $monster_nowmid = $monster_list[$i]['nmid'];
 
     if($cmd =="pve_fighting"){
-    $sql = "SELECT * from game2 where sid = :sid and gid = :gid AND pid = 0";
+    $round = \player\getnowround($sid,$dblj);
+    $sql = "SELECT * from game2 where sid = :sid and gid = :gid AND pid = 0 and round = '$round' and type = 1";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
@@ -1513,16 +1656,18 @@ function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $fight_umsg .= $row['fight_umsg']."<br/>";
     }
     
-    $sql = "SELECT * from game2 where sid = :sid and gid = :gid AND pid != 0";
+    $sql = "SELECT * from game2 where sid = :sid and gid = :gid AND pid != 0 and round =  '$round' and type = 4";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
     $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    if($row['fight_umsg']){
-    $fight_umsg .= $row['fight_umsg']."<br/>";
+    $pet_row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    for($j=0;$j<@count($pet_row);$j++){
+    $pet_usmg = $pet_row[$j]['fight_umsg'];
+    if($pet_usmg){
+    $fight_umsg .= $pet_usmg."<br/>";
     }
-    
+    }
     }
 }
     return $fight_umsg;

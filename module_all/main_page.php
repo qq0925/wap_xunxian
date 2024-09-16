@@ -78,6 +78,7 @@ if($player->ucmd){
 if (isset($newmid)){
     if ($player->nowmid!=$newmid){
         $clmid = player\getmid($newmid,$dblj); //获取即将走的地图信息
+        $dblj->exec("update system_pet_scene set nmid = '$newmid' where nsid = '$sid' and nstate = 1;");
         if($clmid->minto_event_id !=0){
         $parents_cmd = 'gm_scene_new';
         events_steps_change($clmid->minto_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','scene',$clmid->mid,$para);

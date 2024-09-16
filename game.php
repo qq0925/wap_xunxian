@@ -559,7 +559,6 @@ echo $refresh_html;
         case 'pve_fight'://打怪事件,一次打一个
             $player = \player\getplayer($sid,$dblj);
             $pet = \player\getpet_fight($sid,$dblj);
-            $pid = $pet[0]['pid'];
             if($auto_canshu ==1){
                 \player\changeplayersx('uauto_fight',1,$sid,$dblj);
             }elseif($auto_canshu ==2){
@@ -596,18 +595,20 @@ echo $refresh_html;
                     if($nnot_dead ==0){
                         $dblj->exec("DELETE FROM system_npc_scene where ncid = '$ncid'");
                     }
-                        if(!$pid){
-                    $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
-                    $dblj->exec($sql);
-                    $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";
-                    $dblj->exec($sql);
-                        }else{
+                        if($pet){
+                    $fight_pet_count = count($pet);
+                    for($i=0;$i<$fight_pet_count;$i++){
+                    $pid = $pet[$i]['npid'];
                     $sql = "insert into game2(sid,gid,pid) values ('$sid','$ngid','$pid')";
                     $dblj->exec($sql);
                     $sql = "insert into game3(sid,gid,pid) values ('$ngid','$sid','$pid')";
                     $dblj->exec($sql);
+                    }
                         }
-                    
+                    $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
+                    $dblj->exec($sql);
+                    $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";
+                    $dblj->exec($sql);
                     \player\changeplayersx('uis_pve',1,$sid,$dblj);
                     $ym = 'module_all/scene_fight.php';
                 }else{
@@ -2897,7 +2898,7 @@ echo $refresh_html;
         $system_offline_time = $gameconfig->offline_time;
         while(floor((strtotime($player->endtime)-strtotime($player->minutetime))/60 >0) &&$cmd!='login' && $cmd!='cjplayer' &&$cmd !='cj'){
         $parents_cmd = $cmd;
-        \player\exec_global_event(24,'null',null,$sid,$dblj);
+        //\player\exec_global_event(24,'null',null,$sid,$dblj);
         // $ret = global_event_data_get(24,$dblj);
         // if($ret){
         // global_events_steps_change(24,$sid,$dblj,$just_page,$steps_page,$cmid,$currentFilePath,null,null,$para);

@@ -17,7 +17,7 @@ global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid
 function global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$cmid,$parents_page,$oid=null,$mid=null,$para=null){
                 //事件逻辑
                     global $encode;
-                    global $steps_page;
+                    //global $steps_page;
                     global $parents_cmd;
                     global $parents_page;
                     $event_data = global_event_data_get($target_event,$dblj);
@@ -111,6 +111,8 @@ HTML;
                             $ret_4 = skillschanging($step_a_skills,$sid,1);
                             $ret_6 = skillschanging($step_r_skills,$sid,2);
                             $ret_7 = taskschanging($step_r_tasks,$sid,2);
+                            $ret_8 = adoptpeting($step_a_adopt,$sid,1);
+                            $ret_9 = adoptpeting($step_r_adopt,$sid,2);
                             $step_cmmt = html_entity_decode($step_cmmt);
                             $step_cmmt = \lexical_analysis\process_string($step_cmmt,$sid,$oid,$mid);
                             $step_cmmt = \lexical_analysis\process_photoshow($step_cmmt);
@@ -146,6 +148,19 @@ HTML;
                                     $stmt->bindParam(':nowdate', $nowdate, PDO::PARAM_STR);
                                     $stmt->execute();
                                     $ngid = $dblj->lastInsertId();
+                                    
+                                    $pet = \player\getpet_fight($sid,$dblj);
+                                    if($pet){
+                                    $fight_pet_count = count($pet);
+                                    for($i=0;$i<$fight_pet_count;$i++){
+                                    $pid = $pet[$i]['npid'];
+                                    $sql = "insert into game2(sid,gid,pid) values ('$sid','$ngid','$pid')";
+                                    $dblj->exec($sql);
+                                    $sql = "insert into game3(sid,gid,pid) values ('$ngid','$sid','$pid')";
+                                    $dblj->exec($sql);
+                                    }
+                                        }
+                                    
                                     $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
                                     $dblj->exec($sql);
                                     $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";

@@ -1,12 +1,6 @@
 <?php
 include_once 'class/events_steps_change.php';
 $parents_page = $currentFilePath;
-
-if($mid){
-    $nid = $mid;
-}
-
-
 if($_POST['iid']){
     if($count >0){
     $item_weight = \player\getitem($_POST['iid'],$dblj)->iweight;
@@ -23,7 +17,7 @@ if($_POST['iid']){
         echo "购买成功，你花了{$total}{$gm_post->money_measure}{$gm_post->money_name}购买了{$item_name}x{$count}!<br/>";
         $parents_cmd = 'gm_shop_npc';
         $event_id = \gm\get_self_event($dblj,$nid,'npc_shop');
-        events_steps_change($event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/gm_shop_npc.php','npc',$nid,$para);
+        events_steps_change($event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/gm_shop_npc.php','npc_scene',$mid,$para);
         $player = \player\getplayer($sid,$dblj);
     }else{
         echo "购买失败!<br/>";
@@ -50,7 +44,7 @@ if($canshu == 'buy'){
         echo "购买成功，你花了{$total}{$gm_post->money_measure}{$gm_post->money_name}购买了{$item_name}x{$count}!<br/>";
         $parents_cmd = 'gm_shop_npc';
         $event_id = \gm\get_self_event($dblj,$nid,'npc_shop');
-        events_steps_change($event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/gm_shop_npc.php','npc',$nid,$para);
+        events_steps_change($event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/gm_shop_npc.php','npc_scene',$mid,$para);
         $player = \player\getplayer($sid,$dblj);
     }else{
         echo "购买失败!<br/>";
@@ -62,10 +56,10 @@ if($canshu == 'buy'){
 }
 
 $pos = 0;
-$npc = player\getnpc($nid,$dblj);
-$npc_name = $npc ->nname;
-$npc_shop_cond = $npc ->nshop_cond;
-$npc_item = explode(',',$npc ->nshop_item_id);
+$npc_scene = player\getnpc_scene($mid,$dblj);
+$npc_name = $npc_scene ->nname;
+$npc_shop_cond = $npc_scene ->nshop_cond;
+$npc_item = explode(',',$npc_scene ->nshop_item_id);
 $npc_item_count = @count($npc_item);
 
 if (!empty($npc_item[0])){
@@ -79,7 +73,7 @@ foreach ($npc_item as $item_detail){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $clj[] = $cmd;
-    $item_buy = $encode->encode("cmd=gm_shop_npc&nid=$nid&gm_post_canshu=1&ucmd=$cmid&iid=$item_id&sid=$sid");
+    $item_buy = $encode->encode("cmd=gm_shop_npc&mid=$mid&gm_post_canshu=1&ucmd=$cmid&iid=$item_id&sid=$sid");
     $shop_item_list .= <<<HTML
     <a href="?cmd=$item_buy">{$pos}.{$item_name}({$item_value}{$gm_post->money_measure})</a>剩余：(∞)<br/>
 HTML;
@@ -113,23 +107,23 @@ if(!$item_desc){
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$buy_5 = $encode->encode("cmd=gm_shop_npc&nid=$nid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=5&sid=$sid");
+$buy_5 = $encode->encode("cmd=gm_shop_npc&mid=$mid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=5&sid=$sid");
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$buy_10 = $encode->encode("cmd=gm_shop_npc&nid=$nid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=10&sid=$sid");
+$buy_10 = $encode->encode("cmd=gm_shop_npc&mid=$mid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=10&sid=$sid");
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$buy_20 = $encode->encode("cmd=gm_shop_npc&nid=$nid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=20&sid=$sid");
+$buy_20 = $encode->encode("cmd=gm_shop_npc&mid=$mid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=20&sid=$sid");
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$buy_form = $encode->encode("cmd=gm_shop_npc&nid=$nid&ucmd=$cmid&sid=$sid");
+$buy_form = $encode->encode("cmd=gm_shop_npc&mid=$mid&ucmd=$cmid&sid=$sid");
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$gobacklist = $encode->encode("cmd=gm_shop_npc&nid=$nid&ucmd=$cmid&sid=$sid");
+$gobacklist = $encode->encode("cmd=gm_shop_npc&mid=$mid&ucmd=$cmid&sid=$sid");
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;

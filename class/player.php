@@ -130,6 +130,37 @@ function getplayer($sid,$dblj,$uid=null){
     return $player;
 }
 
+function getnowround($sid,$dblj,$db=null){
+
+if (!$db) {
+    // 使用 PDO 查询最大 round
+    $sql = "SELECT MAX(round) AS max_round FROM game2 WHERE sid = '$sid'";
+    $stmt = $dblj->query($sql); // 获取结果
+    $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+    $latestRound = $row['max_round'];  
+} else {
+    // 使用 MySQLi 查询最大 round
+    $sql = "SELECT MAX(round) AS max_round FROM game2 WHERE sid = ?";
+    $stmt = $db->prepare($sql);
+    
+    // 绑定参数
+    $stmt->bind_param('s', $sid); // 's' 表示字符串类型
+    $stmt->execute();
+    
+    // 获取结果
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $latestRound = $row['max_round'];
+    
+    $stmt->close(); // 关闭语句
+}
+
+if(!$latestRound){
+    $latestRound = 0;
+}
+return $latestRound;
+}
+
 function get_temp_attr($obj_id,$attr_name,$obj_type,$dblj){
     
 if($obj_type ==1){
@@ -1326,7 +1357,7 @@ function getfightpara($sid,$dblj){
 }
 
 function getpet_fight($sid,$dblj){
-    $sql = "SELECT * from system_pet_player where psid = '$sid' and php >0 and pstate = 1";
+    $sql = "SELECT * from system_pet_scene where nsid = '$sid' and nhp >0 and nstate = 1";
     $result = $dblj->query($sql);
     $row = $result->fetchAll(\PDO::FETCH_ASSOC);
     return $row;

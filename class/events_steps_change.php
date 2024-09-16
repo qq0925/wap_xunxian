@@ -17,10 +17,9 @@ events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$paren
 function events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$cmid,$parents_page,$oid=null,$mid=null,$para=null){
                 //事件逻辑
                     global $encode;
-                    global $steps_page;
+                    //global $steps_page;
                     global $parents_cmd;
                     global $parents_page;
-                    
                     $event_data = self_event_data_get($target_event,$dblj);
                     //var_dump($event_data['system_event']['module_id']);
                     $event_cond = $event_data['system_event']['cond'];
@@ -41,13 +40,14 @@ function events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$c
                     if($event_cmmt){
                     echo $event_cmmt."<br/>";//不满足触发条件则输出cmmt
                     }
+                    
+                    
                     $cmid = $cmid + 1;
                     $cdid[] = $cmid;
                     //这里写默认不生成返回链接的动作
-                    
                     //考虑module_id取值。物品和战斗页面触发条件不满足不生成返回游戏链接
                     //$event_data['system_event']['module_id']
-                    if($cmd !=$pve_fighting){
+                    if($parents_cmd !=$pve_fighting){;
                     $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
                     $page_url =<<<HTML
                     <a href="?cmd=$just_page">返回游戏</a><br/>
@@ -185,6 +185,19 @@ HTML;
                                     
                                     // 获取插入的 ID
                                     $ngid = $dblj->lastInsertId();
+                                    
+                                    
+                                    $pet = \player\getpet_fight($sid,$dblj);
+                                    if($pet){
+                                    $fight_pet_count = count($pet);
+                                    for($i=0;$i<$fight_pet_count;$i++){
+                                    $pid = $pet[$i]['npid'];
+                                    $sql = "insert into game2(sid,gid,pid) values ('$sid','$ngid','$pid')";
+                                    $dblj->exec($sql);
+                                    $sql = "insert into game3(sid,gid,pid) values ('$ngid','$sid','$pid')";
+                                    $dblj->exec($sql);
+                                    }
+                                        }
                                     $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
                                     $dblj->exec($sql);
                                     $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";

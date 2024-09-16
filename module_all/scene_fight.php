@@ -26,7 +26,7 @@ $npid = "";
 //此变量用于获取你所战斗的仍然活着的宠物基本属性
 $fight_pet_count = @count($pet);
 for($i=0;$i<$fight_pet_count;$i++){
-    $fight_pid = $pet[$i]['pid'];
+    $fight_pid = $pet[$i]['npid'];
     $npid .=$fight_pid.",";
 }
 $npid = rtrim($npid,',');
@@ -44,6 +44,8 @@ $huode = '';
 $rwts = '';
 $game_main = '';
 
+$round = \player\getnowround($sid,$dblj);
+$next_round = $round + 1;
 $get_main_page = \gm\get_pve_page($dblj);
 $br = 0;
 $cmid = $cmid + 1;
@@ -96,7 +98,7 @@ if($cmd=='pve_fight'){
         echo "没有足够的{$attr_name}！<br/>";
     }else{
     \player\addplayertable('game1',$u_skill_attr,-$j_deplete_exp_final,$sid,$dblj);
-    \lexical_analysis\hurt_calc($qtype_id,$sid,$ngid,1,$dblj);//你对怪的伤害
+    \lexical_analysis\hurt_calc($sid,$ngid,1,$dblj,$next_round,$qtype_id,null);//你对怪的伤害
     }
     }
     
@@ -143,10 +145,12 @@ if($cmd=='pve_fight'){
     //宠物伤害逻辑
     
     if($npid){
-    \lexical_analysis\hurt_calc(null,$sid,$ngid,3,$dblj,$npid);//宠对怪的伤害
+    \lexical_analysis\hurt_calc($sid,$ngid,3,$dblj,$next_round,null,$npid);//宠对怪的伤害
     }
 
-    \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
+    if($ngid){
+    \lexical_analysis\hurt_calc($sid,$ngid,2,$dblj,$next_round,null,$npid);//怪对你的伤害
+    }
     }elseif($qtype ==2){
     $busy = \player\get_temp_attr($sid,'busy',1,$dblj);
     if($busy >0){
@@ -174,7 +178,7 @@ if($cmd=='pve_fight'){
             //$dblj->exec("update game2 set cut_hp = cut_hp + $use_value where sid = '$sid'");
             break;
         case 'mp':
-            $dblj->exec("update game2 set cut_mp = '$use_value' where sid = '$sid'");
+            //$dblj->exec("update game2 set cut_mp = '$use_value' where sid = '$sid'");
             break;
     }
     $item_true_id = \player\getplayeritem_attr('item_true_id',$sid,$qtype_id,$dblj)['item_true_id'];
@@ -195,9 +199,12 @@ if($cmd=='pve_fight'){
     
     //宠物伤害逻辑
     if($npid){
-    \lexical_analysis\hurt_calc(null,$sid,$ngid,3,$dblj,$npid);//宠对怪的伤害
+    \lexical_analysis\hurt_calc($sid,$ngid,3,$dblj,$next_round,null,$npid);//宠对怪的伤害
     }
-    \lexical_analysis\hurt_calc(null,$sid,$ngid,2,$dblj);//怪对你的伤害
+    
+    if($ngid){
+    \lexical_analysis\hurt_calc($sid,$ngid,2,$dblj,$next_round,null,$npid);//怪对你的伤害
+    }
     }
     
     //以下获取的怪物id均是活着的怪物id
@@ -489,7 +496,7 @@ if(!isset($zdjg) &&!empty($fight_arr)){
         $guai_gid = $guaiwu_npc[$i-1]['ngid'];
         if ($guai_hp){
         $sql = "update game2 set fight_umsg = '',fight_omsg = '' where gid = '{$guai_gid}' AND sid='$sid'";
-        $dblj->exec($sql);
+        //$dblj->exec($sql);
         }
     }
 if($player->uauto_fight ==1 &&$look_canshu !=1){

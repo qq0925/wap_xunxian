@@ -196,12 +196,12 @@ foreach ($keyValuePairs as $pair) {
                     
                     }
                 elseif($oid =='pet'){
-                $reg = "p".$ele_1_2;
-                $result = $db->query("SHOW COLUMNS FROM system_pet_player LIKE '$reg'");
+                $reg = "n".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_pet_scene LIKE '$reg'");
 
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
-                    $updateQuery = "UPDATE system_pet_player SET $reg = '$ele_2' WHERE psid = '$sid' and pid = $mid";
+                    $updateQuery = "UPDATE system_pet_scene SET $reg = '$ele_2' WHERE nsid = '$sid' and npid = $mid";
                     $db->query($updateQuery);
                 }
                 }
@@ -417,12 +417,12 @@ $sid = $old_sid;
                 break;
             case 'o':
                 if($oid =='pet'){
-                $reg = "p".$ele_1_2;
-                $result = $db->query("SHOW COLUMNS FROM system_pet_player LIKE '$reg'");
+                $reg = "n".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_pet_scene LIKE '$reg'");
 
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
-                    $updateQuery = "UPDATE system_pet_player SET $reg = $reg + '$ele_2' WHERE psid = '$sid' and pid = $mid";
+                    $updateQuery = "UPDATE system_pet_scene SET $reg = $reg + '$ele_2' WHERE nsid = '$sid' and npid = $mid";
                     $db->query($updateQuery);
                 }
                 }
@@ -766,7 +766,7 @@ function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null
             switch ($type) {
                 case '1':
                     // 检查收养数量是否超过最大数量，这里的8先写死
-                    $checkQuery = "SELECT * FROM system_pet_player WHERE psid = ?";
+                    $checkQuery = "SELECT * FROM system_pet_scene WHERE nsid = ?";
                     $checkStmt = $db->prepare($checkQuery);
                     $checkStmt->bind_param("s", $sid);
                     $checkStmt->execute();
@@ -775,11 +775,36 @@ function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null
                     if ($checkResult->num_rows <= 8) {
                         // 判断对应npc有无被收养事件，进行插入操作
                         
-                        $insertQuery = "INSERT IGNORE INTO system_pet_player (pnid,pname, psid, plvl,php,pmaxhp) VALUES (?,?,?,'1','1','1')";
-                        $insertStmt = $db->prepare($insertQuery);
-                        $insertStmt->bind_param("iss", $pet_root_id,$nname,$sid);
-                        $insertResult = $insertStmt->execute();
-                        $lastInsertedId = $db->insert_id;
+                        
+                    // 1. 查询列名并缓存结果以减少重复查询
+                    if (empty($columns)) {
+                        $result = $db->query("SHOW COLUMNS FROM system_npc");
+                        $columns = [];
+                        while ($row = $result->fetch_assoc()) {
+                            $columns[] = $row['Field'];
+                        }
+                    }
+                    
+                    // 2. 移除不必要的列（如果有）
+                    $cols = implode(", ", $columns);
+                    
+                    // 3. 动态构建 SQL 语句
+                    $sql = "INSERT INTO system_pet_scene ($cols, nmid,nsid) 
+                            SELECT $cols, ?, ?
+                            FROM system_npc 
+                            WHERE nid = ?";
+                    // 4. 预编译 SQL 语句
+                    $stmt = $db->prepare($sql);
+                    
+                    // 5. 绑定参数并执行
+                    $nmid = 0;  // 对应的 nmid 值
+                    $stmt->bind_param("isi", $nmid, $sid, $pet_root_id);
+                    $stmt->execute();
+                    
+                    // 获取最后插入记录的自增 ID
+                    $lastInsertId = $db->insert_id;
+
+                        
                         
                         if($pet_default_skills){
                         $pet_default_skills_para = explode(',',$pet_default_skills);
@@ -788,16 +813,20 @@ function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null
                             $pet_default_skill_id = $pet_default_skill[0];
                             $insertQuery = "INSERT IGNORE INTO system_skill_user (jsid,jid,jlvl, jpid) VALUES (?,?,1,?)";
                             $insertStmt = $db->prepare($insertQuery);
-                            $insertStmt->bind_param("sii",$sid, $pet_default_skill_id,$lastInsertedId);
+                            $insertStmt->bind_param("sii",$sid, $pet_default_skill_id,$lastInsertId);
                             $insertResult = $insertStmt->execute();
                         }
                         }
-                        
+                        $dblj = DB::pdo();
                         if($npet_event_id !=0){
-                        include_once 'events_steps_change.php';
-                        include 'pdo.php';
-                        events_steps_change($npet_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','pet',$lastInsertedId,$para);
+                        events_steps_change($npet_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','pet',$lastInsertId,$para);
 }
+                        $ret = $ret ?? global_event_data_get(32, $dblj);
+                        if ($ret) {
+                            global_events_steps_change(32, $sid, $dblj, $just_page, $steps_page, $cmid, 'module/gm_scene_new', 'pet', $lastInsertId, $para);
+                        }
+
+
                         if ($insertResult) {
                             echo "收养了{$nname}<br/>";
                         }

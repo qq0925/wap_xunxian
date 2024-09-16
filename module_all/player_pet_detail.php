@@ -17,6 +17,15 @@ $br = 0;
 if($pet_id){
 $pet_view__id = $pet_id;
 }
+
+if($fight_canshu==1){
+    echo "出战成功！<br/>";
+    $dblj->exec("update system_pet_player set pstate = 1 where pid = '$pet_id'");
+}elseif($fight_canshu==2){
+    echo "收回成功！<br/>";
+    $dblj->exec("update system_pet_player set pstate = 0 where pid = '$pet_id'");
+}
+
 for ($i=0;$i<count($get_main_page);$i++){
     $oid = 'pet';
     $mid = $pet_view__id;
@@ -65,7 +74,7 @@ for ($i=0;$i<count($get_main_page);$i++){
         $main_target_event = $encode->encode("cmd=event_no_define&ucmd=$cmid&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
     }
     if($main_target_func !=0 &&$ret_bool ==0){
-        $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,3,$cmid);
+        $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,4,$cmid);
     }elseif ($main_target_func ==0) {
         $main_target_func = $encode->encode("cmd=func_no_define&ucmd=$cmid&parents_page=$parents_page&$parents_cmd=$cmd&sid=$sid");
     }
@@ -120,7 +129,6 @@ $ret_game = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $ret_list = $encode->encode("cmd=player_pet&ucmd=$cmid&sid=$sid");
 $pet_html = <<<HTML
 $all
-================<br/>
 <a href="?cmd=$ret_list">返回列表</a><br/>
 <a href="?cmd=$ret_game">返回游戏</a><br/>
 HTML;

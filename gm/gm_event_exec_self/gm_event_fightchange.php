@@ -1,5 +1,4 @@
 <?php
-
 if(!empty($_POST)){
 $key=$_POST['npc_id'];
 $old_count=$_POST['old_count'];
@@ -22,6 +21,7 @@ $stmt->bindParam(':id', $step_id);
 // 执行查询
 $stmt->execute();
 }elseif($add && !empty($key)){
+var_dump($string_new);
 // 检查 fight_npcs 字段是否为空
 $query = "SELECT fight_npcs FROM system_event_evs_self where belong = '$event_id' and id = '$step_id'";
 $stmt = $dblj->prepare($query);
@@ -29,6 +29,7 @@ $stmt->execute();
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (empty($result['fight_npcs'])) {
+    
     // fight_npcs 字段为空，直接赋值为 $string_new
     $query = "UPDATE system_event_evs_self SET fight_npcs = :new_value where belong = '$event_id' and id = '$step_id'";
     $stmt = $dblj->prepare($query);
