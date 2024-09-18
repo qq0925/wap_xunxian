@@ -40,6 +40,8 @@ $gm_game_mkdesign = $encode->encode("cmd=gm_game_mkdesign&mk_canshu=0&sid=$sid")
 $gm_online_list = $encode->encode("cmd=nowonline&design_canshu=1&sid=$sid");
 $remove_all_chat = $encode->encode("cmd=gm&remove_canshu=1&sid=$sid");
 $global_value_design = $encode->encode("cmd=global_value_design&sid=$sid");
+$gm_zip_update = $encode->encode("cmd=gm_game_zipfile&type=update&sid=$sid");
+$gm_zip_all = $encode->encode("cmd=gm_game_zipfile&type=all&sid=$sid");
 $gm_post_canshu = 0;
 $post_tishi = '';
 $gm_html = <<<HTML
@@ -79,6 +81,8 @@ $gm_html = <<<HTML
 ---</br>
 <a href="?cmd=$gm_game_logdownload">日志下载</a><br/>
 <a href="?cmd=$gm_design_guide">设计文档</a><br/>
+<a href="?cmd=$gm_zip_update">源文件更新压缩</a><br/>
+<a href="?cmd=$gm_zip_all">源文件全部压缩</a><br/>
 ---</br>
 HTML;
 }else{

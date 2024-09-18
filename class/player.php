@@ -1356,8 +1356,14 @@ function getfightpara($sid,$dblj){
     return $row;
 }
 
-function getpet_fight($sid,$dblj){
+function getpet_fight($sid,$dblj,$para=null){
+    if($para =='alive'){
     $sql = "SELECT * from system_pet_scene where nsid = '$sid' and nhp >0 and nstate = 1";
+    }elseif($para =='dead'){
+    $sql = "SELECT * from system_pet_scene where nsid = '$sid' and nhp <=0 and nstate = 1";
+    }else{
+    $sql = "SELECT * from system_pet_scene where nsid = '$sid' and nstate = 1";
+    }
     $result = $dblj->query($sql);
     $row = $result->fetchAll(\PDO::FETCH_ASSOC);
     return $row;

@@ -1059,6 +1059,8 @@ echo $refresh_html;
                     $cxjg =$dblj->exec($sql2);
                     $sql3 = "ALTER TABLE system_npc_scene DROP COLUMN $delete_column;";
                     $cxjg =$dblj->exec($sql3);
+                    $sql4 = "ALTER TABLE system_pet_scene DROP COLUMN $delete_column;";
+                    $cxjg =$dblj->exec($sql4);
                     break;
                 case '4':
                     $delete_column = "i".$gm_game_attr_id;
@@ -1073,6 +1075,8 @@ echo $refresh_html;
                 case '6':
                     $delete_column = "j".$gm_game_attr_id;
                     $sql = "ALTER TABLE system_skill DROP COLUMN $delete_column;";
+                    $sql2 = "ALTER TABLE system_skill_module DROP COLUMN $delete_column;";
+                    $cxjg =$dblj->exec($sql2);
                     break;
             }
             $cxjg =$dblj->exec($sql);
@@ -1114,6 +1118,8 @@ echo $refresh_html;
                     $cxjg =$dblj->exec($sql2);
                     $sql3 = "ALTER TABLE system_npc_scene ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
                     $cxjg =$dblj->exec($sql3);
+                    $sql4 = "ALTER TABLE system_pet_scene ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $cxjg =$dblj->exec($sql4);
                     break;
                 case '4':
                     $update_column = "i".$gm_id;
@@ -1128,6 +1134,8 @@ echo $refresh_html;
                 case '6':
                     $update_column = "j".$gm_id;
                     $sql = "ALTER TABLE system_skill ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $sql2 = "ALTER TABLE system_skill_module ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $cxjg =$dblj->exec($sql2);
                     break;
             }
             $cxjg =$dblj->exec($sql);
@@ -1177,6 +1185,8 @@ echo $refresh_html;
                     $cxjg =$dblj->exec($sql2);
                     $sql3 = "ALTER TABLE system_npc_scene ADD `$update_column` $add_type NOT NULL;";
                     $cxjg =$dblj->exec($sql3);
+                    $sql4 = "ALTER TABLE system_pet_scene ADD `$update_column` $add_type NOT NULL;";
+                    $cxjg =$dblj->exec($sql4);
                     break;
                 case '4':
                     $update_column = "i".$gm_id;
@@ -1191,6 +1201,8 @@ echo $refresh_html;
                 case '6':
                     $update_column = "j".$gm_id;
                     $sql = "ALTER TABLE system_skill ADD `$update_column` $add_type NOT NULL;";
+                    $sql2 = "ALTER TABLE system_skill_module ADD `$update_column` $add_type NOT NULL;";
+                    $cxjg =$dblj->exec($sql2);
                     break;
             }
             $cxjg =$dblj->exec($sql);
@@ -1652,6 +1664,13 @@ echo $refresh_html;
             break;
         case 'gm_game_lpdesign'://生活职业设计
             $ym = 'gm/gm_lp_design/gm_lp_main.php';
+            break;
+        case 'gm_game_zipfile'://源文件压缩
+            if($type =='update'){
+                $ym = 'zip_update.php';
+            }else{
+                $ym = 'zip_all.php';
+            }
             break;
         case 'delete_ele'://元素删除
             $ym = 'gm/game_page_2.php';
@@ -2910,7 +2929,7 @@ echo $refresh_html;
         // flush();
         }
         
-        if ($minute>=$system_offline_time &&$player->uis_designer==0 &&$system_offline_time !=0||$player->sfzx==0){
+        if ($minute>=$system_offline_time &&$player->uis_designer==0 &&$system_offline_time !=0||($player->sfzx==0&&$player->uis_designer==0)){
             //单位是秒
             echo '<meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">';
             echo "【哎呀！你好像进入了虚无领域!】<br/>".$player->uname."离线时间过长，请重新登陆";

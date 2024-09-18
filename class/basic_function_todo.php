@@ -1503,21 +1503,21 @@ HTML;
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->execute();
-    $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if($row){
-        
-    for($i=0;$i<count($row);$i++){
-    $pet_id = $row[$i]['npid'];
-    $pet_name = $row[$i]['nname'];
-    $pet_hp = $row[$i]['nhp'];
-    $pet_maxhp = $row[$i]['nmaxhp'];
+    $pet_row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if($pet_row){
+    $pet_count = count($pet_row);
+    for($i=0;$i<$pet_count;$i++){
+    $pet_id = $pet_row[$i]['npid'];
+    $pet_name = $pet_row[$i]['nname'];
+    $pet_hp = $pet_row[$i]['nhp'];
+    $pet_maxhp = $pet_row[$i]['nmaxhp'];
     $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = :sid and pid = :pid and round = '$round'";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->bindParam(':pid', $pet_id,PDO::PARAM_INT);
     $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $pcut_hp = $row['total_cut_hp'];
+    $pet_row_2 = $stmt->fetch(PDO::FETCH_ASSOC);
+    $pcut_hp = $pet_row_2['total_cut_hp'];
     $pcut_hp = $pcut_hp >0?"+".$pcut_hp:$pcut_hp;
     $pcut_hp = $pcut_hp ==0?'':$pcut_hp;
     

@@ -23,6 +23,50 @@ HTML;
     </select>
 HTML;
 
+    $excluded_ids = ['id', 'name', 'desc','effect_cmmt', 'lvl', 'point','group_attack']; // 可以根据需要定义排除的 id
+    
+    // 查询 gm_game_attr 表中的数据
+    $stmt = $dblj->query("SELECT id, name,attr_type FROM gm_game_attr WHERE value_type = 6");
+    $self_def_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $attr_array = array();
+    foreach ($self_def_data as $row2) {
+        // 如果 id 不在排除数组中，才添加到 $attr_array
+        if (!in_array($row2['id'], $excluded_ids)) {
+            $attr_array[$row2['id']] = $row2;
+        }
+    }
+
+foreach ($attr_array as $attr_id => $attr_detail){
+        // 生成标识和值
+    $self_id = $attr_detail['id'];
+    $self_name = $attr_detail['name'];
+    $attr_type = $attr_detail['attr_type'];
+    $attr_value = isset($gm_ret['j' . $id]) ? $gm_ret['j' . $id] : '';
+        switch($attr_type){
+            case '0':
+        $self_attr .= <<<HTML
+        $self_name:<input name="$self_id" type="number" value="$attr_value" size="10" maxlength="10"/><br/>
+HTML;
+            break;
+            case '1':
+        $self_attr .= <<<HTML
+        $self_name:<input name="$self_id" type="text" value="$attr_value" size="10" maxlength="10"/><br/>
+HTML;
+            break;
+            case '2':
+$selectedOption = ($attr_value == "1") ? 'selected' : '';
+$self_attr .= <<<HTML
+{$self_name}:<select name="{$self_id}">
+<option value="0" >否</option>
+<option value="1" $selectedOption>是</option>
+</select><br/>
+HTML;
+            break;
+        }
+}
+
+
 $stmt = $dblj->query("SELECT id, name FROM gm_game_attr WHERE value_type = 1 and if_item_use_attr = 1");
 $equip_def_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
     // 构建 <select> 元素
@@ -74,6 +118,7 @@ $skill_add_html = <<<HTML
 <option value="1">非战斗中</option>
 </select><br/>
 攻击范围(-1表示攻击所有):<input name="group_attack" type="text"  maxlength="6"/><br/>
+$self_attr
 伤害系数:<input name="hurt_mod" type="text"  maxlength="6"/><br/>
 冷却时间(秒):<input name="cooling_time" type="text"  maxlength="6"/><br/>
 冷却时间(回合):<input name="cooling_round" type="text"  maxlength="6"/><br/>
@@ -90,6 +135,7 @@ $skill_add_html = <<<HTML
 升级公式:<textarea name="promotion" maxlength="1024" rows="4" cols="40"></textarea><br/>
 升级条件:<textarea name="promotion_cond" maxlength="1024" rows="4" cols="40"></textarea><br/>
 <input type="submit" title="确定" value="确定"/><br/><br/>
+</form>
 <a href="">查看定义数据</a><br/>
 <a href="">导入定义数据</a><br/>
 <a href="">删除该技能</a><br/>

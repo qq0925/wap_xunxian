@@ -9,9 +9,17 @@ $parents_cmd = \player\getplayer($sid,$dblj)->ulast_cmd;
 if(!$para){
 events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$parents_page,$oid,$mid,$para);
 }else {
-    $input_value = $_POST['value'];
-    $sql = "insert into system_player_inputs(sid,event_id,id,value)values('$sid','$target_event','$id','$input_value')";
-    $dblj->exec($sql);
+    $para_para =explode('|',$para);
+    foreach ($para_para as $input_para){
+    $input_value = $_POST[$input_para];
+    $sql = "INSERT INTO system_player_inputs (sid, event_id, id, value) VALUES (:sid, :target_event, :input_para, :input_value)";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':sid', $sid);
+    $stmt->bindParam(':target_event', $target_event);
+    $stmt->bindParam(':input_para', $input_para);
+    $stmt->bindParam(':input_value', $input_value);
+    $stmt->execute();
+    }
 events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$parents_page,null,null,$para);
 }
 function events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$cmid,$parents_page,$oid=null,$mid=null,$para=null){
@@ -133,11 +141,11 @@ HTML;
                             $ret = attrsetting($step_s_attrs,$sid,$oid,$mid,$para);
                             $ret_2 = attrchanging($step_m_attrs,$sid,$oid,$mid,$para);
                             $ret_3 = itemchanging($step_items,$sid);
-                            $ret_4 = skillschanging($step_a_skills,$sid,1);
-                            $ret_6 = skillschanging($step_r_skills,$sid,2);
+                            $ret_4 = skillschanging($step_a_skills,$sid,1,$oid,$mid);
+                            $ret_6 = skillschanging($step_r_skills,$sid,2,$oid,$mid);
                             $ret_7 = taskschanging($step_r_tasks,$sid,2);
-                            $ret_8 = adoptpeting($step_a_adopt,$sid,1);
-                            $ret_9 = adoptpeting($step_r_adopt,$sid,2);
+                            $ret_8 = adoptpeting($step_a_adopt,$sid,1,$oid,$mid);
+                            $ret_9 = adoptpeting($step_r_adopt,$sid,2,$oid,$mid);
                             $step_cmmt = html_entity_decode($step_cmmt);
                             $step_cmmt = \lexical_analysis\process_string($step_cmmt,$sid,$oid,$mid);
                             $step_cmmt = \lexical_analysis\process_photoshow($step_cmmt);
@@ -260,21 +268,28 @@ HTML;
                             
                             if($steps_page <$steps_count && $step_just_return ==0){
                             if($step_inputs){
-                                    $step_input = explode('|',$step_inputs);
+                                $step_inputs_para = explode(',',$step_inputs);
+                                foreach ($step_inputs_para as $step_input_para){
+                                    $step_input = explode('|',$step_input_para);
                                     $form_id = $step_input[0];
                                     $form_text = $step_input[1];
                                     $form_type = $step_input[2];
                                     $form_type = $form_type ==0?"text":"number";
                                     $form_max = $step_input[3];
-                                    $input_para = $form_id;
-                                    $steps_page +=1;
+                                    $input_para .= $form_id."|";
                                     $cmid = $cmid + 1;
                                     $cdid[] = $cmid;
+                                    
+                                    $form_core_html .= <<<HTML
+{$form_text}:<input name="{$form_id}" type="{$form_type}" maxlength="{$form_max}"/><br/>
+HTML;
+                                }
+                                $steps_page +=1;
+                                $input_para = substr($input_para, 0, -1);
                                     $post_url = $encode->encode("cmd=main_target_event&mid=$mid&para=$input_para&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
                                     $form_html = <<<HTML
 <form action="?cmd=$post_url" method="post">
-<input name="id" type="hidden"value="{$form_id}">
-{$form_text}:<input name="value" type="{$form_type}" maxlength="{$form_max}"/><br/>
+$form_core_html
 <input name="submit" type="submit"value="提交">
 </form>
 HTML;
@@ -303,22 +318,27 @@ HTML;
                             }
                             elseif($steps_page >=$count && $step_just_return ==0){
                             if($step_inputs){
-                                    $step_input = explode('|',$step_inputs);
+                                $step_inputs_para = explode(',',$step_inputs);
+                                foreach ($step_inputs_para as $step_input_para){
+                                    $step_input = explode('|',$step_input_para);
                                     $form_id = $step_input[0];
                                     $form_text = $step_input[1];
                                     $form_type = $step_input[2];
                                     $form_type = $form_type ==0?"text":"number";
                                     $form_max = $step_input[3];
-                                    $input_para = $form_id;
-                                    $steps_page +=1;
+                                    $input_para .= $form_id."|";
                                     $cmid = $cmid + 1;
                                     $cdid[] = $cmid;
-                                    
-                                    $post_url = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
+                                    $form_core_html .= <<<HTML
+{$form_text}:<input name="{$form_id}" type="{$form_type}" maxlength="{$form_max}"/><br/>
+HTML;
+                                }
+                                $steps_page +=1;
+                                $input_para = substr($input_para, 0, -1);
+                                    $post_url = $encode->encode("cmd=main_target_event&mid=$mid&para=$input_para&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
                                     $form_html = <<<HTML
 <form action="?cmd=$post_url" method="post">
-<input name="id" type="hidden"value="{$form_id}">
-{$form_text}:<input name="value" type="{$form_type}" maxlength="{$form_max}"/><br/>
+$form_core_html
 <input name="submit" type="submit"value="提交">
 </form>
 HTML;

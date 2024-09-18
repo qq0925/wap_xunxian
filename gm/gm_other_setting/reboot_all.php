@@ -61,6 +61,9 @@ if($_POST&&$reboot == 1){
     $imagesDir = __DIR__ . DIRECTORY_SEPARATOR . 'ache';
     // 删除 ache 目录中的所有文件夹
     deleteAllFoldersInDirectory($imagesDir);
+    $imagesDir = __DIR__ . DIRECTORY_SEPARATOR . 'cache';
+    // 删除 ache 目录中的所有文件夹
+    deleteAllFoldersInDirectory($imagesDir);
     
         // 查询以game_为前缀的所有表名
         $sql = "SHOW TABLES LIKE 'game_%'";
@@ -73,7 +76,7 @@ if($_POST&&$reboot == 1){
         $gameSelfPageTables = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         // 其他需要清空的表
-        $otherTables = ['forum_res', 'forum_text', 'game1', 'game2', 'game3', 'game4', 'global_data','player_temp_attr','player_equip_mosaic','system_addition_attr','system_chat_data','system_auc','system_auc_data','system_draw','system_equip_user','system_event_evs','system_event_evs_npc','system_event_evs_self','system_event_self','system_exp_def','system_fight_quick','system_item','system_item_module','system_item_op','system_lp','system_map','system_map_op','system_mk','system_money_type','system_npc','system_npc_midguaiwu','system_npc_scene','system_npc_op','system_photo','system_photo_type','system_player_black','system_player_boat','system_player_friend','system_player_inputs','system_rank','system_rp','system_self_define_module','system_skill','system_skill_module','system_skill_user','system_storage','system_storage_locked','system_task','system_task_user','system_team_user'];
+        $otherTables = ['forum_res', 'forum_text', 'game1', 'game2', 'game3', 'game4', 'global_data','player_temp_attr','player_equip_mosaic','system_addition_attr','system_chat_data','system_auc','system_auc_data','system_draw','system_equip_user','system_event_evs','system_event_evs_npc','system_event_evs_self','system_event_self','system_exp_def','system_fight_quick','system_item','system_item_module','system_item_op','system_lp','system_map','system_map_op','system_mk','system_money_type','system_npc','system_npc_midguaiwu','system_npc_scene','system_pet_scene','system_npc_op','system_photo','system_photo_type','system_player_black','system_player_boat','system_player_friend','system_player_inputs','system_rank','system_rp','system_self_define_module','system_skill','system_skill_module','system_skill_user','system_storage','system_storage_locked','system_task','system_task_user','system_team_user'];
         // 合并所有需要清空的表
         $tablesToTruncate = array_merge($gamePageTables, $otherTables);
     
@@ -225,7 +228,15 @@ $data = [
         $stmt->execute();
         echo "表 system_area 已插入未分区初始值。<br>";
         
-        $sql = "INSERT INTO system_money_type (rid,rname,runit, rif_default) VALUES ('money','信用币','张', '1')";
+        $sql = "INSERT INTO system_skill_module (jid,jhurt_attr,jdeplete_attr) VALUES ('1','hp','mp')";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $sql = "INSERT INTO system_skill_module (jid,jhurt_attr,jdeplete_attr) VALUES ('2','hp','mp')";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        echo "表 system_skill_module 已插入初始值。<br>";
+        
+        $sql = "INSERT INTO system_money_type (rid,rname,runit, rif_default) VALUES ('money','银子','两', '1')";
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
         echo "表 system_money_type 已插入初始值。<br>";
@@ -364,6 +375,69 @@ $data = [
         if (!empty($dropFields)) {
             foreach ($dropFields as $field) {
                 $sql = "ALTER TABLE system_npc DROP COLUMN $field";
+                $stmt = $dblj->prepare($sql);
+                $stmt->execute();
+                echo "字段 $field 已删除。<br>";
+            }
+        } else {
+            echo "没有需要删除的字段。<br>";
+        }
+
+        // 保留的字段
+        $keepFields = [
+            'narea_id', 'narea_name', 'nid', 'nstate', 'nkill', 'nnot_dead', 'nchuck',
+            'nrefresh_time', 'nshop', 'nhock_shop', 'naccept_give', 'nname', 'nexp',
+            'nlvl', 'nsex', 'ndesc', 'nequips', 'ndrop_exp', 'ndrop_money', 'ndrop_item',
+            'ndrop_item_type', 'nskills', 'nshop_item_id', 'nmuban', 'nshop_cond',
+            'ntaskid', 'nnick_name', 'nhp', 'nmaxhp', 'nmp', 'nmaxmp', 'ngj', 'nfy', 'nimage', 'nop_target',
+            'ntask_target', 'ncreat_event_id', 'nlook_event_id', 'nattack_event_id','nwin_event_id','ndefeat_event_id',
+            'npet_event_id', 'nshop_event_id', 'nup_event_id', 'nheart_event_id',
+            'nminute_event_id','nmid','ncreate_time','ncid'
+        ];
+    
+        // 获取 system_npc_scene 表的所有字段
+        $sql = "DESCRIBE system_npc_scene";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+        // 生成删除字段的SQL
+        $dropFields = array_diff($columns, $keepFields);
+        if (!empty($dropFields)) {
+            foreach ($dropFields as $field) {
+                $sql = "ALTER TABLE system_npc_scene DROP COLUMN $field";
+                $stmt = $dblj->prepare($sql);
+                $stmt->execute();
+                echo "字段 $field 已删除。<br>";
+            }
+        } else {
+            echo "没有需要删除的字段。<br>";
+        }
+
+
+        // 保留的字段
+        $keepFields = [
+            'narea_id', 'narea_name', 'nid', 'nstate', 'nkill', 'nnot_dead', 'nchuck',
+            'nrefresh_time', 'nshop', 'nhock_shop', 'naccept_give', 'nname', 'nexp',
+            'nlvl', 'nsex', 'ndesc', 'nequips', 'ndrop_exp', 'ndrop_money', 'ndrop_item',
+            'ndrop_item_type', 'nskills', 'nshop_item_id', 'nmuban', 'nshop_cond',
+            'ntaskid', 'nnick_name', 'nhp', 'nmaxhp', 'nmp', 'nmaxmp', 'ngj', 'nfy', 'nimage', 'nop_target',
+            'ntask_target', 'ncreat_event_id', 'nlook_event_id', 'nattack_event_id','nwin_event_id','ndefeat_event_id',
+            'npet_event_id', 'nshop_event_id', 'nup_event_id', 'nheart_event_id',
+            'nminute_event_id','nmid','ncreate_time','nsid','npid'
+        ];
+    
+        // 获取 system_pet_scene 表的所有字段
+        $sql = "DESCRIBE system_pet_scene";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+        // 生成删除字段的SQL
+        $dropFields = array_diff($columns, $keepFields);
+        if (!empty($dropFields)) {
+            foreach ($dropFields as $field) {
+                $sql = "ALTER TABLE system_pet_scene DROP COLUMN $field";
                 $stmt = $dblj->prepare($sql);
                 $stmt->execute();
                 echo "字段 $field 已删除。<br>";

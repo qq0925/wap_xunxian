@@ -53,7 +53,6 @@ function checkTriggerCondition($condition,$dblj=null,$sid,$oid=null,$mid=null) {
 }
 
 function attrsetting($input,$sid,$oid=null,$mid=null,$para=null){
-
     // 创建数据库连接
 $db = DB::conn();
 
@@ -639,6 +638,47 @@ function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = n
             switch ($type) {
                 case '1':
                     // 检查字段是否存在
+                    if($oid == 'npc_scene') {
+    $string_new = $pair . "|" . "1";
+
+    // 查询 nskills 字段
+    $query = "SELECT nskills FROM system_npc_scene WHERE ncid = ?";
+    $stmt = $db->prepare($query);
+    $stmt->bind_param('s', $mid);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+
+    if (empty($result['nskills'])) {
+        // 如果 nskills 为空，直接赋值为 $string_new
+        $query = "UPDATE system_npc_scene SET nskills = ? WHERE ncid = ?";
+        $stmt = $db->prepare($query);
+        $stmt->bind_param('ss', $string_new, $mid);
+        $stmt->execute();
+    } elseif (!in_array($string_new, explode(',', $result['nskills']))) {
+        // 如果 nskills 不为空，在原有值后面加上逗号和 $string_new
+        $query = "UPDATE system_npc_scene SET nskills = CONCAT(nskills, ',', ?) WHERE ncid = ?";
+        $stmt = $db->prepare($query);
+        $stmt->bind_param('ss', $string_new, $mid);
+        $stmt->execute();
+    }
+}
+                    elseif($oid =='pet'){
+                    
+                    $checkQuery = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ? and jpid = ?";
+                    $checkStmt = $db->prepare($checkQuery);
+                    $checkStmt->bind_param("isi", $pair, $sid,$mid);
+                    $checkStmt->execute();
+                    $checkResult = $checkStmt->get_result();
+
+                    if ($checkResult->num_rows == 0) {
+                        // 不存在该数据，进行插入操作
+                        $insertQuery = "INSERT IGNORE INTO system_skill_user (jsid, jid, jlvl,jpid) VALUES (?, ?, '1',?)";
+                        $insertStmt = $db->prepare($insertQuery);
+                        $insertStmt->bind_param("sii", $sid, $pair,$mid);
+                        $insertResult = $insertStmt->execute();
+                    }
+                    
+                    }else{
                     $checkQuery = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ?";
                     $checkStmt = $db->prepare($checkQuery);
                     $checkStmt->bind_param("is", $pair, $sid);
@@ -660,6 +700,7 @@ function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = n
                     }
                     else{
                         echo "你已经学会了{$jname}<br/>";
+                    }
                     }
                     break;
 
@@ -827,7 +868,7 @@ function adoptpeting($input, $sid, $type, $oid = null, $mid = null, $para = null
                         }
 
 
-                        if ($insertResult) {
+                        if ($lastInsertId) {
                             echo "收养了{$nname}<br/>";
                         }
                     }

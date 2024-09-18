@@ -11,7 +11,8 @@ include_once 'class/global_event_step_change.php';
 $parents_page = $currentFilePath;
 
 $player = \player\getplayer($sid,$dblj);
-$pet = \player\getpet_fight($sid,$dblj);
+$pet = \player\getpet_fight($sid,$dblj,'alive');
+$pet_dead = \player\getpet_fight($sid,$dblj,'dead');
 $clmid = player\getmid($player->nowmid,$dblj);
 $fight_arr = player\getfightpara($sid,$dblj);
 
@@ -30,6 +31,11 @@ for($i=0;$i<$fight_pet_count;$i++){
     $npid .=$fight_pid.",";
 }
 $npid = rtrim($npid,',');
+
+foreach ($pet_dead as $pet_dead_one){
+    $dead_npid = $pet_dead_one['npid'];
+    $dblj->exec("update system_pet_scene set nhp = 0,nstate = 0 where npid = '$dead_npid'");
+}
 
 $ngid = "";
 //此变量用于获取你所战斗的仍然活着的怪物基本属性
@@ -175,10 +181,10 @@ if($cmd=='pve_fight'){
     //这里要更新game3中的伤害值
     switch($use_attr){
         case 'hp':
-            //$dblj->exec("update game2 set cut_hp = cut_hp + $use_value where sid = '$sid'");
+            //$dblj->exec("update game2 set cut_hp = cut_hp + $use_value where sid = '$sid' and round = '$round'");
             break;
         case 'mp':
-            //$dblj->exec("update game2 set cut_mp = '$use_value' where sid = '$sid'");
+            //$dblj->exec("update game2 set cut_mp = '$use_value' where sid = '$sid' and round = '$round'");
             break;
     }
     $item_true_id = \player\getplayeritem_attr('item_true_id',$sid,$qtype_id,$dblj)['item_true_id'];
@@ -237,11 +243,6 @@ if($cmd=='pve_fight'){
         include_once 'class/events_steps_change.php';
         events_steps_change($defeat_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_id,$para);
         }
-        // $sql = "delete from system_npc_midguaiwu where ngid = '{$monster_id}' AND nsid='$sid'";
-        // $dblj->exec($sql);
-        // $sql = "delete from game2 where gid = '{$monster_id}' AND sid='$sid'";
-        //$dblj->exec($sql);
-        
         $drop_exp = $alive_monster->ndrop_exp;//掉落相关
         $drop_money = $alive_monster->ndrop_money;
         $drop_items = $alive_monster->ndrop_item;
@@ -358,8 +359,7 @@ HTML;
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
             $sql = "delete from system_npc_midguaiwu where nsid='$sid'";
             $dblj->exec($sql);
-            \player\changeplayersx('uhp',0,$sid,$dblj);
-            $player = \player\getplayer($sid,$dblj);
+            \player\changeplayersx('uhp',1,$sid,$dblj);
             $parents_cmd = 'gm_scene_new';
             $ret = global_event_data_get(8,$dblj);
             if($ret){
@@ -374,7 +374,7 @@ HTML;
             include_once 'class/events_steps_change.php';
             events_steps_change($alive_monster->nwin_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
             }
-            
+            $player = \player\getplayer($sid,$dblj);
             //战败事件
             $fight_html = <<<HTML
 战斗失败！<br/>
@@ -382,8 +382,6 @@ HTML;
 你生命：({$player->uhp}/{$player->umaxhp})<br/>
 <a href="?cmd=$gonowmid">返回游戏</a>
 HTML;
-            \player\changeplayersx('uhp',1,$sid,$dblj);
-            $player = \player\getplayer($sid,$dblj);
             break;
         case -1:
             \player\changeplayersx('uis_pve',0,$sid,$dblj);

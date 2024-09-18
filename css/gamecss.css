@@ -33,7 +33,6 @@ body {
     display: block;
     max-width: 30%; /* 设置文本的最大宽度为屏幕宽度的一半 */
 }
-
 @media screen and (max-width: 768px) {
 /* 手机端样式 */
 
@@ -51,6 +50,7 @@ body {
 }
 
 a{
+    word-wrap: break-word;
     font-size: 18px;
     /*outline: none;*/
     border: none;
@@ -59,7 +59,7 @@ a{
 
 a:link {
     color: #0000ff;
-    font-weight: bold;
+    font-weight: 550;
     /*display: inline-block;#0000ff*/
     margin: 4px 3px 2px 4px;
 }

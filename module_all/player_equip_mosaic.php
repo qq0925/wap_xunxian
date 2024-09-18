@@ -236,7 +236,7 @@ if($diss_canshu){
     
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$gojustnow = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$mid&sid=$sid");
+$gojustnow = $encode->encode("cmd=npc_html&ucmd=$cmid&mid=$mid&sid=$sid");
 $player_equip_mosaic = \player\get_player_equip_mosaic_all($sid,$dblj);
 
 if($_POST['kw']){
@@ -329,7 +329,7 @@ HTML;
 }else{
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$gojustnow = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$mid&sid=$sid");
+$gojustnow = $encode->encode("cmd=npc_html&ucmd=$cmid&mid=$mid&sid=$sid");
 $player_equip_mosaic = \player\get_player_all_equip_enable($sid,$dblj);
 
 if($_POST['kw']){
