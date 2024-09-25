@@ -23,7 +23,7 @@ if($pet_fight_id){
 }
 if($pet_rest_id){
     echo "你收回了{$pet_name}。<br/>";
-    $dblj->exec("update system_pet_scene set nstate = 0 where nsid = '$sid' and npid = '$pet_rest_id'");
+    $dblj->exec("update system_pet_scene set nstate = 0,nhp = nmaxhp where nsid = '$sid' and npid = '$pet_rest_id'");
 }
 
 $pet_para = \gm\get_pet_list($dblj,$sid);

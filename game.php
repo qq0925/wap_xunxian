@@ -2021,6 +2021,7 @@ echo $refresh_html;
             $ym = "module_all/player_phone.php";
             break;
         case 'fight_escape':
+            $dblj->exec("update system_pet_scene set nhp = nmaxhp where nsid = '$sid' and nstate = 1");
             \player\update_temp_attr($sid,'busy',3,$dblj,1,0);
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
             $dblj->exec("DELETE from system_npc_midguaiwu where nsid = '$sid'");

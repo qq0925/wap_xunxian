@@ -24,7 +24,7 @@ if($fight_canshu==1){
     $dblj->exec("update system_pet_scene set nstate = 1,nmid = '$nowmid' where nsid = '$sid' and npid = '$pet_id'");
 }elseif($fight_canshu==2){
     echo "收回成功！<br/>";
-    $dblj->exec("update system_pet_scene set nstate = 0 where nsid = '$sid' and npid = '$pet_id'");
+    $dblj->exec("update system_pet_scene set nstate = 0,nhp = nmaxhp where nsid = '$sid' and npid = '$pet_id'");
 }
 
 for ($i=0;$i<count($get_main_page);$i++){

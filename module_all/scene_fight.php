@@ -12,7 +12,6 @@ $parents_page = $currentFilePath;
 
 $player = \player\getplayer($sid,$dblj);
 $pet = \player\getpet_fight($sid,$dblj,'alive');
-$pet_dead = \player\getpet_fight($sid,$dblj,'dead');
 $clmid = player\getmid($player->nowmid,$dblj);
 $fight_arr = player\getfightpara($sid,$dblj);
 
@@ -31,11 +30,6 @@ for($i=0;$i<$fight_pet_count;$i++){
     $npid .=$fight_pid.",";
 }
 $npid = rtrim($npid,',');
-
-foreach ($pet_dead as $pet_dead_one){
-    $dead_npid = $pet_dead_one['npid'];
-    $dblj->exec("update system_pet_scene set nhp = 0,nstate = 0 where npid = '$dead_npid'");
-}
 
 $ngid = "";
 //此变量用于获取你所战斗的仍然活着的怪物基本属性
@@ -271,6 +265,7 @@ if($rwts){
 
 
 if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
+    $dblj->exec("update system_pet_scene set nhp = nmaxhp where nsid = '$sid' and nstate = 1");
     $exp_name = \gm\get_gm_attr_info(1,'exp',$dblj)['name'];
     $money_measure = \gm\gm_post($dblj)->money_measure;
     $money_name = \gm\gm_post($dblj)->money_name;
