@@ -1730,6 +1730,12 @@ echo $refresh_html;
         case 'player_petinfo'://宠物详情
             $ym = 'module_all/player_pet_detail.php';
             break;
+        case 'player_petskill'://宠物技能
+            $ym = 'module_all/player_pet_skill.php';
+            break;
+        case 'player_petskillinfo'://宠物技能详情
+            $ym = 'module_all/player_petskill_detail.php';
+            break;
         case 'player_skill'://技能
             $ym = 'module_all/player_skill.php';
             break;

@@ -190,6 +190,9 @@ $value = $value?$value:$func_name;
         case '79':
             $pet_inout_url = pet_inout_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $pet_inout_url;
+        case '82':
+            $pet_skill_url = pet_skill_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $pet_skill_url;
         default:
             // code...
             break;
@@ -1879,5 +1882,20 @@ HTML;
     return $pet_inout_html;
     
 }
+
+function pet_skill_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    //刷新功能实现
+    global $encode;
+    $pet_skill_url = $encode->encode("cmd=player_petskill&pet_id=$mid&ucmd=$cmid&sid=$sid");
+    $pet_skill_html=<<<HTML
+<a href="?cmd=$pet_skill_url">{$value}</a>
+HTML;
+    return $pet_skill_html;
+    
+}
+
 
 ?>

@@ -2162,6 +2162,9 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $attr3 = 'j'.$attr2;
                         if($attr3 =="jlvl" ||$attr3 == "jpoint" ||$attr3=="jdefault"){
                             $sql = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ?";
+                            if($oid =='skill_pet'){
+                            $sql = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ? and jpid = '$mid'";
+                            }
                             $stmt = $db->prepare($sql);
                             $stmt->bind_param("ss", $jid,$sid);
                             $stmt->execute();
@@ -2238,6 +2241,9 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $attr3 = 'j'.$attr2;
                         if($attr3 =="jlvl" ||$attr3 == "jpoint"||$attr3 =="jdefault"){
                             $sql = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ?";
+                            if($oid =='skill_pet'){
+                            $sql = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ? and jpid = '$mid'";
+                            }
                             $stmt = $db->prepare($sql);
                             $stmt->bind_param("ss", $jid,$sid);
                             $stmt->execute();

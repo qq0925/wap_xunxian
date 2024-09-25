@@ -1417,6 +1417,13 @@ function getpet_fight($sid,$dblj,$para=null){
     return $row;
 }
 
+function getpet_once($sid,$dblj,$pid){
+    $sql = "SELECT * from system_pet_scene where nsid = '$sid' and npid = '$pid'";
+    $result = $dblj->query($sql);
+    $row = $result->fetch(\PDO::FETCH_ASSOC);
+    return $row;
+}
+
 
 class getbasicgmdata{
     var $skill_count;
