@@ -96,7 +96,7 @@ $totalRows = $countRow['total'];
 // 计算总页数
 $totalPages = ceil($totalRows / $list_row);
     
-$page_subtype = 0;
+$page_subtype = $sub_canshu;
 if(empty($_POST['kw'])){
 $get_item_list = \gm\get_item_list($dblj,$gm_post_canshu,$offset,$list_row,$sub_canshu);
 }
@@ -175,9 +175,16 @@ if($sub_canshu){
     $back_list = $encode->encode("cmd=gm_game_itemdefine&sid=$sid");
     $go_sub_page = "<a href='?cmd=$back_son_list'>返回子类别列表</a><br/>";
 }
+if($sub_canshu!='all'){
+$sql = "select name from system_equip_def where id = '$sub_canshu'";
+$gm_post_sub_cx = $dblj->query($sql);
+if ($gm_post_sub_cx){
+    $gm_post_sub = $gm_post_sub_cx->fetch(PDO::FETCH_ASSOC)['name']."类";
+}
+}
 
 $gm_html =<<<HTML
-<p>{$gm_post_canshu}类物品列表：<br/>
+<p>{$gm_post_canshu}类{$gm_post_sub}物品列表：<br/>
 $item_list
 $page_html
 </p>

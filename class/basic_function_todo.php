@@ -187,6 +187,9 @@ $value = $value?$value:$func_name;
         case '78':
             $equip_core_url = equip_core_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $equip_core_url;
+        case '79':
+            $pet_inout_url = pet_inout_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $pet_inout_url;
         default:
             // code...
             break;
@@ -990,49 +993,12 @@ if ($clmid->mnpc_now !=""){
         $ntaskarr = explode(',',$ntaskid);
         if ($ntaskid!=''){
             for ($l=0;$l<@count($ntaskarr);$l++){
-                $nowrw = \player\gettask($ntaskarr[$l],$dblj);
-                $rwret = \player\getplayertaskonce($sid,$ntaskarr[$l],$dblj);
-                $rwnowcount = $rwret[0]['tnowcount'];
-                $rwstate = $rwret[0]['tstate'];
-                $rw_cond = $nowrw->tcond;
-                $rw_type = $nowrw->ttype;
-                $rw_trigger_cond = checkTriggerCondition($rw_cond,$dblj,$sid);
-                if(is_null($rw_trigger_cond)){
-                $rw_trigger_cond = true;
-                }
-                if($rw_trigger_cond){
-                $rw_paras = explode(',',$nowrw->ttarget_obj);
-                $rw_player_paras = explode(',',$rwnowcount);
-                $rw_check_count = @count($rw_paras);
-                $rw_check_done = 0;
-                
-                for($i=0;$i<$rw_check_count;$i++){
-                $rw_para = explode('|',$rw_paras[$i]);
-                $rwtarget_id = $rw_para[0];
-                $rwcount = $rw_para[1];
-                
-                if($rw_type ==2&&$rwstate ==1){
-                $rwnowcount = \player\getitem_count($rwtarget_id,$sid,$dblj)['icount'];
-                }
-                if($rw_type ==1&&$rwstate ==1){
-                $rw_player_para = explode('|',$rw_player_paras[$i]);
-                $rwnowcount = $rw_player_para[1];
-                }
-                if($rwnowcount >=$rwcount){
-                $rw_check_done ++;
-                }
-                }
-                if ($nowrw->ttype){
-                    if ($rwstate !=2 && (!$rwret ||($rw_check_done &&$rw_check_done==$rw_check_count))){
-                        if($nowrw->tnpc_id == $nid){
-                            $npchtml .='<img src="images/tan.gif" />';
-                        }
-                    }elseif ($rwstate==1 ||($rw_check_done &&$rw_check_done<$rw_check_count)){
-                        if($nowrw->tnpc_id == $nid){
-                            $npchtml .='<img src="images/wen.gif" />';
-                        }
-                    }
-                }
+                $taskid = $ntaskarr[$l];
+                $task_show_result = \player\scene_task_show($taskid,$nid,$sid,$dblj);
+                if($task_show_result ==1){
+                $npchtml .='<img src="images/tan.gif" />';
+                }elseif($task_show_result ==2){
+                $npchtml .='<img src="images/wen.gif" />';
                 }
             }
         }
@@ -1887,6 +1853,31 @@ HTML;
 return $bagequiphtml;
 }
 
-
+function pet_inout_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    //刷新功能实现
+    global $encode;
+    
+    $sql = "select nstate,nname from system_pet_scene where nsid = '$sid' and npid = '$mid'";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    $pet_state = $ret['nstate'];
+    $pet_name = $ret['nname'];
+    if($pet_state ==1){
+    $pet_inout_url = $encode->encode("cmd=player_petinfo&pet_id=$mid&fight_canshu=2&ucmd=$cmid&sid=$sid");
+    $pet_inout_html=<<<HTML
+<a href="?cmd=$pet_inout_url">休息</a>
+HTML;
+    }else{
+    $pet_inout_url = $encode->encode("cmd=player_petinfo&pet_id=$mid&fight_canshu=1&ucmd=$cmid&sid=$sid");
+    $pet_inout_html=<<<HTML
+<a href="?cmd=$pet_inout_url">出战</a>
+HTML;
+    }
+    return $pet_inout_html;
+    
+}
 
 ?>

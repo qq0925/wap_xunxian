@@ -39,9 +39,20 @@ $map_task_count = @count(explode(",",$map_task));
 $map_task_count = 0;
 }
 if($designer_canshu&&$designer_target=="item_design"){
+
+    if($item_type =="兵器"||$item_type =="防具"){
+$goback_list = $encode->encode("cmd=gm_game_itemdesign&list_page=$designer_canshu&sub_canshu=$item_subtype&gm_post_canshu=$item_type&sid=$sid");
+}else{
 $goback_list = $encode->encode("cmd=gm_game_itemdesign&list_page=$designer_canshu&gm_post_canshu=$item_type&sid=$sid");
+}
+
+}else{
+    
+if($item_type =="兵器"||$item_type =="防具"){
+$goback_list = $encode->encode("cmd=gm_game_itemdesign&sub_canshu=$item_subtype&gm_post_canshu=$item_type&sid=$sid");
 }else{
 $goback_list = $encode->encode("cmd=gm_game_itemdesign&gm_post_canshu=$item_type&sid=$sid");
+}
 }
 $attr_def = $encode->encode("cmd=gm_type_item&gm_post_canshu=1&item_id=$item_id&sid=$sid");
 $op_def = $encode->encode("cmd=gm_type_item&gm_post_canshu=2&item_id=$item_id&sid=$sid");

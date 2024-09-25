@@ -77,75 +77,7 @@ if($cmd=='pve_fight'){
     \player\update_temp_attr($sid,'busy',1,$dblj,2,-1);
     echo "你不能动弹！预计还要{$busy}回合！<br/>";
     }else{
-
-    //这种加技能熟练度的方式是和出招次数挂钩而不是怪物数量。
-    $sql = "select jadd_point_exp,jdeplete_attr,jdeplete_exp from system_skill where jid = '$qtype_id'";
-    $cxjg = $dblj->query($sql);
-    if ($cxjg){
-    $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
-    $add_point = $ret['jadd_point_exp'];
-    $j_deplete_exp = $ret['jdeplete_exp'];
-    $j_deplete_attr = $ret['jdeplete_attr'];
-    $j_deplete_exp = \lexical_analysis\process_string($j_deplete_exp,$sid,'skill',$qtype_id,$qtype_id);
-    if($j_deplete_exp !=""){
-    $j_deplete_exp_final = @eval("return $j_deplete_exp;");
-    }else{
-    $j_deplete_exp_final = 0;
-    }
-    $u_skill_attr = "u".$j_deplete_attr;
-    $attr_name = \gm\get_gm_attr_info('1',$j_deplete_attr,$dblj)['name'];
-    $sql = "select `$u_skill_attr` from game1 where sid = '$sid'";
-    $cxjg = $dblj->query($sql);
-    if ($cxjg){
-    $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
-    $j_attr = $ret[$u_skill_attr];
-    $u_attr = \player\getplayer($sid,$dblj)->$u_skill_attr;
-    if($u_attr - $j_deplete_exp_final <0){
-        echo "没有足够的{$attr_name}！<br/>";
-    }else{
-    \player\addplayertable('game1',$u_skill_attr,-$j_deplete_exp_final,$sid,$dblj);
     \lexical_analysis\hurt_calc($sid,$ngid,1,$dblj,$next_round,$qtype_id,null);//你对怪的伤害
-    }
-    }
-    
-    }else{
-    $add_point = 1;
-    $j_deplete_exp = 0;
-    }
-    
-    
-    
-    $sql = "select jpromotion,jname,jpromotion_cond from system_skill where jid = '$qtype_id'";
-    $cxjg = $dblj->query($sql);
-    if ($cxjg){
-    $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
-    $jpromotion = $ret['jpromotion'];
-    $jname = $ret['jname'];
-    $jpromotion_cond = $ret['jpromotion_cond'];
-    $jpromotion = ceil(\lexical_analysis\process_string($jpromotion,$sid,'skill',$qtype_id,$qtype_id));
-    $jpromotion_cond = \lexical_analysis\process_string($jpromotion_cond,$sid,'skill',$qtype_id,$qtype_id);
-    $jpromotion_cond = @eval("return $jpromotion_cond;");
-    }else{
-    $jpromotion = 1;
-    }
-    if($jpromotion_cond){
-    $sql = "update system_skill_user set jpoint = jpoint + '$add_point' where jsid = '$sid' and jid = '$qtype_id'";
-    $dblj->exec($sql);
-    $sql = "select jpoint,jlvl from system_skill_user where jid = '$qtype_id' and jsid = '$sid'";
-    $cxjg = $dblj->query($sql);
-    if ($cxjg){
-    $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
-    $jnowpoint = $ret['jpoint'];
-    $jnowlvl = $ret['jlvl'];
-    if($jnowpoint >=$jpromotion){
-        $jnowlvl +=1;
-        echo "你的技能[{$jname}]升级啦！当前为{$jnowlvl}级<br/>";
-        $diff = $jnowpoint - $jpromotion;
-        $sql = "update system_skill_user set jpoint = jpoint - '$diff',jlvl = jlvl + 1 where jsid = '$sid' and jid = '$qtype_id'";
-        $cxjg = $dblj->exec($sql);
-    }
-    }
-    }
 }
 
     //宠物伤害逻辑
@@ -216,7 +148,7 @@ if($cmd=='pve_fight'){
     //以下获取的怪物id均是活着的怪物id
     $monster_ids = explode(',',$ngid);
     $monster_count = count($monster_ids);
-    
+    $item_counts = []; // 用于记录物品数量
     //此处任务逻辑可能导致程序卡死
     for($i=0;$i<$monster_count;$i++){
     $monster_id = $monster_ids[$i];
@@ -273,7 +205,13 @@ if($cmd=='pve_fight'){
                 if($get_ret!=-2){
                     \player\changeitem_belong($get_ret,1, $alive_monster->nid,$dblj);//更新物品掉落来源
                 }
-                $huode .= "得到：{$drop_item_name}x{$drop_count} <br/>";
+                
+                    // 更新物品数量
+                if (isset($item_counts[$drop_item_name])) {
+                    $item_counts[$drop_item_name] += $drop_count;
+                } else {
+                    $item_counts[$drop_item_name] = $drop_count;
+                }
                 
                 $rwts_item = \player\update_task($sid,$dblj,$drop_id,null,null);
                 $rwts .= $rwts_item;
@@ -281,25 +219,26 @@ if($cmd=='pve_fight'){
                 $item_true_id = \player\getplayeritem_attr('item_true_id',$sid,$drop_id,$dblj)['item_true_id'];
                 \player\changeplayeritem($item_true_id,$drop_count,$sid,$dblj);
                 \player\addplayersx('uburthen',-$drop_total_weight,$sid,$dblj);
-                $drop_count = abs($drop_count);
-                $huode .= "失去：{$drop_item_name}x{$drop_count} <br/>";
+                
+                    // 更新物品数量
+                if (isset($item_counts[$drop_item_name])) {
+                    $item_counts[$drop_item_name] -= $drop_count;
+                } else {
+                    $item_counts[$drop_item_name] = -$drop_count;
+                }
             }
         }
         }
         if($drop_exp!=""){
-            $exp_name = \gm\get_gm_attr_info(1,'exp',$dblj)['name'];
             $drop_exp = @eval("return $drop_exp;");
             \player\addplayersx('uexp',$drop_exp,$sid,$dblj);
-            $drop_exp = $drop_exp>=0?"+".$drop_exp:$drop_exp;
-            $huode .= "{$exp_name}{$drop_exp} <br/>";
+                // 更新经验和金钱
+            $total_exp += $drop_exp;
         }
         if($drop_money!=""){
-            $money_measure = \gm\gm_post($dblj)->money_measure;
-            $money_name = \gm\gm_post($dblj)->money_name;
             $drop_money = @eval("return $drop_money;");
             \player\addplayersx('umoney',$drop_money,$sid,$dblj);
-            $drop_money = $drop_money>=0?"+".$drop_money:$drop_money;
-            $huode .= "{$money_name}{$drop_money}{$money_measure} <br/>";
+            $total_money += $drop_money;
         }
 
         $rwts_kill = \player\update_task($sid,$dblj,null,$alive_monster->nid,$alive_monster->nname);
@@ -332,6 +271,27 @@ if($rwts){
 
 
 if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
+    $exp_name = \gm\get_gm_attr_info(1,'exp',$dblj)['name'];
+    $money_measure = \gm\gm_post($dblj)->money_measure;
+    $money_name = \gm\gm_post($dblj)->money_name;
+    
+    // 在循环外部生成输出字符串
+    foreach ($item_counts as $item_name => $count) {
+        if($count >0){
+        $huode .= "得到：{$item_name} x {$count} <br/>";
+        }elseif($count<0){
+        $huode .= "失去：{$item_name} x {$count} <br/>";
+        }
+    }
+    if($total_exp){
+    $total_exp = $total_exp>0?"+".$total_exp:$total_exp;
+    // 添加经验和金钱输出
+    $huode .= "{$exp_name}{$total_exp} <br/>";
+    }
+    if($total_money){
+    $total_money = $total_money>0?"+".$total_money:$total_money;
+    $huode .= "{$money_name}{$total_money}{$money_measure} <br/>";
+    }
     $dblj->exec("DELETE from player_temp_attr where obj_id = '$sid' and attr_name = 'busy'");
     switch ($zdjg){
         case 1:

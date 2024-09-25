@@ -225,6 +225,15 @@ foreach ($keyValuePairs as $pair) {
                     $updateQuery = "UPDATE system_npc_scene SET $reg = '$ele_2' WHERE ncid = '$mid'";
                     $db->query($updateQuery);
                 }
+                }elseif($oid =='npc_monster'){
+                $reg = "n".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_npc_midguaiwu LIKE '$reg'");
+
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = '$ele_2' WHERE ngid = '$mid'";
+                    $db->query($updateQuery);
+                }
                 }else{
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
 
@@ -448,6 +457,16 @@ $sid = $old_sid;
                     $db->query($updateQuery);
                 }
                 }
+                elseif($oid =='npc_monster'){
+                $reg = "n".$ele_1_2;
+                $result = $db->query("SHOW COLUMNS FROM system_npc_midguaiwu LIKE '$reg'");
+
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = $reg + '$ele_2' WHERE ngid = '$mid'";
+                    $db->query($updateQuery);
+                }
+                }
                 break;
             case 'g':
                 // 检查表中是否存在 gid=$ele_1_2 的数据
@@ -662,6 +681,30 @@ function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = n
         $stmt->execute();
     }
 }
+                    elseif($oid == 'npc_monster') {
+                        $string_new = $pair . "|" . "1";
+                    
+                        // 查询 nskills 字段
+                        $query = "SELECT nskills FROM system_npc_midguaiwu WHERE ngid = ?";
+                        $stmt = $db->prepare($query);
+                        $stmt->bind_param('s', $mid);
+                        $stmt->execute();
+                        $result = $stmt->get_result()->fetch_assoc();
+                    
+                        if (empty($result['nskills'])) {
+                            // 如果 nskills 为空，直接赋值为 $string_new
+                            $query = "UPDATE system_npc_midguaiwu SET nskills = ? WHERE ngid = ?";
+                            $stmt = $db->prepare($query);
+                            $stmt->bind_param('ss', $string_new, $mid);
+                            $stmt->execute();
+                        } elseif (!in_array($string_new, explode(',', $result['nskills']))) {
+                            // 如果 nskills 不为空，在原有值后面加上逗号和 $string_new
+                            $query = "UPDATE system_npc_midguaiwu SET nskills = CONCAT(nskills, ',', ?) WHERE ngid = ?";
+                            $stmt = $db->prepare($query);
+                            $stmt->bind_param('ss', $string_new, $mid);
+                            $stmt->execute();
+                        }
+                    }
                     elseif($oid =='pet'){
                     
                     $checkQuery = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ? and jpid = ?";

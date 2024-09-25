@@ -194,6 +194,14 @@ HTML;
                                     // 获取插入的 ID
                                     $ngid = $dblj->lastInsertId();
                                     
+                                    $npc_scene_creat_event = $guaiwu->ncreat_event_id;
+                                    if($npc_scene_creat_event!=0){
+                                    events_steps_change($npc_scene_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_monster',$ngid,$para);
+                                    }
+                                    $ret = global_event_data_get(26,$dblj);
+                                    if($ret){
+                                    global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_monster',$ngid,$para);
+                                    }
                                     
                                     $pet = \player\getpet_fight($sid,$dblj);
                                     if($pet){

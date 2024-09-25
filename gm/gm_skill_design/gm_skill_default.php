@@ -59,33 +59,22 @@ $stmt = $dblj->prepare($selectSql);
 $stmt->execute();
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// 更新 jid 为 2 的数据
-$updateSql = "UPDATE system_skill_module SET
-    jhurt_attr = :jhurt_attr,
-    jdeplete_attr = :jdeplete_attr,
-    jhurt_exp = :jhurt_exp,
-    jdeplete_exp = :jdeplete_exp,
-    jadd_point_exp = :jadd_point_exp,
-    jpromotion = :jpromotion,
-    jpromotion_cond = :jpromotion_cond,
-    jeffect_cmmt = :jeffect_cmmt,
-    jevent_use_id = :jevent_use_id,
-    jevent_up_id = :jevent_up_id
-    WHERE jid = 2";
+// 构建动态的 UPDATE 语句
+$updateSql = "UPDATE system_skill_module SET ";
+$params = [];
+foreach ($row as $field => $value) {
+    if ($field !== 'jid') { // 排除 'jid' 字段本身
+        $updateSql .= "$field = :$field, ";
+        $params[":$field"] = $value;
+    }
+}
+$updateSql = rtrim($updateSql, ', '); // 去掉最后多余的逗号
+$updateSql .= " WHERE jid = 2";
 
+// 准备并执行 UPDATE 语句
 $updateStmt = $dblj->prepare($updateSql);
-$updateStmt->execute(array(
-    ':jhurt_attr' => $row['jhurt_attr'],
-    ':jdeplete_attr' => $row['jdeplete_attr'],
-    ':jhurt_exp' => $row['jhurt_exp'],
-    ':jdeplete_exp' => $row['jdeplete_exp'],
-    ':jadd_point_exp' => $row['jadd_point_exp'],
-    ':jpromotion' => $row['jpromotion'],
-    ':jpromotion_cond' => $row['jpromotion_cond'],
-    ':jeffect_cmmt' => $row['jeffect_cmmt'],
-    ':jevent_use_id' => $row['jevent_use_id'],
-    ':jevent_up_id' => $row['jevent_up_id']
-));
+$updateStmt->execute($params);
+
 
 echo "重置完成!<br/>";
 }
@@ -147,9 +136,55 @@ $skill_use_event = $encode->encode("cmd=game_main_event&add_event=1&add_value=�
 }else{
 $skill_use_event = $encode->encode("cmd=game_main_event&gm_post_canshu=skill_default_use&main_id=2&event_id=$jevent_use_id&sid=$sid");
 }
+
+    $excluded_ids = ['id', 'name', 'desc','effect_cmmt', 'lvl', 'point','group_attack']; // 可以根据需要定义排除的 id
+    
+    // 查询 gm_game_attr 表中的数据
+    $stmt = $dblj->query("SELECT id, name,attr_type FROM gm_game_attr WHERE value_type = 6");
+    $self_def_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $attr_array = array();
+    foreach ($self_def_data as $row2) {
+        // 如果 id 不在排除数组中，才添加到 $attr_array
+        if (!in_array($row2['id'], $excluded_ids)) {
+            $attr_array[$row2['id']] = $row2;
+        }
+    }
+
+foreach ($attr_array as $attr_id => $attr_detail){
+        // 生成标识和值
+    $self_id = $attr_detail['id'];
+    $self_name = $attr_detail['name'];
+    $attr_type = $attr_detail['attr_type'];
+    $attr_value = isset($gm_ret['j' . $self_id]) ? $gm_ret['j' . $self_id] : '';
+        switch($attr_type){
+            case '0':
+        $self_attr .= <<<HTML
+        $self_name:<input name="$self_id" type="number" value="$attr_value" size="10" maxlength="10"/><br/>
+HTML;
+            break;
+            case '1':
+        $self_attr .= <<<HTML
+        $self_name:<input name="$self_id" type="text" value="$attr_value" size="10" maxlength="10"/><br/>
+HTML;
+            break;
+            case '2':
+$selectedOption = ($attr_value == "1") ? 'selected' : '';
+$self_attr .= <<<HTML
+{$self_name}:<select name="{$self_id}">
+<option value="0" >否</option>
+<option value="1" $selectedOption>是</option>
+</select><br/>
+HTML;
+            break;
+        }
+}
+
+
 $skill_html = <<<HTML
 </p>
 <form method="post">
+$self_attr
 伤害目标:{$skill_hurt_attr}<br/>
 消耗目标:{$skill_deplete_attr}<br/>
 伤害值公式:<textarea name="hurt_exp" maxlength="1024" rows="4" cols="40">{$skill_hurt_exp}</textarea><br/>

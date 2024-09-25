@@ -45,6 +45,19 @@ function hurt_calc($sid, $gid, $type, $dblj,$next_round, $jid = null, $pid = nul
     if (!$skill_data['j_deplete_exp']) {
         $skill_data['j_deplete_exp'] = get_default_skill_hurt($db, 2)['j_deplete_exp'];
     }
+    
+    if (!$skill_data['j_add_point_exp']) {
+        $skill_data['j_add_point_exp'] = get_default_skill_hurt($db, 2)['j_add_point_exp'];
+    }
+
+    if (!$skill_data['j_promotion']) {
+        $skill_data['j_promotion'] = get_default_skill_hurt($db, 2)['j_promotion'];
+    }
+
+    if (!$skill_data['j_promotion_cond']) {
+        $skill_data['j_promotion_cond'] = get_default_skill_hurt($db, 2)['j_promotion_cond'];
+    }
+
     if (!$skill_data['j_group_attack']) {
         $skill_data['j_group_attack'] = get_default_skill_hurt($db, 2)['j_group_attack'];
     }
@@ -77,8 +90,13 @@ function get_skill_data($jid, $db) {
         $row = $result->fetch_assoc();  // 将结果作为关联数组获取
 
         return [
+            'j_name' => $row['jname'] ?? null,
             'j_hurt_exp' => $row['jhurt_exp'] ?? null,
             'j_deplete_exp' => $row['jdeplete_exp'] ?? null,
+            'j_deplete_attr' => $row['jdeplete_attr'] ?? null,
+            'j_add_point_exp' => $row['jadd_point_exp'] ?? null,
+            'j_promotion' => $row['jpromotion'] ?? null,
+            'j_promotion_cond' => $row['jpromotion_cond'] ?? null,
             'j_group_attack' => $row['jgroup_attack'] ?? null,
             'j_umsg' => $row['jeffect_cmmt'] ?? null,
             'j_event_use_id' => $row['jevent_use_id'] ?? null,
@@ -101,8 +119,13 @@ function get_default_skill_hurt($db, $default_jid) {
     }
     
         return [
+            'j_name' => $row['j_name'] ?? null,
             'j_hurt_exp' => $row['jhurt_exp'] ?? null,
             'j_deplete_exp' => $row['jdeplete_exp'] ?? null,
+            'j_deplete_attr' => $row['jdeplete_attr'] ?? null,
+            'j_add_point_exp' => $row['jadd_point_exp'] ?? null,
+            'j_promotion' => $row['jpromotion'] ?? null,
+            'j_promotion_cond' => $row['jpromotion_cond'] ?? null,
             'j_group_attack' => $row['jgroup_attack'] ?? null,
             'j_umsg' => $row['jeffect_cmmt'] ?? null,
             'j_event_use_id' => $row['jevent_use_id'] ?? null,
@@ -115,6 +138,76 @@ function get_default_skill_hurt($db, $default_jid) {
 function handle_attack($ngid, $sid, $dblj, $skill_data, $jid,$next_round) {
     $j_group_attack = $skill_data['j_group_attack'];
     $j_event_use_id = $skill_data['j_event_use_id'];
+    $j_deplete_exp = $skill_data['j_deplete_exp'];
+    $j_deplete_attr = $skill_data['j_deplete_attr'];
+    if (!is_numeric($j_deplete_exp)) {
+        $hurt_m_cut = process_string($j_deplete_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight',null);
+        $hurt_m_cut = eval("return $hurt_m_cut;");
+    } else {
+        $hurt_m_cut = $j_deplete_exp;
+    }
+    $hurt_m_cut = (int)floor($hurt_m_cut);
+
+
+    $u_skill_attr = "u".$j_deplete_attr;
+    $attr_name = \gm\get_gm_attr_info('1',$j_deplete_attr,$dblj)['name'];
+    $u_attr = \player\getplayer($sid,$dblj)->$u_skill_attr;
+    $diff = $u_attr - $hurt_m_cut;
+    if($diff <0){
+        echo "没有足够的{$attr_name}！<br/>";
+        return 'no';
+    }else{
+    \player\addplayertable('game1',$u_skill_attr,-$hurt_m_cut,$sid,$dblj);
+    $sql = "insert into game2(cut_mp,sid,gid,round,type)values('-$hurt_m_cut','$sid','$ngid','$next_round','1')";
+    $dblj->exec($sql);
+    $j_add_point_exp = $skill_data['j_add_point_exp'];
+    $j_promotion = $skill_data['j_promotion'];
+    $j_promotion_cond = $skill_data['j_promotion_cond'];
+    $jname = $skill_data['j_name'];
+
+    if (!is_numeric($j_add_point_exp)) {
+        $j_point_exp = process_string($j_add_point_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight',null);
+        $j_point_exp = eval("return $j_point_exp;");
+    } else {
+        $j_point_exp = $j_add_point_exp;
+    }
+    $j_point_exp = (int)floor($j_point_exp);
+
+    if (!is_numeric($j_promotion)) {
+        $j_promotion_add = process_string($j_promotion, $sid, 'npc_monster', $ngid[0], $jid, 'fight',null);
+        $j_promotion_add = eval("return $j_promotion_add;");
+    } else {
+        $j_promotion_add = $j_promotion;
+    }
+    $j_promotion_add = (int)floor($j_promotion_add);
+    if (!is_numeric($j_promotion_cond)) {
+        $j_promotion_cond_add = process_string($j_promotion_cond, $sid, 'npc_monster', $ngid[0], $jid, 'fight',1);
+        $j_promotion_cond_add = eval("return $j_promotion_cond_add;");
+    } else {
+        $j_promotion_cond_add = $j_promotion_cond;
+    }
+    $j_promotion_cond_add = (int)floor($j_promotion_cond_add);
+
+    if($j_promotion_cond_add){
+    $sql = "update system_skill_user set jpoint = jpoint + '$j_point_exp' where jsid = '$sid' and jid = '$jid'";
+    $dblj->exec($sql);
+    $sql = "select jpoint,jlvl from system_skill_user where jid = '$jid' and jsid = '$sid'";
+    $cxjg = $dblj->query($sql);
+    if ($cxjg){
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    $jnowpoint = $ret['jpoint'];
+    $jnowlvl = $ret['jlvl'];
+    if($jnowpoint >=$j_promotion_add){
+        $jnowlvl +=1;
+        echo "你的技能[{$jname}]升级啦！当前为{$jnowlvl}级<br/>";
+        $sql = "update system_skill_user set jpoint = jpoint - '$j_promotion_add',jlvl = jlvl + 1 where jsid = '$sid' and jid = '$jid'";
+        $cxjg = $dblj->exec($sql);
+    }
+    }
+    }
+
+
+    }
 
     if ($j_group_attack == '-1') {
         $ngid_count = count($ngid);
@@ -340,17 +433,8 @@ function process_event($j_event_use_id, $sid, $dblj, $attack_gid) {
 
 // 处理伤害
 function process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, $context,$next_round) {
-    $j_deplete_exp = $skill_data['j_deplete_exp'];
     $j_hurt_exp = $skill_data['j_hurt_exp'];
     $j_umsg = $skill_data['j_umsg'];
-
-    if (!is_numeric($j_deplete_exp)) {
-        $hurt_m_cut = process_string($j_deplete_exp, $sid, $context, $attack_gid, $jid, 'fight',1);
-        $hurt_m_cut = eval("return $hurt_m_cut;");
-    } else {
-        $hurt_m_cut = $j_deplete_exp;
-    }
-    $hurt_m_cut = (int)floor($hurt_m_cut);
 
     $hurt_cut = process_string($j_hurt_exp, $sid, $context, $attack_gid, $jid, 'fight',1);
     $hurt_cut = eval("return $hurt_cut;");
@@ -364,7 +448,7 @@ function process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, $context,$n
     $j_umsg = \lexical_analysis\process_string($j_umsg, $sid, $context, $attack_gid,1);
     $j_umsg = str_replace(["'", "\""], '', $j_umsg);
 
-    $sql = "insert into game2(hurt_hp,cut_mp,sid,gid,pid,fight_umsg,round,type)values('-$hurt_cut','-$hurt_m_cut','$sid','$attack_gid','$p_one','$j_umsg','$next_round','1')";
+    $sql = "insert into game2(hurt_hp,sid,gid,pid,fight_umsg,round,type)values('-$hurt_cut','$sid','$attack_gid','$p_one','$j_umsg','$next_round','1')";
     $dblj->exec($sql);
 }
 
@@ -2082,18 +2166,47 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             $stmt->bind_param("ss", $jid,$sid);
                             $stmt->execute();
                             $result = $stmt->get_result();
+                            
+                            if (!$result) {
+                                die('查询失败: ' . $db->error);
+                            }
+                            $row = $result->fetch_assoc();
+                            $row_result = $row[$attr3];
+                            
                         }else{
-                            $sql = "SELECT * FROM system_skill WHERE jid = ?";
+                            // 首先从 system_skill 表中查询
+                            $sql = "SELECT $attr3 FROM system_skill WHERE jid = ?";
                             $stmt = $db->prepare($sql);
                             $stmt->bind_param("s", $jid);
                             $stmt->execute();
                             $result = $stmt->get_result();
+                            
+                            $row_result = null; // 初始化结果
+                            
+                            if ($result && $result->num_rows > 0) {
+                                // 如果 system_skill 表中有数据
+                                $row = $result->fetch_assoc();
+                                if (!empty($row[$attr3])) {
+                                    $row_result = $row[$attr3]; // 获取 $attr3 字段的值
+                                }
+                            }
+                            
+                            // 如果 $row_result 仍然为 null，查询 system_skill_module 表
+                            if ($row_result === null) {
+                                $sql = "SELECT $attr3 FROM system_skill_module WHERE jid = 2";
+                                $stmt = $db->prepare($sql);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                            
+                                if ($result && $result->num_rows > 0) {
+                                    // 如果 system_skill_module 表中有数据
+                                    $row = $result->fetch_assoc();
+                                    if (!empty($row[$attr3])) {
+                                        $row_result = $row[$attr3]; // 获取 $attr3 字段的值
+                                    }
+                                }
+                            }
                         }
-                        if (!$result) {
-                            die('查询失败: ' . $db->error);
-                        }
-                        $row = $result->fetch_assoc();
-                        $row_result = $row[$attr3];
                         if ($row_result === null ||$row_result ==='') {
                             $op = "\"\""; // 或其他默认值
                             }else{

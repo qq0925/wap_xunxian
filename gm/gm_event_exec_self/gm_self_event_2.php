@@ -165,7 +165,7 @@ switch ($gm_post_canshu) {
 }
 
 
-if($add_event ==1){
+if($add_event ==1&&!$_POST){
     $sql = "SELECT MAX(id) AS max_id FROM system_event_self;";
     $cxjg = $dblj->query($sql);
     $row = $cxjg->fetch(PDO::FETCH_ASSOC);

@@ -64,6 +64,8 @@ $event_links = [
     '被攻击事件' => ['cmd' => 'game_main_event', 'add_event' => $nattack_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '被攻击', 'gm_post_canshu' => 'npc_attack', 'main_id' => $npc_id, 'event_id' => $nattack_event_id],
     '被收养事件' => ['cmd' => 'game_main_event', 'add_event' => $npet_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '被收养', 'gm_post_canshu' => 'npc_pet', 'main_id' => $npc_id, 'event_id' => $npet_event_id],
     '交易事件' => ['cmd' => 'game_main_event', 'add_event' => $nshop_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '交易', 'gm_post_canshu' => 'npc_shop', 'main_id' => $npc_id, 'event_id' => $nshop_event_id],
+    '检测接受物品事件' => ['cmd' => 'game_main_event', 'add_event' => $nbefore_accept_item == 0 ? 1 : 0, 'add_value' => $npc_name . '检测接受物品', 'gm_post_canshu' => 'npc_before_accept_item', 'main_id' => $npc_id, 'event_id' => $nbefore_accept_item],
+    '接受物品事件' => ['cmd' => 'game_main_event', 'add_event' => $non_accept_item == 0 ? 1 : 0, 'add_value' => $npc_name . '接受物品', 'gm_post_canshu' => 'npc_on_accept_item', 'main_id' => $npc_id, 'event_id' => $non_accept_item],
     '升级事件' => ['cmd' => 'game_main_event', 'add_event' => $nup_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '升级', 'gm_post_canshu' => 'npc_up', 'main_id' => $npc_id, 'event_id' => $nup_event_id],
     '心跳事件' => ['cmd' => 'game_main_event', 'add_event' => $nheart_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '心跳', 'gm_post_canshu' => 'npc_heart', 'main_id' => $npc_id, 'event_id' => $nheart_event_id],
     '分钟定时事件' => ['cmd' => 'game_main_event', 'add_event' => $nminute_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '分钟定时', 'gm_post_canshu' => 'npc_minute', 'main_id' => $npc_id, 'event_id' => $nminute_event_id],
@@ -88,6 +90,10 @@ $event_links = [
     '战败事件' => ['cmd' => 'game_main_event', 'add_event' => $ndefeat_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '战败', 'gm_post_canshu' => 'npc_defeat', 'main_id' => $npc_id, 'event_id' => $ndefeat_event_id],
     '被收养事件' => ['cmd' => 'game_main_event', 'add_event' => $npet_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '被收养', 'gm_post_canshu' => 'npc_pet', 'main_id' => $npc_id, 'event_id' => $npet_event_id],
     '交易事件' => ['cmd' => 'game_main_event', 'add_event' => $nshop_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '交易', 'gm_post_canshu' => 'npc_shop', 'main_id' => $npc_id, 'event_id' => $nshop_event_id],
+    
+    '检测接受物品事件' => ['cmd' => 'game_main_event', 'add_event' => $nbefore_accept_item == 0 ? 1 : 0, 'add_value' => $npc_name . '检测接受物品', 'gm_post_canshu' => 'npc_before_accept_item', 'main_id' => $npc_id, 'event_id' => $nbefore_accept_item],
+    '接受物品事件' => ['cmd' => 'game_main_event', 'add_event' => $non_accept_item == 0 ? 1 : 0, 'add_value' => $npc_name . '接受物品', 'gm_post_canshu' => 'npc_on_accept_item', 'main_id' => $npc_id, 'event_id' => $non_accept_item],
+    
     '升级事件' => ['cmd' => 'game_main_event', 'add_event' => $nup_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '升级', 'gm_post_canshu' => 'npc_up', 'main_id' => $npc_id, 'event_id' => $nup_event_id],
     '心跳事件' => ['cmd' => 'game_main_event', 'add_event' => $nheart_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '心跳', 'gm_post_canshu' => 'npc_heart', 'main_id' => $npc_id, 'event_id' => $nheart_event_id],
     '分钟定时事件' => ['cmd' => 'game_main_event', 'add_event' => $nminute_event_id == 0 ? 1 : 0, 'add_value' => $npc_name . '分钟定时', 'gm_post_canshu' => 'npc_minute', 'main_id' => $npc_id, 'event_id' => $nminute_event_id],

@@ -20,10 +20,11 @@ $pet_view__id = $pet_id;
 
 if($fight_canshu==1){
     echo "出战成功！<br/>";
-    $dblj->exec("update system_pet_player set pstate = 1 where pid = '$pet_id'");
+    $nowmid = $player->nowmid;
+    $dblj->exec("update system_pet_scene set nstate = 1,nmid = '$nowmid' where nsid = '$sid' and npid = '$pet_id'");
 }elseif($fight_canshu==2){
     echo "收回成功！<br/>";
-    $dblj->exec("update system_pet_player set pstate = 0 where pid = '$pet_id'");
+    $dblj->exec("update system_pet_scene set nstate = 0 where nsid = '$sid' and npid = '$pet_id'");
 }
 
 for ($i=0;$i<count($get_main_page);$i++){

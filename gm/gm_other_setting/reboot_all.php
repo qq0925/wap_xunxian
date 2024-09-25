@@ -250,6 +250,51 @@ $data = [
         //将 system_equip_default 表的内容插入到 system_equip_def 表中
         $dblj->exec("INSERT INTO system_equip_def SELECT * FROM system_equip_default");
 
+
+        // 保留的字段
+        $keepFields = ['jid', 'jhurt_attr', 'jdeplete_attr', 'jhurt_exp', 'jdeplete_exp', 'jadd_point_exp', 'jpromotion', 'jpromotion_cond', 'jeffect_cmmt', 'jevent_use_id', 'jevent_up_id'];
+    
+        // 获取 system_skill_module 表的所有字段
+        $sql = "DESCRIBE system_skill_module";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+        // 生成删除字段的SQL
+        $dropFields = array_diff($columns, $keepFields);
+        if (!empty($dropFields)) {
+            foreach ($dropFields as $field) {
+                $sql = "ALTER TABLE system_skill_module DROP COLUMN $field";
+                $stmt = $dblj->prepare($sql);
+                $stmt->execute();
+                echo "字段 $field 已删除。<br>";
+            }
+        } else {
+            echo "没有需要删除的字段。<br>";
+        }
+
+        // 保留的字段
+        $keepFields = ['jname','jid','jdesc','joccasion','jimage','jhurt_mod','jgroup_attack','jcooling_time','jcooling_round', 'jhurt_attr', 'jdeplete_attr', 'jhurt_exp', 'jdeplete_exp','jequip_type','jequip_appoint','juse_cond','jcan_use_cmmt', 'jadd_point_exp', 'jpromotion', 'jpromotion_cond', 'jeffect_cmmt', 'jevent_use_id', 'jevent_up_id'];
+    
+        // 获取 system_skill 表的所有字段
+        $sql = "DESCRIBE system_skill";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+        // 生成删除字段的SQL
+        $dropFields = array_diff($columns, $keepFields);
+        if (!empty($dropFields)) {
+            foreach ($dropFields as $field) {
+                $sql = "ALTER TABLE system_skill DROP COLUMN $field";
+                $stmt = $dblj->prepare($sql);
+                $stmt->execute();
+                echo "字段 $field 已删除。<br>";
+            }
+        } else {
+            echo "没有需要删除的字段。<br>";
+        }
+
         // 保留的字段
         $keepFields = ['item_true_id', 'sid', 'uid', 'iid', 'icount', 'ibind', 'iequiped', 'isale_state', 'isale_price', 'icreate_sale_time', 'iexpire_sale_time', 'isale_time', 'iroot'];
     

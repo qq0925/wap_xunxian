@@ -1214,6 +1214,54 @@ function getplayertaskonce($sid,$tid,$dblj){
     return $task;
 }
 
+function scene_task_show($taskid,$npc_id,$sid,$dblj){
+    $nowrw = gettask($taskid,$dblj);
+    $rwret = getplayertaskonce($sid,$taskid,$dblj);
+    $rwnowcount = $rwret[0]['tnowcount'];
+    $rwstate = $rwret[0]['tstate'];
+    $rw_cond = $nowrw->tcond;
+    $rw_type = $nowrw->ttype;
+    $rw_npc_id = $nowrw->tnpc_id;
+    $rw_trigger_cond = checkTriggerCondition($rw_cond,$dblj,$sid);
+    //这里加入是否可放弃的判定
+    if(is_null($rw_trigger_cond)){
+    $rw_trigger_cond = true;
+    }
+    if($rw_trigger_cond){
+    $rw_paras = explode(',',$nowrw->ttarget_obj);
+    $rw_player_paras = explode(',',$rwnowcount);
+    $rw_check_count = @count($rw_paras);
+    $rw_check_done = 0;
+    
+    for($i=0;$i<$rw_check_count;$i++){
+    $rw_para = explode('|',$rw_paras[$i]);
+    $rwtarget_id = $rw_para[0];
+    $rwcount = $rw_para[1];
+    
+    if($rw_type ==2&&$rwstate ==1){
+    $rwnowcount = \player\getitem_count($rwtarget_id,$sid,$dblj)['icount'];
+    }
+    if($rw_type ==1&&$rwstate ==1){
+    $rw_player_para = explode('|',$rw_player_paras[$i]);
+    $rwnowcount = $rw_player_para[1];
+    }
+    if($rwnowcount >=$rwcount){
+    $rw_check_done ++;
+    }
+    }
+    if ($rw_type &&$rw_npc_id == $npc_id&&$rwstate!=2){
+        if(!$rwstate||($rwstate==1&&$rw_type!=3 &&$rw_check_done &&$rw_check_done==$rw_check_count)){
+            return 1;
+        }elseif($rw_type ==3 ||$rwstate==1 ||($rw_check_done &&$rw_check_done<$rw_check_count)){
+            return 2;
+        }else{
+            return 3;
+        }
+    }
+    }
+}
+
+
 class boss{
     var $boss_name;
     var $boss_lvl;
