@@ -193,6 +193,9 @@ $value = $value?$value:$func_name;
         case '82':
             $pet_skill_url = pet_skill_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $pet_skill_url;
+        case '83':
+            $pet_equip_url = pet_equip_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $pet_equip_url;
         default:
             // code...
             break;
@@ -1778,6 +1781,19 @@ HTML;
     return $mosaic_url;
 }
 
+function myclan_url($cmd,$page_id,$sid,$dblj,$value,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    global $encode;
+    $myclan_url = $encode->encode("cmd=player_clan&ucmd=$cmid&sid=$sid");
+    $myclan_html=<<<HTML
+<a href="?cmd=$myclan_url">{$value}</a>
+HTML;
+    return $myclan_html;
+}
+
+
 function equip_core_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
 global $encode;
 $sql = "select * from system_equip_def where type = '1'";
@@ -1788,7 +1804,7 @@ $equipbid = null;
 foreach ($ret as $row) {
     $equiptypeid = $row['id'];
     $equiptypename = $row['name'];
-    $sql = "select * from system_equip_user where eq_type = 1 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid'";
+    $sql = "select * from system_equip_user where eq_type = 1 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid' and eqpid = 0";
     $cxjg = $dblj->query($sql);
     if ($cxjg) {
         $row = $cxjg->fetch(PDO::FETCH_ASSOC);
@@ -1822,7 +1838,7 @@ $equipfhtml = '';
 foreach ($ret as $row) {
     $equiptypeid = $row['id'];
     $equiptypename = $row['name'];
-    $sql = "select * from system_equip_user where eq_type = 2 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid'";
+    $sql = "select * from system_equip_user where eq_type = 2 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid' and eqpid = 0";
     $cxjg = $dblj->query($sql);
     if ($cxjg) {
         $row = $cxjg->fetch(PDO::FETCH_ASSOC);
@@ -1894,8 +1910,19 @@ function pet_skill_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
 <a href="?cmd=$pet_skill_url">{$value}</a>
 HTML;
     return $pet_skill_html;
-    
 }
 
+function pet_equip_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    //刷新功能实现
+    global $encode;
+    $pet_equip_url = $encode->encode("cmd=player_petequip&pet_id=$mid&ucmd=$cmid&sid=$sid");
+    $pet_equip_html=<<<HTML
+<a href="?cmd=$pet_equip_url">{$value}</a>
+HTML;
+    return $pet_equip_html;
+}
 
 ?>

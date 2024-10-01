@@ -115,10 +115,16 @@ HTML;
 
 $gm_module = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=14&sid=$sid");
 
+
+if($pet_id){
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$equip_html = $encode->encode("cmd=player_petequip&pet_id=$pet_id&ucmd=$cmid&sid=$sid");
+}else{
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $equip_html = $encode->encode("cmd=player_equip&ucmd=$cmid&sid=$sid");
-
+}
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;

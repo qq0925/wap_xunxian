@@ -242,7 +242,6 @@ HTML;
                             $ym = 'module_all/main_page.php';
                             //$not_ret_canshu =1;
                             include_once $ym;
-                            
                             }
                             
                             $page_id = str_replace('ct_', '', $step_page_name);

@@ -1,6 +1,8 @@
 {
     "require": {
-        "phpoffice/phpspreadsheet": "^1.23"
+        "phpoffice/phpspreadsheet": "^1.23",
+        "react/event-loop": "^1.5",
+        "react/react": "^1.4"
     },
     "config": {
         "platform": {

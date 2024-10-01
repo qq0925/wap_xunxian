@@ -2,7 +2,7 @@
 //20-23ms
 
 
-require 'class/basic_function_todo.php';
+require_once 'class/basic_function_todo.php';
 // require_once 'class/player.php';
 // require_once 'class/encode.php';
 // require_once 'class/gm.php';

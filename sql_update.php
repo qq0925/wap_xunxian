@@ -2,6 +2,19 @@
 //数据库更新补丁
 
 
+    // 检查 equip 是否存在 eqpid 字段
+    $sql = "SHOW COLUMNS FROM system_equip_user LIKE 'eqpid'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE system_equip_user ADD COLUMN eqpid INT(11) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
 
     // 检查表是否存在 round 字段
     $sql = "SHOW COLUMNS FROM game2 LIKE 'round'";
@@ -219,6 +232,9 @@ if ($stmt->rowCount() == 0) {
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
     }
+    
+
+    
     
     // 检查 game3 是否存在 hurt_mp 字段
     $sql = "SHOW COLUMNS FROM game3 LIKE 'hurt_mp'";
