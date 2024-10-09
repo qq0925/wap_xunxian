@@ -25,6 +25,7 @@ class player
     var $uteam_id;//队伍id
     var $uteam_putin_id;//申请中的队伍id
     var $uteam_invited_id;//被邀请的队伍id
+    var $uclan_id;//帮派id
     var $umaxexp;//经验上限
     var $uhp;//生命
     var $umaxhp;//最大生命
@@ -107,6 +108,7 @@ function getplayer($sid,$dblj,$uid=null){
     $cxjg->bindColumn('uteam_id',$player->uteam_id);
     $cxjg->bindColumn('uteam_putin_id',$player->uteam_putin_id);
     $cxjg->bindColumn('uteam_invited_id',$player->uteam_invited_id);
+    $cxjg->bindColumn('uclan_id',$player->uclan_id);
     $cxjg->bindColumn('uexp',$player->uexp);
     $cxjg->bindColumn('uhp',$player->uhp);
     $cxjg->bindColumn('umaxhp',$player->umaxhp);

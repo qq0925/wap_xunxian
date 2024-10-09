@@ -2754,6 +2754,14 @@ echo $refresh_html;
             $ym = "module_all/player_team_list.php";
         }
             break;
+        case 'player_clan_html':
+            switch($canshu){
+                case 'creat':
+                    $ym = "module_all/player_clan_creat.php";
+                    break;
+                
+            }
+            break;
         case 'player_team_invite'://邀请组队
             $send_time = date('Y-m-d H:i:s');
             if($canshu ==1){

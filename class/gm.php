@@ -414,6 +414,13 @@ function insertsystemmsg($name,$msg,$uid,$dblj){
         $stmt->execute();
 }
 
+function getclan($clan_id,$dblj){
+    $sql = "select * from `system_clan_list` where clan_id = '$clan_id'";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    return $ret;
+}
+
 
 function get_mysqldata($dblj, $data_type, $data_id){
     switch ($data_type) {

@@ -1644,7 +1644,13 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                     $result2 = $stmt2->get_result();
                                     $row2 = $result2->fetch_assoc();
                                     $row_result .= "，" . $row2['jname'] ."(". "{$skill_lvl}".")";
-                                    $op = ltrim($row_result, "，");
+                                    
+                                    $skill_final = ltrim($row_result, "，");
+                                    if(!$skill_final){
+                                        $op = "无";
+                                    }else{
+                                        $op = $skill_final;
+                                    }
                                 }
                             }elseif($attr2 == "equips_cmmt") {
     $sql = "SELECT * FROM system_equip_def WHERE type = '1'";
@@ -1702,7 +1708,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }
                     }
                 }
-                $equipfhtml .= $equiptypename . ",";
+                $equipfhtml .= $equipfname . ",";
             }
         }
     }
@@ -1711,7 +1717,12 @@ $equipbhtml = rtrim($equipbhtml,',');
 $equipfhtml = rtrim($equipfhtml,',');
 $bagequiphtml = $equipbhtml.",".$equipfhtml;
 $bagequiphtml = rtrim($bagequiphtml,',');
+
+if(!$bagequiphtml){
+    $op = "无";
+}else{
     $op = $bagequiphtml;
+}
                             }else{
                             $attr3 = 'n'.$attr2;
                             $sql = "SELECT * FROM system_pet_scene WHERE npid = ?";
