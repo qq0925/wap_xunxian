@@ -2963,7 +2963,7 @@ echo $refresh_html;
         $system_offline_time = $gameconfig->offline_time;
         while(floor((strtotime($player->endtime)-strtotime($player->minutetime))/60 >0) &&$cmd!='login' && $cmd!='cjplayer' &&$cmd !='cj'){
         $parents_cmd = $cmd;
-        // \player\exec_global_event(24,'null',null,$sid,$dblj);
+        \player\exec_global_event(24,'null',null,$sid,$dblj);
         // $ret = global_event_data_get(24,$dblj);
         // if($ret){
         // global_events_steps_change(24,$sid,$dblj,$just_page,$steps_page,$cmid,$currentFilePath,null,null,$para);

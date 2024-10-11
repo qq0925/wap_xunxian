@@ -19,9 +19,16 @@ $pet_view__id = $pet_id;
 }
 
 if($fight_canshu==1){
+    $gameconfig = \player\getgameconfig($dblj);
+    $pet_out_maxcount = $gameconfig->pet_max_count;
+    $player_now_pet_count = \player\getplayer_pet_count($sid,$dblj,'out');
+    if($player_now_pet_count <$pet_out_maxcount){
     echo "出战成功！<br/>";
     $nowmid = $player->nowmid;
     $dblj->exec("update system_pet_scene set nstate = 1,nmid = '$nowmid' where nsid = '$sid' and npid = '$pet_id'");
+    }else{
+    echo "可放出的宠物已达上限！<br/>";
+    }
 }elseif($fight_canshu==2){
     echo "收回成功！<br/>";
     $dblj->exec("update system_pet_scene set nstate = 0,nhp = nmaxhp where nsid = '$sid' and npid = '$pet_id'");

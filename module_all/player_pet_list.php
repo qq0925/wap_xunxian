@@ -16,10 +16,17 @@ if($pet_sure_out_id){
 }
 
 if($pet_fight_id){
+    $gameconfig = \player\getgameconfig($dblj);
+    $pet_out_maxcount = $gameconfig->pet_max_count;
+    $player_now_pet_count = \player\getplayer_pet_count($sid,$dblj,'out');
+    if($player_now_pet_count <$pet_out_maxcount){
     echo "你放出了{$pet_name}。<br/>";
     $nowmid = \player\getplayer($sid,$dblj)->nowmid;
     //$dblj->exec("update system_pet_player set pstate = 0 where psid = '$sid'");
     $dblj->exec("update system_pet_scene set nstate = 1,nmid = '$nowmid' where nsid = '$sid' and npid = '$pet_fight_id'");
+    }else{
+    echo "可放出的宠物已达上限！<br/>";
+    }
 }
 if($pet_rest_id){
     echo "你收回了{$pet_name}。<br/>";
@@ -29,7 +36,7 @@ if($pet_rest_id){
 $pet_para = \gm\get_pet_list($dblj,$sid);
 $ret_game = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 
-$player_now_pet_count=count($pet_para);
+$player_now_pet_count = \player\getplayer_pet_count($sid,$dblj);
 $player_callout_max_pet_count= \player\getgameconfig($dblj)->pet_max_count;
 $player_max_pet_count = 8;//默认最大收养8个
 

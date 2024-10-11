@@ -1487,6 +1487,20 @@ function getpet_once($sid,$dblj,$pid){
     return $row;
 }
 
+function getplayer_pet_count($sid,$dblj,$para=null){
+    if($para=='out'){
+    $sql = "SELECT COUNT(*) as out_count from system_pet_scene where nsid = '$sid' and nstate = 1";
+    $result = $dblj->query($sql);
+    $row = $result->fetch(\PDO::FETCH_ASSOC);
+    $count = $row['out_count'];
+    }else{
+    $sql = "SELECT COUNT(*) as all_count from system_pet_scene where nsid = '$sid'";
+    $result = $dblj->query($sql);
+    $row = $result->fetch(\PDO::FETCH_ASSOC);
+    $count = $row['all_count'];
+    }
+    return $count;
+}
 
 class getbasicgmdata{
     var $skill_count;
