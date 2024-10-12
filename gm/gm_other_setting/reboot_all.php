@@ -343,7 +343,7 @@ $data = [
             'uis_designer', 'uis_forum_gm', 'uid', 'ucmd', 'ulast_cmd', 'uphone', 'sid', 
             'token', 'utran_state', 'uname', 'uimage', 'unick_name', 'ulvl', 'uburthen', 
             'umax_burthen', 'ustorage', 'uis_pve', 'ukill', 'uauto_fight', 'uis_sailing', 
-            'uauto_sailing', 'umoney', 'uteam_invited_id', 'uteam_id', 'uteam_putin_id', 
+            'uauto_sailing', 'umoney', 'uteam_invited_id', 'uteam_id', 'uteam_putin_id','uclan_id',
             'uexp', 'uhp', 'umaxhp', 'ump', 'umaxmp', 'ugj', 'ufy', 'usex', 'endtime', 
             'minutetime', 'nowmid', 'justmid', 'tpsmid', 'nowguaiwu', 'sfzx', 'allchattime', 
             'citychattime', 'areachattime', 'cw', 'ispvp'
