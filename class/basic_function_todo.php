@@ -1670,6 +1670,7 @@ function gogame($cmd,$page_id,$sid,$dblj,$value,&$cmid){
     $player_nowmid = \player\getplayer($sid,$dblj)->nowmid;
     //这里加入场景id有效判断
     if($entrance_last_mid &&!$player_nowmid){
+    \player\changeplayersx('nowmid',$entrance_last_mid,$sid,$dblj);
     $entrance_url = $encode->encode("cmd=gm_scene_new&newmid=$entrance_last_mid&ucmd=$cmid&sid=$sid");
     $entrance_url=<<<HTML
         <a href="?cmd=$entrance_url">{$value}</a>

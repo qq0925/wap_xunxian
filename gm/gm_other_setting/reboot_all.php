@@ -274,7 +274,7 @@ $data = [
         }
 
         // 保留的字段
-        $keepFields = ['jname','jid','jdesc','joccasion','jimage','jhurt_mod','jgroup_attack','jcooling_time','jcooling_round', 'jhurt_attr', 'jdeplete_attr', 'jhurt_exp', 'jdeplete_exp','jequip_type','jequip_appoint','juse_cond','jcan_use_cmmt', 'jadd_point_exp', 'jpromotion', 'jpromotion_cond', 'jeffect_cmmt', 'jevent_use_id', 'jevent_up_id'];
+        $keepFields = ['jname','jid','jdesc','joccasion','jimage','jhurt_mod','jgroup_attack','jcooling_time','jcooling_round', 'jhurt_attr', 'jdeplete_attr', 'jhurt_exp', 'jdeplete_exp','jequip_type','jequip_appoint','juse_cond','jcant_use_cmmt', 'jadd_point_exp', 'jpromotion', 'jpromotion_cond', 'jeffect_cmmt', 'jevent_use_id', 'jevent_up_id'];
     
         // 获取 system_skill 表的所有字段
         $sql = "DESCRIBE system_skill";
