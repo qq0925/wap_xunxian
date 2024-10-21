@@ -523,9 +523,9 @@ switch($attr1){
     case 'o':
         $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$attr;
         break;
-    case 'e':
-        $cacheKey = 'expr:'.':'.$attr2;
-        break;
+    // case 'e':
+    //     $cacheKey = 'expr:'.':'.$attr2;
+    //     break;
     case 'c':
         $cacheKey = 'system:'.':'.$attr2;
         break;
