@@ -38,13 +38,13 @@ try {
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$goclanlist = $encode->encode("cmd=clan_list&ucmd=$cmid&sid=$sid");
 
 $clan_id = \player\getplayer($sid,$dblj)->uclan_id;
 
 if($clan_id ==0){
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$goclanlist = $encode->encode("cmd=clan_list&ucmd=$cmid&sid=$sid");
 $clan_html = <<<HTML
 你还没有加入帮派!<br/>
 <a href="?cmd=$goclanlist">返回帮派列表</a><br/>
@@ -58,9 +58,22 @@ $clan_lvl = $clan_data['clan_lvl'];
 $clan_money = $clan_data['clan_money'];
 $clan_exp = $clan_data['clan_exp'];
 $clan_maxexp = $clan_data['clan_max_exp'];
-$clan_chairman = \player\getplayer($sid,$dblj,$clan_data['clan_chairman'])->uname;
+$clan_chairman_uid =$clan_data['clan_chairman'];
+$clan_chairman = \player\getplayer($sid,$dblj,$clan_chairman_sid)->uname;
 $clan_vice_chairman = $clan_data['clan_vice_chairman'];
-
+$clan_members_count = count(explode(',',$clan_data['clan_members']));
+// $pass_members_para = 
+// $pass_members_count = count($pass_members_para);
+if($clan_chairman_uid ==$player->uid){
+$pass_members = $encode->encode("cmd=clan_pass&clan_id=$clan_id&ucmd=$cmid&sid=$sid");
+$function_html = <<<HTML
+<a href="?cmd=$pass_members">成员审批</a><br/>
+HTML;
+}else{
+$function_html = <<<HTML
+成员审批<br/>
+HTML;
+}
 $clan_html = <<<HTML
 [帮会名称]:{$clan_name}<br/>
 [帮会ID]:{$clan_id}<br/>
@@ -69,6 +82,9 @@ $clan_html = <<<HTML
 [帮会经验]:{$clan_exp}/{$clan_maxexp}<br/>
 [帮会资金]:{$clan_money}<br/>
 [帮主]:{$clan_chairman}<br/>
+[帮会成员]:{$clan_members_count}/10<br/>
+$function_html
+<a href="?cmd=$goclanlist">返回帮派列表</a><br/>
 <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
 }

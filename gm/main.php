@@ -1,12 +1,18 @@
 <?php
 
-if($remove_canshu!=1){
+if($remove_canshu!=1&&$remove_canshu!=3&&$remove_canshu!=5){
     
     if($remove_canshu==2){
         echo "已清空公共聊天数据！<br/>";
         $dblj->exec("delete from system_chat_data where chat_type = '0'");
     }
-    
+
+    if($remove_canshu==4){
+        echo "已清空缓存数据！<br/>";
+        $redis->flushAll(true); // 异步清空所有数据库
+    }
+
+
 $dblj->exec("update system_designer_assist set op_target = '',op_canshu = '' where sid = '$sid'");
 $player = \player\getplayer($sid,$dblj);
 $game_data = \player\getbasicgmdata($dblj);
@@ -42,6 +48,8 @@ $remove_all_chat = $encode->encode("cmd=gm&remove_canshu=1&sid=$sid");
 $global_value_design = $encode->encode("cmd=global_value_design&sid=$sid");
 $gm_zip_update = $encode->encode("cmd=gm_game_zipfile&type=update&sid=$sid");
 $gm_zip_all = $encode->encode("cmd=gm_game_zipfile&type=all&sid=$sid");
+$del_all_cache = $encode->encode("cmd=gm&remove_canshu=3&sid=$sid");
+$view_all_cache = $encode->encode("cmd=gm&remove_canshu=5&sid=$sid");
 $gm_post_canshu = 0;
 $post_tishi = '';
 $gm_html = <<<HTML
@@ -74,6 +82,8 @@ $gm_html = <<<HTML
 <a href="?cmd=$gm_game_othersetting">功能设置</a><br/>
 <a href="?cmd=$gm_game_timerdesign">设计定时器</a>!!!<br/>
 <a href="?cmd=$gm_global_notice">发布临时公告</a><br/>
+<a href="?cmd=$del_all_cache">清空全部缓存</a><br/>
+<a href="?cmd=$view_all_cache">查看全部缓存</a><br/>
 ---</br>
 <a href="?cmd=$lexical_test">词法解析</a><br/>
 <a href="?cmd=$self_module_api">自定模板模拟</a><br/>
@@ -85,12 +95,44 @@ $gm_html = <<<HTML
 <a href="?cmd=$gm_zip_all">源文件全部压缩</a><br/>
 ---</br>
 HTML;
-}else{
+}elseif($remove_canshu ==1){
     $sure_main = $encode->encode("cmd=gm&remove_canshu=2&sid=$sid");
     $cancel_main = $encode->encode("cmd=gm&sid=$sid");
     $gm_html =<<<HTML
     是否清空公聊信息<br/>
 <a href="?cmd=$sure_main">确定</a> | <a href="?cmd=$cancel_main">取消</a><br/>
+HTML;
+}
+elseif($remove_canshu ==3){
+    $sure_main = $encode->encode("cmd=gm&remove_canshu=4&sid=$sid");
+    $cancel_main = $encode->encode("cmd=gm&sid=$sid");
+    $gm_html =<<<HTML
+    是否清空缓存信息<br/>
+<a href="?cmd=$sure_main">确定</a> | <a href="?cmd=$cancel_main">取消</a><br/>
+HTML;
+}
+elseif($remove_canshu ==5){
+
+$iterator = null; // 初始化迭代器
+$pattern = '*';   // 匹配所有键
+
+do {
+    // 使用 SCAN 获取键名
+    $keys = $redis->scan($iterator, $pattern);
+
+    if ($keys !== false) {
+        foreach ($keys as $key) {
+            $value = $redis->get($key); // 获取每个键的值
+            $all_cache .= "Key: $key, Value: $value <br/>"; // 输出键和值
+        }
+    }
+} while ($iterator > 0); // 当迭代器为 0 时，表示已经遍历完成
+
+    
+    $ret_main = $encode->encode("cmd=gm&sid=$sid");
+    $gm_html =<<<HTML
+<a href="?cmd=$ret_main">返回设计大厅</a><br/>
+$all_cache
 HTML;
 }
 echo $gm_html;

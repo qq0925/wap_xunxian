@@ -1034,28 +1034,14 @@ HTML;
     if($cxpetall){
 for ($i=0;$i < count($cxpetall);$i++){
         $nname = $cxpetall[$i]['nname'];
-        $nid = $cxpetall[$i]['nid'];
         $npid = $cxpetall[$i]['npid'];
-        $nkill = $cxpetall[$i]['nkill'];
-        $nnot_dead = $cxpetall[$i]['nnot_dead'];
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $clj[] = $cmd;
-        $petcmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$nid&mid=$ncid&sid=$sid");
-//         if($nkill ==0){
-//                 $npchtml.=<<<HTML
-// <a href="?cmd=$npccmd">{$nname}</a> 
-// HTML;
-//         }else{
-//                 $npchtml.=<<<HTML
-// <a href="?cmd=$npccmd">*{$nname}</a> 
-// HTML;
-//         }
-
+        $petcmd = $encode->encode("cmd=pet_view&ucmd=$cmid&petid=$npid&sid=$sid");
                 $npchtml.=<<<HTML
-$nname 
+<a href="?cmd=$petcmd">{$nname}</a>
 HTML;
-
 }
 $npchtml .="<br/>";
 }
@@ -1602,7 +1588,7 @@ function enemy_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     
     }
 }
-    return $fight_omsg;
+    return nl2br($fight_omsg);
     
 }
 
@@ -1642,7 +1628,8 @@ function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     }
     }
 }
-    return $fight_umsg;
+
+    return nl2br($fight_umsg);
     
 }
 

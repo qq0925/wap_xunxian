@@ -404,11 +404,11 @@ for ($i=0;$i<count($get_main_page);$i++){
                     }, $main_value);
             }
             catch (ParseError $e){
-                print("语法错误: ". $e->getMessage());
+                //print("语法错误: ". $e->getMessage());
                 
             }
             catch (Error $e){
-                print("执行错误: ". $e->getMessage());
+                //print("执行错误: ". $e->getMessage());
 }
     switch ($main_type) {
         case '1':

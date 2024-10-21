@@ -132,6 +132,14 @@ function getplayer($sid,$dblj,$uid=null){
     return $player;
 }
 
+function getplayer_apply($sid,$dblj){
+    $sql="select apply_clan_id from player_clan_apply where apply_sid = '$sid'";
+    $cxjg = $dblj->query($sql);
+    $row = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    $clan_id = $row['apply_clan_id'];
+    return $clan_id;
+}
+
 function getnowround($sid,$dblj,$db=null){
 
 if (!$db) {
@@ -660,7 +668,7 @@ function getnowequiptrueid($eq_true_id,$sid,$dblj){
 }
 
 
-function changeequipstate($sid,$pet_id,$dblj,$equip_root_id,$equip_id,$type){
+function changeequipstate($sid,$dblj,$equip_root_id,$equip_id,$type,$pet_id=null){
     $equip = getitem($equip_root_id,$dblj);
     $equip_type = $equip->itype;
     $equip_subtype = $equip->isubtype;

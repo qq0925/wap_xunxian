@@ -1727,6 +1727,9 @@ echo $refresh_html;
         case 'player_pet'://宠物
             $ym = 'module_all/player_pet_list.php';
             break;
+        case 'pet_view'://宠物场景查看
+            $ym = 'module_all/scene_pet_view.php';
+            break;
         case 'player_petequip'://宠物装备列表
             $ym = 'module_all/player_pet_equip_list.php';
             break;
@@ -1735,6 +1738,9 @@ echo $refresh_html;
             break;
         case 'clan_list'://帮派列表
             $ym = 'module_all/player_clan_list.php';
+            break;
+        case 'clan_pass'://成员审批
+            $ym = 'module_all/player_clan_pass.php';
             break;
         case 'player_clan'://我的帮派
             $ym = 'module_all/player_clan_detail.php';
@@ -2277,7 +2283,7 @@ echo $refresh_html;
                 case 'use':
                     switch($itype){
                         case '兵器':
-                            \player\changeequipstate($sid,$pet_id,$dblj,$iid,$equip_true_id,1);
+                            \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,1,$pet_id);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$equip_true_id' and sid = '$sid'");
                             $canshu = '装备';
                             
@@ -2299,7 +2305,7 @@ echo $refresh_html;
                             }
                             break;
                         case '防具':
-                            \player\changeequipstate($sid,$pet_id,$dblj,$iid,$equip_true_id,1);
+                            \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,1,$pet_id);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$equip_true_id' and sid = '$sid'");
                             $canshu = '装备';
                             if(!$pet_id){
@@ -2333,7 +2339,7 @@ echo $refresh_html;
                 case 'remove':
                     switch($itype){
                     case '兵器':
-                        \player\changeequipstate($sid,$pet_id,$dblj,$iid,$equip_true_id,2);
+                        \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2,$pet_id);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
                         $canshu = '装备';
                         if(!$pet_id){
@@ -2354,7 +2360,7 @@ echo $refresh_html;
                         }
                         break;
                     case '防具':
-                        \player\changeequipstate($sid,$pet_id,$dblj,$iid,$equip_true_id,2);
+                        \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2,$pet_id);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
                         if(!$pet_id){
                         echo "你卸下了{$iname}<br/>";
@@ -2759,7 +2765,12 @@ echo $refresh_html;
                 case 'creat':
                     $ym = "module_all/player_clan_creat.php";
                     break;
-                
+                case 'view':
+                    $ym = "module_all/player_other_clan.php";
+                    break;
+                case 'join':
+                    $ym = "module_all/player_other_clan.php";
+                    break;
             }
             break;
         case 'player_team_invite'://邀请组队

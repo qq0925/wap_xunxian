@@ -7,6 +7,12 @@ use mysqli;
 
 //input是原始输入，sid是用户识别码，uid用于特殊事件，oid用于o关键字，mid用于获取当前场景id或npc的id,para用于分辨是泛字符串解析还是纯变量解析
 
+// 全局 Redis 连接初始化，放在更高层级
+$redis = new \Redis();
+$redis->connect('127.0.0.1', 6379);
+
+
+
 class Cache {
     private static $cache = [];
     private static $expiry = [];
@@ -502,15 +508,47 @@ $expr = preg_replace_callback('/\{eval\((.*?)\)\}/', function($matches) use ($db
 }, $expr);
 $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     $attr = $matches[1]; // 获取匹配到的变量名
+    global $redis;
+        // 检查缓存中是否已有值
+            // 如果缓存中没有，则查询数据库并缓存
             $firstDotPosition = strpos($attr, '.');
-            if (!empty($firstDotPosition)) {
+            if ($firstDotPosition !== false) {
                 $attr1 = substr($attr, 0, $firstDotPosition);
                 $attr2 = substr($attr, $firstDotPosition + 1);
+                
+switch($attr1){
+    case 'u':
+        $cacheKey = 'user:'.$sid.':'.$attr;
+        break;
+    case 'o':
+        $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$attr;
+        break;
+    case 'e':
+        $cacheKey = 'expr:'.':'.$attr2;
+        break;
+    case 'c':
+        $cacheKey = 'system:'.':'.$attr2;
+        break;
+    case 'g':
+        $cacheKey = 'global:'.':'.$attr2;
+        break;
+    case 'm':
+        $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$attr;
+        break;
+}
+                if (!$redis->exists($cacheKey)){
+
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
                 // 替换字符串中的变量
+                 // 将查询的结果存储在 Redis 中，使用 JSON 序列化
+                $redis->set($cacheKey, json_encode($op));
+                }else {
+            // 从 Redis 缓存中获取值
+            $op = json_decode($redis->get($cacheKey), true);
+        }
             }
-        
+
     // 在这里根据变量名获取对应的值，例如从数据库中查询
     // 假设你从数据库中获取了 $attr_value]
     $temp = $op;
@@ -1447,7 +1485,9 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
                         case 'fight_umsg':
-                        $sql = "SELECT fight_umsg FROM game2 WHERE sid = ?";
+                        $dblj = DB::pdo();
+                        $round = \player\getnowround($sid,$dblj);
+                        $sql = "SELECT fight_umsg FROM game2 WHERE sid = ? and pid = 0 and round = '$round'";
                         
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
@@ -1469,7 +1509,9 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
                         case 'fight_omsg':
-                        $sql = "SELECT fight_omsg FROM game2 WHERE sid = ?";
+                        $dblj = DB::pdo();
+                        $round = \player\getnowround($sid,$dblj);
+                        $sql = "SELECT fight_omsg FROM game2 WHERE sid = ? and pid = 0 and round = '$round'";
                         
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
@@ -2285,9 +2327,9 @@ if(!$bagequiphtml){
                                     $row_result = $row[$attr3]; // 获取 $attr3 字段的值
                                 }
                             }
-                            
+                            $exclude_attr = in_array($attr3,['jname','jid','jdesc','joccasion','jimage','jhurt_mod']);
                             // 如果 $row_result 仍然为 null，查询 system_skill_module 表
-                            if ($row_result === null) {
+                            if ($row_result === null&&!$exclude_attr) {
                                 $sql = "SELECT $attr3 FROM system_skill_module WHERE jid = 2";
                                 $stmt = $db->prepare($sql);
                                 $stmt->execute();
@@ -2497,7 +2539,7 @@ if(!$bagequiphtml){
                     //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'e':
-                    $sql = "SELECT * FROM system_exp_def WHERE id = ?";
+                    $sql = "SELECT value FROM system_exp_def WHERE id = ?";
                     $stmt = $db->prepare($sql);
                     $stmt->bind_param("s", $attr2);
                     $stmt->execute();
@@ -2507,9 +2549,9 @@ if(!$bagequiphtml){
                     }
                     $row = $result->fetch_assoc();
                     $op = nl2br($row['value']);
+                    
                     // 替换字符串中的变量
                     $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
-                    
                     $op = @eval("return $op;");
                     //$input = str_replace("{{$match}}", $op, $input);
                     break;
@@ -2709,6 +2751,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
     $db = DB::conn();
 
     $matches = [];
+    if($input){
     preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
     if (!empty($matches[1])) {
         foreach ($matches[1] as $match) {
@@ -2730,9 +2773,10 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
             }
         }
     }
-    
+    }
     $matches_2 = [];
     //preg_match_all('/f\(([\w.]+)\)/', $input, $matches_2);
+    if($input){
     preg_match_all('/\{f\((.*?)\).*?\}/', $input, $matches_2);
     if (!empty($matches_2[1])) {
         $f_temp = $matches_2[0][0];
@@ -2817,11 +2861,39 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
             }
         }
     }
-
+}
     // 进行其他逻辑处理
     // ...
+    
+    $matches_3 = [];
+    if($input){
+    preg_match_all('/stru\(([\w.]+)\)/', $input, $matches_3);
+    if (!empty($matches_3[1])) {
+        foreach ($matches_3[1] as $match) {
+            $firstDotPosition = strpos($match, '.');
+            if (!empty($firstDotPosition)) {
+                $attr1 = substr($match, 0, $firstDotPosition);
+                $attr2 = substr($match, $firstDotPosition + 1);
+                // 使用 process_attribute 处理单个属性
+                $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
+                if(is_numeric($op)){
+                    $op = convertNumber($op);
+                }
+                if($op =='' || $op == "" || $op ==null){
+                    $op = "\"\"";
+                }
+                $op = str_replace(array("''", "\"\""), '0', $op);
+
+                $input = str_replace("{stru({$match})}", $op, $input);
+            }
+        }
+    }
+}
+if($input){
 $input = evaluate_expression($input,$db,$sid,$oid,$mid,$jid,$type,$para);
+}
 // 使用 preg_replace_callback 进行匹配和替换
+if($input){
 $input = preg_replace_callback('/#"(.*?)"/', function ($matches) use ($sid, $oid, $mid, $jid, $type, $db, $para) {
     // 获取原内容
     //var_dump($matches);
@@ -2829,9 +2901,34 @@ $input = preg_replace_callback('/#"(.*?)"/', function ($matches) use ($sid, $oid
    $op = "'".$op."'";
    return $op;
 }, $input);
-
+}
     return $input;
 }
+
+function convertNumber($op) {
+    // 转换成整数以避免浮点数问题
+    $op = intval($op);
+    
+    // 计算亿和万的部分
+    $yi = floor($op / 100000000); // 亿
+    $wan = floor(($op % 100000000) / 10000); // 万
+    $ge = $op % 10000; // 个位
+
+    // 构建结果字符串
+    $result = '';
+    if ($yi > 0) {
+        $result .= $yi . '亿';
+    }
+    if ($wan > 0) {
+        $result .= $wan . '万';
+    }
+    if ($ge > 0) {
+        $result .= $ge;
+    }
+
+    return $result;
+}
+
 
 
 //上为主对被，下为被对主。

@@ -1,15 +1,67 @@
 <?php
 
+$redis = new Redis();
+$redis->connect('127.0.0.1', 6379);
+
+// 清除单个键的值
+//$redis->del('xunxian_all_data');
+
+// 获取缓存中的数据
+$cacheKey = 'xunxian_all_data';
+$data = $redis->get($cacheKey);
+
+if ($data) {
+    // 将 JSON 数据转换为 PHP 数组
+    $dataArray = json_decode($data, true);
+    print_r($dataArray); // 打印缓存中的数据
+} else {
+    echo "缓存中没有数据";
+}
+
+
+
 $start_time = hrtime(true);
+
+class Token {
+    const PLUS = 'PLUS';//+
+    const MINUS = 'MINUS';//-
+    const MUL = 'MUL';//*
+    const DIV = 'DIV';// /
+    const LPAREN = 'LPAREN';  // (
+    const RPAREN = 'RPAREN';  // )
+    const LCURLY = 'LCURLY';  // {
+    const RCURLY = 'RCURLY';  // }
+    const DOT = 'DOT';// 取值运算符 .
+    const DECIMAL = 'DECIMAL'; // 小数点
+    const QUESTION = 'QUESTION';//三元表达式?
+    const COLON = 'COLON';//三元表达式:
+    const OR = 'OR';//||
+    const AND = 'AND';//&&
+    const GT = 'GT';
+    const GTE = 'GTE';
+    const LT = 'LT';
+    const LTE = 'LTE';
+    const EQ = 'EQ';
+    const NEQ = 'NEQ';
+    const IDENTIFIER = 'IDENTIFIER';//标识
+    const NUMBER = 'NUMBER';//数字
+    const STRING = 'STRING';//字符串
+    const FUNCTION = 'FUNCTION';  // v
+    const EVAL = 'EVAL';          // eval
+    const EOF = 'EOF';//结束符
+}
+
 class Lexer {
     private $input;
     private $position;
     private $currentChar;
+    private $bracketStack;  // 栈，用于跟踪括号 () 和 {}
 
     public function __construct($input) {
         $this->input = $input;
         $this->position = 0;
         $this->currentChar = $input[$this->position];
+        $this->bracketStack = [];
     }
 
     private function advance() {
@@ -65,19 +117,29 @@ class Lexer {
                     return $this->createToken(Token::DIV, '/');
                 case '(':
                     $this->advance();
+                    array_push($this->bracketStack, '(');
                     return $this->createToken(Token::LPAREN, '(');
                 case ')':
                     $this->advance();
+                    array_pop($this->bracketStack);
                     return $this->createToken(Token::RPAREN, ')');
                 case '{':
                     $this->advance();
+                    array_push($this->bracketStack, '{');
                     return $this->createToken(Token::LCURLY, '{');
                 case '}':
                     $this->advance();
+                    array_pop($this->bracketStack);
                     return $this->createToken(Token::RCURLY, '}');
                 case '.':
-                    $this->advance();
-                    return $this->createToken(Token::DOT, '.');
+                    // 如果当前不在括号内，则识别为小数点，否则为链式调用的点运算符
+                    if ($this->inBracketScope()) {
+                        $this->advance();
+                        return $this->createToken(Token::DOT, '.'); // 链式调用的点运算符
+                    } else {
+                        $this->advance();
+                        return $this->createToken(Token::DECIMAL, '.'); // 小数点
+                    }
                 case '?':
                     $this->advance();
                     return $this->createToken(Token::QUESTION, '?');
@@ -150,10 +212,19 @@ class Lexer {
 
     private function number() {
         $result = '';
-        while ($this->currentChar !== null && ctype_digit($this->currentChar)) {
+        $hasDecimalPoint = false;
+
+        while ($this->currentChar !== null && (ctype_digit($this->currentChar) || $this->currentChar === '.')) {
+            if ($this->currentChar === '.') {
+                if ($hasDecimalPoint) {
+                    break; // 第二个小数点，停止解析
+                }
+                $hasDecimalPoint = true;
+            }
             $result .= $this->currentChar;
             $this->advance();
         }
+
         return $this->createToken(Token::NUMBER, $result);
     }
 
@@ -167,267 +238,234 @@ class Lexer {
         $this->advance(); // Skip the closing quote
         return $this->createToken(Token::STRING, $result);
     }
+
+    // 判断当前是否在括号或大括号的范围内
+    private function inBracketScope() {
+        return !empty($this->bracketStack);
+    }
 }
 
-class Token {
-    const EOF = 'EOF';
-    const IDENTIFIER = 'IDENTIFIER';
-    const NUMBER = 'NUMBER';
-    const PLUS = 'PLUS';
-    const MINUS = 'MINUS';
-    const MUL = 'MUL';
-    const DIV = 'DIV';
-    const LPAREN = 'LPAREN';
-    const RPAREN = 'RPAREN';
-    const LCURLY = 'LCURLY';
-    const RCURLY = 'RCURLY';
-    const FUNCTION = 'FUNCTION';
-    const EVAL = 'EVAL';
-    const DOT = 'DOT';
-    const QUESTION = 'QUESTION';
-    const COLON = 'COLON';
-    const OR = 'OR';
-    const AND = 'AND';
-    const STRING = 'STRING';
-    const GT = 'GT';
-    const LT = 'LT';
-    const GTE = 'GTE';
-    const LTE = 'LTE';
-    const EQ = 'EQ';
-    const NEQ = 'NEQ';
-}
-
-
-class Interpreter {
+class Parser {
     private $lexer;
     private $currentToken;
-    private $contextCallback;
-    private $dblj;
-    private $sid;
-    private $u_type;
-    private $oid;
-    private $o_type;
-    private $mid;
-    private $cid;
-    private $eid;
-    private $gid;
 
-    public function __construct($lexer, $contextCallback, $dblj, $sid = null, $u_type = null, $oid = null, $o_type = null, $mid = null, $cid = null, $eid = null, $gid = null) {
+    public function __construct($lexer) {
         $this->lexer = $lexer;
         $this->currentToken = $this->lexer->getNextToken();
-        $this->contextCallback = $contextCallback;
-        $this->dblj = $dblj;
-        $this->sid = $sid;
-        $this->u_type = $u_type;
-        $this->oid = $oid;
-        $this->o_type = $o_type;
-        $this->mid = $mid;
-        $this->cid = $cid;
-        $this->eid = $eid;
-        $this->gid = $gid;
     }
 
+    // 消费当前 token 并读取下一个 token
     private function eat($tokenType) {
         if ($this->currentToken['type'] === $tokenType) {
             $this->currentToken = $this->lexer->getNextToken();
         } else {
-            throw new Exception("无效的语法: 期望 {$tokenType}, 但找到 {$this->currentToken['type']}");
+            throw new Exception("解析错误: 期待 " . $tokenType . ", 但得到 " . $this->currentToken['type']);
         }
     }
 
-    public function expr() {
-        return $this->or_expr();
+    // 解析表达式
+    public function parse() {
+        return $this->expression();
     }
 
-    private function or_expr() {
-        $result = $this->and_expr();
+    // 表达式递归解析 (支持逻辑运算)
+    private function expression() {
+        $node = $this->logicalTerm();
 
         while ($this->currentToken['type'] === Token::OR) {
+            $token = $this->currentToken;
             $this->eat(Token::OR);
-            $result = $result || $this->and_expr();
+            $node = [
+                'type' => 'LogicalOp',
+                'op' => '||',
+                'left' => $node,
+                'right' => $this->logicalTerm()
+            ];
         }
 
-        return $result;
+        return $node;
     }
 
-    private function and_expr() {
-        $result = $this->comparison_expr();
+    // 解析逻辑运算的基本单元 (支持 `&&`)
+    private function logicalTerm() {
+        $node = $this->comparison();
 
         while ($this->currentToken['type'] === Token::AND) {
-            $this->eat(Token::AND);
-            $result = $result && $this->comparison_expr();
-        }
-
-        return $result;
-    }
-
-    private function comparison_expr() {
-        $result = $this->ternary_expr();
-
-        while (in_array($this->currentToken['type'], [Token::GT, Token::LT, Token::GTE, Token::LTE, Token::EQ, Token::NEQ])) {
             $token = $this->currentToken;
-            if ($token['type'] === Token::GT) {
-                $this->eat(Token::GT);
-                $result = $result > $this->ternary_expr();
-            } elseif ($token['type'] === Token::LT) {
-                $this->eat(Token::LT);
-                $result = $result < $this->ternary_expr();
-            } elseif ($token['type'] === Token::GTE) {
-                $this->eat(Token::GTE);
-                $result = $result >= $this->ternary_expr();
-            } elseif ($token['type'] === Token::LTE) {
-                $this->eat(Token::LTE);
-                $result = $result <= $this->ternary_expr();
-            } elseif ($token['type'] === Token::EQ) {
-                $this->eat(Token::EQ);
-                $result = $result == $this->ternary_expr();
-            } elseif ($token['type'] === Token::NEQ) {
-                $this->eat(Token::NEQ);
-                $result = $result != $this->ternary_expr();
+            $this->eat(Token::AND);
+            $node = [
+                'type' => 'LogicalOp',
+                'op' => '&&',
+                'left' => $node,
+                'right' => $this->comparison()
+            ];
+        }
+
+        return $node;
+    }
+
+    // 解析比较运算符
+    private function comparison() {
+        $node = $this->term();
+
+        while (in_array($this->currentToken['type'], [Token::GT, Token::GTE, Token::LT, Token::LTE, Token::EQ, Token::NEQ])) {
+            $token = $this->currentToken;
+            switch ($token['type']) {
+                case Token::GT:
+                    $this->eat(Token::GT);
+                    break;
+                case Token::GTE:
+                    $this->eat(Token::GTE);
+                    break;
+                case Token::LT:
+                    $this->eat(Token::LT);
+                    break;
+                case Token::LTE:
+                    $this->eat(Token::LTE);
+                    break;
+                case Token::EQ:
+                    $this->eat(Token::EQ);
+                    break;
+                case Token::NEQ:
+                    $this->eat(Token::NEQ);
+                    break;
             }
+
+            $node = [
+                'type' => 'ComparisonOp',
+                'op' => $token['value'],
+                'left' => $node,
+                'right' => $this->term()
+            ];
         }
 
-        return $result;
+        return $node;
     }
 
-    private function ternary_expr() {
-        $result = $this->additive_expr();
+    // 解析加减法
+    private function term() {
+        $node = $this->factor();
 
-        if ($this->currentToken['type'] === Token::QUESTION) {
-            $this->eat(Token::QUESTION);
-            $trueExpr = $this->ternary_expr();
-            $this->eat(Token::COLON);
-            $falseExpr = $this->ternary_expr();
-            $result = $result ? $trueExpr : $falseExpr;
-        }
-
-        return $result;
-    }
-
-    private function additive_expr() {
-        $result = $this->multiplicative_expr();
-
-        while (in_array($this->currentToken['type'], [Token::PLUS, Token::MINUS])) {
+        while ($this->currentToken['type'] === Token::PLUS || $this->currentToken['type'] === Token::MINUS) {
             $token = $this->currentToken;
             if ($token['type'] === Token::PLUS) {
                 $this->eat(Token::PLUS);
-                $result += $this->multiplicative_expr();
             } elseif ($token['type'] === Token::MINUS) {
                 $this->eat(Token::MINUS);
-                $result -= $this->multiplicative_expr();
             }
+            $node = [
+                'type' => 'BinaryOp',
+                'op' => $token['value'],
+                'left' => $node,
+                'right' => $this->factor()
+            ];
         }
 
-        return $result;
+        return $node;
     }
 
-    private function multiplicative_expr() {
-        $result = $this->factor();
+    // 解析乘法、除法
+    private function factor() {
+        $node = $this->primary();
 
-        while (in_array($this->currentToken['type'], [Token::MUL, Token::DIV])) {
+        while ($this->currentToken['type'] === Token::MUL || $this->currentToken['type'] === Token::DIV) {
             $token = $this->currentToken;
             if ($token['type'] === Token::MUL) {
                 $this->eat(Token::MUL);
-                $result *= $this->factor();
             } elseif ($token['type'] === Token::DIV) {
                 $this->eat(Token::DIV);
-                $result /= $this->factor();
             }
+            $node = [
+                'type' => 'BinaryOp',
+                'op' => $token['value'],
+                'left' => $node,
+                'right' => $this->primary()
+            ];
         }
 
-        return $result;
+        return $node;
     }
 
-    private function factor() {
+    // 处理数字、标识符、函数调用和大括号
+    private function primary() {
         $token = $this->currentToken;
 
         if ($token['type'] === Token::NUMBER) {
             $this->eat(Token::NUMBER);
-            return intval($token['value']);
-        } elseif ($token['type'] === Token::STRING) {
-            $this->eat(Token::STRING);
-            return $token['value'];
-        } elseif ($token['type'] === Token::LPAREN) {
-            $this->eat(Token::LPAREN);
-            $result = $this->expr();
-            $this->eat(Token::RPAREN);
-            return $result;
-        } elseif ($token['type'] === Token::LCURLY) {
-            $this->eat(Token::LCURLY);
-            $result = $this->expr();
-            $this->eat(Token::RCURLY);
-            return $result;
-        } elseif ($token['type'] === Token::IDENTIFIER) {
-            return $this->propertyAccess();
-        } elseif ($token['type'] === Token::FUNCTION || $token['type'] === Token::EVAL) {
-            return $this->functionCall();
-        } else {
-            throw new Exception("无效的语法: " . $token['type']);
+            return [
+                'type' => 'Number',
+                'value' => $token['value']
+            ];
         }
-    }
 
-    private function propertyAccess() {
-        $object = $this->currentToken['value'];
-        $this->eat(Token::IDENTIFIER);
-
-        if ($this->currentToken['type'] === Token::DOT) {
-            $this->eat(Token::DOT);
-            $property = $this->currentToken['value'];
+        if ($token['type'] === Token::IDENTIFIER) {
             $this->eat(Token::IDENTIFIER);
-            return call_user_func($this->contextCallback, $object, $property, $this->dblj, $this->sid, $this->u_type, $this->oid, $this->o_type, $this->mid, $this->cid, $this->eid, $this->gid);
+            // 检查是否是函数调用
+            if ($this->currentToken['type'] === Token::LPAREN) {
+                return $this->functionCall($token['value']);
+            }
+            return [
+                'type' => 'Identifier',
+                'value' => $token['value']
+            ];
         }
 
-        throw new Exception("属性访问错误");
+        if ($token['type'] === Token::LCURLY) { // 处理 { } 包围的表达式
+            $this->eat(Token::LCURLY);
+            $node = $this->expression();
+            $this->eat(Token::RCURLY);
+            return [
+                'type' => 'CurlyExpr',
+                'value' => $node
+            ];
+        }
+
+        if ($token['type'] === Token::LPAREN) {
+            $this->eat(Token::LPAREN);
+            $node = $this->expression();
+            $this->eat(Token::RPAREN);
+            return $node;
+        }
+
+        throw new Exception("解析错误: 不可识别的标记 " . $token['value']);
     }
 
-    private function functionCall() {
-        $funcName = $this->currentToken['value'];
-        $this->eat($this->currentToken['type']);
-        $this->eat(Token::LPAREN);
-        $result = null;
+    // 解析函数调用
+    private function functionCall($funcName) {
+        $this->eat(Token::LPAREN); // 吃掉左括号
 
-        if ($funcName === 'v') {
-            $result = $this->expr();
-        } elseif ($funcName === 'eval') {
-            $result = $this->expr();
-            $result = eval("return \"$result\";");
-        } else {
-            throw new Exception("未知的函数调用: $funcName");
+        $args = [];
+        if ($this->currentToken['type'] !== Token::RPAREN) {
+            $args[] = $this->expression();
+
+            while ($this->currentToken['type'] === Token::COMMA) {
+                $this->eat(Token::COMMA);
+                $args[] = $this->expression();
+            }
         }
 
-        $this->eat(Token::RPAREN);
-        return $result;
+        $this->eat(Token::RPAREN); // 吃掉右括号
+
+        return [
+            'type' => 'FunctionCall',
+            'name' => $funcName,
+            'arguments' => $args
+        ];
     }
 }
 
 
-function contextCallback($object, $property, $dblj, $sid = null, $u_type = null, $oid = null, $o_type = null, $mid = null, $cid = null, $eid = null, $gid = null) {
-    if ($object === 'u' && $sid !== null) {
-        $attr_name = $object . $property;
-        $stmt = $dblj->prepare("SELECT $attr_name FROM game1 WHERE sid = :sid");
-        $stmt->execute(['sid' => $sid]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ? $result[$attr_name] : null;
-    }
-    throw new Exception("属性不存在: $object.$property");
-}
 
 if($_POST['lexical_text']){
     $lexical_code = $_POST['lexical_text'];
 
 try {
     $input = $lexical_code;
-    $sid = "959c9277a3e15eacff9e5f117e51f5bb";
     $lexer = new Lexer($input);
-    $contextCallback = function($object, $property, $dblj, $sid, $u_type, $oid, $o_type, $mid, $cid, $eid, $gid) {
-        if ($object === 'u' && $property === 'sex') {
-            return '男';
-        }
-        return null;
-    };
-    $interpreter = new Interpreter($lexer, $contextCallback, $dblj = null, $sid = null, $u_type = null, $oid = null, $o_type = null, $mid = null, $cid = null, $eid = null, $gid = null);
-    $result = $interpreter->expr();
-    echo $result."<br/>";
+    var_dump($lexer);
+    $parser = new Parser($lexer);
+    $ast = $parser->parse();
+    //var_dump($ast);
 } catch (Exception $e) {
     echo 'Error: ' . $e->getMessage();
 }
@@ -436,6 +474,7 @@ try {
 if($_POST['lexical_text']){
     $lexical_code = $_POST['lexical_text'];
 }
+
 
 $gm_html =<<<HTML
 <form method="post">

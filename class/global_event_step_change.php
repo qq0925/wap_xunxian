@@ -1,4 +1,5 @@
 <?php
+$start_time = microtime(true);
 require_once 'lexical_analysis.php';
 require_once 'data_lexical.php';
 require_once 'event_data_get.php';

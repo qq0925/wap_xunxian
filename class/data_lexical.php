@@ -377,6 +377,7 @@ $sid = $old_sid;
         //     echo "无法匹配到小数点 '.'<br/>";
         //     };
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
+        
         @$ele_2 = eval("return $ele_2;");
         $ele_2 = str_replace(array("'", "\""), '', $ele_2);
         switch ($ele_1_1) {

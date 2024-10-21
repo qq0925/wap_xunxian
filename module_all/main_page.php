@@ -258,7 +258,7 @@ if($clmid->mitem!=''){
             $id = $parts[0];
             $item_count = $parts[1];
             $item_count = \lexical_analysis\process_string($item_count,$sid);
-            $item_count = \lexical_analysis\process_string($item_count,$sid);
+            //$item_count = \lexical_analysis\process_string($item_count,$sid);
             @$item_count = eval("return $item_count;");
             
             // 更新处理后的值
@@ -284,7 +284,8 @@ $change_nowmid = $encode->encode("cmd=gm_map_2&sid=$sid");
 
 if($player->ucmd != "pve_fight"){
 //30-70ms
-for ($i=0;$i<count($get_main_page);$i++){
+$page_count = count($get_main_page);
+for ($i=0;$i<$page_count;$i++){
     $oid = 'scene';
     $mid = $player->nowmid;
     $main_id = $get_main_page[$i]['id'];
@@ -312,13 +313,13 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_target_func = $get_main_page[$i]['target_func'];
     $main_link_value = $get_main_page[$i]['link_value'];
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
-    $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
+    //$main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
     }else{
     $main_value = nl2br($main_value);
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
-    $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
+    //$main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value =\lexical_analysis\process_photoshow($main_value);
     $main_value = \lexical_analysis\color_string($main_value);
     }
