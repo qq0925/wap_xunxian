@@ -23,6 +23,8 @@ if($delete_id !=0){
     $dblj->exec($sql);
     $sql = "DELETE FROM player_temp_attr WHERE obj_id = '$u_sid';";
     $dblj->exec($sql);
+    $sql = "DELETE FROM player_clan_apply WHERE apply_sid = '$u_sid';";
+    $dblj->exec($sql);
     $sql = "DELETE FROM system_addition_attr WHERE sid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_designer_assist WHERE sid = '$u_sid';";
@@ -35,7 +37,7 @@ if($delete_id !=0){
     $dblj->exec($sql);
     $sql = "DELETE FROM system_player_boat WHERE sid = '$u_sid';";
     $dblj->exec($sql);
-    $sql = "DELETE FROM system_pet_player WHERE psid = '$u_sid';";
+    $sql = "DELETE FROM system_pet_scene WHERE nsid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_player_friend WHERE usid = '$u_sid' or osid = '$u_sid';";
     $dblj->exec($sql);
@@ -56,13 +58,13 @@ if($delete_id !=0){
 }
 
 if($refresh_id !=0){
-    $sql = "DELETE FROM game1 WHERE uid = '$delete_id' or (imuid = '$delete_id' and send_type = 0);";
+    $sql = "DELETE FROM game1 WHERE uid = '$refresh_id' or (imuid = '$refresh_id' and send_type = 0);";
     $dblj->exec($sql);
-    $sql = "DELETE FROM system_chat_data WHERE uid = '$delete_id';";
+    $sql = "DELETE FROM system_chat_data WHERE uid = '$refresh_id';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_fight_quick WHERE sid = '$u_sid';";
     $dblj->exec($sql);
-    $sql = "DELETE FROM system_item WHERE uid = '$delete_id';";
+    $sql = "DELETE FROM system_item WHERE uid = '$refresh_id';";
     $dblj->exec($sql);
     $sql = "DELETE FROM forum_text WHERE sid = '$u_sid';";
     $dblj->exec($sql);
@@ -78,6 +80,8 @@ if($refresh_id !=0){
     $dblj->exec($sql);
     $sql = "DELETE FROM player_temp_attr WHERE obj_id = '$u_sid';";
     $dblj->exec($sql);
+    $sql = "DELETE FROM player_clan_apply WHERE apply_sid = '$u_sid';";
+    $dblj->exec($sql);
     $sql = "DELETE FROM system_addition_attr WHERE sid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_designer_assist WHERE sid = '$u_sid';";
@@ -90,7 +94,7 @@ if($refresh_id !=0){
     $dblj->exec($sql);
     $sql = "DELETE FROM system_player_boat WHERE sid = '$u_sid';";
     $dblj->exec($sql);
-    $sql = "DELETE FROM system_pet_player WHERE psid = '$u_sid';";
+    $sql = "DELETE FROM system_pet_scene WHERE nsid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_player_friend WHERE usid = '$u_sid' or osid = '$u_sid';";
     $dblj->exec($sql);
@@ -125,13 +129,14 @@ $tables = [
     "game4",
     "player_equip_mosaic",
     "player_temp_attr",
+    "player_clan_apply",
     "system_addition_attr",
     "system_designer_assist",
     "system_equip_user",
     "system_npc_midguaiwu",
     "system_player_black",
     "system_player_boat",
-    "system_pet_player",
+    "system_pet_scene",
     "system_player_friend",
     "system_player_inputs",
     "system_player_setting",

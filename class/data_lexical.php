@@ -65,8 +65,30 @@ foreach ($keyValuePairs as $pair) {
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
-        //$parts = explode(".", $ele_1);
+        global $redis;
+    switch($ele_1){
+    case 'u':
+        $cacheKey = 'user:'.$sid.':'.$ele_1;
+        break;
+    case 'o':
+        $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$ele_1;
+        break;
+    case 'e':
+        $cacheKey = 'expr:'.':'.$ele_2;
+        break;
+    case 'c':
+        $cacheKey = 'system:'.':'.$ele_2;
+        break;
+    case 'g':
+        $cacheKey = 'global:'.':'.$ele_2;
+        break;
+    case 'm':
+        $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$ele_2;
+        break;
+}
+    $redis->del($cacheKey);
         
+        //$parts = explode(".", $ele_1);
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
             $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
@@ -334,6 +356,31 @@ $sid = $old_sid;
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
+        
+        global $redis;
+    switch($ele_1){
+    case 'u':
+        $cacheKey = 'user:'.$sid.':'.$ele_1;
+        break;
+    case 'o':
+        $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$ele_1;
+        break;
+    case 'e':
+        $cacheKey = 'expr:'.':'.$ele_2;
+        break;
+    case 'c':
+        $cacheKey = 'system:'.':'.$ele_2;
+        break;
+    case 'g':
+        $cacheKey = 'global:'.':'.$ele_2;
+        break;
+    case 'm':
+        $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$ele_2;
+        break;
+}
+    $redis->del($cacheKey);
+        
+        
         //$parts = explode(".", $ele_1);
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
