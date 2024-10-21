@@ -515,7 +515,7 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
             if ($firstDotPosition !== false) {
                 $attr1 = substr($attr, 0, $firstDotPosition);
                 $attr2 = substr($attr, $firstDotPosition + 1);
-                
+                $attr3 = substr($attr,$firstDotPosition + 1,4);
 switch($attr1){
     case 'u':
         $cacheKey = 'user:'.$sid.':'.$attr;
@@ -536,7 +536,7 @@ switch($attr1){
         $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$attr;
         break;
 }
-                if (!$redis->exists($cacheKey)){
+                if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env.'){
 
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
