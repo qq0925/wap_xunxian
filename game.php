@@ -2058,6 +2058,7 @@ echo $refresh_html;
             $itype = $item->itype;
             $iname = $item->iname;
             $ino_out = $item->ino_out;
+            $ino_give = $item->ino_give;
             $iweight = $item->iweight;
             // 确定$canshu的值
             if($canshu!="全部"||!$canshu){
@@ -2240,6 +2241,8 @@ echo $refresh_html;
                     break;
             }
             if($target_event =='sale'){
+                
+                if($ino_give==0){
                 if($sale_cancel ==1){
             $nowcount = \player\getsaleitem_true_count($item_true_id,$sid,$dblj);
             if($nowcount >0){
@@ -2253,6 +2256,10 @@ echo $refresh_html;
             }
                 }else{
             $ym = "module_all/player_sale_html.php";
+                }
+                }else{
+                echo "{$iname}不能挂出销售。<br/>";
+                $ym = "module_all/scene_item.php";
                 }
             }elseif($target_event =='look_book'){
             $ym = "module_all/gm_book_details.php";
