@@ -123,6 +123,10 @@ if($sure_old_mosaic_canshu){
 
 if($diss_this_canshu){
 
+$weight = \player\getitem($diss_this_mosaic_id,$dblj)->iweight;
+$player_last_burthen = $player->umax_burthen - $player->uburthen;
+if($player_last_burthen >=$weight && $player_last_burthen>0){
+
 // 查找符合条件的记录
 $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE belong_sid = :sid AND equip_id = :equip_id";
 $stmt = $dblj->prepare($sql);
@@ -198,6 +202,10 @@ echo "拆卸成功!<br/>";
     }
 } else {
     echo "发生了一个错误，请联系管理员！<br/>";
+}
+}
+else{
+echo "请检测背包负重后再进行操作！<br/>";
 }
 }
 
