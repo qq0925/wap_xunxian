@@ -165,7 +165,6 @@ HTML;
                                     }
                                     $ret = global_event_data_get(26,$dblj);
                                     if($ret){
-                                        var_dump($steps_page);
                                     global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_monster',$ngid,$para);
                                     }
                                     
