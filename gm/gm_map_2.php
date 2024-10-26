@@ -345,6 +345,7 @@ for ($i = 1; $i <= $map_x; $i++) {
     }
     elseif($_POST['modify'] ==3){
     $cxalladdmaps = \player\getmid_detail($dblj,$qy_id);
+    $dblj->exec("delete from system_npc_scene where narea_id = '$qy_id'");
     for($i=0;$i<@count($cxalladdmaps);$i++){
         $addmapmid = $cxalladdmaps[$i]['mid'];
         // 获取原始字段值
@@ -453,6 +454,7 @@ $area_change_html .= <<<HTML
 <option value="5" $selectedOption3>湿热之地</option>
 </select>
 <input type="submit" value="提交"><br/>
+</form>
 HTML;
 $area_change_html .= "<a href='?cmd=$area_modify' >修改区域名称</a><br/>";
 

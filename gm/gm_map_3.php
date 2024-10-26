@@ -70,9 +70,8 @@ if ($update ==1){
     echo "更新成功！<br/>";
     //$excludeFields = ['mname', 'mop_target', 'mid', 'mup', 'mdown', 'mleft', 'mright'];
     $dblj->exec("update system_map set mgtime='$nowdate' WHERE mid='$target_midid'");
-    
-if($clmid->mnpc!=''){
-        $dblj->exec("delete from system_npc_scene where nmid = '$target_midid'");
+    $dblj->exec("delete from system_npc_scene where nmid = '$target_midid'");
+    if($clmid->mnpc!=''){
         
         $data = $clmid->mnpc;
         $npc_s = explode(",", $data); // 使用逗号分隔字符串

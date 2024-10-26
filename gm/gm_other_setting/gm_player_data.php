@@ -1,9 +1,9 @@
 <?php
 
 if($delete_id !=0){
-    $sql = "DELETE FROM game1 WHERE uid = '$delete_id' or (imuid = '$delete_id' and send_type = 0);";
+    $sql = "DELETE FROM game1 WHERE uid = '$delete_id';";
     $dblj->exec($sql);
-    $sql = "DELETE FROM system_chat_data WHERE uid = '$delete_id';";
+    $sql = "DELETE FROM system_chat_data WHERE uid = '$delete_id' or (imuid = '$delete_id' and send_type = 0);";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_fight_quick WHERE sid = '$u_sid';";
     $dblj->exec($sql);
@@ -58,9 +58,9 @@ if($delete_id !=0){
 }
 
 if($refresh_id !=0){
-    $sql = "DELETE FROM game1 WHERE uid = '$refresh_id' or (imuid = '$refresh_id' and send_type = 0);";
+    $sql = "DELETE FROM game1 WHERE uid = '$refresh_id';";
     $dblj->exec($sql);
-    $sql = "DELETE FROM system_chat_data WHERE uid = '$refresh_id';";
+    $sql = "DELETE FROM system_chat_data WHERE uid = '$refresh_id' or (imuid = '$refresh_id' and send_type = 0);";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_fight_quick WHERE sid = '$u_sid';";
     $dblj->exec($sql);
