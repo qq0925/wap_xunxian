@@ -557,6 +557,13 @@ echo $refresh_html;
             $ym = 'gm/gameglobal_notice.php';
             break;
         case 'pve_fight'://打怪事件,一次打一个
+        
+            // 查找以 user:$sid 开头的所有键
+            $keys = $redis->keys("user:$sid*");
+            // 删除所有匹配的键
+            if (!empty($keys)) {
+                $redis->del($keys);
+            }
             $player = \player\getplayer($sid,$dblj);
             $pet = \player\getpet_fight($sid,$dblj);
             if($auto_canshu ==1){
@@ -605,6 +612,12 @@ echo $refresh_html;
             $ym = 'module_all/scene_fight.php';
             break;
         case 'pve_fighting'://打怪事件
+            // 查找以 user:$sid 开头的所有键
+            $keys = $redis->keys("user:$sid*");
+            // 删除所有匹配的键
+            if (!empty($keys)) {
+                $redis->del($keys);
+            }
             $ym = 'module_all/scene_fight.php';
             break;
         case 'quick_set'://调用快捷键设置事件
