@@ -492,7 +492,28 @@ function process_monster_damage($hurt_exp, $effect_comment,$jid, $gid, $dblj, $m
     }
 }
 
+function getSubstringBetweenDots($str, $startDotIndex = 0, $endDotIndex = null) {
+    // 将字符串按 '.' 分割成数组
+    $parts = explode('.', $str);
 
+    // 检查 startDotIndex 是否合理
+    if ($startDotIndex < 0 || $startDotIndex >= count($parts)) {
+        return false; // startDotIndex 不正确
+    }
+
+    // 如果 endDotIndex 为 null，获取从 startDotIndex 到结尾的部分
+    if ($endDotIndex === null) {
+        return implode('.', array_slice($parts, $startDotIndex));
+    }
+
+    // 检查 endDotIndex 是否合理
+    if ($endDotIndex <= $startDotIndex || $endDotIndex > count($parts)) {
+        return false; // endDotIndex 不正确
+    }
+
+    // 获取从 startDotIndex 到 endDotIndex - 1 的子字符串
+    return implode('.', array_slice($parts, $startDotIndex, $endDotIndex - $startDotIndex));
+}
 
 //---------分割线----------//
 function evaluate_expression($expr, $db, $sid,$oid,$mid,$jid,$type,$para=null){
@@ -513,19 +534,19 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
             // 如果缓存中没有，则查询数据库并缓存
             $firstDotPosition = strpos($attr, '.');
             if ($firstDotPosition !== false) {
-                $attr1 = substr($attr, 0, $firstDotPosition);
-                $attr2 = substr($attr, $firstDotPosition + 1);
-                $attr3 = substr($attr,$firstDotPosition + 1,4);
-switch($attr1){
+                $attr1 = getSubstringBetweenDots($attr, 0, 1);
+                $attr2 = getSubstringBetweenDots($attr, 1);
+                $attr3 = getSubstringBetweenDots($attr, 1, 2);
+                switch($attr1){
     case 'u':
         $cacheKey = 'user:'.$sid.':'.$attr;
         break;
     case 'o':
         $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$attr;
         break;
-    // case 'e':
-    //     $cacheKey = 'expr:'.':'.$attr2;
-    //     break;
+    case 'e':
+        $cacheKey = 'expr:'.':'.$attr2;
+        break;
     case 'c':
         $cacheKey = 'system:'.':'.$attr2;
         break;
@@ -536,8 +557,8 @@ switch($attr1){
         $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$attr;
         break;
 }
-                if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env.'){
-
+                if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'){
+                
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
                 // 替换字符串中的变量

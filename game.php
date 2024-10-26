@@ -3000,8 +3000,18 @@ echo $refresh_html;
             //logout($sid);
             $sql = "update game1 set endtime='$nowdate',sfzx=0,ucmd='' WHERE sid='$sid'";
             $dblj->exec($sql);
-            header("refresh:1;url=index.php");
-            exit();
+            
+            // 查找以 user:$sid 开头的所有键
+            $keys = $redis->keys("user:$sid*");
+            
+            // 删除所有匹配的键
+            if (!empty($keys)) {
+                $redis->del($keys);
+            }
+$refresh_html =<<<HTML
+<meta http-equiv="refresh" content="2;URL=index.php">
+HTML;
+echo $refresh_html;
         }else{
             \player\put_system_message_sql($player->uid,$dblj);
             $dblj->exec("update game1 set ucmd = '$cmd' where sid = '$sid'");
