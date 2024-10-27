@@ -107,6 +107,8 @@ if (isset($cmd)&&!isset($sid)){
 //3-4ms
 
 while (\player\upplayerlvl($sid, $dblj) == 1) {
+    $cacheKey = 'user:'.$sid.':'.'u.lvl';
+    $redis->del($cacheKey);
     $parents_cmd = 'gm_scene_new';
     $ret = $ret ?? global_event_data_get(22, $dblj);
     if ($ret) {
@@ -3107,6 +3109,9 @@ $q4 = $clj[$x];
 # 添加一个子项(如果子项存在，则覆盖;)
 $iniFile->addItem('超链接值', [$q3 => $q4]);
 }
+global $redis;
+
+$redis->flushAll($cacheKey);
 
 // echo '<pre>';
 // print_r(get_defined_vars());

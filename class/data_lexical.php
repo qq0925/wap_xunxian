@@ -88,33 +88,32 @@ foreach ($keyValuePairs as $pair) {
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
 
-                $ele_1_1 = \lexical_analysis\getSubstringBetweenDots($ele_1, 0, 1);
-                $ele_1_2 = \lexical_analysis\getSubstringBetweenDots($ele_1, 1);
-                $ele_1_3 = \lexical_analysis\getSubstringBetweenDots($ele_1, 1, 2);
-                switch($ele_1_1){
-    case 'u':
-        $cacheKey = 'user:'.$sid.':'.$ele_1;
-        break;
-    case 'o':
-        $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$ele_1;
-        break;
-    case 'e':
-        $cacheKey = 'expr:'.':'.$ele_1_2;
-        break;
-    case 'c':
-        $cacheKey = 'system:'.':'.$ele_1_2;
-        break;
-    case 'g':
-        $cacheKey = 'global:'.':'.$ele_1_2;
-        break;
-    case 'm':
-        $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$ele_1;
-        break;
-}
-if($cacheKey){
-    global $redis;
-$redis->del($cacheKey);
-}
+        $ele_1_1 = substr($pair, 0, $firstEqualsPos);
+        $ele_1_2 = substr($pair, $firstEqualsPos + 1);
+//                 switch($ele_1_1){
+//     case 'u':
+//         $cacheKey = 'user:'.$sid.':'.$ele_1;
+//         break;
+//     case 'o':
+//         $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$ele_1;
+//         break;
+//     case 'e':
+//         $cacheKey = 'expr:'.':'.$ele_1_2;
+//         break;
+//     case 'c':
+//         $cacheKey = 'system:'.':'.$ele_1_2;
+//         break;
+//     case 'g':
+//         $cacheKey = 'global:'.':'.$ele_1_2;
+//         break;
+//     case 'm':
+//         $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$ele_1;
+//         break;
+// }
+//                 if($cacheKey){
+//     global $redis;
+// $redis->del($cacheKey);
+// }
         $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
         //@$ele_1_2 = eval("return $ele_1_2;");
         $ele_1_2 = str_replace('.', '', $ele_1_2);
@@ -387,33 +386,32 @@ $sid = $old_sid;
             }
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
-                $ele_1_1 = \lexical_analysis\getSubstringBetweenDots($ele_1, 0, 1);
-                $ele_1_2 = \lexical_analysis\getSubstringBetweenDots($ele_1, 1);
-                $ele_1_3 = \lexical_analysis\getSubstringBetweenDots($ele_1, 1, 2);
-                switch($ele_1_1){
-    case 'u':
-        $cacheKey = 'user:'.$sid.':'.$ele_1;
-        break;
-    case 'o':
-        $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$ele_1;
-        break;
-    case 'e':
-        $cacheKey = 'expr:'.':'.$ele_1_2;
-        break;
-    case 'c':
-        $cacheKey = 'system:'.':'.$ele_1_2;
-        break;
-    case 'g':
-        $cacheKey = 'global:'.':'.$ele_1_2;
-        break;
-    case 'm':
-        $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$ele_1;
-        break;
-}
-if($cacheKey){
-    global $redis;
-$redis->del($cacheKey);
-}
+        $ele_1_1 = substr($pair, 0, $firstEqualsPos);
+        $ele_1_2 = substr($pair, $firstEqualsPos + 1);
+//                 switch($ele_1_1){
+//     case 'u':
+//         $cacheKey = 'user:'.$sid.':'.$ele_1;
+//         break;
+//     case 'o':
+//         $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$ele_1;
+//         break;
+//     case 'e':
+//         $cacheKey = 'expr:'.':'.$ele_1_2;
+//         break;
+//     case 'c':
+//         $cacheKey = 'system:'.':'.$ele_1_2;
+//         break;
+//     case 'g':
+//         $cacheKey = 'global:'.':'.$ele_1_2;
+//         break;
+//     case 'm':
+//         $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$ele_1;
+//         break;
+// }
+// if($cacheKey){
+//     global $redis;
+// $redis->del($cacheKey);
+// }
         
         
 
