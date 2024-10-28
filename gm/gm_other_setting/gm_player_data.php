@@ -1,6 +1,9 @@
 <?php
 
 if($delete_id !=0){
+    $token = $player['token'];
+    $sql = "DELETE FROM userinfo WHERE token = '$token';";
+    $dblj->exec($sql);
     $sql = "DELETE FROM game1 WHERE uid = '$delete_id';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_chat_data WHERE uid = '$delete_id' or (imuid = '$delete_id' and send_type = 0);";
@@ -111,8 +114,6 @@ if($refresh_id !=0){
     $sql = "DELETE FROM system_task_user WHERE sid = '$u_sid';";
     $dblj->exec($sql);
 //组队删除未设定
-    $sql = "insert into game1(uid,uis_designer,sid,token) value('$uid','$uis_designer','$sid','$token')";
-    $dblj->exec($sql);
     echo "已清空{$u_name}[ID:{$refresh_id}]的玩家数据！<br/>";
 }
 
@@ -204,7 +205,7 @@ $player_data_html = <<<HTML
 $table_frame
 $player_data_detail
 </table><br/>
-<button onclick="myFunction2(this)" drump_url="{$delete_all_url}">删除所有玩家数据</button><br/><br/>
+<button onclick="myFunction2(this)" drump_url="{$delete_all_url}">清空所有玩家数据</button><br/><br/>
 <a href="?cmd=$last_page">返回上级</a><br/><br/>
 <a href="?cmd=$gm_main">设计大厅</a><br/>
 </div>
