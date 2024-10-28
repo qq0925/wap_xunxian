@@ -56,6 +56,9 @@ if($delete_id !=0){
     $dblj->exec($sql);
     $sql = "DELETE FROM system_task_user WHERE sid = '$u_sid';";
     $dblj->exec($sql);
+    $sql = "DELETE FROM system_team_user WHERE team_master = '$delete_id';";
+    $dblj->exec($sql);
+
 //组队删除未设定
     echo "已删除[ID:{$delete_id}]的玩家数据！<br/>";
 }
@@ -112,6 +115,8 @@ if($refresh_id !=0){
     $sql = "DELETE FROM system_storage_locked WHERE sid = '$u_sid';";
     $dblj->exec($sql);
     $sql = "DELETE FROM system_task_user WHERE sid = '$u_sid';";
+    $dblj->exec($sql);
+    $sql = "DELETE FROM system_team_user WHERE team_master = '$refresh_id';";
     $dblj->exec($sql);
 //组队删除未设定
     echo "已清空{$u_name}[ID:{$refresh_id}]的玩家数据！<br/>";
