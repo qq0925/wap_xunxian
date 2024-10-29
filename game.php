@@ -494,7 +494,7 @@ echo $refresh_html;
 $refresh_html =<<<HTML
 <meta http-equiv="refresh" content="1;URL=?cmd=$gofirst">
 HTML;
-//echo $refresh_html;
+echo $refresh_html;
                     //header("refresh:1;url=?cmd=$gofirst");
                 }
             }else{
