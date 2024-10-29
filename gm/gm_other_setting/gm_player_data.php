@@ -1,8 +1,7 @@
 <?php
 
 if($delete_id !=0){
-    $token = $player['token'];
-    $sql = "DELETE FROM userinfo WHERE token = '$token';";
+    $sql = "DELETE FROM userinfo WHERE token = '$u_token';";
     $dblj->exec($sql);
     $sql = "DELETE FROM game1 WHERE uid = '$delete_id';";
     $dblj->exec($sql);
@@ -118,7 +117,7 @@ if($refresh_id !=0){
     $dblj->exec($sql);
     $sql = "DELETE FROM system_team_user WHERE team_master = '$refresh_id';";
     $dblj->exec($sql);
-//组队删除未设定
+//组队删除未设定,这里应该传递组队删除事件过去，将该玩家相关功能无效
     echo "已清空{$u_name}[ID:{$refresh_id}]的玩家数据！<br/>";
 }
 
@@ -175,16 +174,19 @@ foreach ($playerData as $player) {
 $index = $index + 1;
 $uid = $player['uid'];
 $uname = $player['uname'];
-$refresh_url = $encode->encode("cmd=gm_game_othersetting&canshu=4&refresh_id=$uid&sid=$sid");
-$delete_url = $encode->encode("cmd=gm_game_othersetting&canshu=4&delete_id=$uid&sid=$sid");
+$usid = $player['sid'];
+$u_token = $player['token'];
+$ulvl = $player['ulvl'];
+$refresh_url = $encode->encode("cmd=gm_game_othersetting&canshu=4&u_sid=$usid&refresh_id=$uid&sid=$sid");
+$delete_url = $encode->encode("cmd=gm_game_othersetting&canshu=4&u_token=$u_token&u_sid=$usid&delete_id=$uid&sid=$sid");
 $player_data_detail .= <<<HTML
 <tr>
 <td>{$index}</td>
 <td>{$uid}</td>
-<td>{$player['token']}</td>
+<td>{$u_token}</td>
 <td>{$uname}</td>
-<td>{$player['ulvl']}</td>
-<td>{$player['sid']}</td>
+<td>{$ulvl}</td>
+<td>{$usid}</td>
 <td>
 <button onclick="myFunction(this)" drump_url="{$refresh_url}" id="{$uid}" name="{$uname}">清空</button>
 <button onclick="myFunction1(this)" drump_url="{$delete_url}" id="{$uid}" name="{$uname}">删除</button>

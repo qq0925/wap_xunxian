@@ -398,10 +398,8 @@ HTML;
                 $sid = md5($username.$token.'19980925');
                 $sql="select * from game1 where token='$token'";
                 $cxjg = $dblj->query($sql);
-                $cxjg->bindColumn('sid',$player->sid);
-                $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
                 $nowdate = date('Y-m-d H:i:s');
-                if ($player->sid ==''){
+                if ($cxjg->rowCount() == 0){
                     $gameconfig = \player\getgameconfig($dblj);
                     $firstmid = $gameconfig->entrance_id;
                     
@@ -496,7 +494,7 @@ echo $refresh_html;
 $refresh_html =<<<HTML
 <meta http-equiv="refresh" content="1;URL=?cmd=$gofirst">
 HTML;
-echo $refresh_html;
+//echo $refresh_html;
                     //header("refresh:1;url=?cmd=$gofirst");
                 }
             }else{
@@ -1665,6 +1663,9 @@ echo $refresh_html;
             break;
         case 'gm_game_lpdesign'://生活职业设计
             $ym = 'gm/gm_lp_design/gm_lp_main.php';
+            break;
+        case 'gm_game_timerdesign'://定时器设计
+            $ym = 'gm/gm_timer/gm_timer_main.php';
             break;
         case 'gm_game_zipfile'://源文件压缩
             if($type =='update'){

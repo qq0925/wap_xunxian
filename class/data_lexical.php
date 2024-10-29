@@ -88,8 +88,8 @@ foreach ($keyValuePairs as $pair) {
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
 
-        $ele_1_1 = substr($pair, 0, $firstEqualsPos);
-        $ele_1_2 = substr($pair, $firstEqualsPos + 1);
+        $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
+        $ele_1_2 = substr($ele_1, $SecondEqualsPos + 1);
 //                 switch($ele_1_1){
 //     case 'u':
 //         $cacheKey = 'user:'.$sid.':'.$ele_1;
@@ -386,8 +386,8 @@ $sid = $old_sid;
             }
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
-        $ele_1_1 = substr($pair, 0, $firstEqualsPos);
-        $ele_1_2 = substr($pair, $firstEqualsPos + 1);
+        $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
+        $ele_1_2 = substr($ele_1, $SecondEqualsPos + 1);
 //                 switch($ele_1_1){
 //     case 'u':
 //         $cacheKey = 'user:'.$sid.':'.$ele_1;
