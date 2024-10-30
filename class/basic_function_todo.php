@@ -112,9 +112,21 @@ $value = $value?$value:$func_name;
         case '34':
             $online_url = online_url($cmd,$page_id,$sid,$dblj,$value,$cmid);
             return $online_url;
+        case '39':
+            $buy_url = buy_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $buy_url;
+        case '41':
+            $gift_url = gift_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $gift_url;
         case '43':
             $invite_team_url = invite_team_action($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $invite_team_url;
+        case '45':
+            $add_friend_url = add_friend_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $add_friend_url;
+        case '46':
+            $add_black_url = add_black_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $add_black_url;
         case '50':
             $quick_link = quick_link($cmd,$page_id,$sid,$dblj,$value,$mid,1,$cmid);
             return $quick_link;
@@ -367,6 +379,80 @@ HTML;
     return $online_html;
 }
 
+function buy_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    global $encode;
+    $buy_url = $encode->encode("cmd=player_buy&oid=$mid&ucmd=$cmid&sid=$sid");
+    $buy_html=<<<HTML
+<a href="?cmd=$buy_url">{$value}</a>
+HTML;
+    return $buy_html;
+}
+
+function gift_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    global $encode;
+    $gift_url = $encode->encode("cmd=player_gift&oid=$mid&ucmd=$cmid&sid=$sid");
+    $gift_html=<<<HTML
+<a href="?cmd=$gift_url">{$value}</a>
+HTML;
+    return $gift_html;
+}
+
+function add_friend_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+global $encode;
+$add_para = explode('|',$value);
+$sql = "select * from system_player_friend where usid = '$sid' and osid = '$mid'";
+$cxjg = $dblj->query($sql);
+$wtjrw = $cxjg->fetch(PDO::FETCH_ASSOC);
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+if($wtjrw){
+    $delete_value = $add_para[1];
+    $delete_url = $encode->encode("cmd=player_delete_friend&ucmd=$cmid&canshu=1&oid=$mid&sid=$sid");
+    $add_html .=<<<HTML
+<a href ="?cmd=$delete_url">{$delete_value}</a>
+HTML;
+}else{
+    $add_value = $add_para[0];
+    $add_url = $encode->encode("cmd=player_delete_friend&ucmd=$cmid&canshu=2&oid=$mid&sid=$sid");
+    $add_html .=<<<HTML
+<a href ="?cmd=$add_url">{$add_value}</a>
+HTML;
+}
+    return $add_html;
+}
+
+
+function add_black_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+global $encode;
+$add_para = explode('|',$value);
+$sql = "select * from system_player_black where usid = '$sid' and osid = '$mid'";
+$cxjg = $dblj->query($sql);
+$wtjrw = $cxjg->fetch(PDO::FETCH_ASSOC);
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+if($wtjrw){
+    $delete_value = $add_para[1];
+    $delete_url = $encode->encode("cmd=player_delete_black&ucmd=$cmid&canshu=1&oid=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$delete_url">{$delete_value}</a><br/>
+HTML;
+}else{
+    $add_value = $add_para[1];
+    $add_url = $encode->encode("cmd=player_delete_black&ucmd=$cmid&canshu=2&oid=$mid&sid=$sid");
+    $op_html .=<<<HTML
+<a href ="?cmd=$add_url">{$add_value}</a><br/>
+HTML;
+}
+    return $add_html;
+}
 
 function item_url($cmd,$page_id,$sid,$dblj,$value,&$cmid){
     
