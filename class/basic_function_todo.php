@@ -445,7 +445,7 @@ if($wtjrw){
 <a href ="?cmd=$delete_url">{$delete_value}</a>
 HTML;
 }else{
-    $add_value = $add_para[1];
+    $add_value = $add_para[0];
     $add_url = $encode->encode("cmd=player_delete_black&ucmd=$cmid&canshu=2&oid=$mid&sid=$sid");
     $add_html .=<<<HTML
 <a href ="?cmd=$add_url">{$add_value}</a>
