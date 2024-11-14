@@ -534,6 +534,13 @@ function getitem($iid,$dblj){
     return $item;
 }
 
+function getitem_root($item_true_id,$sid,$dblj){
+    $sql = "select iid from `system_item` where item_true_id = '$item_true_id' and sid = '$sid'";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    return $ret['iid'];
+}
+
 
 function getitem_user($sid,$dblj){
     $item = new item();

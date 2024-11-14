@@ -109,9 +109,6 @@ $other_html = <<<HTML
 <form action="?cmd=$other_set" method="POST">
 查看物品操作列表是否换行：<select name="item_op_br"><option value =0>否</option><option value =1 {$selectedOption_3}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
-背景颜色:<select name="text_color"><option value =0>黑</option><option value =1 {$selectedOption}>白</option><option value =2 {$selectedOption}>灰</option><option value =3 {$selectedOption}>青</option></select><br/>
-文字颜色:<select name="text_color"><option value =0>黑</option><option value =1 {$selectedOption}>白</option></select><br/>
-命令颜色:<select name="text_color"><option value =0>浅绿</option><option value =1 {$selectedOption}>浅蓝</option><option value =2 {$selectedOption}>深黄</option><option value =3 {$selectedOption}>深粉</option><option value =3 {$selectedOption}>深橘</option></select><br/>
 css样式编写:<br/>
 <form action="?cmd=$other_set" method="POST">
 <textarea name="gm_css_text" maxlength="-1" rows="8" cols="40" >{$gm_css_text}</textarea>
@@ -120,5 +117,10 @@ css样式编写:<br/>
 <a href="?cmd=$last_page">返回上级</a><br/><br/>
 <a href="?cmd=$gm_main">设计大厅</a><br/>
 HTML;
+
+//背景颜色:<select name="text_color"><option value =0>黑</option><option value =1 {$selectedOption}>白</option><option value =2 {$selectedOption}>灰</option><option value =3 {$selectedOption}>青</option></select><br/>
+// 文字颜色:<select name="text_color"><option value =0>黑</option><option value =1 {$selectedOption}>白</option></select><br/>
+// 命令颜色:<select name="text_color"><option value =0>浅绿</option><option value =1 {$selectedOption}>浅蓝</option><option value =2 {$selectedOption}>深黄</option><option value =3 {$selectedOption}>深粉</option><option value =3 {$selectedOption}>深橘</option></select><br/>
+
 echo $other_html;
 ?>

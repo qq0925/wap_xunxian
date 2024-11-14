@@ -133,6 +133,7 @@ $cdid[] = $cmid;
 $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 
 if($player->uis_designer ==1){
+    $itemid = \player\getitem_root($item_true_id,$sid,$dblj);
     $modify = $encode->encode("cmd=game_item_list&item_id=$itemid&sid=$sid");
     $gm_item_design = <<<HTML
     <a href = "?cmd=$modify">设计该物品</a><br/>

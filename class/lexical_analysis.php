@@ -2010,6 +2010,7 @@ if(!$bagequiphtml){
                                 $stmt->bind_param("ss", $mid,$sid);
                                 $stmt->execute();
                                 $result = $stmt->get_result();
+                                $row = $result->fetch_assoc();
                             }elseif(strpos($attr3, 'iembed.') === 0){
                         //镶物属性相关
                         $attr4 = substr($attr3, 7); // 提取 "embed." 后面的部分
@@ -2047,17 +2048,28 @@ if(!$bagequiphtml){
                         }
                         //镶物属性相关
                             }else{
-                                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = ? and sid = ?)";
+                                $sql = "SHOW COLUMNS FROM system_item_module LIKE '$attr3'";
+                                $result = $db->query($sql);
+                                if($result->num_rows >0){
+                                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mid' and sid = '$sid')";
+                                }else{
+                                $sql = "SELECT * FROM system_addition_attr WHERE sid = '$sid' and oid = 'item' and mid = '$mid' and name = '$attr3'";
+                                $attr_type = 1;
+                                }
                                 $stmt = $db->prepare($sql);
-                                $stmt->bind_param("ss", $mid,$sid);
                                 $stmt->execute();
-                                $result = $stmt->get_result();
+                                $result_2 = $stmt->get_result();
+                                if (!$result_2) {
+                                    die('查询失败: ' . $db->error);
+                                }
+                                $row = $result_2->fetch_assoc();
                             }
-                            if (!$result) {
-                                die('查询失败: ' . $db->error);
-                            }
-                            $row = $result->fetch_assoc();
+                            
+                            if($attr_type ==1){
+                            $row_result = $row['value'];
+                            }else{
                             $row_result = $row[$attr3];
+                            }
                             if($attr3 =="iroot"){
                                 $item_para = explode("|",$row_result);
                                 $para_1 = $item_para[0];
@@ -2096,7 +2108,11 @@ if(!$bagequiphtml){
                                 die('查询失败: ' . $db->error);
                             }
                             $row = $result->fetch_assoc();
+                            if($attr_type !=1){
                             $row_result = $row[$attr3];
+                            }else{
+                            $row_result = $row['value'];
+                            }
                             if ($row_result === null ||$row_result ==='') {
                                 $op = "\"\""; // 或其他默认值
                                 }else{

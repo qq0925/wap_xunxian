@@ -187,7 +187,6 @@ foreach ($keyValuePairs as $pair) {
                 break;
             case 'o':
                 // 检查字段是否存在
-                
                 if(strpos($ele_1_2, "c_msg") === 0){
                     $sql = "select uname,uid from game1 where sid ='$oid'";
                     $result = $db->query($sql);
@@ -257,6 +256,24 @@ foreach ($keyValuePairs as $pair) {
                     $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = '$ele_2' WHERE ngid = '$mid'";
                     $db->query($updateQuery);
                 }
+                }elseif($oid =='item'){
+                // $sql = "select name from gm_game_attr where value_type =4 and id = '$ele_1_2'";
+                // $result = $db->query($sql);
+                // $row = $result->fetch_assoc();
+                // $attr_name = $row['name'];
+                $ele_1_2 = 'i'.$ele_1_2;
+                // 检查字段是否存在
+                $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$sid' and oid = 'item' and mid = '$mid'");
+                // 如果字段存在，则更新字段值
+                if($result->num_rows > 0){
+                    $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE sid = '$sid' and name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
+                    $db->query($updateQuery);
+                } else{
+                    // 字段不存在，添加新字段并更新值
+                    $alterQuery = "INSERT INTO system_addition_attr(name,value,sid,oid,mid)values('$ele_1_2','$ele_2','$sid','item','$mid')";
+                    $db->query($alterQuery);
+                }
+                
                 }else{
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
 
@@ -519,6 +536,25 @@ $sid = $old_sid;
                     $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = $reg + '$ele_2' WHERE ngid = '$mid'";
                     $db->query($updateQuery);
                 }
+                }
+                elseif($oid =='item'){
+                // $sql = "select name from gm_game_attr where value_type =4 and id = '$ele_1_2'";
+                // $result = $db->query($sql);
+                // $row = $result->fetch_assoc();
+                // $attr_name = $row['name'];
+                $ele_1_2 = 'i'.$ele_1_2;
+                // 检查字段是否存在
+                $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$sid' and oid = 'item' and mid ='$mid'");
+                // 如果字段存在，则更新字段值
+                if($result->num_rows > 0){
+                    $updateQuery = "UPDATE system_addition_attr SET value = value + '$ele_2' WHERE sid = '$sid' and name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
+                    $db->query($updateQuery);
+                } else{
+                    // 字段不存在，添加新字段并更新值
+                    $alterQuery = "INSERT INTO system_addition_attr(name,value,sid,oid,mid)values('$ele_1_2','$ele_2','$sid','item','$mid')";
+                    $db->query($alterQuery);
+                }
+                
                 }
                 break;
             case 'g':

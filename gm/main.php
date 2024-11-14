@@ -50,6 +50,7 @@ $gm_zip_update = $encode->encode("cmd=gm_game_zipfile&type=update&sid=$sid");
 $gm_zip_all = $encode->encode("cmd=gm_game_zipfile&type=all&sid=$sid");
 $del_all_cache = $encode->encode("cmd=gm&remove_canshu=3&sid=$sid");
 $view_all_cache = $encode->encode("cmd=gm&remove_canshu=5&sid=$sid");
+$gm_game_timerdesign = $encode->encode("cmd=gm_game_timerdesign&sid=$sid");
 $gm_post_canshu = 0;
 $post_tishi = '';
 $gm_html = <<<HTML
@@ -80,7 +81,7 @@ $gm_html = <<<HTML
 ---</br>
 <a href="?cmd=$gm_game_photomanage">管理图片({$game_data->photo_count})</a><br/>
 <a href="?cmd=$gm_game_othersetting">功能设置</a><br/>
-<a href="?cmd=$gm_game_timerdesign">设计定时器</a>!!!<br/>
+<a href="?cmd=$gm_game_timerdesign">设计定时器</a><br/>
 <a href="?cmd=$gm_global_notice">发布临时公告</a><br/>
 <a href="?cmd=$del_all_cache">清空全部缓存</a><br/>
 <a href="?cmd=$view_all_cache">查看全部缓存</a><br/>

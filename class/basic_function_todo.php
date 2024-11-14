@@ -553,7 +553,7 @@ $op_link_task = $result[$i]['link_task'];
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$register_triggle = checkTriggerCondition($op_show_cond,$dblj,$sid,$oid);//显示条件
+$register_triggle = checkTriggerCondition($op_show_cond,$dblj,$sid,$oid,$mid);//显示条件
 if(is_null($register_triggle)){
     $register_triggle =1;//若触发条件为空则默认true
 }
@@ -651,6 +651,46 @@ HTML;
 }
 break;
         case '3':
+$itemid = \player\getitem_root($mid,$sid,$dblj);
+$sql = "SELECT * FROM system_item_op WHERE belong = :iid order by id asc";
+$stmt = $dblj->prepare($sql);
+$stmt->bindParam(':iid', $itemid,PDO::PARAM_STR);
+$stmt->execute();
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$sql = "SELECT item_op_br FROM gm_game_basic";
+$stmt = $dblj->prepare($sql);
+$stmt->execute();
+$result_2 = $stmt->fetch(PDO::FETCH_ASSOC);
+$op_br = $result_2['item_op_br'];
+for ($i=0;$i<count($result);$i++){
+$op_id = $result[$i]['id'];
+$op_name = $result[$i]['name'];
+$op_belong = $result[$i]['belong'];
+$op_show_cond = $result[$i]['show_cond'];
+$op_link_event = $result[$i]['link_event'];
+$op_link_task = $result[$i]['link_task'];
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+$register_triggle = checkTriggerCondition($op_show_cond,$dblj,$sid,$oid,$mid);//显示条件
+if(is_null($register_triggle)){
+    $register_triggle =1;//若触发条件为空则默认true
+}
+if($register_triggle){
+$oid = 'item';
+$parents_page = 'module_all/scene_item_info.php';
+$op_next = $encode->encode("cmd=main_target_event&oid=$oid&mid=$mid&parents_cmd=$cmd&ucmd=$cmid&itemid=$op_belong&target_event=$op_link_event&sid=$sid");
+$op_html .=<<<HTML
+<a href="?cmd=$op_next">{$op_name}</a>
+HTML;
+if($op_br ==1){
+    $op_html .="<br/>";
+}
+}if($op_br !=1){
+$op_html .="<br/>";
+}
+}
+            
         // $sql = "SELECT sim.itype,si.item_true_id, sim.iid
         // FROM system_item si
         // JOIN system_item_module sim ON si.iid = sim.iid
