@@ -2044,6 +2044,7 @@ if(!$bagequiphtml){
                         
                         // 获取查询结果
                         $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
                         $attr3 = $xid;
                         }
                         //镶物属性相关
