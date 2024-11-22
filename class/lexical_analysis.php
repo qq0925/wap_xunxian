@@ -2643,7 +2643,7 @@ if(!$bagequiphtml){
                         $userData = [];
                         while ($row = $cxjg->fetch_assoc()) {
                             $userSid = $row['sid'];
-                            $userExp = process_string($rankExp, $userSid);
+                            $userExp = (int)process_string($rankExp, $userSid);
                             $userShowCond = checkTriggerCondition($showCond, $db, $userSid);
                     
                             if (is_null($userShowCond)) {
@@ -2727,7 +2727,7 @@ if(!$bagequiphtml){
                                 $userData = [];
                                 while ($row = $cxjg->fetch_assoc()) {
                                     $userSid = $row['sid'];
-                                    $userExp = process_string($rankExp, $userSid);
+                                    $userExp = (int)process_string($rankExp, $userSid);
                                     $userShowCond = checkTriggerCondition($showCond, $db, $userSid);
                             
                                     if (is_null($userShowCond)) {
