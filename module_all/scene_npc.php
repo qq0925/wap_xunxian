@@ -203,7 +203,7 @@ for ($i=0;$i<count($get_main_page);$i++){
     $cdid[] = $cmid;
         $main_target_event = $encode->encode("cmd=main_target_event&oid=$oid&mid=$mid&target_event=$main_target_event&parents_cmd=$cmd&parents_page=$parents_page&last_page_id=$main_id&sid=$sid");
     }elseif ($main_target_event ==0) {
-        $main_target_event = $encode->encode("cmd=event_no_define&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
+        $main_target_event = $encode->encode("cmd=event_no_define&oid=$oid&mid=$mid&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
     }
     if($main_target_func !=0 &&$ret_bool ==0){
         $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,2,$cmid);

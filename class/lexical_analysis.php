@@ -442,7 +442,7 @@ function process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, $context,$n
     $j_hurt_exp = $skill_data['j_hurt_exp'];
     $j_umsg = $skill_data['j_umsg'];
 
-    $hurt_cut = process_string($j_hurt_exp, $sid, $context, $attack_gid, $jid, 'fight',1);
+    $hurt_cut = process_string($j_hurt_exp, $sid, $context, $attack_gid, $jid, 'fight',0);
     $hurt_cut = eval("return $hurt_cut;");
     $hurt_cut = (int)floor($hurt_cut);
     $hurt_cut = $hurt_cut <= 0 ? 1 : $hurt_cut;
@@ -2790,7 +2790,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
 
     $matches = [];
     if($input){
-    preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
+    while(preg_match_all('/v\(([\w.]+)\)/', $input, $matches)){
     if (!empty($matches[1])) {
         foreach ($matches[1] as $match) {
             $firstDotPosition = strpos($match, '.');
@@ -2812,6 +2812,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
         }
     }
     }
+}
     $matches_2 = [];
     //preg_match_all('/f\(([\w.]+)\)/', $input, $matches_2);
     if($input){

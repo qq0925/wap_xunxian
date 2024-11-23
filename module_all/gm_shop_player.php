@@ -93,7 +93,7 @@ $gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$gobackoplayer = $encode->encode("cmd=getoplayerinfo&oid=$ouid&ucmd=$cmid&sid=$sid");
+$gobackoplayer = $encode->encode("cmd=getoplayerinfo&mid=$oid&ucmd=$cmid&sid=$sid");
 
 $shop_html = <<<HTML
 <p>你身上有{$gm_post->money_name}:{$player->umoney}{$gm_post->money_measure}<br/>

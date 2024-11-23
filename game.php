@@ -733,11 +733,11 @@ echo $refresh_html;
             break;
         case 'getoplayerinfo'://查看对方玩家事件
             $player = player\getplayer($sid,$dblj);
-            if($uid == $player->uid){
+            if($mid == $player->sid){
             $ym ='module_all/scene_player_detail.php';
             }else{
-                if(!$oid){
-                $oid = $uid;
+                if(!$mid){
+                $mid = $oid;
                 }
             //查看对方玩家事件
             $ym ='module_all/scene_oplayer_detail.php';
@@ -2806,6 +2806,7 @@ echo $refresh_html;
             $team_id = \player\getplayer($sid,$dblj)->uteam_id;
             if($invited_state==0&&$team_id!=0){
             \player\changeplayersx('uteam_invited_id',$team_id,$oid,$dblj);
+            $mid = $oid;
             $oid = $ret['uid'];
             $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','邀请你加入队伍!请打开队伍页面进行确认!<br/>',$player->uid,{$oid},1,'$send_time')";
             $cxjg = $dblj->exec($sql);
@@ -2826,6 +2827,7 @@ echo $refresh_html;
             $sql = "select * from game1 where sid = '$oid'";
             $cxjg = $dblj->query($sql);
             $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+            $mid = $oid;
             $oid = $ret['uid'];
             echo "已将对方移出好友列表！<br/>";
             }elseif($canshu ==2){
@@ -2834,6 +2836,7 @@ echo $refresh_html;
             $sql = "select * from game1 where sid = '$oid'";
             $cxjg = $dblj->query($sql);
             $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+            $mid = $oid;
             $oid = $ret['uid'];
             $player = \player\getplayer($sid,$dblj);
             $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','加你为好友了!',$player->uid,{$oid},1,'$send_time')";
@@ -2850,6 +2853,7 @@ echo $refresh_html;
             $sql = "select * from game1 where sid = '$oid'";
             $cxjg = $dblj->query($sql);
             $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+            $mid = $oid;
             $oid = $ret['uid'];
             echo "已将对方移出黑名单！<br/>";
             }elseif($canshu ==2){
@@ -2858,6 +2862,7 @@ echo $refresh_html;
             $sql = "select * from game1 where sid = '$oid'";
             $cxjg = $dblj->query($sql);
             $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+            $mid = $oid;
             $oid = $ret['uid'];
             $player = \player\getplayer($sid,$dblj);
             $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','我们恩断义绝吧!',$player->uid,{$oid},1,'$send_time')";

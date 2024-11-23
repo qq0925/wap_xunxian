@@ -48,7 +48,7 @@ $list_row = $game_config->list_row;
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$goplayer = $encode->encode("cmd=getoplayerinfo&oid=$oplayer->uid&ucmd=$cmid&sid=$sid");
+$goplayer = $encode->encode("cmd=getoplayerinfo&mid=$oplayer->sid&ucmd=$cmid&sid=$sid");
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;

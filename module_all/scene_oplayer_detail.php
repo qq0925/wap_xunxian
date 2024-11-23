@@ -11,12 +11,12 @@ $parents_page = $currentFilePath;
 // $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
 $uid = $player->uid;
-$oplayer = player\getplayer1($oid,$dblj);
+$oplayer = player\getplayer($mid,$dblj);
 if(!$oplayer->sid){
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
-    $all =<<<HTML
+$all =<<<HTML
 该用户不存在！<br/>
 <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
@@ -24,7 +24,7 @@ HTML;
 $game_main = '';
 $get_main_page = \gm\get_oplayer_page($dblj);
 $br = 0;
-$oplayer = player\getplayer1($oid,$dblj);
+
 $imoid = $oplayer->uid;
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
@@ -42,7 +42,6 @@ HTML;
 
 for ($i=0;$i<count($get_main_page);$i++){
     $oid = 'scene_oplayer';
-    $mid = $oplayer->sid;
     $main_id = $get_main_page[$i]['id'];
     $main_type = $get_main_page[$i]['type'];
     $main_value = $get_main_page[$i]['value'];
@@ -92,10 +91,9 @@ for ($i=0;$i<count($get_main_page);$i++){
     if($main_target_event !=0 &&$ret_bool ==0){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
-    $clj[] = $i;
-        $main_target_event = $encode->encode("cmd=main_target_event&target_event=$main_target_event&parents_cmd=$cmd&parents_page=$parents_page&last_page_id=$main_id&sid=$sid");
+        $main_target_event = $encode->encode("cmd=main_target_event&oid=$oid&mid=$mid&target_event=$main_target_event&ucmd=$cmid&parents_cmd=$cmd&parents_page=$parents_page&last_page_id=$main_id&sid=$sid");
     }elseif ($main_target_event ==0) {
-        $main_target_event = $encode->encode("cmd=event_no_define&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
+        $main_target_event = $encode->encode("cmd=event_no_define&oid=$oid&mid=$mid&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
     }
     if($main_target_func !=0 &&$ret_bool ==0){
         $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,5,$cmid);
@@ -145,7 +143,6 @@ $friend_list = <<<HTML
 <a href="?cmd=$gofriend_list">返回好友列表</a><br/>
 HTML;
 }
-$oplayer_design = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=5&sid=$sid");
 $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
@@ -158,6 +155,7 @@ $friend_list
 HTML;
 }
 if($player->uis_designer ==1){
+$oplayer_design = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=5&sid=$sid");
 $all .=<<<HTML
 <a href="?cmd=$oplayer_design">设计查看玩家模板</a><br/>
 HTML;

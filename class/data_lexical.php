@@ -274,6 +274,28 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($alterQuery);
                 }
                 
+                }elseif($oid =='scene_oplayer'){
+                $sql = "select name,if_show from gm_game_attr where value_type =1 and id = '$ele_1_2'";
+                $result = $db->query($sql);
+                $row = $result->fetch_assoc();
+                $attr_name = $row['name'];
+                $attr_show = $row['if_show'];
+                $ele_1_2 = 'u'.$ele_1_2;
+                // 检查字段是否存在
+                $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
+                $result_2 = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$mid'");
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE game1 SET $ele_1_2 = '$ele_2' WHERE sid = '$mid'";
+                    $db->query($updateQuery);
+                }elseif($result_2->num_rows > 0){
+                $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE sid = '$mid' and name = '$ele_1_2'";
+                $db->query($updateQuery);
+                } else {
+                    // 字段不存在，添加新字段并更新值,这边还要做判断
+                    $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$mid')";
+                    $db->query($alterQuery);
+                }
                 }else{
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
 
@@ -555,6 +577,37 @@ $sid = $old_sid;
                     $db->query($alterQuery);
                 }
                 
+                }
+                elseif($oid =='scene_oplayer'){
+                $sql = "select name,if_show from gm_game_attr where value_type =1 and id = '$ele_1_2'";
+                $result = $db->query($sql);
+                $row = $result->fetch_assoc();
+                $attr_name = $row['name'];
+                $attr_show = $row['if_show'];
+                $ele_1_2 = 'u'.$ele_1_2;
+                // 检查字段是否存在
+                $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
+                $result_2 = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$mid'");
+                // 如果字段存在，则更新字段值
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE game1 SET $ele_1_2 = $ele_1_2 + '$ele_2' WHERE sid = '$mid'";
+                    $db->query($updateQuery);
+                }elseif($result_2->num_rows > 0){
+                $updateQuery = "UPDATE system_addition_attr SET value = value + '$ele_2' WHERE sid = '$mid' and name = '$ele_1_2'";
+                $db->query($updateQuery);
+                } else {
+                    // 字段不存在，添加新字段并更新值,这边还要做判断
+                    $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$mid')";
+                    $db->query($alterQuery);
+                }
+                include "pdo.php";
+                if($ele_2 >=0 && $attr_name && $attr_show){
+                $echo_mess =  "{$attr_name}+{$ele_2}";
+                \player\update_message_sql($mid,$dblj,$echo_mess,0);
+                }elseif($ele_2 <0 && $attr_name && $attr_show){
+                $echo_mess =  "{$attr_name}{$ele_2}";
+                \player\update_message_sql($mid,$dblj,$echo_mess,0);
+                }
                 }
                 break;
             case 'g':

@@ -559,7 +559,8 @@ if(is_null($register_triggle)){
 }
 if($register_triggle){
 $oid = 'scene';
-$parents_page = 'module_all/main_page.php';
+//$parents_page = 'module_all/main_page.php';
+global $parents_page;
 $op_next = $encode->encode("cmd=main_target_event&oid=$oid&mid=$mid&parents_page=$parents_page&parents_cmd=$cmd&ucmd=$cmid&mid=$op_belong&target_event=$op_link_event&sid=$sid");
 $op_html .=<<<HTML
 <a href="?cmd=$op_next">{$op_name}</a>
@@ -868,7 +869,6 @@ case '5':
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$clj[] = $cmd;
     $player_gift = $encode->encode("cmd=player_gift&ucmd=$cmid&oid=$mid&sid=$sid");
     $op_html .=<<<HTML
 <a href ="?cmd=$player_gift">赠送</a>
@@ -876,7 +876,6 @@ HTML;
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$clj[] = $cmd;
     $player_action = $encode->encode("cmd=player_buy&ucmd=$cmid&oid=$mid&sid=$sid");
     $op_html .=<<<HTML
 <a href ="?cmd=$player_action">动作</a>
@@ -884,7 +883,6 @@ HTML;
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$clj[] = $cmd;    
 $quest_tran = $encode->encode("cmd=player_quest_tran&ucmd=$cmid&canshu=1&oid=$mid&sid=$sid");
 $op_html .=<<<HTML
 <a href ="?cmd=$quest_tran">交易</a>
@@ -892,7 +890,6 @@ HTML;
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$clj[] = $cmd;
     $player_buy = $encode->encode("cmd=player_buy&ucmd=$cmid&oid=$mid&sid=$sid");
     $op_html .=<<<HTML
 <a href ="?cmd=$player_buy">摊位</a><br/>
@@ -900,7 +897,6 @@ HTML;
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$clj[] = $cmd;
     $player_battle = $encode->encode("cmd=player_buy&ucmd=$cmid&oid=$mid&sid=$sid");
     $op_html .=<<<HTML
 <a href ="?cmd=$player_battle">挑战</a>
@@ -908,7 +904,6 @@ HTML;
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$clj[] = $cmd;
     $player_attack = $encode->encode("cmd=player_buy&ucmd=$cmid&oid=$mid&sid=$sid");
     $op_html .=<<<HTML
 <a href ="?cmd=$player_attack">偷袭</a>
@@ -917,9 +912,6 @@ HTML;
 $sql = "select uteam_id from game1 where sid = '$sid'";
 $cxjg = $dblj->query($sql);
 $uteam_ret = $cxjg->fetch(PDO::FETCH_ASSOC);
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$clj[] = $cmd;
 $uteam_id = $uteam_ret['uteam_id'];
 
 $sql = "select uid,uteam_id from game1 where sid = '$mid'";
@@ -927,7 +919,6 @@ $cxjg = $dblj->query($sql);
 $team_ret = $cxjg->fetch(PDO::FETCH_ASSOC);
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$clj[] = $cmd;
 $team_id = $team_ret['uteam_id'];
 $oid = $team_ret['uid'];
 if($team_id!=0&&$uteam_id==0){
@@ -943,7 +934,6 @@ $cxjg = $dblj->query($sql);
 $wtjrw = $cxjg->fetch(PDO::FETCH_ASSOC);
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$clj[] = $cmd;
 if($wtjrw){
     $delete_url = $encode->encode("cmd=player_delete_friend&ucmd=$cmid&canshu=1&oid=$mid&sid=$sid");
     $op_html .=<<<HTML
@@ -1197,14 +1187,14 @@ if ($cxjg){
     $cxallplayer_count = @count($cxallplayer);
     for ($i = 1;$i<$cxallplayer_count +1;$i++){
         if ($cxallplayer[$i-1]['uname']!=""){
-            $cxuid = $cxallplayer[$i-1]['uid'];
+            //$cxuid = $cxallplayer[$i-1]['uid'];
             $cxsid = $cxallplayer[$i-1]['sid'];
             $cxuname = $cxallplayer[$i-1]['uname'];
             if ($playerLinkCount < $near_player_show_count) {
                 $cmid = $cmid + 1;
                 $cdid[] = $cmid;
                 $clj[] = $cmd;
-                $playercmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&oid=$cxuid&sid=$sid");
+                $playercmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&mid=$cxsid&sid=$sid");
                 $playerhtml .= "<a href='?cmd=$playercmd'>{$club->clubname}{$cxuname}</a>";
                 $playerLinkCount++; // 增加链接计数
             }
