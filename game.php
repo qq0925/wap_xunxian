@@ -733,11 +733,19 @@ echo $refresh_html;
             break;
         case 'getoplayerinfo'://查看对方玩家事件
             $player = player\getplayer($sid,$dblj);
-            if($mid == $player->sid){
+            if($uid){
+            $oplayer = player\getplayer1($uid,$dblj);
+            }
+            if($oplayer->sid == $player->sid){
             $ym ='module_all/scene_player_detail.php';
             }else{
                 if(!$mid){
+                    
+                if($uid){
+                $mid = $oplayer->sid;
+                }else{
                 $mid = $oid;
+                }
                 }
             //查看对方玩家事件
             $ym ='module_all/scene_oplayer_detail.php';
