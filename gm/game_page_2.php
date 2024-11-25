@@ -154,7 +154,7 @@ $delete_ele = $encode->encode("cmd=delete_ele&delete_value=$main_value&delete_id
 if($main_value ==''){
     $main_value = "未命名";
 }
-$main_value = '&#8203;' . $main_value;
+//$main_value = '&#8203;' . $main_value;
 if($link_value ==''){
     $link_value = "http://";
 }

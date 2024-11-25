@@ -163,6 +163,57 @@ $gm_game_pagemoduledefine_12 = $encode->encode("cmd=gm_game_pagemoduledefine&gm_
 $gm_game_pagemoduledefine_13 = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=13&sid=$sid");
 $gm_game_pagemoduledefine_14 = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=14&sid=$sid");
 $gm_game_pagemoduledefine_change_function_name = $encode->encode("cmd=gm_function_change&sid=$sid");
+$gm_game_pagemoduledefine_delete_zero = $encode->encode("cmd=gm_game_pagemoduledefine&delete_zero=1&sid=$sid");
+
+
+if ($delete_zero == 1) {
+    try {
+        // 数据库连接检查
+        if (!$dblj) {
+            throw new PDOException("数据库连接无效。");
+        }
+
+        // 1. 获取所有以 game_ 开头的表名
+        $tablesQuery = $dblj->query("SHOW TABLES LIKE 'game\\_%'");
+        $tables = $tablesQuery->fetchAll(PDO::FETCH_COLUMN);
+
+        if (!$tables) {
+            echo "没有找到以 'game_' 开头的表。<br/>";
+            exit;
+        }
+
+        // 2. 遍历每个表，清理 value 字段中的零宽字符
+        foreach ($tables as $table) {
+            try {
+                // 确保表名安全
+                $table = preg_replace('/[^a-zA-Z0-9_]/', '', $table);
+
+                // 获取所有 value 数据
+                $query = "SELECT `id`, `value` FROM `$table`";
+                $stmt = $dblj->query($query);
+                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // 遍历每一行，移除 PHP 层面的零宽字符，并写回数据库
+                foreach ($rows as $row) {
+                    $id = $row['id'];
+                    $value = str_replace("\u{200B}", "", $row['value']); // 移除零宽字符
+
+                    $updateQuery = "UPDATE `$table` SET `value` = :value WHERE `id` = :id";
+                    $updateStmt = $dblj->prepare($updateQuery);
+                    $updateStmt->execute([':value' => $value, ':id' => $id]);
+                }
+
+                echo "表 $table 清理完成，已更新记录数：" . count($rows) . "<br/>";
+            } catch (PDOException $e) {
+                echo "清理表 $table 时出错: " . $e->getMessage() . "<br/>";
+            }
+        }
+
+        echo "已清除零宽字符！<br/>";
+    } catch (PDOException $e) {
+        echo "数据库操作失败: " . $e->getMessage() . "<br/>";
+    }
+}
 
 if($gm_post_canshu == 0){
 $gm_html = <<<HTML
@@ -180,7 +231,8 @@ $gm_html = <<<HTML
 <a href="?cmd=$gm_game_pagemoduledefine_10">定义战斗页面模板</a><br/>
 <a href="?cmd=$gm_game_pagemoduledefine_11">定义首页页面模板</a><br/>
 <a href="?cmd=$gm_game_pagemoduledefine_13">自定义页面模板</a><br/>
-<a href="?cmd=$gm_game_pagemoduledefine_change_function_name">修改功能点名称(好像不是很有必要)</a><br/><br/>
+<a href="?cmd=$gm_game_pagemoduledefine_change_function_name">修改功能点名称(好像不是很有必要)</a><br/>
+<a href="?cmd=$gm_game_pagemoduledefine_delete_zero">清除零距符号</a><br/><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
 HTML;
 echo $gm_html;

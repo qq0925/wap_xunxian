@@ -39,7 +39,7 @@ $delete_ele = $encode->encode("cmd=delete_ele_self&delete_value=$main_value&self
 if($main_value ==''){
     $main_value = "未命名";
 }
-$main_value = '&#8203;' . $main_value;
+//$main_value = '&#8203;' . $main_value;
 if($link_value ==''){
     $link_value = "http://";
 }
