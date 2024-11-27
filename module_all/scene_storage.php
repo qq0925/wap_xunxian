@@ -9,7 +9,7 @@ $clmid = player\getmid($player_nowmid,$dblj);
 $map_name = $clmid->mname;
 $game_config = \player\getgameconfig($dblj);
 
-if($_POST['password']){
+if($_POST['password']&&!$_POST['kw']){
 $stmt = $dblj->prepare("SELECT userpass FROM userinfo WHERE token = (SELECT token from game1 where sid = :sid)");
 $stmt->bindParam(':sid', $sid);
 $stmt->execute();
@@ -22,13 +22,12 @@ if ($rowCount > 0){
         $lock_sure = 3;
     }
 }else{
-    unset($lock_sure);
     echo "账号不存在！请联系GM！<br/>";
 }
 
 }
 
-if($lock_canshu ==1){
+if($lock_canshu ==1&&!$_POST['kw']){
 
 // 查询是否存在相应的数据
 $stmt = $dblj->prepare("SELECT * FROM system_storage_locked WHERE ibelong_mid = :lock_mid AND sid = :sid");
@@ -54,10 +53,14 @@ if ($rowCount > 0) {
 }
     
     echo "上锁成功！<br/>";
-}elseif($lock_canshu ==2){
+    unset($lock_canshu);
+}elseif($lock_canshu ==2&&!$_POST['kw']){
 if($lock_sure == 1){
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
 $unlock_html = <<<HTML
 <form method="post">
+<input name="ucmd" type="hidden" value="{$cmid}">
 请输入账号密码：<input name="password" type="text" title="账号密码"><br/>
 <input name="submit" type="submit" title="账号密码"><br/>
 </form>
@@ -91,7 +94,7 @@ if ($rowCount > 0) {
 elseif($lock_sure ==3){
     echo "密码错误！<br/>";
 }
-
+unset($lock_canshu);
 }
 
 
