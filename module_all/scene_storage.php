@@ -9,6 +9,25 @@ $clmid = player\getmid($player_nowmid,$dblj);
 $map_name = $clmid->mname;
 $game_config = \player\getgameconfig($dblj);
 
+if($_POST['password']){
+$stmt = $dblj->prepare("SELECT userpass FROM userinfo WHERE token = (SELECT token from game1 where sid = :sid)");
+$stmt->bindParam(':sid', $sid);
+$stmt->execute();
+$rowCount = $stmt->rowCount();
+$user_pass = $stmt->fetch(PDO::FETCH_ASSOC);
+if ($rowCount > 0){
+    if($user_pass['userpass'] == $_POST['password']){
+        $lock_sure = 2;
+    }else{
+        $lock_sure = 3;
+    }
+}else{
+    unset($lock_sure);
+    echo "账号不存在！请联系GM！<br/>";
+}
+
+}
+
 if($lock_canshu ==1){
 
 // 查询是否存在相应的数据
@@ -36,7 +55,15 @@ if ($rowCount > 0) {
     
     echo "上锁成功！<br/>";
 }elseif($lock_canshu ==2){
-    
+if($lock_sure == 1){
+$unlock_html = <<<HTML
+<form method="post">
+请输入账号密码：<input name="password" type="text" title="账号密码"><br/>
+<input name="submit" type="submit" title="账号密码"><br/>
+</form>
+HTML;
+}elseif($lock_sure ==2){
+
 // 查询是否存在相应的数据
 $stmt = $dblj->prepare("SELECT * FROM system_storage_locked WHERE ibelong_mid = :lock_mid AND sid = :sid");
 $stmt->bindParam(':lock_mid', $lock_mid);
@@ -59,8 +86,12 @@ if ($rowCount > 0) {
     $insertStmt->bindParam(':sid', $sid);
     $insertStmt->execute();
 }
-    
     echo "开锁成功！<br/>";
+}
+elseif($lock_sure ==3){
+    echo "密码错误！<br/>";
+}
+
 }
 
 
@@ -110,7 +141,7 @@ if($getstorelock==0){
     $lock_op = $encode->encode("cmd=gm_storage&lock_mid=$player_nowmid&lock_canshu=1&canshu=$canshu&ucmd=$cmid&sid=$sid");
     $lock_html = "<a href='?cmd=$lock_op'>仓库上锁</a><br/>";
 }else{
-    $unlock_op = $encode->encode("cmd=gm_storage&lock_mid=$player_nowmid&lock_canshu=2&canshu=$canshu&ucmd=$cmid&sid=$sid");
+    $unlock_op = $encode->encode("cmd=gm_storage&lock_mid=$player_nowmid&lock_canshu=2&lock_sure=1&canshu=$canshu&ucmd=$cmid&sid=$sid");
     $lock_html = "<a href='?cmd=$unlock_op'>仓库开锁</a><br/>";
 }
 
@@ -347,6 +378,7 @@ if($keyword =="%"){
     $keyword = "";
 }
 $bagitemhtml =<<<HTML
+$unlock_html
 [{$map_name}的仓库]<br/>
 仓库负重：({$now_city_storage}|{$city_storage})<br/>
 背包负重：({$player->uburthen}|{$player->umax_burthen})<br/>
