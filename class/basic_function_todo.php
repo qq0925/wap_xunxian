@@ -1156,7 +1156,7 @@ for ($i=0;$i < count($cxpetall);$i++){
         $clj[] = $cmd;
         $petcmd = $encode->encode("cmd=pet_view&ucmd=$cmid&petid=$npid&sid=$sid");
                 $npchtml.=<<<HTML
-<a href="?cmd=$petcmd">{$nname}</a>
+<a href="?cmd=$petcmd">{$nname}(宠)</a>
 HTML;
 }
 $npchtml .="<br/>";
