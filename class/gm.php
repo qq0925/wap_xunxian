@@ -324,6 +324,20 @@ function getqy_all($dblj){
     return $ret;
 }
 
+function getregion($qy_belong,$dblj){
+    $sql = "select * from `system_region` where id = '$qy_belong'";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    return $ret;
+}
+
+function getregion_all($dblj){
+    $sql = "select * from `system_region` ORDER BY pos ASC";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
+    return $ret;
+}
+
 function getqy($dblj,$qy_id){
     $sql = "select * from `system_area` where id = '$qy_id'";
     $cxjg = $dblj->query($sql);

@@ -2732,6 +2732,32 @@ echo $refresh_html;
             $ym = 'gm/gm_map_2.php';
             break;
             }
+
+        case 'region_post'://大区域更新相关事件
+            if($gm_post_canshu ==1){
+            $ym = 'gm/gm_map_4.php';
+            break;
+            }elseif($gm_post_canshu ==0){
+            $sql = "select MAX(pos) as max_pos from `system_region`";
+            $cxjg = $dblj->query($sql);
+            $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+            $max_pos = $ret['max_pos'] + 1;
+            $last_id = $_POST['last_id'];
+            $name = $_POST['name'];
+            $sql = "INSERT INTO system_region set pos = '$max_pos',id = '$last_id',name = '$name',belong = '0';";
+            $cxjg =$dblj->exec($sql);
+            echo "新增成功！<br/>";
+            $ym = 'gm/gm_map_4.php';
+            break;
+            }
+            elseif($gm_post_canshu ==2){
+            $sql = "DELETE from system_region where id = '$remove_id';";
+            $cxjg =$dblj->exec($sql);
+            echo "移除成功！<br/>";
+            $ym = 'gm/gm_map_4.php';
+            break;
+            }
+            
         case 'game_task_list'://任务设计相关
             if($add_canshu ==1){
                 $sql = "INSERT INTO system_task set tname = '未命名',ttype ='$task_type';";

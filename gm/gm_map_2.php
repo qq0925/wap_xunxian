@@ -11,6 +11,7 @@ $map = '';
 $hangshu = 0;
 $br = 0;
 $area_add = $encode->encode("cmd=area_post&gm_post_canshu=1&sid=$sid");
+$region_define = $encode->encode("cmd=region_post&gm_post_canshu=1&sid=$sid");
 if($post_canshu ==0){
     
 if($delete_id){
@@ -33,26 +34,27 @@ for ($i=0;$i<count($cxallqy);$i++){
     $qy_id = $cxallqy[$i]['id'];
     $qy_pos = $cxallqy[$i]['pos'];
     $qy_belong = $cxallqy[$i]['belong'];
-    switch ($qy_belong) {
-        case '1':
-            $qy_belong_name = "日出之地";
-            break;
-        case '2':
-            $qy_belong_name = "灼热之地";
-            break;
-        case '3':
-            $qy_belong_name = "日落之地";
-            break;
-        case '4':
-            $qy_belong_name = "极寒之地";
-            break;
-        case '5':
-            $qy_belong_name = "湿热之地";
-            break;
-        default:
-            $qy_belong_name = "失落之地";
-            break;
-    }
+    $qy_belong_name = \gm\getregion($qy_belong,$dblj)['name'];
+    // switch ($qy_belong) {
+    //     case '1':
+    //         $qy_belong_name = "日出之地";
+    //         break;
+    //     case '2':
+    //         $qy_belong_name = "灼热之地";
+    //         break;
+    //     case '3':
+    //         $qy_belong_name = "日落之地";
+    //         break;
+    //     case '4':
+    //         $qy_belong_name = "极寒之地";
+    //         break;
+    //     case '5':
+    //         $qy_belong_name = "湿热之地";
+    //         break;
+    //     default:
+    //         $qy_belong_name = "失落之地";
+    //         break;
+    // }
 if (isset($_POST['kw'])) {
     $keyword = $_POST['kw'];
     // 构建查询语句，使用过滤条件
@@ -66,26 +68,27 @@ if (isset($_POST['kw'])) {
     $qy_id = $cxallqy[$i]['id'];
     $qy_pos = $cxallqy[$i]['pos'];
     $qy_belong = $cxallqy[$i]['belong'];
-    switch ($qy_belong) {
-        case '1':
-            $qy_belong_name = "日出之地";
-            break;
-        case '2':
-            $qy_belong_name = "灼热之地";
-            break;
-        case '3':
-            $qy_belong_name = "日落之地";
-            break;
-        case '4':
-            $qy_belong_name = "极寒之地";
-            break;
-        case '5':
-            $qy_belong_name = "湿热之地";
-            break;
-        default:
-            $qy_belong_name = "失落之地";
-            break;
-    }
+    $qy_belong_name = \gm\getregion($qy_belong,$dblj)['name'];
+    // switch ($qy_belong) {
+    //     case '1':
+    //         $qy_belong_name = "日出之地";
+    //         break;
+    //     case '2':
+    //         $qy_belong_name = "灼热之地";
+    //         break;
+    //     case '3':
+    //         $qy_belong_name = "日落之地";
+    //         break;
+    //     case '4':
+    //         $qy_belong_name = "极寒之地";
+    //         break;
+    //     case '5':
+    //         $qy_belong_name = "湿热之地";
+    //         break;
+    //     default:
+    //         $qy_belong_name = "失落之地";
+    //         break;
+    // }
 }
   if($qy_id ==0){
       $cxallmaps = \gm\getmid_detail($dblj,0);
@@ -127,10 +130,9 @@ HTML;
   }}
 
 
-
-
 $allmap = <<<HTML
 [地图设计]<br/>
+<a href="?cmd=$region_define" >定义大区域</a><br/>
 目前定义了如下区域：<br/>
 $map
 $no_area<br/>
@@ -436,23 +438,22 @@ $update_all_data = $encode->encode("cmd=gm_post_4&update=2&post_canshu=1&qy_id=$
 if($qy_id !=0){
 $area_modify = $encode->encode("cmd=gm_post_4&area_modify=1&post_canshu=3&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
 $area_belong = \gm\getqy($dblj,$qy_id)['belong'];
-$selectedOption1 = ($area_belong == "1") ? 'selected' : '';
-$selectedOption2 = ($area_belong == "2") ? 'selected' : '';
-$selectedOption3 = ($area_belong == "3") ? 'selected' : '';
+$region_data = \gm\getregion_all($dblj);
+$select = '所属大区域:<select name="area_belong">';
+foreach ($region_data as $region_row) {
+    $selected = ($region_row['id'] == $area_belong) ? ' selected' : '';
+    $select .= '<option value="' . htmlspecialchars($region_row['id']) . '"' . $selected . '>' . htmlspecialchars($region_row['name']) . '</option>';
+    
+}
+$select .= '</select><br/>';
+
 $area_change_html .= <<<HTML
 <form method="post">
 <input type="hidden" name="marea_name" value="{$marea_name}">
 <input type="hidden" name="qy_id" value="{$qy_id}">
 <input type="hidden" name="post_canshu" value="1">
 <input name="modify" type="hidden" title="确定" value="4"/>
-所属大区域:<select name="area_belong">
-<option value="0" >失落之地</option>
-<option value="1" $selectedOption1>日出之地</option>
-<option value="2" $selectedOption2>灼热之地</option>
-<option value="3" $selectedOption3>日落之地</option>
-<option value="4" $selectedOption3>极寒之地</option>
-<option value="5" $selectedOption3>湿热之地</option>
-</select>
+$select
 <input type="submit" value="提交"><br/>
 </form>
 HTML;

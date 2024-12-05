@@ -159,7 +159,40 @@ try {
     echo "操作时出错: " . $e->getMessage();
 }
 
+try {
+    // 1. 查询表是否存在
+    $query = $dblj->prepare("SHOW TABLES LIKE 'system_region'");
+    $query->execute();
+    $table_exists = $query->fetch();
 
+    if (!$table_exists) {
+        // 2. 表不存在，复制 system_npc 表的结构
+        $create_table = $dblj->prepare("CREATE TABLE `system_region` LIKE `system_area`");
+        $create_table->execute();
+        $sql = "INSERT INTO system_region set pos = '0',id = '0',name = '失落之地',belong = '0';";
+        $cxjg =$dblj->exec($sql);
+        $sql = "INSERT INTO system_region set pos = '1',id = '1',name = '日出之地',belong = '0';";
+        $cxjg =$dblj->exec($sql);
+        $sql = "INSERT INTO system_region set pos = '2',id = '2',name = '灼热之地',belong = '0';";
+        $cxjg =$dblj->exec($sql);
+        $sql = "INSERT INTO system_region set pos = '3',id = '3',name = '日落之地',belong = '0';";
+        $cxjg =$dblj->exec($sql);
+        $sql = "INSERT INTO system_region set pos = '4',id = '4',name = '极寒之地',belong = '0';";
+        $cxjg =$dblj->exec($sql);
+        $sql = "INSERT INTO system_region set pos = '5',id = '5',name = '湿热之地',belong = '0';";
+        $cxjg =$dblj->exec($sql);
+        // 使用事务来保证所有操作的原子性
+        $dblj->beginTransaction();
+        // 提交事务
+        $dblj->commit();
+    }
+} catch (PDOException $e) {
+    // 回滚事务（如果有进行事务处理）
+    if ($dblj->inTransaction()) {
+        $dblj->rollBack();
+    }
+    echo "操作时出错: " . $e->getMessage();
+}
 
 
 try {

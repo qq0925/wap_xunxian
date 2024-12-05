@@ -2,7 +2,7 @@
 
 $area_add = $encode->encode("cmd=area_post&gm_post_canshu=0&sid=$sid");
 $gm = $encode->encode("cmd=gm&sid=$sid");
-
+$ret_last = $encode->encode("cmd=gm_map_2&sid=$sid");
 
 $conn = DB::conn();
 
@@ -44,7 +44,7 @@ $area_html = <<<HTML
 <option value="5" >湿热之地</option>
 </select>
 <input name="submit" type="submit" title="确定" value="确定"/><input name="submit" type="hidden" title="确定" value="确定"/></form><br/>
-<button onClick="javascript:history.back(-1);">返回上级</button><br/>
+<a href="?cmd=$ret_last">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
 HTML;
 echo $area_html;
