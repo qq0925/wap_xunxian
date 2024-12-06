@@ -2753,6 +2753,8 @@ echo $refresh_html;
             elseif($gm_post_canshu ==2){
             $sql = "DELETE from system_region where id = '$remove_id';";
             $cxjg =$dblj->exec($sql);
+            $sql = "UPDATE system_area set belong = 0 where belong = '$remove_id';";
+            $cxjg =$dblj->exec($sql);
             echo "移除成功！<br/>";
             $ym = 'gm/gm_map_4.php';
             break;

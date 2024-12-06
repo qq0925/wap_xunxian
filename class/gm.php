@@ -345,6 +345,13 @@ function getqy($dblj,$qy_id){
     return $ret;
 }
 
+function getregion_qy($dblj,$region_id){
+    $sql = "select COUNT(*) as area_count from `system_area` where belong = '$region_id'";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    return $ret;
+}
+
 function getmid_detail($dblj,$qy_id,$offset=null,$list_row=null){
     if($list_row){
     $sql = "select * from `system_map` where marea_id = '$qy_id' LIMIT $offset,$list_row";

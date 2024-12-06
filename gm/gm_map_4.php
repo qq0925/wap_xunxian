@@ -24,7 +24,7 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         // 更新最后一个ID
         $last_id = $row['id'];
-
+        $area_count = \gm\getregion_qy($dblj,$last_id)['area_count'];
         // 构建每个区域的HTML
         $region_name = $row['name'];
         $remove_region = $encode->encode("cmd=region_post&gm_post_canshu=2&remove_id=$last_id&sid=$sid");
@@ -53,6 +53,7 @@ $last_id ++;
 //进行重复区域名称检测
 $area_html = <<<HTML
 <p>[地图大区域设计]<br/>
+TIPS:若移除将会将内含区域的所属大区域置为失落之地。<br/>
 $region_all<br/></p>
 增加大区域<br/>
 <form action="?cmd=$region_add" method="post">
