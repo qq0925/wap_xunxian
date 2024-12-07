@@ -1,7 +1,10 @@
 <?php
 
-$region_add = $encode->encode("cmd=region_post&gm_post_canshu=0&sid=$sid");
 $gm = $encode->encode("cmd=gm&sid=$sid");
+
+if(!$rename_canshu){
+$region_add = $encode->encode("cmd=region_post&gm_post_canshu=0&sid=$sid");
+
 $ret_last = $encode->encode("cmd=gm_map_2&sid=$sid");
 
 $conn = DB::conn();
@@ -9,6 +12,12 @@ $conn = DB::conn();
 // 检查连接是否成功
 if (!$conn) {
     die("连接失败: " . mysqli_connect_error());
+}
+
+if($_POST['name']){
+    $new_name = $_POST['name'];
+    echo "修改成功！<br/>";
+    $conn->query("UPDATE system_region SET name='$new_name' WHERE id = '$rename_id'");
 }
 
 
@@ -28,7 +37,7 @@ if ($result->num_rows > 0) {
         // 构建每个区域的HTML
         $region_name = $row['name'];
         $remove_region = $encode->encode("cmd=region_post&gm_post_canshu=2&remove_id=$last_id&sid=$sid");
-        $rename_region = $encode->encode("cmd=region_post&gm_post_canshu=4&rename_id=$last_id&rename_name=$region_name&sid=$sid");
+        $rename_region = $encode->encode("cmd=region_post&gm_post_canshu=1&rename_canshu=1&rename_id=$last_id&rename_name=$region_name&sid=$sid");
         if($last_id =="0"){
         $region_all .= "[$i].{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a>(默认大区域，不可移除)<br/>";
         }else{
@@ -63,5 +72,17 @@ $region_all<br/></p>
 <a href="?cmd=$ret_last">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
 HTML;
+}else{
+$region_rename_sure = $encode->encode("cmd=region_post&gm_post_canshu=1&rename_id=$rename_id&sid=$sid");
+$ret_last = $encode->encode("cmd=region_post&gm_post_canshu=1&sid=$sid");
+$area_html = <<<HTML
+<p>[地图大区域设计]<br/>
+你想要把{$rename_name}改成什么?<br/>
+<form action="?cmd=$region_rename_sure" method="post">
+大区域名称:<input name="name" type="text" maxlength="50"/><br/>
+<input name="submit" type="submit" title="确定" value="确定"/><input name="submit" type="hidden" title="确定" value="确定"/></form><br/>
+<a href="?cmd=$ret_last">返回上级</a><br/>
+HTML;
+}
 echo $area_html;
 ?>

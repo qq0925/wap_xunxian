@@ -6,7 +6,6 @@ function trimTrailingNewlinesAndCount($input) {
     // 使用正则表达式去除所有换行符（包括 \r 和 \n）
     // rtrim 会去除末尾的所有空白字符、换行符或回车符（Windows 和 Unix 风格的换行符）
     $trimmedString = rtrim($input, "\n");
-
     // 计算去除的换行符数量
     $newlineCount = strlen($input) - strlen($trimmedString);
 
@@ -1169,6 +1168,9 @@ for ($i=0;$i < count($cxpetall);$i++){
 HTML;
 }
 }
+if($npchtml){
+$npchtml = preg_replace('/<br\s*\/?>$/', '', $npchtml); // 去掉结尾的 <br>
+}
 return $npchtml;
 }
 
@@ -1210,15 +1212,11 @@ if ($cxjg){
             if ($cxallplayer_count > $near_player_show_count) {
                 $allplayerspage = $encode->encode("cmd=getalloplayerinfo&ucmd=$cmid&sid=$sid");
                 $playerhtml .= " <a href='?cmd=$allplayerspage'>...</a>";
-                $playerhtml = $playerhtml."<br/>";
+                //$playerhtml = $playerhtml."<br/>";
                 return $playerhtml;
             }
 
         }
-    }
-
-    if($cxallplayer_count){
-    $playerhtml = $playerhtml."<br/>";
     }
     return $playerhtml;
 }
@@ -1558,7 +1556,7 @@ function self_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $player_text =<<<HTML
 [{$player_name}]:<br/>
 {$attr_hp_name}：({$player_hp}/{$player_maxhp})<br/>
-{$attr_mp_name}：({$player_mp}/{$player_maxmp})<br/>
+{$attr_mp_name}：({$player_mp}/{$player_maxmp})
 HTML;
     if($cmd =="pve_fighting"){
     $round = \player\getnowround($sid,$dblj);
@@ -1575,7 +1573,7 @@ HTML;
     $player_text =<<<HTML
 [{$player_name}]:<br/>
 {$attr_hp_name}：({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
-{$attr_mp_name}：({$player_mp}/{$player_maxmp}){$cut_mp}<br/>
+{$attr_mp_name}：({$player_mp}/{$player_maxmp}){$cut_mp}
 HTML;
     }
     $sql = "SELECT * from system_pet_scene where nsid = :sid and nstate = 1";
@@ -1602,15 +1600,18 @@ HTML;
     
     if($pet_hp <=0){
     $player_text .=<<<HTML
-[{$pet_name}]已经战死！<br/>
+<br/>[{$pet_name}]已经战死！
 HTML;
     }else{
     $player_text .=<<<HTML
-[{$pet_name}]:({$pet_hp}/{$pet_maxhp}){$pcut_hp}<br/>
+<br/>[{$pet_name}]:({$pet_hp}/{$pet_maxhp}){$pcut_hp}
 HTML;
 }
     }
 }
+    if($player_text){
+    $player_text = preg_replace('/<br\s*\/?>$/', '', $player_text); // 去掉结尾的 <br>
+    }
     return $player_text;
     
 }
@@ -1665,6 +1666,9 @@ HTML;
 HTML;
 }
 }
+    if($enemy_text){
+    $enemy_text = preg_replace('/<br\s*\/?>$/', '', $enemy_text); // 去掉结尾的 <br>
+    }
     return $enemy_text;
     
 }
@@ -1709,6 +1713,11 @@ function enemy_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     
     }
 }
+
+    if($fight_omsg){
+    $fight_omsg = preg_replace('/<br\s*\/?>$/', '', $fight_omsg); // 去掉结尾的 <br>
+    }
+
     return nl2br($fight_omsg);
     
 }
@@ -1750,6 +1759,10 @@ function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     }
 }
 
+    if($fight_umsg){
+    $fight_umsg = preg_replace('/<br\s*\/?>$/', '', $fight_umsg); // 去掉结尾的 <br>
+    }
+
     return nl2br($fight_umsg);
     
 }
@@ -1789,7 +1802,7 @@ HTML;
         <a href="?cmd=$entrance_url">{$value}</a>
 HTML;
 }else{
-    $entrance_url = "未设置入口场景<br/>";
+    $entrance_url = "未设置入口场景";
 }
     return $entrance_url;
 }
@@ -1976,7 +1989,6 @@ foreach ($ret as $row) {
 $bagequiphtml = <<<HTML
 兵器：{$equipbhtml}<br/>
 $equipfhtml
-<br/>
 HTML;
 return $bagequiphtml;
 }

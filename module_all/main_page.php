@@ -308,7 +308,15 @@ for ($i=0;$i<$page_count;$i++){
 }
     $ret_bool = ($ret !== false && $ret !== null) ? 0 : 1;
     if($ret_bool ==0){
-    //$main_value = nl2br($main_value);
+        
+    if($main_type !=1){
+    list($main_value,$br_count) = trimTrailingNewlinesAndCount($main_value);
+    // 使用 str_repeat() 来生成多个 <br/> 标签
+    $br_count_html = str_repeat("<br/>", $br_count);
+    }else{
+    $main_value = nl2br($main_value);
+    }
+        
     $main_target_event = $get_main_page[$i]['target_event'];
     $main_target_func = $get_main_page[$i]['target_func'];
     $main_link_value = $get_main_page[$i]['link_value'];
@@ -348,13 +356,10 @@ for ($i=0;$i<$page_count;$i++){
         $main_target_func = \lexical_analysis\color_string($main_target_func);
     }
 
-    list($main_value,$br_count) = trimTrailingNewlinesAndCount($main_value);
-    // 使用 str_repeat() 来生成多个 <br/> 标签
-    $br_count_html = str_repeat("<br/>", $br_count);
     switch ($main_type) {
         case '1':
                 $game_main .=<<<HTML
-{$main_value}{$br_count_html}
+{$main_value}
 HTML;
 
             break;
