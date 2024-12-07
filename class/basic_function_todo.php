@@ -1327,6 +1327,10 @@ if ($ltcxjg){
         }
     }
 }
+
+if($lthtml){
+$lthtml = preg_replace('/<br\s*\/?>$/', '', $lthtml); // 去掉结尾的 <br>
+}
 return $lthtml;
 }
 
