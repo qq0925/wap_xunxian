@@ -2,6 +2,17 @@
 require_once 'class/encode.php';
 $encode = new \encode\encode();
 
+function trimTrailingNewlinesAndCount($input) {
+    // 使用正则表达式去除所有换行符（包括 \r 和 \n）
+    // rtrim 会去除末尾的所有空白字符、换行符或回车符（Windows 和 Unix 风格的换行符）
+    $trimmedString = rtrim($input, "\n");
+
+    // 计算去除的换行符数量
+    $newlineCount = strlen($input) - strlen($trimmedString);
+
+    return [$trimmedString, $newlineCount];
+}
+
 function basic_func_choose($cmd,$page_id,$sid,$dblj,$value,$mid=null,$func_type,&$cmid=null){
 $sql = "SELECT name from system_function where id = '$page_id'";
 $stmt = $dblj->prepare($sql);
@@ -543,7 +554,8 @@ $stmt = $dblj->prepare($sql);
 $stmt->execute();
 $result_2 = $stmt->fetch(PDO::FETCH_ASSOC);
 $op_br = $result_2['scene_op_br'];
-for ($i=0;$i<count($result);$i++){
+$op_count = count($result);
+for ($i=0;$i<$op_count;$i++){
 $op_id = $result[$i]['id'];
 $op_name = $result[$i]['name'];
 $op_belong = $result[$i]['belong'];
@@ -568,8 +580,6 @@ HTML;
 if($op_br ==1){
     $op_html .="<br/>";
 }
-}if($op_br !=1){
-$op_html .="<br/>";
 }
 }
         break;
@@ -620,8 +630,6 @@ HTML;
 if($op_br ==1){
     $op_html .="<br/>";
 }
-}if($op_br !=1){
-$op_html .="<br/>";
 }
 }
 
@@ -687,8 +695,6 @@ HTML;
 if($op_br ==1){
     $op_html .="<br/>";
 }
-}if($op_br !=1){
-$op_html .="<br/>";
 }
 }
             
@@ -965,6 +971,9 @@ HTML;
 }
     break;
     }
+    if($op_html){
+    $op_html = preg_replace('/<br\s*\/?>$/', '', $op_html); // 去掉结尾的 <br>
+    }
     return $op_html;
 }
 
@@ -1159,7 +1168,6 @@ for ($i=0;$i < count($cxpetall);$i++){
 <a href="?cmd=$petcmd">{$nname}(宠)</a>
 HTML;
 }
-$npchtml .="<br/>";
 }
 return $npchtml;
 }
@@ -1243,9 +1251,6 @@ function get_item_list($sid,$dblj,$mid,&$cmid){
 HTML;
 }
 }
-$itemhtml.=<<<HTML
-</br/>
-HTML;
     }
 
     return $itemhtml;
@@ -1868,7 +1873,7 @@ function pick_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
     global $encode;
     $pick_url = $encode->encode("cmd=pick_html&rp_id=$rp_id&mid=$mid&ucmd=$cmid&sid=$sid");
     $pick_url=<<<HTML
-        <a href="?cmd=$pick_url">{$rp_action_name}<br/></a>
+        <a href="?cmd=$pick_url">{$rp_action_name}</a>
 HTML;
     return $pick_url;
 }

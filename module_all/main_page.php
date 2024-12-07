@@ -308,7 +308,7 @@ for ($i=0;$i<$page_count;$i++){
 }
     $ret_bool = ($ret !== false && $ret !== null) ? 0 : 1;
     if($ret_bool ==0){
-    $main_value = nl2br($main_value);
+    //$main_value = nl2br($main_value);
     $main_target_event = $get_main_page[$i]['target_event'];
     $main_target_func = $get_main_page[$i]['target_func'];
     $main_link_value = $get_main_page[$i]['link_value'];
@@ -316,31 +316,26 @@ for ($i=0;$i<$page_count;$i++){
     //$main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
-    }else{
-    $main_value = nl2br($main_value);
-    $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
-    //$main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
-    $main_value =\lexical_analysis\process_photoshow($main_value);
-    $main_value = \lexical_analysis\color_string($main_value);
-    }
-    try{
-        $matches = array();
-                $pattern = '/\[([^\[\]]*)\]/';
-                $main_value = preg_replace_callback($pattern, function($matches) {
-                    $content = $matches[1]; // 获取方括号中的内容
-                    // 进行处理，例如将内容转换为大写
-                    $processedContent = @eval("return $content;");
-                    return '[' . $processedContent . ']'; // 将处理后的内容放回原字符串中
-                    }, $main_value);
-            }
-            catch (ParseError $e){
-                print("语法错误: ". $e->getMessage());
+    
+//     try{
+//         $matches = array();
+//                 $pattern = '/\[([^\[\]]*)\]/';
+//                 $main_value = preg_replace_callback($pattern, function($matches) {
+//                     $content = $matches[1]; // 获取方括号中的内容
+//                     // 进行处理，例如将内容转换为大写
+//                     $processedContent = @eval("return $content;");
+//                     return '[' . $processedContent . ']'; // 将处理后的内容放回原字符串中
+//                     }, $main_value);
+//             }
+//             catch (ParseError $e){
+//                 print("语法错误: ". $e->getMessage());
                 
-            }
-            catch (Error $e){
-                print("执行错误: ". $e->getMessage());
-}
-if($ret_bool ==0){
+//             }
+//             catch (Error $e){
+//                 print("执行错误: ". $e->getMessage());
+// }
+
+
     if($main_target_event !=0){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
@@ -351,42 +346,40 @@ if($ret_bool ==0){
     if($main_target_func !=0 ){
         $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,1,$cmid);
         $main_target_func = \lexical_analysis\color_string($main_target_func);
-    }else {
-        $main_target_func = $encode->encode("cmd=func_no_define&parents_page=$parents_page&$parents_cmd=$cmd&sid=$sid");
     }
-}
-    if($ret_bool ==0){
+
+    list($main_value,$br_count) = trimTrailingNewlinesAndCount($main_value);
+    // 使用 str_repeat() 来生成多个 <br/> 标签
+    $br_count_html = str_repeat("<br/>", $br_count);
     switch ($main_type) {
         case '1':
-            if($ret_bool ==0){
                 $game_main .=<<<HTML
-$main_value
+{$main_value}{$br_count_html}
 HTML;
-}
+
             break;
         case '2':
-            if($ret_bool ==0){
                 $game_main .=<<<HTML
-<a href="?cmd=$main_target_event" >$main_value</a>
+<a href="?cmd=$main_target_event" >{$main_value}</a>{$br_count_html}
 HTML;
-}
             break;
         case '3':
-            if($ret_bool ==0){
+        if($main_target_func){
                 $game_main .=<<<HTML
-$main_target_func
+{$main_target_func}{$br_count_html}
 HTML;
 }
             break;
         case '4':
-            if($ret_bool ==0){
                 $game_main .=<<<HTML
-<a href="$main_link_value" >$main_value</a>
+<a href="$main_link_value" >{$main_value}</a>{$br_count_html}
 HTML;
-}
             break;
     }
+    
+
     }
+
 }
 }
 
