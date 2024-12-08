@@ -474,8 +474,21 @@ $sid = $old_sid;
 
         
         $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
+
         //@$ele_1_2 = eval("return $ele_1_2;");
+
+        $ThirdEqualsPos = strpos($ele_1_2, '.');
+        if ($ThirdEqualsPos !== false){
+           $ele_1_3 = substr($ele_1_2, 0, $ThirdEqualsPos);
+        if($ele_1_3 == 'icc'){
+            $ele_1_4 = substr($ele_1_2, $ThirdEqualsPos + 1);
+        }else{
         $ele_1_2 = str_replace('.', '', $ele_1_2);
+        }
+
+        }else{
+        $ele_1_2 = str_replace('.', '', $ele_1_2);
+        }
         }else{
             echo "错误语法警告！<br/>";
         }
@@ -491,6 +504,10 @@ $sid = $old_sid;
         $ele_2 = str_replace(array("'", "\""), '', $ele_2);
         switch ($ele_1_1) {
             case 'u':
+                if($ele_1_3 =='icc'){
+                $last_para = $ele_1_4.'|'.$ele_2;
+                $ret = itemchanging($last_para,$sid,$oid,$mid,$para);
+                }else{
                 $sql = "select name,if_show from gm_game_attr where value_type =1 and id = '$ele_1_2'";
                 $result = $db->query($sql);
                 $row = $result->fetch_assoc();
@@ -530,6 +547,7 @@ $sid = $old_sid;
                 $echo_mess =  "{$attr_name}{$ele_2}";
                 echo $echo_mess."<br/>";
                 \player\update_message_sql($sid,$dblj,$echo_mess,1);
+                }
                 }
                 }
                 break;
