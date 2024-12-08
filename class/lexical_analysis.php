@@ -602,6 +602,29 @@ return $result;
 function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=null) {
             switch ($attr1) {
                 case 'u':
+                    switch($oid){
+                    case 'mosaic_equip':
+                    $attr3 = 'i'.$attr2;
+                    $sql = "SELECT * FROM system_item_module WHERE iid = ?";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s", $sid);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    
+                    if (!$result) {
+                        die('查询失败: ' . $db->error);
+                    }
+                    $row = $result->fetch_assoc();
+                    $row_result = $row[$attr3];
+                    if ($row_result === null ||$row_result ==='') {
+                        $op = "\"\""; // 或其他默认值
+                        }else{
+                    $op = nl2br($row_result);
+                        }
+                    $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+
+                        break;
+                    default:
                     if (strpos($attr2, "env.") === 0) {
                     $attr3 = substr($attr2, 4); // 提取 "env." 后面的部分
                     switch($attr3){
@@ -1391,6 +1414,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     // 替换字符串中的变量
                     }
                     break;
+                    }
+                    break;
                 case 'ut':
                     switch($attr2){
                         case 'is_computer':
@@ -2052,9 +2077,9 @@ if(!$bagequiphtml){
                                 $sql = "SHOW COLUMNS FROM system_item_module LIKE '$attr3'";
                                 $result = $db->query($sql);
                                 if($result->num_rows >0){
-                                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mid' and sid = '$sid')";
+                                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mid')";
                                 }else{
-                                $sql = "SELECT * FROM system_addition_attr WHERE sid = '$sid' and oid = 'item' and mid = '$mid' and name = '$attr3'";
+                                $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr3'";
                                 $attr_type = 1;
                                 }
                                 $stmt = $db->prepare($sql);
@@ -2096,6 +2121,99 @@ if(!$bagequiphtml){
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                             // 替换字符串中的变量
                             //$input = str_replace("{{$match}}", $op, $input);
+                            break;
+                        case 'mosaic_equip':
+                            $attr3 = 'i'.$attr2;
+                            if($attr3 =="icount"||$attr3 =="iroot"){
+                                $sql = "SELECT * FROM system_item WHERE item_true_id = ?";
+                                $stmt = $db->prepare($sql);
+                                $stmt->bind_param("s", $mid);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                $row = $result->fetch_assoc();
+                            }elseif(strpos($attr3, 'iembed.') === 0){
+                        //镶物属性相关
+                        $attr4 = substr($attr3, 7); // 提取 "embed." 后面的部分
+                        if(preg_match('/^(\d+\.)?(.*)/', $attr4, $matches)){
+                        $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
+                        $mosaic_pos = rtrim($prefix, ".");
+                        
+                        $attr5 = $matches[2]; // 匹配到的剩余部分
+                        }
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$mid'";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        $mosaic_list = $row['equip_mosaic'];
+                        $mosaic_para = explode('|',$mosaic_list);
+                        if(!$mosaic_para[$mosaic_pos]){
+                            $op = "\"\"";
+                        }else{
+                        $mosaic_id = $mosaic_para[$mosaic_pos];
+                        $xid = "i".$attr5;
+                        $sql = "SELECT * FROM system_item_module WHERE iid = '$mosaic_id'";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        $attr3 = $xid;
+                        }
+                        //镶物属性相关
+                            }else{
+                                $sql = "SHOW COLUMNS FROM system_item_module LIKE '$attr3'";
+                                $result = $db->query($sql);
+                                if($result->num_rows >0){
+                                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mid')";
+                                }else{
+                                $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr3'";
+                                $attr_type = 1;
+                                }
+                                $stmt = $db->prepare($sql);
+                                $stmt->execute();
+                                $result_2 = $stmt->get_result();
+                                if (!$result_2) {
+                                    die('查询失败: ' . $db->error);
+                                }
+                                $row = $result_2->fetch_assoc();
+                            }
+                            
+                            if($attr_type ==1){
+                            $row_result = $row['value'];
+                            }else{
+                            $row_result = $row[$attr3];
+                            }
+                            if($attr3 =="iroot"){
+                                $item_para = explode("|",$row_result);
+                                $para_1 = $item_para[0];
+                                $para_2 = $item_para[1];
+                                if($para_1 ==1){
+                                $sql = "SELECT nname FROM system_npc WHERE nid = ?";
+                                $stmt = $db->prepare($sql);
+                                $stmt->bind_param("s", $para_2);
+                                $stmt->execute();
+                                $result_npc = $stmt->get_result();
+                                $row_npc = $result_npc->fetch_assoc();
+                                $row_npc_name = $row_npc['nname'];
+                                $row_result = "怪物掉落"."|".$row_npc_name;
+                                }else{
+                                $row_result = "未知来源";
+                                }
+                            }
+                            if ($row_result === null ||$row_result ==='') {
+                                $op = "\"\""; // 或其他默认值
+                                }else{
+                            $op = nl2br($row_result);
+                                }
+                            $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                             break;
                         case 'item_module':
                             $attr3 = 'i'.$attr2;

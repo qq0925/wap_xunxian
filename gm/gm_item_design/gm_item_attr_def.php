@@ -212,7 +212,7 @@ HTML;
                 break;
             case 'equip_cond':
                 $item_mid_page .= <<<HTML
-装备条件表达式:<textarea name="use_cond" maxlength="1024" rows="4" cols="40"></textarea><br/>
+装备条件表达式:<textarea name="equip_cond" maxlength="1024" rows="4" cols="40">{$value}</textarea><br/>
 HTML;
                 break;
         default:
@@ -273,7 +273,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $attack_value = $data[0]['iattack_value'];
 $recovery_value = $data[0]['irecovery_value'];
 $embed_count = $data[0]['iembed_count'];
-$equip_cond = $data[0]['equip_cond'];
+$equip_cond = $data[0]['iequip_cond'];
 if($item_type =="兵器" || $item_type =="兵器镶嵌物"){
      $item_mid_page .= <<<HTML
 攻击力(attack_value):<input name="attack_value" type="text" value="{$attack_value}" size="10" maxlength="10"/><br/>

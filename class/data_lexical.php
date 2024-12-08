@@ -263,14 +263,32 @@ foreach ($keyValuePairs as $pair) {
                 // $attr_name = $row['name'];
                 $ele_1_2 = 'i'.$ele_1_2;
                 // 检查字段是否存在
-                $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$sid' and oid = 'item' and mid = '$mid'");
+                $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and oid = 'item' and mid = '$mid'");
                 // 如果字段存在，则更新字段值
                 if($result->num_rows > 0){
-                    $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE sid = '$sid' and name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
+                    $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
                     $db->query($updateQuery);
                 } else{
                     // 字段不存在，添加新字段并更新值
-                    $alterQuery = "INSERT INTO system_addition_attr(name,value,sid,oid,mid)values('$ele_1_2','$ele_2','$sid','item','$mid')";
+                    $alterQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
+                    $db->query($alterQuery);
+                }
+                
+                }elseif($oid =='mosaic_equip'){
+                // $sql = "select name from gm_game_attr where value_type =4 and id = '$ele_1_2'";
+                // $result = $db->query($sql);
+                // $row = $result->fetch_assoc();
+                // $attr_name = $row['name'];
+                $ele_1_2 = 'i'.$ele_1_2;
+                // 检查字段是否存在
+                $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and oid = 'item' and mid = '$mid'");
+                // 如果字段存在，则更新字段值
+                if($result->num_rows > 0){
+                    $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
+                    $db->query($updateQuery);
+                } else{
+                    // 字段不存在，添加新字段并更新值
+                    $alterQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
                     $db->query($alterQuery);
                 }
                 
@@ -566,14 +584,33 @@ $sid = $old_sid;
                 // $attr_name = $row['name'];
                 $ele_1_2 = 'i'.$ele_1_2;
                 // 检查字段是否存在
-                $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$sid' and oid = 'item' and mid ='$mid'");
+                $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and oid = 'item' and mid ='$mid'");
                 // 如果字段存在，则更新字段值
                 if($result->num_rows > 0){
-                    $updateQuery = "UPDATE system_addition_attr SET value = value + '$ele_2' WHERE sid = '$sid' and name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
+                    $updateQuery = "UPDATE system_addition_attr SET value = value + '$ele_2' WHERE name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
                     $db->query($updateQuery);
                 } else{
                     // 字段不存在，添加新字段并更新值
-                    $alterQuery = "INSERT INTO system_addition_attr(name,value,sid,oid,mid)values('$ele_1_2','$ele_2','$sid','item','$mid')";
+                    $alterQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
+                    $db->query($alterQuery);
+                }
+                
+                }
+                elseif($oid =='mosaic_equip'){
+                // $sql = "select name from gm_game_attr where value_type =4 and id = '$ele_1_2'";
+                // $result = $db->query($sql);
+                // $row = $result->fetch_assoc();
+                // $attr_name = $row['name'];
+                $ele_1_2 = 'i'.$ele_1_2;
+                // 检查字段是否存在
+                $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and oid = 'item' and mid = '$mid'");
+                // 如果字段存在，则更新字段值
+                if($result->num_rows > 0){
+                    $updateQuery = "UPDATE system_addition_attr SET value = value + '$ele_2' WHERE name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
+                    $db->query($updateQuery);
+                } else{
+                    // 字段不存在，添加新字段并更新值
+                    $alterQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
                     $db->query($alterQuery);
                 }
                 
