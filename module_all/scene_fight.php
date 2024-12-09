@@ -249,6 +249,7 @@ $zdjg = 1;
 
 $player =  player\getplayer($sid,$dblj);
 while (\player\upplayerlvl($sid, $dblj) == 1) {
+    $redis->flushAll($cacheKey);
     $parents_cmd = 'gm_scene_new';
     $ret = $ret ?? global_event_data_get(22, $dblj);
     if ($ret) {
