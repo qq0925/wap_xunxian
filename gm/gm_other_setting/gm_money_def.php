@@ -4,8 +4,13 @@ $last_page = $encode->encode("cmd=gm_game_othersetting&sid=$sid");
 $money_add = $encode->encode("cmd=gm_game_othersetting&canshu=6&sid=$sid");
 
 if(!empty($_POST) && !$change_basic_id){
+    
+    if($money_id && $money_name && $money_unit){
 $sql = "insert into system_money_type(rid,rname,runit) values('$money_id','$money_name','$money_unit')";
 $cxjg = $dblj->exec($sql);
+}else{
+    echo "不能为空！<br/>";
+}
 }
 
 if($delete_id){
