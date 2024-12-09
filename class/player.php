@@ -393,7 +393,7 @@ function upplayerlvl($sid,$dblj){
     $upexp = @eval("return $upexp;");
     $up_cond = \lexical_analysis\process_string($up_cond,$sid);
     $up_cond = @eval("return $up_cond;");
-    while ($exp >= $upexp &&$up_cond){
+    if ($exp >= $upexp &&$up_cond){
         $sql = "update game1 set uexp = uexp - $upexp,ulvl = ulvl + 1 where sid='$sid'";
         $dblj->exec($sql);
         

@@ -107,8 +107,7 @@ if (isset($cmd)&&!isset($sid)){
 //3-4ms
 
 while (\player\upplayerlvl($sid, $dblj) == 1) {
-    $cacheKey = 'user:'.$sid.':'.'u.lvl';
-    $redis->del($cacheKey);
+    $redis->flushAll($cacheKey);
     $parents_cmd = 'gm_scene_new';
     $ret = $ret ?? global_event_data_get(22, $dblj);
     if ($ret) {
