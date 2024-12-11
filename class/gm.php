@@ -442,6 +442,42 @@ function getclan($clan_id,$dblj){
     return $ret;
 }
 
+function checkBalancedBrackets(string $str): bool {
+    // 定义括号对
+    $pairs = [
+        '}' => '{',
+        ')' => '('
+    ];
+    
+    // 栈，用于存储左括号
+    $stack = [];
+    
+    // 遍历字符串中的每个字符
+    for ($i = 0; $i < strlen($str); $i++) {
+        $char = $str[$i];
+        
+        // 如果是左括号，压入栈
+        if ($char === '{' || $char === '(') {
+            array_push($stack, $char);
+        }
+        // 如果是右括号，检查栈
+        elseif ($char === '}' || $char === ')') {
+            // 栈为空，匹配失败
+            if (empty($stack)) {
+                return false;
+            }
+            
+            // 弹出栈顶元素并检查是否匹配
+            $top = array_pop($stack);
+            if ($top !== $pairs[$char]) {
+                return false;
+            }
+        }
+    }
+    
+    // 检查栈是否为空
+    return empty($stack);
+}
 
 function get_mysqldata($dblj, $data_type, $data_id){
     switch ($data_type) {

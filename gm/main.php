@@ -42,7 +42,7 @@ $gm_game_buffdesign = $encode->encode("cmd=gm_game_buffdesign&sid=$sid");
 $gm_game_fbdesign = $encode->encode("cmd=gm_game_fbdesign&sid=$sid");
 $gm_game_rpdesign = $encode->encode("cmd=gm_game_rpdesign&rp_canshu=0&sid=$sid");
 $gm_game_lpdesign = $encode->encode("cmd=gm_game_lpdesign&lp_canshu=0&sid=$sid");
-$gm_game_mkdesign = $encode->encode("cmd=gm_game_mkdesign&mk_canshu=0&sid=$sid");
+//$gm_game_mkdesign = $encode->encode("cmd=gm_game_mkdesign&mk_canshu=0&sid=$sid");
 $gm_online_list = $encode->encode("cmd=nowonline&design_canshu=1&sid=$sid");
 $remove_all_chat = $encode->encode("cmd=gm&remove_canshu=1&sid=$sid");
 $global_value_design = $encode->encode("cmd=global_value_design&sid=$sid");
@@ -76,7 +76,7 @@ $gm_html = <<<HTML
 <a href="?cmd=$gm_game_bossdesign">设计世界BOSS({$game_data->boss_count})</a>!!!<br/>
 <a href="?cmd=$gm_game_fbdesign">设计副本({$game_data->fb_count})</a>!!!<br/>
 <a href="?cmd=$gm_game_lpdesign">设计生活职业({$game_data->lp_count})</a><br/>
-<a href="?cmd=$gm_game_mkdesign">设计制造系统({$game_data->mk_count})</a>!!!<br/>
+<!--<a href="?cmd=$gm_game_mkdesign">设计制造系统({$game_data->mk_count})</a>!!!<br/>-->
 <a href="?cmd=$gm_game_rpdesign">设计资源点({$game_data->rp_count})</a><br/>
 ---</br>
 <a href="?cmd=$gm_game_photomanage">管理图片({$game_data->photo_count})</a><br/>

@@ -836,8 +836,13 @@ echo $refresh_html;
                 $exp_type = $_POST['exp_type'];
                 $exp = $_POST['exp'];
                 if($key){
+                $ret = \gm\checkBalancedBrackets($exp);
+                if($ret){
                 $sql = "INSERT INTO system_exp_def(id, type, value) VALUES ('$key', '$exp_type', '$exp')";
                 $cxjg = $dblj->exec($sql);
+                }else{
+                echo "请检查表达式中(),{}是否成对！<br/>";
+                }
                 }else{
                 echo "ID不能为空！<br/>";
                 }
@@ -855,8 +860,13 @@ echo $refresh_html;
                 $key = $_POST['key'];
                 $exp_type = $_POST['def_type'];
                 $exp = $_POST['exp'];
+                $ret = \gm\checkBalancedBrackets($exp);
+                if($ret){
                 $sql = "UPDATE system_exp_def set id = '$key',type = '$exp_type',value = '$exp' WHERE id = '$old_key'";
                 $cxjg = $dblj->exec($sql);
+                }else{
+                echo "请检查表达式中(),{}是否成对！<br/>";
+                }
                 $ym ='gm/gameexp_define.php';
             }
             break;
