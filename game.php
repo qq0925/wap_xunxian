@@ -519,24 +519,24 @@ echo $refresh_html;
             $attr_name = $_POST['attr_name'];
             $attr_value = $_POST['attr_value'];
             // 查询数据
-
+            $up_sid = \player\getplayer($sid,$dblj,$id)->sid;
             // 检查字段是否存在
             $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$attr_name'");
-            $result_2 = $db->query("SELECT value from system_addition_attr where name = '$attr_name' and sid = '$sid'");
+            $result_2 = $db->query("SELECT value from system_addition_attr where name = '$attr_name' and sid = '$up_sid'");
             // 如果字段存在，则更新字段值
             if ($result->num_rows > 0 ) {
-                $updateQuery = "UPDATE game1 SET $attr_name = '$attr_value' WHERE sid = '$sid'";
+                $updateQuery = "UPDATE game1 SET $attr_name = '$attr_value' WHERE sid = '$up_sid'";
                 $db->query($updateQuery);
                 echo "标准属性值更新成功。<br/>";
                 $cmd = "gm_scene_new";
             } elseif($result_2->num_rows > 0){
-                $updateQuery = "UPDATE system_addition_attr SET value = '$attr_value' WHERE sid = '$sid' and name = '$attr_name'";
+                $updateQuery = "UPDATE system_addition_attr SET value = '$attr_value' WHERE sid = '$up_sid' and name = '$attr_name'";
                 $db->query($updateQuery);
             echo "自定属性值更新成功。<br/>";
             $cmd = "gm_scene_new";
             } else{
                 // 字段不存在，添加新字段并更新值
-                $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$attr_name','$attr_value','$sid')";
+                $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$attr_name','$attr_value','$up_sid')";
                 $db->query($alterQuery);
             echo "自定属性添加并更新成功。<br/>";
             $cmd = "gm_scene_new";
