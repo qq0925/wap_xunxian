@@ -531,7 +531,7 @@ $sid = $old_sid;
                 }
                 include "pdo.php";
                 if($echo_type !="self"){
-                if($ele_2 >=0 && $attr_name && $attr_show){
+                if($ele_2 >0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
                 \player\update_message_sql($sid,$dblj,$echo_mess);
                 }elseif($ele_2 <0 && $attr_name && $attr_show){
@@ -539,7 +539,7 @@ $sid = $old_sid;
                 \player\update_message_sql($sid,$dblj,$echo_mess);
                 }
                 }else{
-                if($ele_2 >=0 && $attr_name && $attr_show){
+                if($ele_2 >0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
                 echo $echo_mess."<br/>";
                 \player\update_message_sql($sid,$dblj,$echo_mess,1);
@@ -656,7 +656,7 @@ $sid = $old_sid;
                     $db->query($alterQuery);
                 }
                 include "pdo.php";
-                if($ele_2 >=0 && $attr_name && $attr_show){
+                if($ele_2 >0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
                 \player\update_message_sql($mid,$dblj,$echo_mess,0);
                 }elseif($ele_2 <0 && $attr_name && $attr_show){
