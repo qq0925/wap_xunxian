@@ -479,6 +479,53 @@ function checkBalancedBrackets(string $str): bool {
     return empty($stack);
 }
 
+
+function deletenpcevent($delete_npc_id,$dblj){
+
+$query = "SELECT nop_target,ntask_target,ncreat_event_id,nlook_event_id,nattack_event_id,nwin_event_id,ndefeat_event_id,npet_event_id,nshop_event_id,nup_event_id,nheart_event_id,nminute_event_id from system_npc where nid = '$delete_npc_id'";
+$cxjg=$dblj->query($sql);
+$ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+if ($ret) {
+    $nop_target = $ret['nop_target'];
+    $ntask_target = $ret['ntask_target'];
+    $ncreat_event_id = $ret['ncreat_event_id'];
+    $nlook_event_id = $ret['nlook_event_id'];
+    $nattack_event_id = $ret['nattack_event_id'];
+    $nwin_event_id = $ret['nwin_event_id'];
+    $ndefeat_event_id = $ret['ndefeat_event_id'];
+    $npet_event_id = $ret['npet_event_id'];
+    $nshop_event_id = $ret['nshop_event_id'];
+    $nup_event_id = $ret['nup_event_id'];
+    $nheart_event_id = $ret['nheart_event_id'];
+    $nminute_event_id = $ret['nminute_event_id'];
+}
+
+$query = "delete from system_npc_op where belong = '$delete_npc_id'";
+$dblj->exec($query);
+
+
+$query = "delete from system_task where tnpc_id = '$delete_npc_id' and tid in ($ntask_target)";
+$dblj->exec($query);
+
+
+
+$sql = "SELECT id from system_event_self where belong in ($ntask_target) and module_id = 'npc_task_accept' || module_id = 'npc_task_giveup' || module_id = 'npc_task_finish'";
+$cxjg=$dblj->query($sql);
+$ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+$event_id = $ret['id'];
+$query = "delete from system_event_evs_self where belong = '$event_id'";
+$dblj->exec($query);
+
+$query = "delete from system_event_self where belong = '$remove_id' and module_id = 'npc_task_accept'";
+$dblj->exec($query);
+$query = "delete from system_event_self where belong = '$remove_id' and module_id = 'npc_task_giveup'";
+$dblj->exec($query);
+$query = "delete from system_event_self where belong = '$remove_id' and module_id = 'npc_task_finish'";
+$dblj->exec($query);
+
+
+}
+
 function get_mysqldata($dblj, $data_type, $data_id){
     switch ($data_type) {
         case 'events':

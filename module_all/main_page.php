@@ -75,6 +75,12 @@ if($player->ucmd){
     \player\changeplayersx('ucmd',"",$sid,$dblj);
     $player = \player\getplayer($sid,$dblj);
 }
+
+        
+ if ($player->uhp<=0){
+     \player\changeplayersx('uhp',1,$sid,$dblj);
+ }
+
 if (isset($newmid)){
     if ($player->nowmid!=$newmid){
         $clmid = player\getmid($newmid,$dblj); //获取即将走的地图信息
@@ -87,21 +93,21 @@ if (isset($newmid)){
         $player = player\getplayer($sid,$dblj);//获取玩家信息
         $tpsmid = $player->tpsmid;
         }
-        if ($player->uhp<=0){
-            $retmid = \player\getmid($player->nowmid,$dblj);
-            $retqy = \player\getqy($retmid->id,$dblj);
-            echo("你已经重伤请治疗<br/>");
+        // if ($player->uhp<=0){
+        //     $retmid = \player\getmid($player->nowmid,$dblj);
+        //     $retqy = \player\getqy($retmid->id,$dblj);
+        //     echo("你已经重伤请治疗<br/>");
+        // }
+        $parents_cmd = 'gm_scene_new';
+        global_events_steps_change(49,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php',null,null,$para);
+        if($tpsmid!=0){
+        \player\changeplayersx('justmid',$player->nowmid,$sid,$dblj);//更新玩家justmid
+        \player\changeplayersx('nowmid',$tpsmid,$sid,$dblj);//更新玩家nowmid
+        \player\changeplayersx('tpsmid',0,$sid,$dblj);
         }else{
-            $parents_cmd = 'gm_scene_new';
-            global_events_steps_change(49,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php',null,null,$para);
-            if($tpsmid!=0){
-            \player\changeplayersx('justmid',$player->nowmid,$sid,$dblj);//更新玩家justmid
-            \player\changeplayersx('nowmid',$tpsmid,$sid,$dblj);//更新玩家nowmid
-            \player\changeplayersx('tpsmid',0,$sid,$dblj);
-            }else{
-            \player\changeplayersx('justmid',$player->nowmid,$sid,$dblj);//更新玩家justmid
-            \player\changeplayersx('nowmid',$newmid,$sid,$dblj);//更新玩家nowmid
-            $oldclmid = player\getmid($player->nowmid,$dblj);//获取离开的地图信息
+        \player\changeplayersx('justmid',$player->nowmid,$sid,$dblj);//更新玩家justmid
+        \player\changeplayersx('nowmid',$newmid,$sid,$dblj);//更新玩家nowmid
+        $oldclmid = player\getmid($player->nowmid,$dblj);//获取离开的地图信息
             if($oldclmid->mout_event_id !=0){
                 $parents_cmd = 'gm_scene_new';
                 events_steps_change($oldclmid->mout_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','scene',$oldclmid->mid,$para);
@@ -112,8 +118,6 @@ if (isset($newmid)){
                 \player\changeplayersx('tpsmid',0,$sid,$dblj);
                 }
                 }
-            
-            }
         }
         $player = player\getplayer($sid,$dblj);//获取玩家信息
     }

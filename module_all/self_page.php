@@ -20,6 +20,17 @@ $cmd = $parents_cmd;
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_self_page($dblj,$page_id);
+$page_para = \gm\get_self_page_list($dblj,$self_id);
+$not_return = $page_para[0]['not_return'];
+if($not_return ==0){
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+$ret_game = <<<HTML
+<a href="?cmd=$gonowmid">返回游戏</a><br/>
+HTML;
+}
+
 $br = 0;
 
 $player = player\getplayer($sid,$dblj);
@@ -105,16 +116,13 @@ $gm_html = <<<HTML
 <a href="?cmd=$gm_main">设计大厅</a><br/>
 HTML;
 }
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="css/gamecss.css">
 </head>
 $game_main
-<a href="?cmd=$gonowmid">返回游戏</a><br/>
+$ret_game
 $gm_html
 HTML;
 echo $all;

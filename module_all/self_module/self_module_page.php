@@ -15,6 +15,13 @@ $sql = "UPDATE system_self_define_module set name = '$change_name' where id = '$
 $cxjg = $dblj->query($sql);
 echo "更改成功！<br/>";
 }
+
+if($_POST['change_not_return']){
+$sql = "UPDATE system_self_define_module set not_return = '$not_return' where id = '$change_self_id'";
+$cxjg = $dblj->query($sql);
+echo "更改成功！<br/>";
+}
+
 if(!empty($_POST) &&!$_POST['change_module_name']){
 $text = $_POST['text'];
 $cond = $_POST['cond'];
@@ -94,6 +101,24 @@ $get_main_page = \gm\get_self_page_list($dblj,$self_id);
 $self_name = $get_main_page[0]['name'];
 $self_call_sum = $get_main_page[0]['call_sum'];
 $self_id = $get_main_page[0]['id'];
+$not_return = $get_main_page[0]['not_return'];
+
+if($not_return ==0){
+    $choose_html = <<<HTML
+    <select name="not_return" id="not_return">
+        <option value="0" selected>是</option>
+        <option value="1" >否</option>
+    </select>
+HTML;
+}else{
+    $choose_html = <<<HTML
+    <select name="not_return" id="not_return">
+        <option value="0" >是</option>
+        <option value="1" selected>否</option>
+    </select>
+HTML;
+}
+
 $get_main_page = \gm\get_self_page($dblj,$self_id);
 $table_id = "game_self_page_".$self_id;
 $sql_id = "ct_".$self_id;
@@ -142,7 +167,12 @@ $all = <<<HTML
 <input type="hidden" name="change_self_id" value="{$self_id}">
 <input name="change_name" placeholder="{$self_name}" size="20"">
 <input name="change_module_name" type="submit" title="更名" value="更名"/>
-</form><br/>
+</form>
+是否生成返回链接:<form method="post">
+<input type="hidden" name="change_self_id" value="{$self_id}">
+$choose_html
+<input name="change_not_return" type="submit" title="修改" value="修改"/>
+</form>
 模板：ct_{$self_id}[调用个数：{$page_count},调用次数：{$self_call_sum}<a href="?cmd=$reboot">清空</a>]<br/>
 ============<br/>
 $game_main<br/>

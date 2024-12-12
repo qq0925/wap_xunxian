@@ -2483,7 +2483,7 @@ if(!$bagequiphtml){
                                     $row_result = $row[$attr3]; // 获取 $attr3 字段的值
                                 }
                             }
-                            $exclude_attr = in_array($attr3,['jname','jid','jdesc','joccasion','jimage','jhurt_mod']);
+                            $exclude_attr = in_array($attr3,['jname','jid','jdesc','joccasion','jimage','jhurt_mod','jgroup_attack']);
                             // 如果 $row_result 仍然为 null，查询 system_skill_module 表
                             if ($row_result === null&&!$exclude_attr) {
                                 $sql = "SELECT $attr3 FROM system_skill_module WHERE jid = 2";

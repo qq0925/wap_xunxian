@@ -7,7 +7,7 @@ $fieldNames = $stmt->fetchAll(PDO::FETCH_COLUMN);
 // 输出字段名称
 foreach ($fieldNames as $fieldName) {
     $gm_attr_text .=<<<HTML
-    {$fieldName}&nbsp; 
+    {$fieldName}
 HTML;
 }
     
@@ -19,7 +19,7 @@ $fieldNames = $stmt->fetchAll(PDO::FETCH_COLUMN);
 // 输出字段名称
 foreach ($fieldNames as $fieldName) {
     $gm_addition_attr_text .=<<<HTML
-    {$fieldName}&nbsp; 
+    {$fieldName}
 HTML;
 }
 

@@ -272,12 +272,14 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     $money_name = \gm\gm_post($dblj)->money_name;
     
     // 在循环外部生成输出字符串
+    if($item_counts){
     foreach ($item_counts as $item_name => $count) {
         if($count >0){
         $huode .= "得到：{$item_name} x {$count} <br/>";
         }elseif($count<0){
         $huode .= "失去：{$item_name} x {$count} <br/>";
         }
+    }
     }
     if($total_exp){
     $total_exp = $total_exp>0?"+".$total_exp:$total_exp;

@@ -15,6 +15,18 @@
         $stmt->execute();
     }
 
+    $sql = "SHOW COLUMNS FROM system_self_define_module LIKE 'not_return'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE system_self_define_module ADD COLUMN not_return INT(1) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
 
     // 检查表是否存在 round 字段
     $sql = "SHOW COLUMNS FROM game2 LIKE 'round'";
