@@ -64,6 +64,8 @@ class npcguaiwu{
     var $ndrop_exp;
     var $ndrop_money;
     var $ndrop_item;
+    var $ndrop_item_type;
+    var $nmid;
 }
 
 class skill{}
@@ -638,7 +640,7 @@ function getnpcguaiwu($nid,$dblj){
 
 function getnpcguaiwu_attr($nid,$dblj){
     $npcguaiwu = new npcguaiwu();
-    $sql = "select nid,nname,nhp,nmp,nwin_event_id,ndefeat_event_id,ndrop_exp,ndrop_money,ndrop_item from system_npc_midguaiwu where ngid = '$nid'";
+    $sql = "select nid,nname,nhp,nmp,nwin_event_id,ndefeat_event_id,ndrop_exp,ndrop_money,ndrop_item,ndrop_item_type,nmid from system_npc_midguaiwu where ngid = '$nid'";
     $cxjg = $dblj->query($sql);
     $cxjg->bindColumn('nid',$npcguaiwu->nid);
     $cxjg->bindColumn('nname',$npcguaiwu->nname);
@@ -649,6 +651,8 @@ function getnpcguaiwu_attr($nid,$dblj){
     $cxjg->bindColumn('ndrop_exp',$npcguaiwu->ndrop_exp);
     $cxjg->bindColumn('ndrop_money',$npcguaiwu->ndrop_money);
     $cxjg->bindColumn('ndrop_item',$npcguaiwu->ndrop_item);
+    $cxjg->bindColumn('ndrop_item_type',$npcguaiwu->ndrop_item_type);
+    $cxjg->bindColumn('nmid',$npcguaiwu->nmid);
     $data = $cxjg->fetch(\PDO::FETCH_ASSOC);
     // 循环遍历数组，动态生成类的属性并赋值
     if(is_bool($data)){
@@ -1448,6 +1452,8 @@ class gameconfig{
     var $npc_op_br;
     var $item_op_br;
     var $list_row;
+    var $drop_protect_time;
+    var $drop_disappear_time;
 }
 
 function getgameconfig($dblj){
@@ -1471,6 +1477,8 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('game_player_regular_minute',$gameconfig->game_player_regular_minute);
     $cxjg->bindColumn('game_temp_notice',$gameconfig->game_temp_notice);
     $cxjg->bindColumn('game_temp_notice_time',$gameconfig->game_temp_notice_time);
+    $cxjg->bindColumn('drop_protect_time',$gameconfig->drop_protect_time);
+    $cxjg->bindColumn('drop_disappear_time',$gameconfig->drop_disappear_time);
     $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
     return $gameconfig;
 }

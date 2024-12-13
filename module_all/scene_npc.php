@@ -72,7 +72,7 @@ if ($ntaskid!='' && $nkill ==0){
                 \player\inserttask($ntaskarr[$order-1],$player_tnowcount,$sid,$dblj);
                 $parents_cmd = 'gm_scene_new';
                 //步骤中若放弃传值的问题
-                events_steps_change($task_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_module',$nid,$para);
+                events_steps_change($task_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_module',$mid,$para);
                 $npc_hide = 1;
                 break;
                 }

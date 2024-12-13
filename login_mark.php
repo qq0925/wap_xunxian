@@ -1,6 +1,7 @@
 <?php
 require_once 'class/player.php';
 require_once 'class/encode.php';
+require 'class/gm.php';
 include_once 'pdo.php';
 include_once 'class/iniclass.php';
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
@@ -8,7 +9,10 @@ header("Expires: Sat, 1 Jan 2000 00:00:00 GMT");
 
 $encode = new \encode\encode();//创建一个名为 $encode 的新对象，并使用命名空间 \encode\encode() 实例化该对象。
 $dblj = DB::pdo();
-
+if(!$gm_post){
+$gm_post = new \gm\gm();
+$gm_post = \gm\gm_post($dblj);
+}
 $Dcmd = $_SERVER['QUERY_STRING'];
 $result = array();
 parse_str($Dcmd, $result);
@@ -75,9 +79,9 @@ if ($result) {
 <html lang="zh-CN">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>{$gm_post->game_name}的主页</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <link rel="stylesheet" href="css/gamecss.css">
-    <title>主页</title>
 </head>
 <body>
 尊敬的{$username}，欢迎您回来!<br/><br/>

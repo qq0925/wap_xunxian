@@ -147,7 +147,6 @@ if($cmd=='pve_fight'){
     for($i=0;$i<$monster_count;$i++){
     $monster_id = $monster_ids[$i];
     $alive_monster = player\getnpcguaiwu_attr($monster_id,$dblj);
-    
     if ($alive_monster->nhp<=0){//怪物死亡
         $alive_id = $alive_monster->nid;
         $defeat_id = $alive_monster->ndefeat_event_id;
@@ -172,6 +171,8 @@ if($cmd=='pve_fight'){
         $drop_exp = $alive_monster->ndrop_exp;//掉落相关
         $drop_money = $alive_monster->ndrop_money;
         $drop_items = $alive_monster->ndrop_item;
+        $drop_item_type = $alive_monster->ndrop_item_type;
+        $drop_map_id = $alive_monster->nmid;
         if($drop_exp){
         $drop_exp = \lexical_analysis\process_string($drop_exp,$sid);
         }
@@ -182,6 +183,40 @@ if($cmd=='pve_fight'){
         
         $drop_item = explode(',',$drop_items);
         $drop_item_count = count($drop_item);
+        if($drop_item_type ==1){
+        $drop_add_map_item = [];
+        for($j=0;$j<$drop_item_count;$j++){
+            $drop_para = explode('|',$drop_item[$j]);
+            $drop_id = $drop_para[0];
+            $drop_item_name = \player\getitem($drop_id,$dblj)->iname;
+            $drop_item_name = \lexical_analysis\color_string($drop_item_name);
+            $drop_count = $drop_para[1];
+            $drop_count = \lexical_analysis\process_string($drop_count,$sid);
+            $drop_count = @eval("return $drop_count;");
+                // 更新地图掉落物品字符串
+            $drop_add_map_item[] = "$drop_id|$drop_count";
+            if (isset($item_counts[$drop_item_name])) {
+                    $item_counts[$drop_item_name] += $drop_count;
+                } else {
+                    $item_counts[$drop_item_name] = $drop_count;
+                }
+        }
+        if($drop_add_map_item){
+            // 拼接掉落物品字符串
+        $drop_add_map_item_str = implode(',', $drop_add_map_item);
+        // 使用参数化查询，避免 SQL 注入，同时处理 mitem_now 为空的情况
+        $stmt = $dblj->prepare("
+            UPDATE system_map 
+            SET mitem_now = 
+                CASE 
+                    WHEN mitem_now IS NULL OR mitem_now = '' THEN ? 
+                    ELSE CONCAT(mitem_now, ?) 
+                END 
+            WHERE mid = ?
+        ");
+        $stmt->execute([$drop_add_map_item_str, ',' . $drop_add_map_item_str, $drop_map_id]);
+        }
+        }else{
         for($j=0;$j<$drop_item_count;$j++){
             $drop_para = explode('|',$drop_item[$j]);
             $drop_id = $drop_para[0];
@@ -221,6 +256,7 @@ if($cmd=='pve_fight'){
                     $item_counts[$drop_item_name] = -$drop_count;
                 }
             }
+        }
         }
         }
         if($drop_exp!=""){
@@ -272,6 +308,15 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     $money_name = \gm\gm_post($dblj)->money_name;
     
     // 在循环外部生成输出字符串
+    if($drop_item_type ==1){
+    if($item_counts){
+    foreach ($item_counts as $item_name => $count) {
+        if($count >0){
+        $huode .= "你看到：{$item_name} x {$count}掉落在地上！ <br/>";
+        }
+    }
+    }
+    }else{
     if($item_counts){
     foreach ($item_counts as $item_name => $count) {
         if($count >0){
@@ -279,6 +324,7 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
         }elseif($count<0){
         $huode .= "失去：{$item_name} x {$count} <br/>";
         }
+    }
     }
     }
     if($total_exp){

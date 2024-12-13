@@ -51,6 +51,14 @@ foreach ($_POST as $key => $value) {
             $sql = "update  gm_game_basic set default_storage = '$value' where game_id = 19980925";
             $dblj->exec($sql);
             break;
+        case 'drop_protect_time':
+            $sql = "update  gm_game_basic set drop_protect_time = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
+        case 'drop_disappear_time':
+            $sql = "update  gm_game_basic set drop_disappear_time = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
         case 'gm_css_text':
             // 获取提交的CSS内容
             $gm_css_text = $_POST['gm_css_text'] ?? '';
@@ -98,6 +106,14 @@ $other_html = <<<HTML
 </form>
 <form action="?cmd=$other_set" method="POST">
 城市默认仓库容量：<input type="tel" name="default_storage" size="5" value="{$game_config->default_storage}">
+<input type="submit" value="保存"/>
+</form>
+<form action="?cmd=$other_set" method="POST">
+掉落物品保护时长：<input type="tel" name="drop_protect_time" size="5" value="{$game_config->drop_protect_time}">秒
+<input type="submit" value="保存"/>
+</form>
+<form action="?cmd=$other_set" method="POST">
+掉落物品消失时长：<input type="tel" name="drop_disappear_time" size="5" value="{$game_config->drop_disappear_time}">秒
 <input type="submit" value="保存"/>
 </form>
 <form action="?cmd=$other_set" method="POST">

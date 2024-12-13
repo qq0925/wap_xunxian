@@ -27,6 +27,20 @@
         $stmt->execute();
     }
 
+    $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'drop_protect_time'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE gm_game_basic ADD COLUMN drop_protect_time INT(11) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $sql = "ALTER TABLE gm_game_basic ADD COLUMN drop_disappear_time INT(11) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
 
     // 检查表是否存在 round 字段
     $sql = "SHOW COLUMNS FROM game2 LIKE 'round'";
