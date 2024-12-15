@@ -2142,6 +2142,20 @@ echo $refresh_html;
                             }
                             break;
                         case '兵器':
+                            $iequip_cond = $item->iequip_cond;
+                            $equip_ret = $iequip_cond !== '' 
+                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid, null, null, "check_cond"): 1;
+                            try{
+                                @$ret = eval("return $equip_ret;");
+                            }
+                            catch (ParseError $e){
+                            print("该装备的装备条件语法错误: ". $e->getMessage()."<br/>");
+                        }
+                            catch (Error $e){
+                            print("该装备的装备条件执行错误: ". $e->getMessage()."<br/>");
+                        }
+                            $equip_bool = ($ret !== false && $ret !== null) ? 0 : 1;
+                            if($equip_bool ==0){
                             $result = \player\getnowequiptrueid($item_true_id,$sid,$dblj);
                             if($result ==0){
                             \player\changeequipstate($sid,$dblj,$iid,$item_true_id,1);
@@ -2160,8 +2174,25 @@ echo $refresh_html;
                             }else{
                             echo "你已经装备了{$iname}！<br/>";
                             }
+                            }else{
+                                echo "以你的水平暂时无法穿上该装备!<br/>";
+                            }
                             break;
                         case '防具':
+                            $iequip_cond = $item->iequip_cond;
+                            $equip_ret = $iequip_cond !== '' 
+                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid, null, null, "check_cond"): 1;
+                            try{
+                                @$ret = eval("return $equip_ret;");
+                            }
+                            catch (ParseError $e){
+                            print("该装备的装备条件语法错误: ". $e->getMessage()."<br/>");
+                        }
+                            catch (Error $e){
+                            print("该装备的装备条件执行错误: ". $e->getMessage()."<br/>");
+                        }
+                            $equip_bool = ($ret !== false && $ret !== null) ? 0 : 1;
+                            if($equip_bool ==0){
                             $result = \player\getnowequiptrueid($item_true_id,$sid,$dblj);
                             if($result ==0){
                             \player\changeequipstate($sid,$dblj,$iid,$item_true_id,1);
@@ -2177,6 +2208,9 @@ echo $refresh_html;
                             \player\exec_global_event(40,'item',$item_true_id,$sid,$dblj);
                             }else{
                             echo "你已经装备上了{$iname}！<br/>";
+                            }
+                            }else{
+                                echo "以你的水平暂时无法穿上该装备!<br/>";
                             }
                             break;
                         case '其它':
@@ -2314,6 +2348,7 @@ echo $refresh_html;
                     $iid = $row['iid'];
                     $itype = $row['itype'];
                     $iname = \lexical_analysis\color_string($row['iname']);
+                    $iequip_cond = $row['iequip_cond'];
                 }
             }
             switch($target_event){
@@ -2323,6 +2358,19 @@ echo $refresh_html;
                 case 'use':
                     switch($itype){
                         case '兵器':
+                            $equip_ret = $iequip_cond !== '' 
+                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid, null, null, "check_cond"): 1;
+                            try{
+                                @$ret = eval("return $equip_ret;");
+                            }
+                            catch (ParseError $e){
+                            print("该装备的装备条件语法错误: ". $e->getMessage()."<br/>");
+                        }
+                            catch (Error $e){
+                            print("该装备的装备条件执行错误: ". $e->getMessage()."<br/>");
+                        }
+                            $equip_bool = ($ret !== false && $ret !== null) ? 0 : 1;
+                            if($equip_bool ==0){
                             \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,1,$pet_id);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$equip_true_id' and sid = '$sid'");
                             $canshu = '装备';
@@ -2343,8 +2391,25 @@ echo $refresh_html;
                             }
                                 \player\exec_global_event(40,'item',$equip_true_id,$sid,$dblj);
                             }
+                            }else{
+                                echo "以你的水平暂时无法穿上该装备!<br/>";
+                            }
                             break;
                         case '防具':
+                            $equip_ret = $iequip_cond !== '' 
+                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid, null, null, "check_cond"): 1;
+                            try{
+                                @$ret = eval("return $equip_ret;");
+                            }
+                            catch (ParseError $e){
+                            print("该装备的装备条件语法错误: ". $e->getMessage()."<br/>");
+                        }
+                            catch (Error $e){
+                            print("该装备的装备条件执行错误: ". $e->getMessage()."<br/>");
+                        }
+                            $equip_bool = ($ret !== false && $ret !== null) ? 0 : 1;
+                            if($equip_bool ==0){
+                            
                             \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,1,$pet_id);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$equip_true_id' and sid = '$sid'");
                             $canshu = '装备';
@@ -2363,6 +2428,9 @@ echo $refresh_html;
                                 }
                             }
                                 \player\exec_global_event(40,'item',$equip_true_id,$sid,$dblj);
+                            }
+                            }else{
+                                echo "以你的水平暂时无法穿上该装备!<br/>";
                             }
                             break;
                         default:
