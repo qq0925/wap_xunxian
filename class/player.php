@@ -1450,6 +1450,7 @@ class gameconfig{
     var $near_player_show;
     var $scene_op_br;
     var $npc_op_br;
+    var $npc_list_br;
     var $item_op_br;
     var $list_row;
     var $drop_protect_time;
@@ -1471,6 +1472,7 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('near_player_show',$gameconfig->near_player_show);
     $cxjg->bindColumn('scene_op_br',$gameconfig->scene_op_br);
     $cxjg->bindColumn('npc_op_br',$gameconfig->npc_op_br);
+    $cxjg->bindColumn('npc_list_br',$gameconfig->npc_list_br);
     $cxjg->bindColumn('item_op_br',$gameconfig->item_op_br);
     $cxjg->bindColumn('list_row',$gameconfig->list_row);
     $cxjg->bindColumn('default_storage',$gameconfig->default_storage);

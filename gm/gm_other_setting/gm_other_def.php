@@ -35,6 +35,10 @@ foreach ($_POST as $key => $value) {
             $sql = "update  gm_game_basic set npc_op_br = '$value' where game_id = 19980925";
             $dblj->exec($sql);
             break;
+        case 'npc_list_br':
+            $sql = "update  gm_game_basic set npc_list_br = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
         case 'item_op_br':
             $sql = "update  gm_game_basic set item_op_br = '$value' where game_id = 19980925";
             $dblj->exec($sql);
@@ -82,6 +86,7 @@ $game_config = \player\getgameconfig($dblj);
 $selectedOption = ($game_config->scene_op_br == "1") ? 'selected' : '';
 $selectedOption_2 = ($game_config->npc_op_br == "1") ? 'selected' : '';
 $selectedOption_3 = ($game_config->item_op_br == "1") ? 'selected' : '';
+$selectedOption_4 = ($game_config->npc_list_br == "1") ? 'selected' : '';
 $other_html = <<<HTML
 [杂项设置]<br/><br/>
 <form action="?cmd=$other_set" method="POST">
@@ -121,6 +126,9 @@ $other_html = <<<HTML
 </form>
 <form action="?cmd=$other_set" method="POST">
 查看电脑人物操作列表是否换行：<select name="npc_op_br"><option value =0>否</option><option value =1 {$selectedOption_2}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
+</form>
+<form action="?cmd=$other_set" method="POST">
+场景电脑人物列表是否换行：<select name="npc_list_br"><option value =0>否</option><option value =1 {$selectedOption_4}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
 <form action="?cmd=$other_set" method="POST">
 查看物品操作列表是否换行：<select name="item_op_br"><option value =0>否</option><option value =1 {$selectedOption_3}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />

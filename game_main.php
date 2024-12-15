@@ -27,10 +27,12 @@ for ($i=0;$i<count($get_main_page);$i++){
         @$ret = eval("return $show_ret;");
     }
     catch (ParseError $e){
-    print("语法错误: ". $e->getMessage());
+    $index = $i+1;
+    print("第{$index}个元素的显示条件语法错误: ". $e->getMessage()."<br/>");
 }
     catch (Error $e){
-    print("执行错误: ". $e->getMessage());
+    $index = $i+1;
+    print("第{$index}个元素的显示条件执行错误: ". $e->getMessage()."<br/>");
 }
     $ret_bool = ($ret !== false && $ret !== null) ? 0 : 1;
     if($ret_bool ==0){
@@ -46,7 +48,7 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_link_value = $get_main_page[$i]['link_value'];
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_photoshow($main_value);
-    $main_value =\lexical_analysis\color_string($main_value);    
+    $main_value =\lexical_analysis\color_string($main_value);
     if($main_target_event !=0){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;

@@ -27,6 +27,18 @@
         $stmt->execute();
     }
 
+    $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'npc_list_br'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE gm_game_basic ADD COLUMN npc_list_br INT(2) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
     $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'drop_protect_time'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();

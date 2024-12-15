@@ -25,10 +25,12 @@ for ($i=0;$i<count($get_main_page);$i++){
         @$ret = eval("return $show_ret;");
     }
     catch (ParseError $e){
-    print("语法错误: ". $e->getMessage());
+    $index = $i+1;
+    print("第{$index}个元素的显示条件语法错误: ". $e->getMessage()."<br/>");
 }
     catch (Error $e){
-    print("执行错误: ". $e->getMessage());
+    $index = $i+1;
+    print("第{$index}个元素的显示条件执行错误: ". $e->getMessage()."<br/>");
 }
     $ret_bool = ($ret !== false && $ret !== null) ? 0 : 1;
     if($ret_bool ==0){

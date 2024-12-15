@@ -1100,6 +1100,7 @@ $clmid = player\getmid($nowmid,$dblj);
 
 $npc_list = '';
 if ($clmid->mnpc_now !=""){
+    $npc_list_br = \player\getgameconfig($dblj)->npc_list_br;
     $npc_list = explode(',',$clmid->mnpc_now);
     foreach ($npc_list as $npc_detail){
     $npc_para = explode('|',$npc_detail);
@@ -1147,7 +1148,10 @@ HTML;
 HTML;
         }
 }
+
+if($npc_list_br ==1){
     $npchtml .="<br/>";
+}
 }
     }
 }

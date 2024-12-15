@@ -29,6 +29,7 @@ if($canshu == 'hockshop'){
         $total = ($item_now_count)*($item_value);
         $item_name = \player\getitem($iid,$dblj)->iname;
         $item_type = \player\getitem($iid,$dblj)->itype;
+        $item_weight_total = \player\getitem($iid,$dblj)->iweight * $item_now_count;
         $item_name = \lexical_analysis\color_string($item_name);
         \player\changeplayeritem($item_true_id,-$item_now_count,$sid,$dblj);
         $sql = "update game1 set umoney = umoney +  '$total' where sid = '$sid' ";
@@ -39,7 +40,7 @@ if($canshu == 'hockshop'){
         }
         
         echo "出售成功，你出售了{$item_name}x{$item_now_count}，获得了{$total}{$gm_post->money_measure}{$gm_post->money_name}!<br/>";
-        \player\addplayersx('uburthen',-$item_now_count,$sid,$dblj);
+        \player\addplayersx('uburthen',-$item_weight_total,$sid,$dblj);
         $player = \player\getplayer($sid,$dblj);
     }else{
         echo "出售失败!<br/>";

@@ -41,39 +41,36 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_type = $get_main_page[$i]['type'];
     $main_value = $get_main_page[$i]['value'];
     $main_show_cond = $get_main_page[$i]['show_cond'];
-    $show_ret = \lexical_analysis\process_string($main_show_cond,$sid,$oid,$mid);
-    @$ret = eval("return $show_ret;");
-    $ret_bool = $ret ? '0' : '1';
-    if(is_null($ret)){
-        $ret_bool = 0;
+    $show_ret = $main_show_cond !== '' 
+        ? \lexical_analysis\process_string($main_show_cond, $sid, $oid, $mid, null, null, "check_cond") 
+        : 1;
+    try{
+        @$ret = eval("return $show_ret;");
     }
-    
+    catch (ParseError $e){
+    $index = $i+1;
+    print("第{$index}个元素的显示条件语法错误: ". $e->getMessage()."<br/>");
+}
+    catch (Error $e){
+    $index = $i+1;
+    print("第{$index}个元素的显示条件执行错误: ". $e->getMessage()."<br/>");
+}
+    $ret_bool = ($ret !== false && $ret !== null) ? 0 : 1;
+    if($ret_bool ==0){
+    if($main_type !=1){
+    list($main_value,$br_count) = trimTrailingNewlinesAndCount($main_value);
+    // 使用 str_repeat() 来生成多个 <br/> 标签
+    $br_count_html = str_repeat("<br/>", $br_count);
+    }else{
     $main_value = nl2br($main_value);
+    }
     $main_target_event = $get_main_page[$i]['target_event'];
     $main_target_func = $get_main_page[$i]['target_func'];
     $main_link_value = $get_main_page[$i]['link_value'];
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
-    $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
-    try{
-        $matches = array();
-                $pattern = '/\[([^\[\]]*)\]/';
-                $main_value = preg_replace_callback($pattern, function($matches) {
-                    $content = $matches[1]; // 获取方括号中的内容
-                    // 进行处理，例如将内容转换为大写
-                    $processedContent = @eval("return $content;");
-                    return '[' . $processedContent . ']'; // 将处理后的内容放回原字符串中
-                    }, $main_value);
-            }
-            catch (ParseError $e){
-                print("语法错误: ". $e->getMessage());
-                
-            }
-            catch (Error $e){
-                print("执行错误: ". $e->getMessage());
-}
-    if($main_target_event !=0 &&$ret_bool ==0){
+    if($main_target_event !=0){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $clj[] = $i;
@@ -81,40 +78,34 @@ for ($i=0;$i<count($get_main_page);$i++){
     }elseif ($main_target_event ==0) {
         $main_target_event = $encode->encode("cmd=event_no_define&ucmd=$cmid&parents_cmd=$cmd&parents_page=$parents_page&sid=$sid");
     }
-    if($main_target_func !=0 &&$ret_bool ==0){
+    if($main_target_func !=0){
         $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,4,$cmid);
-    }elseif ($main_target_func ==0) {
-        $main_target_func = $encode->encode("cmd=func_no_define&ucmd=$cmid&parents_page=$parents_page&$parents_cmd=$cmd&sid=$sid");
     }
     switch ($main_type) {
         case '1':
-            if($ret_bool ==0){
                 $game_main .=<<<HTML
-$main_value
+{$main_value}
 HTML;
-}
+
             break;
         case '2':
-            if($ret_bool ==0){
                 $game_main .=<<<HTML
-<a href="?cmd=$main_target_event" >$main_value</a>
+<a href="?cmd=$main_target_event" >{$main_value}</a>{$br_count_html}
 HTML;
-}
             break;
         case '3':
-            if($ret_bool ==0){
+        if($main_target_func){
                 $game_main .=<<<HTML
-$main_target_func
+{$main_target_func}{$br_count_html}
 HTML;
 }
             break;
         case '4':
-            if($ret_bool ==0){
                 $game_main .=<<<HTML
-<a href="$main_link_value" >$main_value</a>
+<a href="$main_link_value" >{$main_value}</a>{$br_count_html}
 HTML;
-}
             break;
+    }
     }
 }
 $cmid = $cmid + 1;
