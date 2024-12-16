@@ -276,6 +276,29 @@ if($clmid->mitem!=''){
     }
 
 }
+
+$scene_drop_item = \player\getscenedropitem($clmid->mid,$dblj);
+if($scene_drop_item){
+// 获取当前时间
+$nowtime = new \DateTime(); // 获取当前时间
+$drop_disappear_time = \player\getgameconfig($dblj)->drop_disappear_time; // 获取配置中的消失时间
+$scene_id = $clmid->mid;
+ // 准备 SQL 语句
+$sql = "
+    DELETE FROM system_npc_drop_list
+    WHERE drop_mid = $scene_id and (drop_item_data IS NULL
+    OR TIMESTAMPDIFF(SECOND, drop_time, NOW()) > :drop_disappear_time
+)";
+
+    $stmt = $dblj->prepare($sql);
+
+    // 绑定参数
+    $stmt->bindParam(':drop_disappear_time', $drop_disappear_time, \PDO::PARAM_INT);
+
+    // 执行 SQL 语句
+    $stmt->execute();
+}
+
 $map_detail = $encode->encode("cmd=map_detail&mid=$player->nowmid&sid=$sid");
 
 if($player->nowmid !=0){

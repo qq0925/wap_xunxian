@@ -705,15 +705,7 @@ HTML;
 if($ltlx == "clan"){
 $city_id = \player\getmid($player->nowmid,$dblj)->marea_id;
 $area_mid = \player\getqy($city_id,$dblj)->belong;
-$area_names = [
-    0 => '失落之地',
-    1 => '日出之地',
-    2 => '灼热之地',
-    3 => '日落之地',
-    4 => '极寒之地',
-    5 => '湿热之地',
-];
-$area_name = $area_names[$area_mid];
+$area_name = \gm\getregion($area_mid,$dblj);
 if($delete_msid){
     echo "删除成功！<br/>";
     $dblj->exec("delete from system_chat_data where id = '$delete_msid'");

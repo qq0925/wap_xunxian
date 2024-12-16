@@ -2507,6 +2507,25 @@ echo $refresh_html;
             }
             $ym = "module_all/main_page.php";
             break;
+        case 'get_drop_item_ret'://拾取地面掉落物品,先查过期，再查所属
+            $iexpire = \player\getscenedropitem_state($mid,$drop_id,$sid,$iid,$dblj);
+            $cmd = "gm_scene_new";
+            switch($iexpire){
+                case '-1':
+                echo "没有该物品!<br/>";
+                    break;
+                case '-2':
+                echo "这不是你打落的物品!<br/>";
+                    break;
+                case '0':
+                echo "没有该物品!<br/>";
+                    break;
+                default:
+                    \player\getscenedropitem_action($drop_id,$sid,$iid,$mid,$iname,$icount,$dblj);
+                    break;
+            }
+            $ym = "module_all/main_page.php";
+            break;
         case 'photo_detail'://照片相关
             if($upload ==1){
             if(empty($_POST['id'])||empty($_POST['name'])){

@@ -121,6 +121,37 @@ try {
 
 try {
     // 1. 查询表是否存在
+    $query = $dblj->prepare("SHOW TABLES LIKE 'system_npc_drop_list'");
+    $query->execute();
+    $table_exists = $query->fetch();
+
+    if (!$table_exists) {
+        // 使用事务来保证所有操作的原子性
+        $dblj->beginTransaction();
+
+
+    // 创建表的SQL语句
+    $sql = "CREATE TABLE IF NOT EXISTS system_npc_drop_list (
+            drop_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+            drop_npc_id INT(11) NOT NULL,
+            drop_item_data TEXT NOT NULL,
+            drop_player_sid TEXT NOT NULL,
+            drop_time DATETIME NOT NULL,
+            drop_mid INT(11) NOT NULL)";
+    $dblj->exec($sql);
+        // 提交事务
+        $dblj->commit();
+    }
+} catch (PDOException $e) {
+    // 回滚事务（如果有进行事务处理）
+    if ($dblj->inTransaction()) {
+        $dblj->rollBack();
+    }
+    echo "操作时出错: " . $e->getMessage();
+}
+
+try {
+    // 1. 查询表是否存在
     $query = $dblj->prepare("SHOW TABLES LIKE 'system_pet_scene'");
     $query->execute();
     $table_exists = $query->fetch();

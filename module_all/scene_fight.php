@@ -205,16 +205,9 @@ if($cmd=='pve_fight'){
             // 拼接掉落物品字符串
         $drop_add_map_item_str = implode(',', $drop_add_map_item);
         // 使用参数化查询，避免 SQL 注入，同时处理 mitem_now 为空的情况
-        $stmt = $dblj->prepare("
-            UPDATE system_map 
-            SET mitem_now = 
-                CASE 
-                    WHEN mitem_now IS NULL OR mitem_now = '' THEN ? 
-                    ELSE CONCAT(mitem_now, ?) 
-                END 
-            WHERE mid = ?
-        ");
-        $stmt->execute([$drop_add_map_item_str, ',' . $drop_add_map_item_str, $drop_map_id]);
+        $nowdate = date('Y-m-d H:i:s');
+        $stmt = $dblj->prepare("insert into system_npc_drop_list(drop_npc_id,drop_item_data,drop_player_sid,drop_time,drop_mid)values(?,?,?,?,?)");
+        $stmt->execute([$alive_id,$drop_add_map_item_str,$sid,$nowdate,$drop_map_id]);
         }
         }else{
         for($j=0;$j<$drop_item_count;$j++){

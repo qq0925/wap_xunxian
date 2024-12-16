@@ -155,8 +155,11 @@ if ($update ==1){
     $sql = "update system_map set mnpc_now = '$clmid_npc_count' WHERE mid='$target_midid'";
     $dblj->exec($sql);
 }
-
-if($clmid->mitem!=''){
+    else{
+    $sql = "update system_map set mnpc_now = '' WHERE mid='$target_midid'";
+    $dblj->exec($sql);
+}
+    if($clmid->mitem!=''){
     $data = $clmid->mitem;
     $items = explode(",", $data); // 使用逗号分隔字符串，得到每个项
     foreach ($items as &$item) {
@@ -175,6 +178,10 @@ if($clmid->mitem!=''){
     // 将处理后的数据重新组合成字符串
     $clmid_item_count = implode(",", $items);
     $sql = "update system_map set mitem_now = '$clmid_item_count' WHERE mid='$target_midid'";
+    $dblj->exec($sql);
+    }
+    else{
+    $sql = "update system_map set mitem_now = '' WHERE mid='$target_midid'";
     $dblj->exec($sql);
     }
 }

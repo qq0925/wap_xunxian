@@ -743,6 +743,27 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                 $totalItemCount += (int)$itemCount; // 将每个item的数量累加
                             }
                         }
+                        
+                        $sql = "SELECT drop_item_data FROM system_npc_drop_list WHERE drop_mid = (SELECT nowmid FROM game1 WHERE sid = ?)";
+                        // 使用预处理语句
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param("s", $sid);
+                        
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        // 处理结果
+                        while ($row = $result->fetch_assoc()) {
+                            $mitem = $row["drop_item_data"];
+                            $items = explode(",", $mitem); // 拆分成每个item项
+                            foreach ($items as $item) {
+                                list(, $itemCount) = explode("|", $item);
+                                $totalItemCount += (int)$itemCount; // 将每个item的数量累加
+                            }
+                        }
+                        
                         $op = $totalItemCount;
                         break;
                         case 'justmid':

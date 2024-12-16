@@ -1254,7 +1254,35 @@ HTML;
 }
 }
     }
-
+    $drop_item_list = player\getscenedropitem($mid,$dblj);
+    if($drop_item_list){
+    $drop_item_all_count = count($drop_item_list);
+    for($i=0;$i<$drop_item_all_count;$i++){
+    $drop_item_datas = explode(',',$drop_item_list[$i]['drop_item_data']);
+    $drop_id = $drop_item_list[$i]['drop_id'];
+    foreach ($drop_item_datas as $drop_item_data){
+    $drop_item_one = explode('|',$drop_item_data);
+    $drop_item_id = $drop_item_one[0];
+    $drop_item_count = $drop_item_one[1];
+    if($drop_item_count >0){
+    $drop_item_para = player\getitem($drop_item_id,$dblj);
+    $drop_item_name = $drop_item_para ->iname;
+    $drop_item_name =\lexical_analysis\color_string($drop_item_name);
+    
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    $drop_itemcmd = $encode->encode("cmd=get_drop_item_ret&drop_id=$drop_id&mid=$mid&iid=$drop_item_id&ucmd=$cmid&icount=$drop_item_count&iname=$drop_item_name&sid=$sid");
+    $drop_itemhtml.=<<<HTML
+<a href="?cmd=$drop_itemcmd">{$drop_item_name}({$drop_item_count})</a>
+HTML;
+}
+}
+}
+    }
+    if($drop_itemhtml){
+    $itemhtml .=$drop_itemhtml;
+    }
     return $itemhtml;
 }
 

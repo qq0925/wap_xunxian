@@ -598,6 +598,13 @@ function getstore_item_true_count($mid,$item_true_id,$sid,$dblj){
     return $value;
 }
 
+function getscenedropitem($mid,$dblj){
+    $sql = "select * from `system_npc_drop_list` where drop_mid = '$mid'";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
+    return $ret;
+}
+
 
 function getsaleitem_true_count($item_true_id,$sid,$dblj){
     $sql = "select icount from `system_item` where isale_state = 1 and item_true_id = '$item_true_id' and sid = '$sid'";
@@ -923,7 +930,7 @@ function changeitem_ower($sid,$oid,$item_true_id,$dblj){
 
 function getsceneitem_state($mid,$iid,$dblj){
     $check_para = $iid."|";
-    $sql = "select mitem_now from system_map where mid = '$mid' AND mitem_now LIKE '%$check_para%' OR mitem_now LIKE '%,$check_para%' OR mitem_now LIKE '%$check_para,%'";
+    $sql = "select mitem_now from system_map where mid = '$mid' AND (mitem_now LIKE '%$check_para%' OR mitem_now LIKE '%,$check_para%' OR mitem_now LIKE '%$check_para,%')";
     $cxjg = $dblj->query($sql);
     $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
     $mitem_now = $ret['mitem_now'];
@@ -936,6 +943,51 @@ function getsceneitem_state($mid,$iid,$dblj){
         return -1;
     }
 }
+
+function getscenedropitem_state($mid,$drop_id,$sid,$iid,$dblj){
+    $check_para = $iid."|";
+    $sql = "select drop_item_data,drop_time,drop_player_sid from system_npc_drop_list where drop_mid = '$mid' AND drop_id = '$drop_id' AND (drop_item_data LIKE '%$check_para%' OR drop_item_data LIKE '%,$check_para%' OR drop_item_data LIKE '%$check_para,%')";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    $mitem_now = $ret['drop_item_data'];
+    if ($ret){
+        $drop_time = $ret['drop_time'];
+        $nowtime = new \DateTime(); // 获取当前时间
+        $drop_time_obj = new \DateTime($drop_time); // 将 'Y-m-d H:i:s' 字符串转换为 DateTime 对象
+        $drop_disappear_time = \player\getgameconfig($dblj)->drop_disappear_time;
+        // 计算时间差（秒）
+        $interval = $nowtime->getTimestamp() - $drop_time_obj->getTimestamp();
+        if($interval < $drop_disappear_time){
+        $drop_protect_time = \player\getgameconfig($dblj)->drop_protect_time;
+        
+        if($interval < $drop_protect_time){
+        $drop_sid = $ret['drop_player_sid'];
+        
+        if($sid ==$drop_sid){
+        // 使用正则表达式匹配对应的值
+        $pattern = "/$iid\|(\d+)/";
+        preg_match($pattern, $mitem_now, $matches);
+        return $matches[1];
+        }else{
+            return -2;
+        }
+        
+        }else{
+        // 使用正则表达式匹配对应的值
+        $pattern = "/$iid\|(\d+)/";
+        preg_match($pattern, $mitem_now, $matches);
+        return $matches[1];
+        }
+        
+        }else{
+            return -1;
+        }
+}
+else{
+    return 0;
+}
+}
+
 
 function getsceneitem($sid,$iid,$mid,$iname,$icount,$dblj){
     $player = getplayer($sid,$dblj);
@@ -961,6 +1013,30 @@ function getsceneitem($sid,$iid,$mid,$iname,$icount,$dblj){
     }
 }
 
+function getscenedropitem_action($drop_id,$sid,$iid,$mid,$iname,$icount,$dblj){
+    $player = getplayer($sid,$dblj);
+    $get_item_iweight = getitem($iid,$dblj)->iweight;
+    $get_item_total_weight = $icount * $get_item_iweight;
+    $player_last_burthen = $player->umax_burthen - $player->uburthen;
+    if($player_last_burthen >=$get_item_total_weight && $player_last_burthen>0){
+        echo "你捡起了:{$iname}x{$icount}<br/>";
+        \player\additem($sid,$iid,$icount,$dblj);
+        \player\removescenedropitem($drop_id,$mid,$iid,$icount,null,$dblj,1);
+    }elseif($player_last_burthen >0 &&$player_last_burthen < $get_item_total_weight){
+        $maxpick = floor(($player_last_burthen)/($get_item_iweight));
+        if($maxpick>0){
+        $least_pick = $icount - $maxpick;
+        echo "你捡起了:{$iname}x{$maxpick}";
+        \player\additem($sid,$iid,$maxpick,$dblj);
+        \player\removescenedropitem($drop_id,$mid,$iid,$icount,$least_pick,$dblj,2);
+        }else{
+        echo "你已经无法再装下任何{$iname}了！<br/>";
+        }
+    }else{
+        echo "你已经无法再装下任何{$iname}了！<br/>";
+    }
+}
+
 function removesceneitem($mid,$iid,$icount,$maxpick=null,$dblj,$para=null){
     if($para ==1){
     $string = $iid."|"."$icount";
@@ -973,6 +1049,20 @@ function removesceneitem($mid,$iid,$icount,$maxpick=null,$dblj,$para=null){
     $dblj->exec($sql);
     
 }
+
+function removescenedropitem($drop_id,$mid,$iid,$icount,$maxpick=null,$dblj,$para=null){
+    if($para ==1){
+    $string = $iid."|"."$icount";
+    $sql = "UPDATE system_npc_drop_list SET drop_item_data = REPLACE(drop_item_data, ',$string', ''),drop_item_data = REPLACE(drop_item_data, '$string,', ''),drop_item_data = REPLACE(drop_item_data, '$string', '') WHERE drop_item_data LIKE '%,$string%' OR drop_item_data LIKE '%$string,%' OR drop_item_data = '$string' and drop_mid = '$mid' and drop_id = '$drop_id';";
+    }elseif($para ==2){
+    $old_string = $iid."|"."$icount";
+    $new_string = $iid."|"."$maxpick";
+    $sql = "UPDATE system_npc_drop_list SET drop_item_data = REPLACE(drop_item_data, '$old_string', '$new_string') WHERE drop_item_data LIKE '%$old_string%' and drop_id = '$drop_id';";
+    }
+    $dblj->exec($sql);
+    
+}
+
 
 function getgm_attr(){
     
