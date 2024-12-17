@@ -1585,6 +1585,33 @@ echo $refresh_html;
                 $qy_id = $qy_id;
                 $deleteSql = "DELETE FROM system_npc WHERE nid = '$npc_id'";
                 $deleteStmt = $dblj->exec($deleteSql);
+                $deleteSql = "DELETE FROM system_npc_op WHERE belong = '$npc_id'";
+                $deleteStmt = $dblj->exec($deleteSql);
+                try {
+
+                    // 第一步：查询 system_event_self 表，获取符合条件的 id 值
+                    $sql = "SELECT id FROM system_event_self WHERE module_id LIKE 'npc_%' AND belong = :belong";
+                    $stmt = $dblj->prepare($sql);
+                    $stmt->bindParam(':belong', $npc_id, PDO::PARAM_STR);  // 绑定参数
+                    $stmt->execute();
+                
+                    // 获取符合条件的所有 id 值
+                    $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                
+                    if (count($ids) > 0) {
+                        // 将查询到的 id 值转换为逗号分隔的字符串
+                        $idList = implode(',', $ids);
+                
+                        // 第二步：删除 system_event_evs_self 表中对应的记录
+                        $deleteSql = "DELETE FROM system_event_evs_self WHERE belong IN ($idList)";
+                        $deleteStmt = $dblj->prepare($deleteSql);
+                        $deleteStmt->execute();
+                    } else {
+                        echo "没有找到符合条件的记录。";
+                    }
+                } catch (PDOException $e) {
+                    echo "数据库操作失败: " . $e->getMessage();
+                }
                 $ym = 'gm/gamenpc_design.php';
             }elseif($out_canshu ==1){
             $ym = 'gm/gm_npc_design/npc_data_out.php';
