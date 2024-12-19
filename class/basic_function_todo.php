@@ -712,9 +712,13 @@ if($op_br ==1){
         $item_true_id = $mid;
         $sale_state = \player\getitem_sale_state($item_true_id,$sid,$dblj);
         $equip_state = \player\getitem_equip_state($item_true_id,$sid,$dblj);
-        $stmt =$dblj->query("SELECT iid from system_item where item_true_id = '$item_true_id'");
+        $stmt = $dblj->query("SELECT sim.iid, sim.itype
+                      FROM system_item si
+                      JOIN system_item_module sim ON si.iid = sim.iid
+                      WHERE si.item_true_id = '$item_true_id'");
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $iid = $result['iid'];
+        $itype = $result['itype'];
         if($sale_state ==0 &&$equip_state==0){
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
@@ -723,6 +727,13 @@ if($op_br ==1){
 $op_html .=<<<HTML
 <a href="?cmd=$use_next">使用</a>
 HTML;
+
+if($itype =="书籍"){
+        $read_next = $encode->encode("cmd=item_op_basic&parents_cmd=$cmd&ucmd=$cmid&item_true_id=$item_true_id&iid=$iid&target_event=look_book&sid=$sid");
+$op_html .=<<<HTML
+<a href="?cmd=$read_next">阅读</a><br/>
+HTML;
+}
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;

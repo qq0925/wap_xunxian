@@ -2250,7 +2250,14 @@ echo $refresh_html;
                             }
                             break;
                         case '书籍':
-                            $target_event = "look_book";
+                            if($item->iuse_event_id!=0){
+                            include 'class/events_steps_change.php';
+                            $parents_cmd = 'iteminfo_new';
+                            events_steps_change($item->iuse_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/scene_item.php',null,$iid,$para);
+                            }else{
+                            echo "你想使用{$iname}，但看了看好像没什么头绪。<br/>";
+                            }
+                            //$target_event = "look_book";
                             //书籍系统
                             break;
                         default:
