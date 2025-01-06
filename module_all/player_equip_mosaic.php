@@ -573,6 +573,7 @@ $gomosaic = $encode->encode("cmd=mosaic_html&ucmd=$cmid&mid=$mid&sid=$sid");
 $mosaic_list = \player\get_player_all_mosaic($equip_type,$sid,$dblj);
 for($i=1;$i<count($mosaic_list)+1;$i++){
 $mosaic_name = $mosaic_list[$i-1]['iname'];
+$mosaic_name = \lexical_analysis\color_string($mosaic_name);
 $mosaic_count = $mosaic_list[$i-1]['icount'];
 $mosaic_id = $mosaic_list[$i-1]['iid'];
 $mosaic_true_id = $mosaic_list[$i-1]['item_true_id'];
@@ -611,6 +612,7 @@ $gomosaic = $encode->encode("cmd=mosaic_html&ucmd=$cmid&mid=$mid&sid=$sid");
 $mosaic_list = \player\get_player_all_mosaic($equip_type,$sid,$dblj);
 for($i=1;$i<count($mosaic_list)+1;$i++){
 $mosaic_name = $mosaic_list[$i-1]['iname'];
+$mosaic_name = \lexical_analysis\color_string($mosaic_name);
 $mosaic_count = $mosaic_list[$i-1]['icount'];
 $mosaic_id = $mosaic_list[$i-1]['iid'];
 $mosaic_true_id = $mosaic_list[$i-1]['item_true_id'];

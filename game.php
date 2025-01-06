@@ -2185,7 +2185,10 @@ echo $refresh_html;
                             if($equip_bool ==0){
                             $result = \player\getnowequiptrueid($item_true_id,$sid,$dblj);
                             if($result ==0){
-                            \player\changeequipstate($sid,$dblj,$iid,$item_true_id,1);
+                            $ret = \player\changeequipstate($sid,$dblj,$iid,$item_true_id,1);
+                            
+                            if($ret !='-1'){
+                            
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$item_true_id' and sid = '$sid'");
                             echo "你装备了{$iname}<br/>";
                             
@@ -2198,6 +2201,7 @@ echo $refresh_html;
                             }
                             
                             \player\exec_global_event(40,'item',$item_true_id,$sid,$dblj);
+                            }
                             }else{
                             echo "你已经装备了{$iname}！<br/>";
                             }
@@ -2222,7 +2226,8 @@ echo $refresh_html;
                             if($equip_bool ==0){
                             $result = \player\getnowequiptrueid($item_true_id,$sid,$dblj);
                             if($result ==0){
-                            \player\changeequipstate($sid,$dblj,$iid,$item_true_id,1);
+                            $ret = \player\changeequipstate($sid,$dblj,$iid,$item_true_id,1);
+                            if($ret !='-1'){
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$item_true_id' and sid = '$sid'");
                             echo "你装备了{$iname}<br/>";
                             $mosaic_list = \player\get_player_equip_mosaic_once($item_true_id,$sid,$dblj)['equip_mosaic'];
@@ -2233,6 +2238,7 @@ echo $refresh_html;
                                 }
                             }
                             \player\exec_global_event(40,'item',$item_true_id,$sid,$dblj);
+                            }
                             }else{
                             echo "你已经装备上了{$iname}！<br/>";
                             }
@@ -2312,6 +2318,107 @@ echo $refresh_html;
                 case 'remove':
                     switch($itype){
                     case '兵器':
+                    $equip_mosaic_link = \player\getgameconfig($dblj)->equip_mosaic_link;
+                    if($equip_mosaic_link ==1){
+                    try {
+                        // 查询装备嵌套信息
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE belong_sid = :sid AND equip_id = :equip_id";
+                        $stmt = $dblj->prepare($sql);
+                        $stmt->execute([':sid' => $sid, ':equip_id' => $item_true_id]);
+                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                        if ($row) {
+                            $diss_count = count($row);
+                            $player_last_burthen = $player->umax_burthen - $player->uburthen;
+                            $weight = 0;
+                            
+                            $diss_para = explode('|',$row['equip_mosaic']);
+                            
+                            // 计算总负重
+                            foreach ($diss_para as $diss_para_id) {
+                                $weight += \player\getitem($diss_para_id, $dblj)->iweight ?? 0;
+                            }
+                            
+                            if ($player_last_burthen >= $weight && $player_last_burthen > 0) {
+                                // 将装备拆卸到背包
+                
+                                $event_data = global_event_data_get(43,$dblj);
+                                $event_cond = $event_data['system_event']['cond'];
+                                $event_cmmt = $event_data['system_event']['cmmt'];
+                
+                                foreach ($diss_para as $diss_para_id) {
+                                    
+                                $register_triggle = checkTriggerCondition($event_cond,$dblj,$diss_para_id,'mosaic_equip',$item_true_id);
+                                if(is_null($register_triggle)){
+                                    $register_triggle =1;
+                                }
+                            
+                                if(!$register_triggle){
+                                echo "拆卸失败！<br/>";
+                                if($event_cmmt){
+                                echo $event_cmmt.'<br/>';
+                                }
+                                }
+                                else{
+                                if(!empty($event_data['system_event']['link_evs'])){
+                                    $system_event_evs = $event_data["system_event_evs"];
+                                    foreach ($system_event_evs as $index => $event) {
+                                    $step_cond = $event['cond'];
+                                    $step_cmmt = $event['cmmt'];
+                                    $step_cmmt2 = $event['cmmt2'];
+                                    $step_s_attrs = $event['s_attrs'];
+                                    $step_m_attrs = $event['m_attrs'];
+                                    $step_triggle = checkTriggerCondition($step_cond,$dblj,$diss_para_id,'mosaic_equip',$item_true_id);
+                                    if(is_null($step_triggle)){
+                                    $step_triggle =1;
+                                        }
+                                    if(!$step_triggle){
+                                        if($step_cmmt2){
+                                        echo $step_cmmt2."<br/>";
+                                        }
+                                        }elseif($step_triggle){
+                                        if($step_cmmt){
+                                        echo $step_cmmt."<br/>";
+                                        }
+                                        $ret = attrsetting($step_s_attrs,$diss_para_id,'mosaic_equip',$item_true_id);
+                                        $ret = attrchanging($step_m_attrs,$diss_para_id,'mosaic_equip',$item_true_id);
+                                        }
+                                    }
+                            
+                                }
+                                }
+                                \player\additem($sid, $diss_para_id, 1, $dblj);
+                                }
+                                // 删除嵌套信息
+                                $delete_sql = "DELETE FROM player_equip_mosaic WHERE belong_sid = :sid and equip_id = :equip_id";
+                                $delete_stmt = $dblj->prepare($delete_sql);
+                                $delete_stmt->execute([':sid' => $sid, ':equip_id' => $item_true_id]);
+                
+                                echo "你卸下了{$iname}<br/>";
+                                \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
+                                $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
+                                $mosaic_list = \player\get_player_equip_mosaic_once($item_true_id,$sid,$dblj)['equip_mosaic'];
+                                if($mosaic_list){
+                                        $mosaic_ones = explode("|",$mosaic_list);
+                                        foreach ($mosaic_ones as $mosaic_one){
+                                        \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
+                                        }
+                                    }
+                                    \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                            } else {
+                                echo "请检测背包负重后再进行操作！<br/>";
+                            }
+                            
+                            
+                        } else {
+                            echo "没有找到嵌套装备记录！<br/>";
+                        }
+                    } catch (Exception $e) {
+                        echo "操作失败: " . $e->getMessage();
+                    }
+
+                    }
+                    else{
                         \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
                         echo "你卸下了{$iname}<br/>";
@@ -2323,8 +2430,110 @@ echo $refresh_html;
                                 }
                             }
                             \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                    }
                         break;
                     case '防具':
+                    $equip_mosaic_link = \player\getgameconfig($dblj)->equip_mosaic_link;
+                    if($equip_mosaic_link ==1){
+                    try {
+                        // 查询装备嵌套信息
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE belong_sid = :sid AND equip_id = :equip_id";
+                        $stmt = $dblj->prepare($sql);
+                        $stmt->execute([':sid' => $sid, ':equip_id' => $item_true_id]);
+                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                        if ($row) {
+                            $diss_count = count($row);
+                            $player_last_burthen = $player->umax_burthen - $player->uburthen;
+                            $weight = 0;
+                            
+                            $diss_para = explode('|',$row['equip_mosaic']);
+                            
+                            // 计算总负重
+                            foreach ($diss_para as $diss_para_id) {
+                                $weight += \player\getitem($diss_para_id, $dblj)->iweight ?? 0;
+                            }
+                            
+                            if ($player_last_burthen >= $weight && $player_last_burthen > 0) {
+                                // 将装备拆卸到背包
+                
+                                $event_data = global_event_data_get(43,$dblj);
+                                $event_cond = $event_data['system_event']['cond'];
+                                $event_cmmt = $event_data['system_event']['cmmt'];
+                
+                                foreach ($diss_para as $diss_para_id) {
+                                    
+                                $register_triggle = checkTriggerCondition($event_cond,$dblj,$diss_para_id,'mosaic_equip',$item_true_id);
+                                if(is_null($register_triggle)){
+                                    $register_triggle =1;
+                                }
+                            
+                                if(!$register_triggle){
+                                echo "拆卸失败！<br/>";
+                                if($event_cmmt){
+                                echo $event_cmmt.'<br/>';
+                                }
+                                }
+                                else{
+                                if(!empty($event_data['system_event']['link_evs'])){
+                                    $system_event_evs = $event_data["system_event_evs"];
+                                    foreach ($system_event_evs as $index => $event) {
+                                    $step_cond = $event['cond'];
+                                    $step_cmmt = $event['cmmt'];
+                                    $step_cmmt2 = $event['cmmt2'];
+                                    $step_s_attrs = $event['s_attrs'];
+                                    $step_m_attrs = $event['m_attrs'];
+                                    $step_triggle = checkTriggerCondition($step_cond,$dblj,$diss_para_id,'mosaic_equip',$item_true_id);
+                                    if(is_null($step_triggle)){
+                                    $step_triggle =1;
+                                        }
+                                    if(!$step_triggle){
+                                        if($step_cmmt2){
+                                        echo $step_cmmt2."<br/>";
+                                        }
+                                        }elseif($step_triggle){
+                                        if($step_cmmt){
+                                        echo $step_cmmt."<br/>";
+                                        }
+                                        $ret = attrsetting($step_s_attrs,$diss_para_id,'mosaic_equip',$item_true_id);
+                                        $ret = attrchanging($step_m_attrs,$diss_para_id,'mosaic_equip',$item_true_id);
+                                        }
+                                    }
+                            
+                                }
+                                }
+                                \player\additem($sid, $diss_para_id, 1, $dblj);
+                                }
+                                // 删除嵌套信息
+                                $delete_sql = "DELETE FROM player_equip_mosaic WHERE belong_sid = :sid and equip_id = :equip_id";
+                                $delete_stmt = $dblj->prepare($delete_sql);
+                                $delete_stmt->execute([':sid' => $sid, ':equip_id' => $item_true_id]);
+                
+                                echo "你卸下了{$iname}<br/>";
+                                \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
+                                $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
+                                $mosaic_list = \player\get_player_equip_mosaic_once($item_true_id,$sid,$dblj)['equip_mosaic'];
+                                if($mosaic_list){
+                                        $mosaic_ones = explode("|",$mosaic_list);
+                                        foreach ($mosaic_ones as $mosaic_one){
+                                        \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
+                                        }
+                                    }
+                                    \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                            } else {
+                                echo "请检测背包负重后再进行操作！<br/>";
+                            }
+                            
+                            
+                        } else {
+                            echo "没有找到嵌套装备记录！<br/>";
+                        }
+                    } catch (Exception $e) {
+                        echo "操作失败: " . $e->getMessage();
+                    }
+
+                    }
+                    else{
                         \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
                         echo "你卸下了{$iname}<br/>";
@@ -2333,10 +2542,10 @@ echo $refresh_html;
                                 $mosaic_ones = explode("|",$mosaic_list);
                                 foreach ($mosaic_ones as $mosaic_one){
                                 \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
-                                    
                                 }
                             }
-                        \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                            \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                    }
                         break;
                     }
                     break;
@@ -2481,9 +2690,111 @@ echo $refresh_html;
                 case 'remove':
                     switch($itype){
                     case '兵器':
+                    $canshu = '装备';
+                    $equip_mosaic_link = \player\getgameconfig($dblj)->equip_mosaic_link;
+                    if($equip_mosaic_link ==1){
+                    try {
+                        // 查询装备嵌套信息
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE belong_sid = :sid AND equip_id = :equip_id";
+                        $stmt = $dblj->prepare($sql);
+                        $stmt->execute([':sid' => $sid, ':equip_id' => $equip_true_id]);
+                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                        if ($row) {
+                            $diss_count = count($row);
+                            $player_last_burthen = $player->umax_burthen - $player->uburthen;
+                            $weight = 0;
+                            
+                            $diss_para = explode('|',$row['equip_mosaic']);
+                            
+                            // 计算总负重
+                            foreach ($diss_para as $diss_para_id) {
+                                $weight += \player\getitem($diss_para_id, $dblj)->iweight ?? 0;
+                            }
+                            
+                            if ($player_last_burthen >= $weight && $player_last_burthen > 0) {
+                                // 将装备拆卸到背包
+                
+                                $event_data = global_event_data_get(43,$dblj);
+                                $event_cond = $event_data['system_event']['cond'];
+                                $event_cmmt = $event_data['system_event']['cmmt'];
+                
+                                foreach ($diss_para as $diss_para_id) {
+                                    
+                                $register_triggle = checkTriggerCondition($event_cond,$dblj,$diss_para_id,'mosaic_equip',$equip_true_id);
+                                if(is_null($register_triggle)){
+                                    $register_triggle =1;
+                                }
+                            
+                                if(!$register_triggle){
+                                echo "拆卸失败！<br/>";
+                                if($event_cmmt){
+                                echo $event_cmmt.'<br/>';
+                                }
+                                }
+                                else{
+                                if(!empty($event_data['system_event']['link_evs'])){
+                                    $system_event_evs = $event_data["system_event_evs"];
+                                    foreach ($system_event_evs as $index => $event) {
+                                    $step_cond = $event['cond'];
+                                    $step_cmmt = $event['cmmt'];
+                                    $step_cmmt2 = $event['cmmt2'];
+                                    $step_s_attrs = $event['s_attrs'];
+                                    $step_m_attrs = $event['m_attrs'];
+                                    $step_triggle = checkTriggerCondition($step_cond,$dblj,$diss_para_id,'mosaic_equip',$equip_true_id);
+                                    if(is_null($step_triggle)){
+                                    $step_triggle =1;
+                                        }
+                                    if(!$step_triggle){
+                                        if($step_cmmt2){
+                                        echo $step_cmmt2."<br/>";
+                                        }
+                                        }elseif($step_triggle){
+                                        if($step_cmmt){
+                                        echo $step_cmmt."<br/>";
+                                        }
+                                        $ret = attrsetting($step_s_attrs,$diss_para_id,'mosaic_equip',$equip_true_id);
+                                        $ret = attrchanging($step_m_attrs,$diss_para_id,'mosaic_equip',$equip_true_id);
+                                        }
+                                    }
+                            
+                                }
+                                }
+                                \player\additem($sid, $diss_para_id, 1, $dblj);
+                                }
+                                // 删除嵌套信息
+                                $delete_sql = "DELETE FROM player_equip_mosaic WHERE belong_sid = :sid and equip_id = :equip_id";
+                                $delete_stmt = $dblj->prepare($delete_sql);
+                                $delete_stmt->execute([':sid' => $sid, ':equip_id' => $equip_true_id]);
+                
+                                echo "你卸下了{$iname}<br/>";
+                                \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2);
+                                $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
+                                $mosaic_list = \player\get_player_equip_mosaic_once($equip_true_id,$sid,$dblj)['equip_mosaic'];
+                                if($mosaic_list){
+                                        $mosaic_ones = explode("|",$mosaic_list);
+                                        foreach ($mosaic_ones as $mosaic_one){
+                                        \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
+                                        }
+                                    }
+                                    \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
+                            } else {
+                                echo "请检测背包负重后再进行操作！<br/>";
+                            }
+                            
+                            
+                        } else {
+                            echo "没有找到嵌套装备记录！<br/>";
+                        }
+                    } catch (Exception $e) {
+                        echo "操作失败: " . $e->getMessage();
+                    }
+
+                    }
+                    else{
+                        
                         \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2,$pet_id);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
-                        $canshu = '装备';
                         if(!$pet_id){
                         echo "你卸下了{$iname}<br/>";
                         }else{
@@ -2500,26 +2811,131 @@ echo $refresh_html;
                         
                                 \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
                         }
+                    }
                         break;
                     case '防具':
+                    $canshu = '装备';
+                    $equip_mosaic_link = \player\getgameconfig($dblj)->equip_mosaic_link;
+                    if($equip_mosaic_link ==1){
+                    try {
+                        // 查询装备嵌套信息
+                        $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE belong_sid = :sid AND equip_id = :equip_id";
+                        $stmt = $dblj->prepare($sql);
+                        $stmt->execute([':sid' => $sid, ':equip_id' => $equip_true_id]);
+                        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                        if ($row) {
+                            $diss_count = count($row);
+                            $player_last_burthen = $player->umax_burthen - $player->uburthen;
+                            $weight = 0;
+                            
+                            $diss_para = explode('|',$row['equip_mosaic']);
+                            
+                            // 计算总负重
+                            foreach ($diss_para as $diss_para_id) {
+                                $weight += \player\getitem($diss_para_id, $dblj)->iweight ?? 0;
+                            }
+                            
+                            if ($player_last_burthen >= $weight && $player_last_burthen > 0) {
+                                // 将装备拆卸到背包
+                
+                                $event_data = global_event_data_get(43,$dblj);
+                                $event_cond = $event_data['system_event']['cond'];
+                                $event_cmmt = $event_data['system_event']['cmmt'];
+                
+                                foreach ($diss_para as $diss_para_id) {
+                                    
+                                $register_triggle = checkTriggerCondition($event_cond,$dblj,$diss_para_id,'mosaic_equip',$equip_true_id);
+                                if(is_null($register_triggle)){
+                                    $register_triggle =1;
+                                }
+                            
+                                if(!$register_triggle){
+                                echo "拆卸失败！<br/>";
+                                if($event_cmmt){
+                                echo $event_cmmt.'<br/>';
+                                }
+                                }
+                                else{
+                                if(!empty($event_data['system_event']['link_evs'])){
+                                    $system_event_evs = $event_data["system_event_evs"];
+                                    foreach ($system_event_evs as $index => $event) {
+                                    $step_cond = $event['cond'];
+                                    $step_cmmt = $event['cmmt'];
+                                    $step_cmmt2 = $event['cmmt2'];
+                                    $step_s_attrs = $event['s_attrs'];
+                                    $step_m_attrs = $event['m_attrs'];
+                                    $step_triggle = checkTriggerCondition($step_cond,$dblj,$diss_para_id,'mosaic_equip',$equip_true_id);
+                                    if(is_null($step_triggle)){
+                                    $step_triggle =1;
+                                        }
+                                    if(!$step_triggle){
+                                        if($step_cmmt2){
+                                        echo $step_cmmt2."<br/>";
+                                        }
+                                        }elseif($step_triggle){
+                                        if($step_cmmt){
+                                        echo $step_cmmt."<br/>";
+                                        }
+                                        $ret = attrsetting($step_s_attrs,$diss_para_id,'mosaic_equip',$equip_true_id);
+                                        $ret = attrchanging($step_m_attrs,$diss_para_id,'mosaic_equip',$equip_true_id);
+                                        }
+                                    }
+                            
+                                }
+                                }
+                                \player\additem($sid, $diss_para_id, 1, $dblj);
+                                }
+                                // 删除嵌套信息
+                                $delete_sql = "DELETE FROM player_equip_mosaic WHERE belong_sid = :sid and equip_id = :equip_id";
+                                $delete_stmt = $dblj->prepare($delete_sql);
+                                $delete_stmt->execute([':sid' => $sid, ':equip_id' => $equip_true_id]);
+                
+                                echo "你卸下了{$iname}<br/>";
+                                \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2);
+                                $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
+                                $mosaic_list = \player\get_player_equip_mosaic_once($equip_true_id,$sid,$dblj)['equip_mosaic'];
+                                if($mosaic_list){
+                                        $mosaic_ones = explode("|",$mosaic_list);
+                                        foreach ($mosaic_ones as $mosaic_one){
+                                        \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
+                                        }
+                                    }
+                                    \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
+                            } else {
+                                echo "请检测背包负重后再进行操作！<br/>";
+                            }
+                            
+                            
+                        } else {
+                            echo "没有找到嵌套装备记录！<br/>";
+                        }
+                    } catch (Exception $e) {
+                        echo "操作失败: " . $e->getMessage();
+                    }
+
+                    }
+                    else{
+                        
                         \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2,$pet_id);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
                         if(!$pet_id){
                         echo "你卸下了{$iname}<br/>";
                         }else{
                         echo "宠物卸下了{$iname}<br/>";
-                        }if(!$pet_id){
+                        }
+                        if(!$pet_id){
                             $mosaic_list = \player\get_player_equip_mosaic_once($equip_true_id,$sid,$dblj)['equip_mosaic'];
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
                                 foreach ($mosaic_ones as $mosaic_one){
-                                    
                                 \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
-                                    
                                 }
                             }
+                        
                                 \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
                         }
+                    }
                         break;
                     }
                     
