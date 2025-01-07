@@ -10,11 +10,22 @@ if($_POST['gm_doc_text']){
 $gm_doc_text_post = $_POST['gm_doc_text'] ?? '';
 // 写入文件
 if (file_put_contents($edit_file_path, $gm_doc_text_post) !== false) {
-    echo "doc文件已成功更新。";
+    echo "doc文件已成功更新。<br/>";
 } else {
-    echo "更新doc文件时出错。";
+    echo "更新doc文件时出错。<br/>";
 }
 }
+
+if($update_canshu == '1'){
+$down_url = "https://xunxian.txsj.ink/gm/design_help.txt";
+$down_doc = file_get_contents($down_url);
+if (file_put_contents($edit_file_path, $down_doc) !== false) {
+    echo "doc文件已成功更新。<br/>";
+} else {
+    echo "更新doc文件时出错。<br/>";
+}
+}
+
 if (file_exists($edit_file_path)) {
     // 读取文件内容并赋值给变量
     $gm_edit_text = htmlspecialchars(file_get_contents($edit_file_path));
@@ -32,9 +43,15 @@ $html =<<<HTML
 <a href="?cmd=$gm_main">返回设计大厅</a>
 HTML;
 }else{
+    
+
+
+
 $doc_edit = $encode->encode("cmd=gm_design_guide&edit_canshu=1&sid=$sid");
+$doc_update = $encode->encode("cmd=gm_design_guide&update_canshu=1&sid=$sid");
 $html =<<<HTML
-<a href="?cmd=$doc_edit">编辑文档(不明情况者勿点！)</a><br/>
+<a href="?cmd=$doc_edit">编辑文档(不明情况者勿点！)</a>
+<a href="?cmd=$doc_update">获取最新文档</a><br/>
 HTML;
 $html .= $gm_edit_text;
 $html .=<<<HTML
