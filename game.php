@@ -1,5 +1,6 @@
 <?php
 session_start();
+//ob_start();
 $start_time = microtime(true);
 //error_reporting(0);
 //ini_set('display_errors', '0');
@@ -2410,8 +2411,12 @@ echo $refresh_html;
                             }
                             
                             
-                        } else {
-                            echo "没有找到嵌套装备记录！<br/>";
+                        }
+                        else{
+                        echo "你卸下了{$iname}<br/>";
+                        \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
+                        $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
+                        \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
                         }
                     } catch (Exception $e) {
                         echo "操作失败: " . $e->getMessage();
@@ -2526,7 +2531,10 @@ echo $refresh_html;
                             
                             
                         } else {
-                            echo "没有找到嵌套装备记录！<br/>";
+                        echo "你卸下了{$iname}<br/>";
+                        \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
+                        $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
+                        \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
                         }
                     } catch (Exception $e) {
                         echo "操作失败: " . $e->getMessage();
@@ -2783,8 +2791,12 @@ echo $refresh_html;
                             }
                             
                             
-                        } else {
-                            echo "没有找到嵌套装备记录！<br/>";
+                        }
+                        else{
+                        echo "你卸下了{$iname}<br/>";
+                        \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2);
+                        $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
+                        \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
                         }
                     } catch (Exception $e) {
                         echo "操作失败: " . $e->getMessage();
@@ -2792,7 +2804,6 @@ echo $refresh_html;
 
                     }
                     else{
-                        
                         \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2,$pet_id);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
                         if(!$pet_id){
@@ -2908,7 +2919,10 @@ echo $refresh_html;
                             
                             
                         } else {
-                            echo "没有找到嵌套装备记录！<br/>";
+                        echo "你卸下了{$iname}<br/>";
+                        \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2);
+                        $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
+                        \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
                         }
                     } catch (Exception $e) {
                         echo "操作失败: " . $e->getMessage();
@@ -3491,7 +3505,6 @@ echo $refresh_html;
     }
 }
 
-    
 //$usersession = \player\getplayersession($sid,$dblj,$_SESSION['sessionID']);
 
 //if($usersession['session_id'] && $usersession['session_id'] !=$_SESSION['sessionID']){
@@ -3642,7 +3655,7 @@ echo $refresh_html;
         //这里的include是吃性能大户
         //80-599ms
     }?>
-</body>
+    
 <footer>
     <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
     
@@ -3659,16 +3672,6 @@ HTML;
 }
 echo $gm_cheat_html;
 
-    ?>
-</footer>
-</html>
-<?php
- //调用user.ini是否存在
-include("./ini/user_ini.php");
-$bugym = ($iniFile->getItem('最后页面id', '页面id'));
-//最大值
-$a5 = $cmid;
-//将cmd最小最大值写入
 $end_time = microtime(true);
 $execution_time = ceil(($end_time - $start_time) * 1000);// 单位是毫秒
 echo "页面执行时间为：{$execution_time} 毫秒<br/>";
@@ -3684,6 +3687,18 @@ $test_code_text = $gm_other_code;
 echo "<br/>";
 include_once 'gm/gm_test_code_show/gm_test_code_other.php';
 }
+?>
+</footer>
+</body>
+
+</html>
+<?php
+ //调用user.ini是否存在
+include("./ini/user_ini.php");
+$bugym = ($iniFile->getItem('最后页面id', '页面id'));
+//最大值
+$a5 = $cmid;
+//将cmd最小最大值写入
 $iniFile->updItem('验证信息', ['xcmid值' => $a4, 'dcmid值' => $a5]);
 //写入超链接及其所对应的值
 $iniFile->delCategory('超链接值');
@@ -3700,6 +3715,13 @@ $iniFile->addItem('超链接值', [$q3 => $q4]);
 global $redis;
 
 $redis->flushAll($cacheKey);
+
+//$static_page = ob_get_contents();
+//file_put_contents("static_page.html", $static_page);
+//ob_end_clean();
+// 输出获取到的内容
+//echo $static_page;
+
 
 // echo '<pre>';
 // print_r(get_defined_vars());
