@@ -92,6 +92,7 @@ $skill_def = $encode->encode("cmd=gm_type_npc&gm_post_canshu=5&npc_id=$npc_id&si
 $equip_def = $encode->encode("cmd=gm_type_npc&gm_post_canshu=6&npc_id=$npc_id&sid=$sid");
 $dead_drop_def = $encode->encode("cmd=gm_type_npc&canshu=1&gm_post_canshu=7&npc_id=$npc_id&sid=$sid");
 $copy_npc = $encode->encode("cmd=gm_type_npc&copy_name=$npc_name&gm_post_canshu=8&npc_id=$npc_id&sid=$sid");
+$copy_url = "game.php?cmd=$copy_npc";
 $update_scene = $encode->encode("cmd=gm_type_npc&gm_post_canshu=10&npc_id=$npc_id&sid=$sid");
 $entrance_scene = $encode->encode("cmd=gm_type_npc&gm_post_canshu=11&npc_id=$npc_id&sid=$sid");
 
@@ -109,7 +110,7 @@ $npc_main
 <a href="game.php?cmd=$equip_def">放置装备</a>({$npc_equip_count})<br/>
 $shop_html
 <a href="game.php?cmd=$dead_drop_def">死后掉落定义</a><br/>
-<a href="game.php?cmd=$copy_npc">复制该人物</a><br/>
+<a href="#" onclick="confirmAction()">复制该人物</a><br/>
 <a href="game.php?cmd=$delete_npc">删除该人物</a><br/>
 <a href="game.php?cmd=$area_main">返回区域</a><br/>
 <a href="game.php?cmd=$gm_main">返回设计大厅</a><br/>
@@ -124,3 +125,15 @@ HTML;
 
 echo $npc_design;
 ?>
+<script>
+function confirmAction() {
+    // 弹出确认框
+    if (confirm("你确定要复制该NPC吗？")) {
+        // 如果点击“确认”，则跳转到PHP传递的链接
+        window.location.href = "<?php echo $copy_url; ?>";
+    } else {
+        // 如果点击“取消”，则什么也不做
+        return false;
+    }
+}
+</script>

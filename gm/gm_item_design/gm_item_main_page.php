@@ -59,6 +59,7 @@ $op_def = $encode->encode("cmd=gm_type_item&gm_post_canshu=2&item_id=$item_id&si
 $event_def = $encode->encode("cmd=gm_type_item&gm_post_canshu=3&item_id=$item_id&sid=$sid");
 $task_def = $encode->encode("cmd=gm_type_item&gm_post_canshu=4&item_id=$item_id&sid=$sid");
 $item_copy = $encode->encode("cmd=gm_type_item&gm_post_canshu=5&copy_name=$item_name&item_id=$item_id&sid=$sid");
+$copy_url = "game.php?cmd=$item_copy";
 $item_delete = $encode->encode("cmd=gm_type_item&gm_post_canshu=6&item_name=$item_name&item_id=$item_id&sid=$sid");
 $item_html =<<<HTML
 <p>[物品设计]<br/>
@@ -67,7 +68,7 @@ $item_html =<<<HTML
 <a href="?cmd=$event_def">定义事件</a>({$item_event_count})<br/>
 <a href="?cmd=$op_def">定义操作</a>({$item_op_count})<br/>
 <a href="?cmd=$task_def">任务设定</a>({$item_task_count})<br/>
-<a href="?cmd=$item_copy">复制该物品</a><br/>
+<a href="#" onclick="confirmAction()">复制该物品</a><br/>
 <a href="?cmd=$item_delete">删除该物品</a><br/>
 <a href="?cmd=$goback_list">返回物品列表</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
@@ -75,3 +76,15 @@ $item_html =<<<HTML
 HTML;
 echo $item_html;
 ?>
+<script>
+function confirmAction() {
+    // 弹出确认框
+    if (confirm("你确定要复制该物品吗？")) {
+        // 如果点击“确认”，则跳转到PHP传递的链接
+        window.location.href = "<?php echo $copy_url; ?>";
+    } else {
+        // 如果点击“取消”，则什么也不做
+        return false;
+    }
+}
+</script>

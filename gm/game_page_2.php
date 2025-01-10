@@ -3,6 +3,12 @@
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 
+if(isset($del_event)){
+echo "已删除！<br/>";
+//删除操作元素事件，先删除事件步骤，然后删除事件表，最后将对应模板数据库中的target_event字段置0；
+
+}
+
 $get_main_page = '';
 switch($gm_post_canshu){
     case '1':
@@ -162,13 +168,14 @@ switch($main_type){
     case '1':
         $game_main = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=$gm_post_canshu&sid=$sid");
         $page=<<<HTML
+<script type="text/javascript" src="js/auto_insert.js"></script>
 <form action="?cmd=$game_main" method="post">
 <input type="hidden" name="ele_id" value="$main_id">
 <input type="hidden" name="add_id" value="$max_id">
 <input type="hidden" name="main_type" value="$main_type"> 
 <input type="hidden" name="op_type" value="$op_type"> 
 元素名称:<textarea style="white-space: pre-wrap" name="text" maxlength="1024" rows="4" cols="40 value = "未命名">$main_value</textarea><br/>
-显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">$main_cond</textarea><br/>
+显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">$main_cond</textarea><button type="button" onclick="insertTextAtCursorDesigner()">插入设计者权限判断</button><br/>
 位置:<input name="position" maxlength="3" value="$last_pos" size="5"><br/>
 <input name="submit" type="submit" title="确定" value="确定"/>
 </form><br/>
@@ -177,19 +184,27 @@ break;
     case '2':
         if(!empty($target_event) && !empty($main_id)){
         $game_main_event = $encode->encode("cmd=game_main_event&gm_post_canshu=$gm_post_canshu&main_id=$main_id&main_type=$main_type&event_id=$target_event&sid=$sid");
+        $game_main_event_del = $encode->encode("cmd=game_main_event&del_event=1&gm_post_canshu=$gm_post_canshu&main_id=$main_id&main_type=$main_type&event_id=$target_event&sid=$sid");
+        $event_show_text = <<<HTML
+<a href="?cmd=$game_main_event">修改事件</a><a href="?cmd=$game_main_event_del">删除事件</a>
+HTML;
         }else{
         $game_main_event = $encode->encode("cmd=game_main_event&add_event=1&add_value=$main_value&gm_post_canshu=$gm_post_canshu&main_id=$main_id&main_type=$main_type&sid=$sid");
+        $event_show_text = <<<HTML
+<a href="?cmd=$game_main_event">定义事件</a>
+HTML;
         }
         $game_main = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=$gm_post_canshu&sid=$sid");
         $page=<<<HTML
+<script type="text/javascript" src="js/auto_insert.js"></script>
 <form action="?cmd=$game_main" method="post">
 <input type="hidden" name="ele_id" value="{$main_id}">
 <input type="hidden" name="add_id" value="{$max_id}">
 <input type="hidden" name="main_type" value="{$main_type}"> 
 <input type="hidden" name="op_type" value="{$op_type}"> 
 元素名称:<textarea name="text" maxlength="1024" rows="4" cols="40 value="未命名">{$main_value}</textarea><br/>
-显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">{$main_cond}</textarea><br/>
-触发事件:<a href="?cmd=$game_main_event">定义事件</a><br/>
+显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">{$main_cond}</textarea><button type="button" onclick="insertTextAtCursorDesigner()">插入设计者权限判断</button><br/>
+触发事件:{$event_show_text}<br/>
 触发任务:<a href="">定义任务</a><br/>
 位置:<input name="position" maxlength="3" value="$last_pos" size="5"><br/>
 <input name="submit" type="submit" title="确定" value="确定"/>
@@ -210,6 +225,7 @@ break;
         $game_main_func = $encode->encode("cmd=game_main_func&func_name=$ele_func_name&gm_post_canshu=$gm_post_canshu&main_id=$main_id&main_type=$main_type&func_id=1&sid=$sid");
         $game_main = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=$gm_post_canshu&sid=$sid");
         $page=<<<HTML
+<script type="text/javascript" src="js/auto_insert.js"></script>
 <form action="?cmd=$game_main" method="post">
 <input type="hidden" name="ele_id" value="$main_id">
 <input type="hidden" name="add_id" value="$max_id">
@@ -217,7 +233,7 @@ break;
 <input type="hidden" name="op_type" value="$op_type"> 
 <input type="hidden" name="func_id" value="$func_id"> 
 元素名称:<textarea name="text" maxlength="1024" rows="4" cols="40" value="未命名">$main_value</textarea><br/>
-显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">$main_cond</textarea><br/>
+显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">$main_cond</textarea><button type="button" onclick="insertTextAtCursorDesigner()">插入设计者权限判断</button><br/>
 元素功能:<a href="?cmd=$game_main_func">{$func_name}</a><br/>
 位置:<input name="position" maxlength="3" value="{$last_pos}" size="5"><br/>
 <input name="submit" type="submit" title="确定" value="确定"/>
@@ -227,13 +243,14 @@ break;
     case '4':
         $game_main = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=$gm_post_canshu&sid=$sid");
         $page=<<<HTML
+<script type="text/javascript" src="js/auto_insert.js"></script>
 <form action="?cmd=$game_main" method="post">
 <input type="hidden" name="ele_id" value="$main_id">
 <input type="hidden" name="add_id" value="$max_id">
 <input type="hidden" name="main_type" value="$main_type"> 
 <input type="hidden" name="op_type" value="$op_type"> 
 元素名称:<textarea name="text" maxlength="1024" rows="4" cols="40" value="未命名">$main_value</textarea><br/>
-显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">$main_cond</textarea><br/>
+显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">$main_cond</textarea><button type="button" onclick="insertTextAtCursorDesigner()">插入设计者权限判断</button><br/>
 链接地址:<input name="link_value" type="text" size="40" maxlength="200"/ value="{$link_value}"><br/>
 位置:<input name="position" maxlength="3" value="{$last_pos}" size="5"><br/>
 <input name="submit" type="submit" title="确定" value="确定"/>

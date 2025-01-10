@@ -605,7 +605,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     switch($oid){
                     case 'mosaic_equip':
                     $attr3 = 'i'.$attr2;
-                    $sql = "SELECT * FROM system_item_module WHERE iid = ?";
+                    $sql = "SELECT $attr3 FROM system_item_module WHERE iid = ?";
                     $stmt = $db->prepare($sql);
                     $stmt->bind_param("s", $sid);
                     $stmt->execute();
@@ -1017,7 +1017,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $para = explode(".",$attr3);
                     $order = $para[0];
                     $attr_guai = "n".$para[1];
-                    $sql = "SELECT * FROM system_npc_midguaiwu WHERE nsid = ?";
+                    $sql = "SELECT $attr_guai FROM system_npc_midguaiwu WHERE nsid = ?";
                     // 使用预处理语句
                     $stmt = $db->prepare($sql);
                     $stmt->bind_param("s",$sid);
@@ -1055,7 +1055,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $para = explode(".",$attr3);
                     $order = $para[0];
                     $attr_guai = "n".$para[1];
-                    $sql = "SELECT * FROM system_npc_midguaiwu WHERE nhp > 0 and nsid = ?";
+                    $sql = "SELECT $attr_guai FROM system_npc_midguaiwu WHERE nhp > 0 and nsid = ?";
                     // 使用预处理语句
                     $stmt = $db->prepare($sql);
                     $stmt->bind_param("s",$sid);
@@ -1119,7 +1119,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }else{
                         $mosaic_id = $mosaic_para[$mosaic_pos];
                         $xid = "i".$attr6;
-                        $sql = "SELECT * FROM system_item_module WHERE iid = '$mosaic_id'";
+                        $sql = "SELECT $xid FROM system_item_module WHERE iid = '$mosaic_id'";
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
                         // 执行查询

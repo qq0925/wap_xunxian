@@ -225,11 +225,9 @@ $map_out = $encode->encode("cmd=gm_type_map&gm_post_canshu=5&target_midid=$targe
 $npc_who = $encode->encode("cmd=gm_type_map&gm_post_canshu=6&target_midid=$target_midid&sid=$sid");
 $item_what = $encode->encode("cmd=gm_type_map&gm_post_canshu=7&target_midid=$target_midid&sid=$sid");
 $copy_scene = $encode->encode("cmd=gm_type_map&copy_name=$map_name&gm_post_canshu=8&target_midid=$target_midid&sid=$sid");
+$copy_url = "game.php?cmd=$copy_scene";
 $update_scene = $encode->encode("cmd=gm_type_map&gm_post_canshu=10&target_midid=$target_midid&sid=$sid");
 $entrance_scene = $encode->encode("cmd=gm_type_map&gm_post_canshu=11&newmid=$target_midid&sid=$sid");
-    
-    
-    
 $map_design =<<<HTML
 <p>[地图设计]<br/>
 $map
@@ -244,10 +242,22 @@ $rp_html
 $shop_html
 <a href="game.php?cmd=$update_scene">更新该场景</a><br/>
 <a href="game.php?cmd=$entrance_scene">进入该场景</a><br/>
-<a href="game.php?cmd=$copy_scene">复制该场景</a><br/>
+<a href="#" onclick="confirmAction()">复制该场景</a><br/>
 <a href="game.php?cmd=$delete_scene">删除该场景</a><br/>
 <a href="game.php?cmd=$area_main">返回区域</a><br/>
 <a href="game.php?cmd=$gm_main">返回设计大厅</a><br/>
 HTML;
 echo $map_design;
 ?>
+<script>
+function confirmAction() {
+    // 弹出确认框
+    if (confirm("你确定要复制该场景吗？")) {
+        // 如果点击“确认”，则跳转到PHP传递的链接
+        window.location.href = "<?php echo $copy_url; ?>";
+    } else {
+        // 如果点击“取消”，则什么也不做
+        return false;
+    }
+}
+</script>

@@ -3674,9 +3674,10 @@ echo $gm_cheat_html;
 
 $end_time = microtime(true);
 $execution_time = ceil(($end_time - $start_time) * 1000);// 单位是毫秒
+
+if($player->uis_designer ==1){
 echo "页面执行时间为：{$execution_time} 毫秒<br/>";
 echo 'Memory usage: ' . memory_get_usage() . ' bytes';
-if($player->uis_designer ==1){
     $gm_other_code = <<<HTML
 当前php路径：{$currentFilePath}<br/>
 a4的值赋值给xcmid：{$a4}<br/>
