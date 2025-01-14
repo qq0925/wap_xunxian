@@ -16,7 +16,7 @@ if($_POST&&$reboot == 1){
     $cxjg = $dblj->query($sql);
     $ret2 = $cxjg->fetch(PDO::FETCH_ASSOC);
     if ($ret2['userpass']){
-    echo"身份验证通过，正在清空游戏数据！<br/>";
+    echo"身份验证通过，正在清空游戏数据！(注：css和js文件将会保留)<br/>";
 
     try {
         
@@ -76,7 +76,7 @@ if($_POST&&$reboot == 1){
         $gameSelfPageTables = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         // 其他需要清空的表
-        $otherTables = ['forum_res', 'forum_text', 'game1', 'game2', 'game3', 'game4', 'global_data','player_temp_attr','player_clan_apply','player_equip_mosaic','system_addition_attr','system_chat_data','system_auc','system_auc_data','system_draw','system_equip_user','system_event_evs','system_event_evs_npc','system_event_evs_self','system_event_self','system_exp_def','system_fight_quick','system_item','system_item_module','system_item_op','system_lp','system_map','system_map_op','system_mk','system_money_type','system_npc','system_npc_midguaiwu','system_npc_scene','system_pet_scene','system_npc_op','system_photo','system_photo_type','system_player_black','system_player_boat','system_player_friend','system_player_inputs','system_rank','system_rp','system_self_define_module','system_skill','system_skill_module','system_skill_user','system_storage','system_storage_locked','system_task','system_task_user','system_team_user','system_clan_list','system_designer_assist','system_fb'];
+        $otherTables = ['forum_res', 'forum_text', 'game1', 'game2', 'game3', 'game4', 'global_data','player_temp_attr','player_clan_apply','player_equip_mosaic','system_addition_attr','system_chat_data','system_auc','system_auc_data','system_draw','system_equip_user','system_event_evs','system_event_evs_npc','system_event_evs_self','system_event_self','system_exp_def','system_fight_quick','system_item','system_item_module','system_item_op','system_lp','system_map','system_map_op','system_mk','system_money_type','system_npc','system_npc_midguaiwu','system_npc_scene','system_pet_scene','system_npc_op','system_photo','system_photo_type','system_player_black','system_player_boat','system_player_land','system_player_aircraft','system_player_friend','system_player_inputs','system_rank','system_rp','system_self_define_module','system_skill','system_skill_module','system_skill_user','system_storage','system_storage_locked','system_task','system_task_user','system_team_user','system_clan_list','system_designer_assist','system_fb'];
         // 合并所有需要清空的表
         $tablesToTruncate = array_merge($gamePageTables, $otherTables);
     
