@@ -168,8 +168,8 @@ $selectedOption3 = ($value == "3") ? 'selected' : '';
 $map_mid_page .= <<<HTML
 中转点类型:<select name="tp_type">
 <option value="0" >无</option>
-<option value="1" $selectedOption1>码头渡口</option>
-<option value="2" $selectedOption2>陆行车站</option>
+<option value="1" $selectedOption1>陆行车站</option>
+<option value="2" $selectedOption2>码头渡口</option>
 <option value="3" $selectedOption3>飞行营地</option>
 </select><br/>
 HTML;

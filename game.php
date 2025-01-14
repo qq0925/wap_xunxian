@@ -1749,14 +1749,44 @@ echo $refresh_html;
         case 'map_detail'://场景地图
             $ym = 'module_all/map_detail.php';
             break;
+        case 'road_html'://出行
+            $ym = 'module_all/road.php';
+            break;
         case 'sail_html'://出航
             $ym = 'module_all/sail.php';
+            break;
+        case 'sky_html'://起飞
+            $ym = 'module_all/sky.php';
             break;
         case 'pick_html'://采集资源
             $ym = 'module_all/pick.php';
             break;
         case 'mosaic_html'://镶嵌装备
             $ym = 'module_all/player_equip_mosaic.php';
+            break;
+        case 'roading_html'://出行途中
+            $player = \player\getplayer($sid,$dblj);
+            if($canshu ==1){
+            \player\changeplayersx('uis_roading',1,$sid,$dblj);
+            \player\changeplayertable('system_player_land','land_distance',$distance,$sid,$dblj);
+            \player\changeplayertable('system_player_land','land_begin_id',$begin_id,$sid,$dblj);
+            \player\changeplayertable('system_player_land','land_over_id',$over_id,$sid,$dblj);
+            }
+            if($road_speed){
+            \player\addplayertable('system_player_land','land_distance',-$road_speed,$sid,$dblj);
+            }
+            $road = \player\getcycle($sid,$dblj,1);
+            if($road['land_distance'] <=0 && $player->uis_roading ==1){
+            $over_name = \lexical_analysis\color_string(\player\getmid($over_id,$dblj)->mname);
+            \player\changeplayersx('uis_roading',0,$sid,$dblj);
+            \player\changeplayersx('nowmid',$over_id,$sid,$dblj);
+            \player\changeplayertable('system_player_land','land_distance',0,$sid,$dblj);
+            echo "已到达{$over_name}!<br/>";
+            $cmd = 'gm_scene_new';
+            $ym = 'module_all/main_page.php';
+            }else{
+            $ym = 'module_all/roading.php';
+            }
             break;
         case 'sailing_html'://出航途中
             $player = \player\getplayer($sid,$dblj);
@@ -1769,7 +1799,7 @@ echo $refresh_html;
             if($boat_speed){
             \player\addplayertable('system_player_boat','boat_distance',-$boat_speed,$sid,$dblj);
             }
-            $boat = \player\getboat($sid,$dblj);
+            $boat = \player\getcycle($sid,$dblj,2);
             if($boat['boat_distance'] <=0 && $player->uis_sailing ==1){
             $over_name = \lexical_analysis\color_string(\player\getmid($over_id,$dblj)->mname);
             \player\changeplayersx('uis_sailing',0,$sid,$dblj);
@@ -1780,6 +1810,30 @@ echo $refresh_html;
             $ym = 'module_all/main_page.php';
             }else{
             $ym = 'module_all/sailing.php';
+            }
+            break;
+        case 'skying_html'://飞行途中
+            $player = \player\getplayer($sid,$dblj);
+            if($canshu ==1){
+            \player\changeplayersx('uis_skying',1,$sid,$dblj);
+            \player\changeplayertable('system_player_aircraft','aircraft_distance',$distance,$sid,$dblj);
+            \player\changeplayertable('system_player_aircraft','aircraft_begin_id',$begin_id,$sid,$dblj);
+            \player\changeplayertable('system_player_aircraft','aircraft_over_id',$over_id,$sid,$dblj);
+            }
+            if($aircraft_speed){
+            \player\addplayertable('system_player_aircraft','aircraft_distance',-$aircraft_speed,$sid,$dblj);
+            }
+            $aircraft = \player\getcycle($sid,$dblj,3);
+            if($aircraft['aircraft_distance'] <=0 && $player->uis_skying ==1){
+            $over_name = \lexical_analysis\color_string(\player\getmid($over_id,$dblj)->mname);
+            \player\changeplayersx('uis_skying',0,$sid,$dblj);
+            \player\changeplayersx('nowmid',$over_id,$sid,$dblj);
+            \player\changeplayertable('system_player_aircraft','aircraft_distance',0,$sid,$dblj);
+            echo "已到达{$over_name}!<br/>";
+            $cmd = 'gm_scene_new';
+            $ym = 'module_all/main_page.php';
+            }else{
+            $ym = 'module_all/skying.php';
             }
             break;
         case 'player_state'://状态
@@ -3304,7 +3358,13 @@ echo $refresh_html;
             $max_pos = $ret['max_pos'] + 1;
             $last_id = $_POST['last_id'];
             $name = $_POST['name'];
-            $sql = "INSERT INTO system_region set pos = '$max_pos',id = '$last_id',name = '$name',belong = '0';";
+            if(!$name){
+                $name = '未命名新大区域'.$last_id;
+            }
+            $new_road_hide = $_POST['road_hide'];
+            $new_sail_hide = $_POST['sail_hide'];
+            $new_sky_hide = $_POST['sky_hide'];
+            $sql = "INSERT INTO system_region set pos = '$max_pos',id = '$last_id',name = '$name',belong = '0',road_hide = '$new_road_hide',sail_hide = '$new_sail_hide',sky_hide = '$new_sky_hide';";
             $cxjg =$dblj->exec($sql);
             echo "新增成功！<br/>";
             $ym = 'gm/gm_map_4.php';

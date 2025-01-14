@@ -2,7 +2,7 @@
 $player = \player\getplayer($sid,$dblj);
 
 
-$boat = \player\getboat($sid,$dblj);
+$boat = \player\getcycle($sid,$dblj,2);
 $distance = $boat['boat_distance'];
 $boat_speed = $boat['boat_speed'];
 $begin_id = $boat['boat_begin_id'];

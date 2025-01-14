@@ -15,6 +15,44 @@
         $stmt->execute();
     }
 
+    $sql = "SHOW COLUMNS FROM game1 LIKE 'uis_roading'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE game1 ADD COLUMN uis_roading INT(11) NOT NULL,ADD COLUMN uauto_roading INT(1) NOT NULL,ADD COLUMN uis_skying INT(11) NOT NULL,ADD COLUMN uauto_skying INT(1) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
+    $sql = "SHOW COLUMNS FROM system_region LIKE 'sail_hide'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE system_region ADD COLUMN sail_hide INT(1) DEFAULT 0 NOT NULL,add COLUMN sky_hide INT(1) DEFAULT 0 NOT NULL,ADD COLUMN road_hide INT(1) DEFAULT 0 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
+    // $sql = "SHOW COLUMNS FROM system_task LIKE 'tnpc_id'";
+    // $stmt = $dblj->prepare($sql);
+    // $stmt->execute();
+    // $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // if ($column) {
+    //     $sql = "ALTER TABLE system_task change tnpc_id tput_id int(11) NOT NULL";
+    //     $stmt = $dblj->prepare($sql);
+    //     $stmt->execute();
+    //     $sql = "ALTER TABLE system_task ADD COLUMN tput_type VARCHAR(11) DEFAULT 'npc' NOT NULL";
+    //     $stmt = $dblj->prepare($sql);
+    //     $stmt->execute();
+    // }
+
     $sql = "SHOW COLUMNS FROM system_self_define_module LIKE 'not_return'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
@@ -162,6 +200,52 @@ try {
     }
     echo "操作时出错: " . $e->getMessage();
 }
+
+try {
+    // 1. 查询表是否存在
+    $query = $dblj->prepare("SHOW TABLES LIKE 'system_player_land'");
+    $query->execute();
+    $table_exists = $query->fetch();
+
+    if (!$table_exists) {
+        // 使用事务来保证所有操作的原子性
+        $dblj->beginTransaction();
+
+
+    // 创建表的SQL语句
+    $sql = "CREATE TABLE IF NOT EXISTS system_player_land (
+            sid TEXT NOT NULL,
+            land_name VARCHAR(255) NOT NULL,
+            land_cons int(11) NOT NULL,
+            land_distance int(11) NOT NULL,
+            land_speed int(11) DEFAULT 400 NOT NULL,
+            land_begin_id int(11) NOT NULL,
+            land_over_id int(11) NOT NULL,
+            land_durable int(11) DEFAULT 100 NOT NULL,
+            land_max_durable int(11) DEFAULT 100 NOT NULL)";
+            $dblj->exec($sql);
+    $sql = "CREATE TABLE IF NOT EXISTS system_player_aircraft (
+            sid TEXT NOT NULL,
+            aircraft_name VARCHAR(255) NOT NULL,
+            aircraft_cons int(11) NOT NULL,
+            aircraft_distance int(11) NOT NULL,
+            aircraft_speed int(11) DEFAULT 1000 NOT NULL,
+            aircraft_begin_id int(11) NOT NULL,
+            aircraft_over_id int(11) NOT NULL,
+            aircraft_durable int(11) DEFAULT 200 NOT NULL,
+            aircraft_max_durable int(11) DEFAULT 200 NOT NULL)";
+            $dblj->exec($sql);
+        // 提交事务
+        $dblj->commit();
+    }
+} catch (PDOException $e) {
+    // 回滚事务（如果有进行事务处理）
+    if ($dblj->inTransaction()) {
+        $dblj->rollBack();
+    }
+    echo "操作时出错: " . $e->getMessage();
+}
+
 
 try {
     // 1. 查询表是否存在

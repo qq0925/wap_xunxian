@@ -198,8 +198,8 @@ $value = $value?$value:$func_name;
             $look_o_url = look_o_url($cmd,$page_id,$sid,$dblj,$value,$cmid);
             return $look_o_url;
         case '74':
-            $sail_url = sail_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
-            return $sail_url;
+            $outgoing_url = outgoing_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $outgoing_url;
         case '76':
             $pick_url = pick_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $pick_url;
@@ -1915,16 +1915,33 @@ HTML;
 }
 
 
-function sail_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+function outgoing_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+    $map_tp_type = \player\getmid($mid,$dblj)->mtp_type;
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $clj[] = $cmd;
     global $encode;
-    $sail_url = $encode->encode("cmd=sail_html&mid=$mid&ucmd=$cmid&sid=$sid");
-    $sail_url=<<<HTML
-        <a href="?cmd=$sail_url">{$value}</a>
+    switch($map_tp_type){
+        case '1':
+    $road_url = $encode->encode("cmd=road_html&mid=$mid&ucmd=$cmid&sid=$sid");
+    $final_url=<<<HTML
+        <a href="?cmd=$road_url">出发</a>
 HTML;
-    return $sail_url;
+            break;
+        case '2':
+    $sail_url = $encode->encode("cmd=sail_html&mid=$mid&ucmd=$cmid&sid=$sid");
+    $final_url=<<<HTML
+        <a href="?cmd=$sail_url">出航</a>
+HTML;
+            break;
+        case '3':
+    $sky_url = $encode->encode("cmd=sky_html&mid=$mid&ucmd=$cmid&sid=$sid");
+    $final_url=<<<HTML
+        <a href="?cmd=$sky_url">起飞</a>
+HTML;
+            break;
+    }
+    return $final_url;
 }
 
 function pick_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){

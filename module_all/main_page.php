@@ -55,10 +55,18 @@ $clj[] = $cmd;
 $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&newmid=$player->nowmid&sid=$sid");
 
 $u_sailing = $player->uis_sailing;
+$u_roading = $player->uis_roading;
+$u_skying = $player->uis_skying;
 $u_pve = $player->uis_pve;
 if($u_sailing ==1){
     $cmd = 'sailing_html';
     include 'module_all/sailing.php';
+}elseif($u_roading ==1){
+    $cmd = 'roading_html';
+    include 'module_all/roading.php';
+}elseif($u_skying ==1){
+    $cmd = 'skying_html';
+    include 'module_all/skying.php';
 }elseif($u_pve ==1 &&$player->uhp >0){
     $cmd = 'pve_fight';
     include 'module_all/scene_fight.php';

@@ -66,6 +66,14 @@ if (!empty($npc_item[0])){
 foreach ($npc_item as $item_detail){
     $pos +=1;
     $item_id = explode('|',$item_detail)[0];
+    $item_count = explode('|',$item_detail)[1];
+    $item_money_type = explode('|',$item_detail)[2]?:'money';
+    $sql = "select rname,runit from system_money_type where rid = '$item_money_type'";
+    $cxjg = $dblj->query($sql);
+    $money_ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+    $pay_type = $money_ret['rname'];
+    $pay_runit = $money_ret['runit'];
+    
     $item_para = player\getitem($item_id,$dblj);
     $item_name = $item_para ->iname;
     $item_name = \lexical_analysis\color_string($item_name);
@@ -73,9 +81,9 @@ foreach ($npc_item as $item_detail){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $clj[] = $cmd;
-    $item_buy = $encode->encode("cmd=gm_shop_npc&mid=$mid&gm_post_canshu=1&ucmd=$cmid&iid=$item_id&sid=$sid");
+    $item_buy = $encode->encode("cmd=gm_shop_npc&mid=$mid&gm_post_canshu=1&ucmd=$cmid&money_type=$item_money_type&item_money_name=$pay_type&item_money_unit=$pay_runit&iid=$item_id&sid=$sid");
     $shop_item_list .= <<<HTML
-    <a href="?cmd=$item_buy">{$pos}.{$item_name}({$item_value}{$gm_post->money_measure})</a>剩余：(∞)<br/>
+    <a href="?cmd=$item_buy">{$pos}.{$item_name}({$item_value}{$pay_runit}{$pay_type})</a>剩余：({$item_count})<br/>
 HTML;
     }
 }
@@ -129,12 +137,14 @@ $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
 $gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+$item_money_player = $player->{'u' . $money_type}?:0;
 $shop_html = <<<HTML
 {$item_name}x1<br/>
 重量:{$item_weight}<br/>
-价格:{$item_value}<br/>
+价格:{$item_value}{$item_money_unit}{$item_money_name}<br/>
+剩余数量:{$item_count}<br/>
 介绍:{$item_desc}<br/>
-你身上有{$gm_post->money_name}:{$player->umoney}{$gm_post->money_measure}<br/>
+你身上有{$item_money_name}:{$item_money_player}{$item_money_unit}<br/>
 负重:{$player->uburthen}/{$player->umax_burthen}<br/><br/>
 <a href="?cmd=$buy_5">购买+5</a><br/>
 <a href="?cmd=$buy_10">购买+10</a><br/>

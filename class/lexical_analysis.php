@@ -831,6 +831,66 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         break;
                     }
                     }
+                    elseif(strpos($attr2, "land.") === 0){
+                    $attr3 = 'land_'.substr($attr2, 5);
+                    // 构建 SQL 查询语句
+                    $sql = "SELECT $attr3 FROM system_player_land WHERE sid = ?";
+                    
+                    // 使用预处理语句
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s", $sid);
+                    
+                    // 执行查询
+                    $stmt->execute();
+                    
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $op = $row[$attr3];
+                    if ($op === null||$op =='') {
+                        $op = "\"\""; // 或其他默认值
+                        }
+                    }
+                    elseif(strpos($attr2, "boat.") === 0){
+                    $attr3 = 'boat_'.substr($attr2, 5);
+                    // 构建 SQL 查询语句
+                    $sql = "SELECT $attr3 FROM system_player_boat WHERE sid = ?";
+                    
+                    // 使用预处理语句
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s", $sid);
+                    
+                    // 执行查询
+                    $stmt->execute();
+                    
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $op = $row[$attr3];
+                    if ($op === null||$op =='') {
+                        $op = "\"\""; // 或其他默认值
+                        }
+                    }
+                    elseif(strpos($attr2, "craft.") === 0){
+                    $attr3 = 'aircraft_'.substr($attr2, 6);
+                    // 构建 SQL 查询语句
+                    $sql = "SELECT $attr3 FROM system_player_aircraft WHERE sid = ?";
+                    
+                    // 使用预处理语句
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s", $sid);
+                    
+                    // 执行查询
+                    $stmt->execute();
+                    
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $op = $row[$attr3];
+                    if ($op === null||$op =='') {
+                        $op = "\"\""; // 或其他默认值
+                        }
+                    }
                     elseif(strpos($attr2, "input.") === 0){
                     $attr3 = substr($attr2, 6); // 提取 "input." 后面的部分
                     // 构建 SQL 查询语句

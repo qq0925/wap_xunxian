@@ -371,6 +371,48 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($alterQuery);
                 }
                 break;
+            case 'uland':
+                $checkQuery = "SELECT * FROM system_player_land WHERE sid = '$sid'";
+                $result = $db->query($checkQuery);
+                $new_value = 'land_'.$ele_1_2;
+                // 如果存在，执行更新操作
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_player_land SET $new_value = '$ele_2' WHERE sid = '$sid'";
+                    $db->query($updateQuery);
+                } else {
+                    // 不存在，执行插入操作
+                    $insertQuery = "INSERT INTO system_player_land (sid,$new_value) VALUES ('$sid','$ele_2')";
+                    $db->query($insertQuery);
+                }
+                break;
+            case 'uboat':
+                $checkQuery = "SELECT * FROM system_player_boat WHERE sid = '$sid'";
+                $result = $db->query($checkQuery);
+                $new_value = 'boat_'.$ele_1_2;
+                // 如果存在，执行更新操作
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_player_boat SET $new_value = '$ele_2' WHERE sid = '$sid'";
+                    $db->query($updateQuery);
+                } else {
+                    // 不存在，执行插入操作
+                    $insertQuery = "INSERT INTO system_player_boat (sid,$new_value) VALUES ('$sid','$ele_2')";
+                    $db->query($insertQuery);
+                }
+                break;
+            case 'ucraft':
+                $checkQuery = "SELECT * FROM system_player_aircraft WHERE sid = '$sid'";
+                $result = $db->query($checkQuery);
+                $new_value = 'aircraft_'.$ele_1_2;
+                // 如果存在，执行更新操作
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_player_aircraft SET $new_value = '$ele_2' WHERE sid = '$sid'";
+                    $db->query($updateQuery);
+                } else {
+                    // 不存在，执行插入操作
+                    $insertQuery = "INSERT INTO system_player_aircraft (sid,$new_value) VALUES ('$sid','$ele_2')";
+                    $db->query($insertQuery);
+                }
+                break;
             case 'ot':
                 $sql = "select attr_value from player_temp_attr where obj_oid = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
                 $result = $db->query($sql);

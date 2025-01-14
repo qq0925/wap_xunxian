@@ -54,7 +54,8 @@ HTML;
 
 
 $money_html = <<<HTML
-[货币管理]<br/><br/>
+标识中请勿带|,等特殊字符！<br/>
+[货币管理]<br/>
 $money_list
 <form action="?cmd=$money_add" method="POST">
 币种名称：<input name="money_name" size="5"><br/>

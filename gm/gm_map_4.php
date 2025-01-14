@@ -14,14 +14,19 @@ if (!$conn) {
     die("连接失败: " . mysqli_connect_error());
 }
 
-if($_POST['name']){
-    $new_name = $_POST['name'];
+
+
+if($_POST['old_name']){
+    $old_name = $_POST['old_name'];
+    $new_name = $_POST['name']?:$old_name;
+    $new_road_hide = $_POST['road_hide'];
+    $new_sail_hide = $_POST['sail_hide'];
+    $new_sky_hide = $_POST['sky_hide'];
     echo "修改成功！<br/>";
-    $conn->query("UPDATE system_region SET name='$new_name' WHERE id = '$rename_id'");
+    $conn->query("UPDATE system_region SET name='$new_name',road_hide='$new_road_hide',sail_hide='$new_sail_hide',sky_hide='$new_sky_hide' WHERE id = '$rename_id'");
 }
 
-
-$sql = "SELECT id, name, pos FROM system_region ORDER BY pos ASC";
+$sql = "SELECT * FROM system_region ORDER BY pos ASC";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -36,12 +41,15 @@ if ($result->num_rows > 0) {
         $area_count = \gm\getregion_qy($dblj,$last_id)['area_count'];
         // 构建每个区域的HTML
         $region_name = $row['name'];
+        $rename_road_hide = $row['road_hide'] == '0'?'[路]':'[隐]';
+        $rename_sail_hide = $row['sail_hide'] == '0'?'[海]':'[隐]';
+        $rename_sky_hide = $row['sky_hide'] == '0'?'[空]':'[隐]';
         $remove_region = $encode->encode("cmd=region_post&gm_post_canshu=2&remove_id=$last_id&sid=$sid");
-        $rename_region = $encode->encode("cmd=region_post&gm_post_canshu=1&rename_canshu=1&rename_id=$last_id&rename_name=$region_name&sid=$sid");
+        $rename_region = $encode->encode("cmd=region_post&gm_post_canshu=1&rename_canshu=1&rename_id=$last_id&rename_name=$region_name&rename_road_hide=$rename_road_hide&rename_sail_hide=$rename_sail_hide&rename_sky_hide=$rename_sky_hide&sid=$sid");
         if($last_id =="0"){
-        $region_all .= "[$i].{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a>(默认大区域，不可移除)<br/>";
+        $region_all .= "[$i].{$rename_road_hide}{$rename_sail_hide}{$rename_sky_hide}{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a>(默认大区域，不可移除)<br/>";
         }else{
-        $region_all .= "[$i].{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a><a href='?cmd=$remove_region'>移除</a><br/>";
+        $region_all .= "[$i].{$rename_road_hide}{$rename_sail_hide}{$rename_sky_hide}{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a><a href='?cmd=$remove_region'>移除</a><br/>";
         }
         $i++;
     }
@@ -63,11 +71,24 @@ $last_id ++;
 $area_html = <<<HTML
 <p>[地图大区域设计]<br/>
 TIPS:若移除将会将内含区域的所属大区域置为失落之地。<br/>
+若大区域为隐藏，则在对应航线上不会出现。<br/>
 $region_all<br/></p>
 增加大区域<br/>
 <form action="?cmd=$region_add" method="post">
 <input name="last_id" type="hidden" title="id" value="$last_id"/>
 大区域名称:<input name="name" type="text" maxlength="50"/><br/>
+陆:<select name="road_hide">
+<option value="0" >显</option>
+<option value="1" >隐</option>
+</select>
+海:<select name="sail_hide">
+<option value="0" >显</option>
+<option value="1" >隐</option>
+</select>
+空:<select name="sky_hide">
+<option value="0" >显</option>
+<option value="1" >隐</option>
+</select><br/>
 <input name="submit" type="submit" title="确定" value="确定"/><input name="submit" type="hidden" title="确定" value="确定"/></form><br/>
 <a href="?cmd=$ret_last">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
@@ -75,11 +96,27 @@ HTML;
 }else{
 $region_rename_sure = $encode->encode("cmd=region_post&gm_post_canshu=1&rename_id=$rename_id&sid=$sid");
 $ret_last = $encode->encode("cmd=region_post&gm_post_canshu=1&sid=$sid");
+$road_selected = $rename_road_hide == '[隐]'?'selected':'';
+$sail_selected = $rename_sail_hide == '[隐]'?'selected':'';
+$sky_selected = $rename_sky_hide == '[隐]'?'selected':'';
 $area_html = <<<HTML
 <p>[地图大区域设计]<br/>
 你想要把{$rename_name}改成什么?<br/>
 <form action="?cmd=$region_rename_sure" method="post">
-大区域名称:<input name="name" type="text" maxlength="50"/><br/>
+<input name="old_name" type="hidden" title="id" value="{$rename_name}">
+大区域名称:<input name="name" placeholder="{$rename_name}" type="text" maxlength="50"/><br/>
+陆:<select name="road_hide">
+<option value="0" >显</option>
+<option value="1" {$road_selected}>隐</option>
+</select>
+海:<select name="sail_hide">
+<option value="0" >显</option>
+<option value="1" {$sail_selected}>隐</option>
+</select>
+空:<select name="sky_hide">
+<option value="0" >显</option>
+<option value="1" {$sky_selected}>隐</option>
+</select><br/>
 <input name="submit" type="submit" title="确定" value="确定"/><input name="submit" type="hidden" title="确定" value="确定"/></form><br/>
 <a href="?cmd=$ret_last">返回上级</a><br/>
 HTML;

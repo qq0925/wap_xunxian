@@ -22,6 +22,10 @@ class player
     var $uauto_fight;//是否自动战斗
     var $uauto_sailing;//是否自动航行
     var $uis_sailing;//是否正在航行
+    var $uauto_roading;//
+    var $uis_roading;//
+    var $uauto_skying;//
+    var $uis_skying;//
     var $uteam_id;//队伍id
     var $uteam_putin_id;//申请中的队伍id
     var $uteam_invited_id;//被邀请的队伍id
@@ -107,6 +111,10 @@ function getplayer($sid,$dblj,$uid=null){
     $cxjg->bindColumn('uauto_fight',$player->uauto_fight);
     $cxjg->bindColumn('uis_sailing',$player->uis_sailing);
     $cxjg->bindColumn('uauto_sailing',$player->uauto_sailing);
+    $cxjg->bindColumn('uis_roading',$player->uis_roading);
+    $cxjg->bindColumn('uauto_roading',$player->uauto_roading);
+    $cxjg->bindColumn('uis_skying',$player->uis_skying);
+    $cxjg->bindColumn('uauto_skying',$player->uauto_skying);
     $cxjg->bindColumn('uteam_id',$player->uteam_id);
     $cxjg->bindColumn('uteam_putin_id',$player->uteam_putin_id);
     $cxjg->bindColumn('uteam_invited_id',$player->uteam_invited_id);
@@ -1695,15 +1703,25 @@ function getmid($mid,$dblj){
     return $clmid;
 }
 
-function getsail($mid,$area_belong,$dblj){
-    $sql = "select * from `system_map` where mid != '$mid' and mis_tp =1 and mtp_type = 1 and marea_id in (select id from system_area where belong = '$area_belong')";
+function getoutgoing($mid,$area_belong,$dblj,$type){
+    $sql = "select * from `system_map` where mid != '$mid' and mis_tp =1 and mtp_type = '$type' and marea_id in (select id from system_area where belong = '$area_belong')";
     $cxjg = $dblj->query($sql);
     $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
     return $ret;
 }
 
-function getboat($sid,$dblj){
-    $sql = "select * from `system_player_boat` where sid = '$sid'";
+function getcycle($sid,$dblj,$type){
+    switch($type){
+        case '1':
+            $sql = "select * from `system_player_land` where sid = '$sid'";
+            break;
+        case '2':
+            $sql = "select * from `system_player_boat` where sid = '$sid'";
+            break;
+        case '3':
+            $sql = "select * from `system_player_aircraft` where sid = '$sid'";
+            break;
+    }
     $cxjg = $dblj->query($sql);
     $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
     return $ret;

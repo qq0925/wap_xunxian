@@ -2,7 +2,7 @@
 
 function generateAreaLinks($dblj, $currentBelong, $encode, $cmid, $mid, $sid) {
     // 获取所有区域
-    $sql = "SELECT `id`,`name` FROM `system_region` WHERE `sail_hide` = 0 and `id` != 0 ORDER BY `pos` ASC";
+    $sql = "SELECT `id`,`name` FROM `system_region` WHERE `road_hide` = 0 and `id` != 0 ORDER BY `pos` ASC";
     $regions = $dblj->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     $links = '';
     foreach ($regions as $region) {
@@ -16,7 +16,7 @@ function generateAreaLinks($dblj, $currentBelong, $encode, $cmid, $mid, $sid) {
             $cmid = $cmid + 1;
             $cdid[] = $cmid;
             $clj[] = $cmd;
-            $encodedCmd = $encode->encode("cmd=sail_html&choose_area_belong=$id&ucmd=$cmid&mid=$mid&sid=$sid");
+            $encodedCmd = $encode->encode("cmd=road_html&choose_area_belong=$id&ucmd=$cmid&mid=$mid&sid=$sid");
             $links .= "<a href=\"?cmd=$encodedCmd\">{$name}</a> ";
         }
     }
@@ -31,21 +31,21 @@ $map_area_belong = \gm\getqy($dblj,$map_area_id)['belong'];
 
 // 生成区域链接
 if($choose_area_belong){
-$sail_area_html = generateAreaLinks($dblj, $choose_area_belong, $encode, $cmid, $mid, $sid);
+$road_area_html = generateAreaLinks($dblj, $choose_area_belong, $encode, $cmid, $mid, $sid);
 }else{
-$sail_area_html = generateAreaLinks($dblj, $map_area_belong, $encode, $cmid, $mid, $sid);
+$road_area_html = generateAreaLinks($dblj, $map_area_belong, $encode, $cmid, $mid, $sid);
 }
 
-$sail_list = \player\getoutgoing($mid,$choose_area_belong,$dblj,2);
-for($i=0;$i<@count($sail_list);$i++){
-$sail_city_name = $sail_list[$i]['marea_name'];
-$sail_city_dire = $sail_list[$i]['mdire'];
-$sail_city_id = $sail_list[$i]['mid'];
-$sail_city_area_belong = \gm\getqy($dblj,$sail_city_area_id)['belong'];
-$distance = \gm\calculateDistance($map_dire,$sail_city_dire);
-$sailto = $encode->encode("cmd=sail_html&distance=$distance&city_name=$sail_city_name&city_id=$sail_city_id&choose_area_belong=$choose_area_belong&ucmd=$cmid&mid=$mid&sid=$sid");
-$sail_city .=<<<HTML
-<a href="?cmd=$sailto">{$sail_city_name}（{$distance}海里）</a><br/>
+$road_list = \player\getoutgoing($mid,$choose_area_belong,$dblj,1);
+for($i=0;$i<@count($road_list);$i++){
+$road_city_name = $road_list[$i]['marea_name'];
+$road_city_dire = $road_list[$i]['mdire'];
+$road_city_id = $road_list[$i]['mid'];
+$road_city_area_belong = \gm\getqy($dblj,$road_city_area_id)['belong'];
+$distance = \gm\calculateDistance($map_dire,$road_city_dire);
+$roadto = $encode->encode("cmd=road_html&distance=$distance&city_name=$road_city_name&city_id=$road_city_id&choose_area_belong=$choose_area_belong&ucmd=$cmid&mid=$mid&sid=$sid");
+$road_city .=<<<HTML
+<a href="?cmd=$roadto">{$road_city_name}（{$distance}海里）</a><br/>
 HTML;
 }
 $cmid = $cmid + 1;
@@ -53,31 +53,31 @@ $cdid[] = $cmid;
 $clj[] = $cmd;
 $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $now_time = date('H:i:s');
-$sail_html = <<<HTML
+$road_html = <<<HTML
 {$map_name}<br/>
-出航：请选择你要航行的目的地<br/>
-$sail_city
+出发：请选择你要出发的目的地<br/>
+$road_city
 点击选择其他地区:<br/>
-$sail_area_html
+$road_area_html
 <a href="?cmd=$gonowmid">返回{$map_name}</a><br/>
 报时：($now_time)<br/>
 HTML;
 if($city_id){
-$cycle = \player\getcycle($sid,$dblj,2);
-$cycle_name = $cycle['boat_name'];
-$cycle_cons = $cycle['boat_cons'];
-$cycle_speed = $cycle['boat_speed'];
-$cycle_durable = $cycle['boat_durable'];
-$cycle_max_durable = $cycle['boat_max_durable'];
+$cycle = \player\getcycle($sid,$dblj,1);
+$cycle_name = $cycle['land_name'];
+$cycle_cons = $cycle['land_cons'];
+$cycle_speed = $cycle['land_speed'];
+$cycle_durable = $cycle['land_durable'];
+$cycle_max_durable = $cycle['cycle_max_durable'];
 $cycle_total_cons = ceil($distance/100*$cycle_cons);
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$gojust = $encode->encode("cmd=sail_html&mid=$mid&choose_area_belong=$choose_area_belong&ucmd=$cmid&sid=$sid");
-$gonow = $encode->encode("cmd=sailing_html&canshu=1&begin_id=$mid&over_id=$city_id&distance=$distance&ucmd=$cmid&sid=$sid");
-$sail_html = <<<HTML
+$gojust = $encode->encode("cmd=road_html&mid=$mid&choose_area_belong=$choose_area_belong&ucmd=$cmid&sid=$sid");
+$gonow = $encode->encode("cmd=roading_html&canshu=1&begin_id=$mid&over_id=$city_id&distance=$distance&ucmd=$cmid&sid=$sid");
+$road_html = <<<HTML
 {$map_name}<br/>
-你即将驾驶【{$cycle_name}】航行至：{$city_name}<br/>
+你即将驾驶【{$cycle_name}】出行至：{$city_name}<br/>
 距离：{$distance} 海里<br/>
 百里能耗：{$cycle_cons}<br/>
 速度：{$cycle_speed}海里/秒<br/>
@@ -89,5 +89,5 @@ $sail_html = <<<HTML
 报时：($now_time)<br/>
 HTML;
 }
-echo $sail_html;
+echo $road_html;
 ?>
