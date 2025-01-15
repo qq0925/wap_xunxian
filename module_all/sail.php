@@ -23,7 +23,8 @@ function generateAreaLinks($dblj, $currentBelong, $encode, $cmid, $mid, $sid) {
     return $links . '<br/>';
 }
 
-
+$cycle_name = \player\getcycle($sid,$dblj,2)['boat_name'];
+if($cycle_name){
 $map_name = \lexical_analysis\color_string(\player\getmid($mid,$dblj)->mname);
 $map_dire = \player\getmid($mid,$dblj)->mdire;
 $map_area_id = \player\getmid($mid,$dblj)->marea_id;
@@ -88,6 +89,15 @@ $sail_html = <<<HTML
 <a href="?cmd=$gonowmid">返回{$map_name}</a><br/>
 报时：($now_time)<br/>
 HTML;
+}
+}else{
+$map_name = \lexical_analysis\color_string(\player\getmid($mid,$dblj)->mname);
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
+$sail_html = "你没有海上交通工具！<br/>
+<a href='?cmd=$gonowmid'>返回{$map_name}</a><br/>";
 }
 echo $sail_html;
 ?>
