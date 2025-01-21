@@ -2,6 +2,17 @@
 
 
 if($_POST &&$add ==0){
+    if($page_name){
+    $true_page_name = substr($page_name,3);
+    $sql = "SELECT id FROM `system_self_define_module` where id = '$true_page_name';";
+    $stmt = $dblj->query($sql);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    if(!$result['id']){
+        echo "请检查页面模板是否存在！<br/>";
+        $mod_block = 1;
+    }
+}
+    if($mod_block!=1){
     $gm_event_cmmt = htmlspecialchars($cmmt);
     $gm_event_cmmt_2 = htmlspecialchars($cmmt2);
     $sql = "UPDATE system_event_evs_self SET cond = '$cond', exec_cond = '$exec_cond',
@@ -11,6 +22,7 @@ if($_POST &&$add ==0){
     // var_dump($sql);
     $cxjg = $dblj->exec($sql);
     echo "修改成功!<br/>";
+}
 }
 
 if($add ==1){

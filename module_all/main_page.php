@@ -329,7 +329,7 @@ for ($i=0;$i<$page_count;$i++){
     $main_show_cond = $get_main_page[$i]['show_cond'];
     //var_dump($main_show_cond."<br/>");
 
-    $show_ret = $main_show_cond !== '' 
+    $show_ret = $main_show_cond !== ''
         ? \lexical_analysis\process_string($main_show_cond, $sid, $oid, $mid, null, null, "check_cond") 
         : 1;
     try{

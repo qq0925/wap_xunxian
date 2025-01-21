@@ -2095,7 +2095,7 @@ echo $refresh_html;
             $ym = 'lexical_test.php';
             break;
         case 'global_value_design'://公共数据设计
-            $ym = 'global_value_design.php';
+            $ym = 'gm/gm_data_player/global_value_design.php';
             break;
         case 'self_module_api'://自定义模板调用测试
             if($_POST){
@@ -3776,7 +3776,6 @@ $iniFile->addItem('超链接值', [$q3 => $q4]);
 global $redis;
 
 $redis->flushAll($cacheKey);
-
 //$static_page = ob_get_contents();
 //file_put_contents("static_page.html", $static_page);
 //ob_end_clean();

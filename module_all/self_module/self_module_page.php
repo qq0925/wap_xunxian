@@ -10,10 +10,31 @@ $cxjg = $dblj->query($sql);
 echo "已清空调用次数！<br/>";
 }
 
-if($_POST['change_module_name']){
+if($_POST['change_module_name']&&$change_name){
 $sql = "UPDATE system_self_define_module set name = '$change_name' where id = '$change_self_id'";
 $cxjg = $dblj->query($sql);
 echo "更改成功！<br/>";
+}
+
+if($_POST['change_module_id']&&$change_id){
+$old_id = 'ct_'.$change_self_id;
+$new_id = 'ct_'.$change_id;
+$old_table_id = 'game_self_page_'.$change_self_id;
+$new_table_id = 'game_self_page_'.$change_id;
+$sql = "RENAME TABLE `$old_table_id` TO `$new_table_id`";;
+$cxjg = $dblj->exec($sql);
+$sql = "UPDATE system_event_evs set page_name = '$new_id' where page_name = '$old_id'";
+$cxjg = $dblj->query($sql);
+$global_affect = $cxjg->rowCount();
+echo "受影响的公共事件步骤数量：$global_affect".'<br/>';
+$sql = "UPDATE system_event_evs_self set page_name = '$new_id' where page_name = '$old_id'";
+$cxjg = $dblj->query($sql);
+$self_affect = $cxjg->rowCount();
+echo "受影响的私有事件步骤数量：$self_affect".'<br/>';
+$sql = "UPDATE system_self_define_module set id = '$change_id' where id = '$change_self_id'";
+$cxjg = $dblj->query($sql);
+echo "更改成功！<br/>";
+$self_id = $change_id;
 }
 
 if($_POST['change_not_return']){
@@ -167,6 +188,11 @@ $all = <<<HTML
 <input type="hidden" name="change_self_id" value="{$self_id}">
 <input name="change_name" placeholder="{$self_name}" size="20"">
 <input name="change_module_name" type="submit" title="更名" value="更名"/>
+</form>
+<form method="post">
+<input type="hidden" name="change_self_id" value="{$self_id}">
+<input name="change_id" placeholder="{$self_id}" size="20"">
+<input name="change_module_id" type="submit" title="修改id" value="更ID"/>
 </form>
 是否生成返回链接:<form method="post">
 <input type="hidden" name="change_self_id" value="{$self_id}">

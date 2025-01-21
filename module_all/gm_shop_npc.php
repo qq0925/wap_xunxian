@@ -112,18 +112,19 @@ $item_desc = $item_para ->idesc;
 if(!$item_desc){
     $item_desc = "无";
 }
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$clj[] = $cmd;
-$buy_5 = $encode->encode("cmd=gm_shop_npc&mid=$mid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=5&sid=$sid");
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$clj[] = $cmd;
-$buy_10 = $encode->encode("cmd=gm_shop_npc&mid=$mid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=10&sid=$sid");
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$clj[] = $cmd;
-$buy_20 = $encode->encode("cmd=gm_shop_npc&mid=$mid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=20&sid=$sid");
+// $cmid = $cmid + 1;
+// $cdid[] = $cmid;
+// $clj[] = $cmd;
+// $buy_5 = $encode->encode("cmd=gm_shop_npc&mid=$mid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=5&sid=$sid");
+// $cmid = $cmid + 1;
+// $cdid[] = $cmid;
+// $clj[] = $cmd;
+// $buy_10 = $encode->encode("cmd=gm_shop_npc&mid=$mid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=10&sid=$sid");
+// $cmid = $cmid + 1;
+// $cdid[] = $cmid;
+// $clj[] = $cmd;
+// $buy_20 = $encode->encode("cmd=gm_shop_npc&mid=$mid&canshu=buy&ucmd=$cmid&iid=$iid&item_value=$item_value&count=20&sid=$sid");
+
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
@@ -138,6 +139,9 @@ $cdid[] = $cmid;
 $clj[] = $cmd;
 $gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $item_money_player = $player->{'u' . $money_type}?:0;
+//<a href="?cmd=$buy_5">购买+5</a><br/>
+// <a href="?cmd=$buy_10">购买+10</a><br/>
+// <a href="?cmd=$buy_20">购买+20</a><br/>
 $shop_html = <<<HTML
 {$item_name}x1<br/>
 重量:{$item_weight}<br/>
@@ -146,9 +150,6 @@ $shop_html = <<<HTML
 介绍:{$item_desc}<br/>
 你身上有{$item_money_name}:{$item_money_player}{$item_money_unit}<br/>
 负重:{$player->uburthen}/{$player->umax_burthen}<br/><br/>
-<a href="?cmd=$buy_5">购买+5</a><br/>
-<a href="?cmd=$buy_10">购买+10</a><br/>
-<a href="?cmd=$buy_20">购买+20</a><br/>
 <form action="?cmd=$buy_form" method="post">
 <input name="iid" type="hidden" value="{$iid}">
 <input name="item_value" type="hidden" value="{$item_value}">
