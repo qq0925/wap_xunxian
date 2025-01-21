@@ -3344,7 +3344,7 @@ echo $refresh_html;
             $last_id = $_POST['last_id'];
             $name = $_POST['name'];
             $belong_name =$_POST['area_belong']; 
-            $sql = "INSERT INTO system_area set pos = '$max_pos',id = '$last_id',name = '$name',belong = '$belong_name';";
+            $sql = "INSERT INTO system_area(pos,id,name,belong)values('$max_pos','$last_id','$name','$belong_name');";
             $cxjg =$dblj->exec($sql);
             $ym = 'gm/gm_map_2.php';
             break;

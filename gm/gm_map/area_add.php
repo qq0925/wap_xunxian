@@ -23,11 +23,22 @@ if ($result->num_rows > 0) {
     echo "表中没有数据";
 }
 
-// 关闭连接
-$conn->close();
+$sql = "SELECT * FROM system_region ORDER BY pos ASC";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+    $select_region = '<select name="area_belong">';
+    // 使用 while 循环遍历所有行
+    while ($row = $result->fetch_assoc()) {
+        // 更新最后一个ID
+        $region_id = $row['id'];
+        $region_name = $row['name'];
 
-//进行重复区域名称检测
-
+$select_region .=<<<HTML
+<option value="$region_id" >{$region_name}</option>
+HTML;
+    }
+    $select_region .= '</select>';
+}
 $area_html = <<<HTML
 <p>[地图设计]<br/>
 增加区域<br/>
@@ -35,14 +46,7 @@ $area_html = <<<HTML
 <form action="?cmd=$area_add" method="post">
 <input name="last_id" type="hidden" title="id" value="$last_id"/>
 区域名称:<input name="name" type="text" maxlength="50"/><br/>
-所属大区域:<select name="area_belong">
-<option value="0" >失落之地</option>
-<option value="1" >日出之地</option>
-<option value="2" >灼热之地</option>
-<option value="3" >日落之地</option>
-<option value="4" >极寒之地</option>
-<option value="5" >湿热之地</option>
-</select>
+所属大区域:{$select_region}<br/>
 <input name="submit" type="submit" title="确定" value="确定"/><input name="submit" type="hidden" title="确定" value="确定"/></form><br/>
 <a href="?cmd=$ret_last">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
