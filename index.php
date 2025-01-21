@@ -45,7 +45,7 @@ echo $refresh_html;
 </head>
 <body>
 <img src="images/login.png" width="320" height="200"><br/>
-<?php echo "<div id='mainfont'>".nl2br($gm_post->game_desc)."</div>"?>
+<?php echo "<div id='mainfont'>".html_entity_decode(nl2br($gm_post->game_desc))."</div>"?>
 <form action=<?php echo $_SERVER['PHP_SELF']; ?> method="post">
     账号：<br/>
     <input type="text" name="username"><br/>

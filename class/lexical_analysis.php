@@ -4612,7 +4612,7 @@ function color_string($input) {
 
     $input = str_replace('@end@', '</span>', $input);
 
-    return $input;
+    return html_entity_decode($input);
 }
 
 function generate_image_link($hashtag) {
