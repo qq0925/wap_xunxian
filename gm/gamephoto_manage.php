@@ -50,12 +50,16 @@ HTML;
 }
 
 if($gm_type_add ==0){
-$login_define = $encode->encode("cmd=login_photo&sid=$sid");
+$login_define = $encode->encode("cmd=addition_photo&canshu=1&sid=$sid");
+$ico_define = $encode->encode("cmd=addition_photo&canshu=2&sid=$sid");
 $gm_html = <<<HTML
 <p>[图片管理]</p>
 $photo_html<br/>
 <a href="?cmd=$photo_type_add">增加图片类别</a><br/>
+----------<br/>
 <a href="?cmd=$login_define">定义登录页图片</a><br/>
+<a href="?cmd=$ico_define">定义网页图标</a><br/>
+----------<br/>
 <a href="?cmd=$gm_main">返回设计大厅</a><br/>
 HTML;
 }elseif($gm_type_add ==1){

@@ -231,7 +231,7 @@ $gm_html = <<<HTML
 <a href="?cmd=$gm_game_pagemoduledefine_10">定义战斗页面模板</a><br/>
 <a href="?cmd=$gm_game_pagemoduledefine_11">定义首页页面模板</a><br/>
 <a href="?cmd=$gm_game_pagemoduledefine_13">自定义页面模板</a><br/>
-<a href="?cmd=$gm_game_pagemoduledefine_change_function_name">修改功能点名称(好像不是很有必要)</a><br/>
+<a href="?cmd=$gm_game_pagemoduledefine_change_function_name">修改功能点名称</a><br/>
 <a href="?cmd=$gm_game_pagemoduledefine_delete_zero">清除零距符号</a><br/><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
 HTML;

@@ -826,6 +826,9 @@ echo $refresh_html;
         case 'game_main_func'://功能相关
             $ym = 'gm/gm_func_exec/gm_func_exec.php';
             break;
+        case 'gm_function_change'://功能名称相关
+            $ym = 'gm/gm_func_change.php';
+            break;
         case 'just_event_page'://模板跳转相关
             $ym = 'gm/game_page_2.php';
             break;
@@ -3200,7 +3203,7 @@ echo $refresh_html;
         case 'photo_choose'://照片选择
             $ym = 'gm/gamephoto_manage_5.php';
             break;
-        case 'login_photo'://登录页图片
+        case 'addition_photo'://额外杂项图片
             $ym = 'gm/gamephoto_manage_6.php';
             break;
         case 'target_mid'://区域设计
