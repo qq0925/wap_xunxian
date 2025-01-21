@@ -134,8 +134,12 @@ $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 if($player->uis_designer ==1){
     $itemid = \player\getitem_root($item_true_id,$sid,$dblj);
     $modify = $encode->encode("cmd=game_item_list&item_id=$itemid&sid=$sid");
+    $modify_module = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=4&sid=$sid");
     $gm_item_design = <<<HTML
+----------<br/>
     <a href = "?cmd=$modify">设计该物品</a><br/>
+    <a href = "?cmd=$modify_module">设计物品模板</a><br/>
+----------<br/>
 HTML;
 }
 

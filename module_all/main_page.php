@@ -430,9 +430,11 @@ HTML;
 
 if($player->uis_designer ==1){
 $gm_html = <<<HTML
+----------<br/>
 <a href="?cmd=$change_nowmid">修改当前场景</a><br/>
 <a href="?cmd=$change_scenemodule">设计场景模板</a><br/>
 <a href="?cmd=$gm_main">设计大厅</a><br/>
+----------<br/>
 HTML;
 }
 $all = <<<HTML

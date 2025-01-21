@@ -90,7 +90,6 @@ HTML;
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
-$player_design = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=7&sid=$sid");
 $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
@@ -100,8 +99,13 @@ $game_main
 <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
 if($player->uis_designer ==1){
+$gm_main = $encode->encode("cmd=gm&sid=$sid");
+$player_design = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=7&sid=$sid");
 $all .=<<<HTML
+----------<br/>
 <a href="?cmd=$player_design">设计状态模板</a><br/>
+<a href="?cmd=$gm_main">设计大厅</a><br/>
+----------<br/>
 HTML;
 }
 echo $all;

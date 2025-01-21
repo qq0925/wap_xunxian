@@ -114,8 +114,10 @@ if($player->uis_designer ==1){
 $gm_now_module = $encode->encode("cmd=game_self_page&self_id=$page_id&sid=$sid");
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $gm_html = <<<HTML
+----------<br/>
 <a href="?cmd=$gm_now_module">设计当前模板</a><br/>
 <a href="?cmd=$gm_main">设计大厅</a><br/>
+----------<br/>
 HTML;
 }
 $all = <<<HTML

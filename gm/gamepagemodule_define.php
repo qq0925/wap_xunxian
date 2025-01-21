@@ -614,8 +614,9 @@ HTML;
 HTML;
 }
 }
+$mystate = $encode->encode("cmd=player_state&sid=$sid");
 $all = <<<HTML
-<p>定义查看自己状态页面模板<br/>
+<p>定义查看自己状态页面模板<a href="?cmd=$mystate">GO</a><br/>
 ============<br/>
 $game_main<br/>
 ============<br/>
