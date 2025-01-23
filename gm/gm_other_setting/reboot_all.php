@@ -76,7 +76,7 @@ if($_POST&&$reboot == 1){
         $gameSelfPageTables = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         // 其他需要清空的表
-        $otherTables = ['forum_res', 'forum_text', 'game1', 'game2', 'game3', 'game4', 'global_data','player_temp_attr','player_clan_apply','player_equip_mosaic','system_addition_attr','system_chat_data','system_auc','system_auc_data','system_draw','system_equip_user','system_event_evs','system_event_evs_npc','system_event_evs_self','system_event_self','system_exp_def','system_fight_quick','system_item','system_item_module','system_item_op','system_lp','system_map','system_map_op','system_mk','system_money_type','system_npc','system_npc_midguaiwu','system_npc_scene','system_pet_scene','system_npc_op','system_photo','system_photo_type','system_player_black','system_player_boat','system_player_land','system_player_aircraft','system_player_friend','system_player_inputs','system_rank','system_rp','system_self_define_module','system_skill','system_skill_module','system_skill_user','system_storage','system_storage_locked','system_task','system_task_user','system_team_user','system_clan_list','system_designer_assist','system_fb'];
+        $otherTables = ['forum_res', 'forum_text', 'game1', 'game2', 'game3', 'game4', 'global_data','player_temp_attr','player_clan_apply','player_equip_mosaic','system_addition_attr','system_chat_data','system_auc','system_auc_data','system_draw','system_equip_user','system_event_evs','system_event_evs_npc','system_event_evs_self','system_event_self','system_exp_def','system_fight_quick','system_item','system_item_module','system_item_op','system_lp','system_map','system_map_op','system_mk','system_money_type','system_npc','system_npc_midguaiwu','system_npc_scene','system_pet_scene','system_npc_op','system_photo','system_photo_type','system_player_black','system_player_boat','system_player_land','system_player_aircraft','system_player_friend','system_player_inputs','system_rank','system_rp','system_self_define_module','system_skill','system_skill_module','system_skill_user','system_storage','system_storage_locked','system_task','system_task_user','system_team_user','system_clan_list','system_designer_assist','system_fb','system_npc_drop_list'];
         // 合并所有需要清空的表
         $tablesToTruncate = array_merge($gamePageTables, $otherTables);
     
@@ -227,7 +227,18 @@ $data = [
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
         echo "表 system_area 已插入未分区初始值。<br>";
-        
+
+        // 清空并插入数据到 system_region 表
+        $sql = "TRUNCATE TABLE system_region";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        echo "表 system_region 已成功清空。<br>";
+    
+        $sql = "INSERT INTO system_region (belong,pos,id, name,sail_hide,sky_hide,road_hide) VALUES (0,0,0, '失落之地',0,0,0)";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        echo "表 system_region 已插入未分区初始值。<br>";
+
         $sql = "INSERT INTO system_skill_module (jid,jhurt_attr,jdeplete_attr) VALUES ('1','hp','mp')";
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
@@ -342,7 +353,7 @@ $data = [
         $keepFields = [
             'uis_designer', 'uis_forum_gm', 'uid', 'ucmd', 'ulast_cmd', 'uphone', 'sid', 
             'token', 'utran_state', 'uname', 'uimage', 'unick_name', 'ulvl', 'uburthen', 
-            'umax_burthen', 'ustorage', 'uis_pve', 'ukill', 'uauto_fight', 'uis_sailing', 
+            'umax_burthen', 'ustorage', 'uis_pve', 'ukill', 'uauto_fight','uis_roading', 'uauto_roading','uis_skying','uauto_skying','uis_sailing', 
             'uauto_sailing', 'umoney', 'uteam_invited_id', 'uteam_id', 'uteam_putin_id','uclan_id',
             'uexp', 'uhp', 'umaxhp', 'ump', 'umaxmp', 'ugj', 'ufy', 'usex', 'endtime', 
             'minutetime', 'nowmid', 'justmid', 'tpsmid', 'nowguaiwu', 'sfzx', 'allchattime', 
