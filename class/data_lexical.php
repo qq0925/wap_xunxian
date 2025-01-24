@@ -173,7 +173,7 @@ foreach ($keyValuePairs as $pair) {
                 $result_2 = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$sid'");
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0 ) {
-                    $updateQuery = "UPDATE game1 SET $ele_1_2 = '$ele_2' WHERE sid = '$sid'";
+                    $updateQuery = "UPDATE game1 SET `$ele_1_2` = '$ele_2' WHERE sid = '$sid'";
                     $db->query($updateQuery);
                 } elseif($result_2->num_rows > 0){
                     $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE sid = '$sid' and name = '$ele_1_2'";
@@ -623,7 +623,7 @@ $sid = $old_sid;
 
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
-                    $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = $reg + '$ele_2' WHERE ngid = '$mid'";
+                    $updateQuery = "UPDATE system_npc_scene SET $reg = $reg + '$ele_2' WHERE ncid = '$mid'";
                     $db->query($updateQuery);
                 }
                 }
