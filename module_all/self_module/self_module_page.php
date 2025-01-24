@@ -182,6 +182,7 @@ HTML;
 HTML;
 }
 }
+$self_test = $encode->encode("cmd=self_module_api&page_name=$sql_id&sid=$sid");
 $reboot = $encode->encode("cmd=game_self_page&reboot_id=$self_id&self_id=$self_id&sid=$sid");
 $all = <<<HTML
 定义[{$self_name}]<form method="post">
@@ -199,7 +200,7 @@ $all = <<<HTML
 $choose_html
 <input name="change_not_return" type="submit" title="修改" value="修改"/>
 </form>
-模板：ct_{$self_id}[调用个数：{$page_count},调用次数：{$self_call_sum}<a href="?cmd=$reboot">清空</a>]<br/>
+模板：ct_{$self_id}[调用个数：{$page_count},调用次数：{$self_call_sum}<a href="?cmd=$reboot">清空</a>|<a href="?cmd=$self_test" >测试</a>]<br/>
 ============<br/>
 $game_main<br/>
 ============<br/>

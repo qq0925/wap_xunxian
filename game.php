@@ -2106,8 +2106,12 @@ echo $refresh_html;
             $ym = 'gm/gm_data_player/global_value_design.php';
             break;
         case 'self_module_api'://自定义模板调用测试
-            if($_POST){
+            if($_POST||$page_name){
+                if($page_name){
+                $str = $page_name;
+                }else{
                 $str = $_POST['page_name'];
+                }
                 $prefix = 'ct_'; // 要去掉的前缀
                 $result = str_replace($prefix, '', $str);
                 $table_name = "game_self_page_".$result;
