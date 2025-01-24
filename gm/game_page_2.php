@@ -4,9 +4,55 @@ $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 
 if(isset($del_event)){
-echo "已删除！<br/>";
 //删除操作元素事件，先删除事件步骤，然后删除事件表，最后将对应模板数据库中的target_event字段置0；
+echo "已删除！<br/>";
+$sql = "delete from system_event_evs_self where belong = '$del_event'";
+$dblj->exec($sql);
 
+$sql = "delete from system_event_self where id = '$del_event'";
+$dblj->exec($sql);
+
+switch($gm_post_canshu){
+    case '1':
+        $del_module = 'scene_page';
+        break;
+    case '2':
+        $del_module = 'npc_page';
+        break;
+    case '3':
+        $del_module = 'pet_page';
+        break;
+    case '4':
+        $del_module = 'item_page';
+        break;
+    case '5':
+        $del_module = 'oplayer_page';
+        break;
+    case '6':
+        $del_module = 'equip_page';
+        break;
+    case '7':
+        $del_module = 'player_page';
+        break;
+    case '8':
+        $del_module = 'skill_page';
+        break;
+    case '9':
+        $del_module = 'function_page';
+        break;
+    case '10':
+        $del_module = 'pve_page';
+        break;
+    case '11':
+        $del_module = 'main_page';
+        break;
+    case '14':
+        $del_module = 'equip_detail_page';
+        break;
+}
+$del_module = 'game_'.$del_module;
+$sql = "update `$del_module` set target_event = 0 where target_event = '$del_event'";
+$dblj->exec($sql);
 }
 
 $get_main_page = '';

@@ -567,7 +567,12 @@ echo $refresh_html;
             $player = \player\getplayer($sid,$dblj);
             $pet = \player\getpet_fight($sid,$dblj);
             if($auto_canshu ==1){
+                $ret = \player\getskill_default($dblj,$sid);
+                if($ret){
                 \player\changeplayersx('uauto_fight',1,$sid,$dblj);
+                }else{
+                echo "没有设置默认技能，无法使用自动攻击！<br/>";
+                }
             }elseif($auto_canshu ==2){
                 \player\changeplayersx('uauto_fight',0,$sid,$dblj);
             }
@@ -3784,7 +3789,6 @@ $redis->flushAll($cacheKey);
 //ob_end_clean();
 // 输出获取到的内容
 //echo $static_page;
-
 
 // echo '<pre>';
 // print_r(get_defined_vars());

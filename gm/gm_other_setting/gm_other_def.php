@@ -55,6 +55,14 @@ foreach ($_POST as $key => $value) {
             $sql = "update  gm_game_basic set game_max_char = '$value' where game_id = 19980925";
             $dblj->exec($sql);
             break;
+        case 'scene_message_count':
+            $sql = "update  gm_game_basic set scene_message_count = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
+        case 'long_exist_message':
+            $sql = "update  gm_game_basic set long_exist_message = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
         case 'default_storage':
             $sql = "update  gm_game_basic set default_storage = '$value' where game_id = 19980925";
             $dblj->exec($sql);
@@ -92,6 +100,7 @@ $selectedOption_2 = ($game_config->npc_op_br == "1") ? 'selected' : '';
 $selectedOption_3 = ($game_config->item_op_br == "1") ? 'selected' : '';
 $selectedOption_4 = ($game_config->npc_list_br == "1") ? 'selected' : '';
 $selectedOption_5 = ($game_config->equip_mosaic_link == "1") ? 'selected' : '';
+$selectedOption_6 = ($game_config->long_exist_message == "1") ? 'selected' : '';
 $other_html = <<<HTML
 [杂项设置]<br/><br/>
 <form action="?cmd=$other_set" method="POST">
@@ -105,6 +114,13 @@ $other_html = <<<HTML
 <form action="?cmd=$other_set" method="POST">
 列表行数：<input type="tel" name="list_row" size="5" value="{$game_config->list_row}">
 <input type="submit" value="保存"/>
+</form>
+<form action="?cmd=$other_set" method="POST">
+场景显示信息条数：<input type="tel" name="scene_message_count" size="5" value="{$game_config->scene_message_count}">
+<input type="submit" value="保存"/>
+</form>
+<form action="?cmd=$other_set" method="POST">
+场景信息持久显示：<select name="long_exist_message"><option value =0>否</option><option value =1 {$selectedOption_6}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
 <form action="?cmd=$other_set" method="POST">
 最大信息字符数：<input type="tel" name="game_max_char" size="5" value="{$game_config->game_max_char}">

@@ -1304,27 +1304,32 @@ function get_chat_list($sid,$dblj,&$cmid){
 global $encode;
 $player = player\getplayer($sid,$dblj);
 $gameconfig = player\getgameconfig($dblj);
-$sql = 'SELECT * FROM system_chat_data ORDER BY id DESC LIMIT 2';//聊天列表获取
+$scene_message_count = $gameconfig->scene_message_count;
+$long_exist_message = $gameconfig->long_exist_message;
+$sql = "SELECT * FROM system_chat_data where viewed = 0 ORDER BY id DESC LIMIT 0,$scene_message_count";//聊天列表获取
 $ltcxjg = $dblj->query($sql);
 $lthtml='';
 if ($ltcxjg){
     $ret = $ltcxjg->fetchAll(PDO::FETCH_ASSOC);
-    for ($i=0;$i < count($ret);$i++){
-        $chat_id = $ret[count($ret) - $i-1]['id'];
-        $uname = $ret[count($ret) - $i-1]['name'];
-        $umsg = $ret[count($ret) - $i-1]['msg'];
-        $uid = $ret[count($ret) - $i-1]['uid'];
-        $imuid = $ret[count($ret) - $i-1]['imuid'];
-        $chat_type = $ret[count($ret) - $i-1]['chat_type'];
-        $send_type = $ret[count($ret) - $i-1]['send_type'];
-        $send_time = $ret[count($ret) - $i-1]['send_time'];
-        $viewed = $ret[count($ret) - $i-1]['viewed'];
+    $ret_count = count($ret);
+    for ($i=0;$i < $ret_count;$i++){
+        $chat_id = $ret[$ret_count - $i-1]['id'];
+        $uname = $ret[$ret_count - $i-1]['name'];
+        $umsg = $ret[$ret_count - $i-1]['msg'];
+        $uid = $ret[$ret_count - $i-1]['uid'];
+        $imuid = $ret[$ret_count - $i-1]['imuid'];
+        $chat_type = $ret[$ret_count - $i-1]['chat_type'];
+        $send_type = $ret[$ret_count - $i-1]['send_type'];
+        $send_time = $ret[$ret_count - $i-1]['send_time'];
+        $viewed = $ret[$ret_count - $i-1]['viewed'];
         $maxChars = $gameconfig->game_max_char; // 最大字符数量
         $nowdate = date('Y-m-d H:i:s');
         if (mb_strlen($umsg, 'utf-8') > $maxChars) {
             $umsg = mb_substr($umsg, 0, $maxChars, 'utf-8') . "...";
         }
         $umsg = lexical_analysis\color_string($umsg);
+        
+        if($long_exist_message ==0){
         if ($uid &&  $chat_type ==0 && $player->allchattime < $send_time){
         $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
         $stmt = $dblj->exec($sql);
@@ -1370,6 +1375,48 @@ if ($ltcxjg){
             $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
             $stmt = $dblj->exec($sql);
             $lthtml .="[<span style='color: orangered;'>系统</span>]:<a href='?cmd=$u_cmd''>$uname</a>:{$umsg}<span class='txt-fade'></span><br/>";
+        }
+        }else{
+        if ($uid &&  $chat_type ==0){
+        $cmid = $cmid + 1;
+        $cdid[] = $cmid;
+        $clj[] = $cmd;
+        if($send_type==0){
+            $u_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
+        }elseif($send_type==1){
+            $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$sid");
+        }
+        
+        $lthtml .="[<span style='color: orangered;'>公共</span>]<a href='?cmd=$u_cmd''>$uname</a>:$umsg<span class='txt-fade'></span><br/>";
+        
+        }elseif($imuid == $player->uid && $chat_type == 1 && $viewed == 0){
+        $cmid = $cmid + 1;
+        $cdid[] = $cmid;
+        $clj[] = $cmd;
+        $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
+        if($uid){
+            $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'></span><br/>";
+            $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
+        }else{
+            $lthtml .="[系统]:{$umsg}<span class='txt-fade'></span><br/>";
+            $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
+        }
+        
+        }elseif(!$uid && $imuid == 0 && $chat_type == 6){
+            $lthtml .="[<span style='color: orangered;'>系统</span>]:{$umsg}<span class='txt-fade'></span><br/>";
+        }elseif($uid && $chat_type == 6){
+            $cmid = $cmid + 1;
+            $cdid[] = $cmid;
+            $clj[] = $cmd;
+            
+            if($send_type==0){
+                $u_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
+            }elseif($send_type==1){
+                $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$sid");
+            }
+            $lthtml .="[<span style='color: orangered;'>系统</span>]:<a href='?cmd=$u_cmd''>$uname</a>:{$umsg}<span class='txt-fade'></span><br/>";
+        }
+            
         }
     }
 }

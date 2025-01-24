@@ -519,7 +519,12 @@ function getskill_all($dblj){
     $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
     return $ret;
 }
-
+function getskill_default($dblj,$sid){
+    $sql = "select * from `system_skill_user` where jdefault = 1 and jsid = '$sid' and jpid = 0";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    return $ret;
+}
 function getmoney_type_all($dblj){
     $sql = "select * from `system_money_type`";
     $cxjg = $dblj->query($sql);
@@ -1740,6 +1745,8 @@ class gameconfig{
     var $pet_max_count;
     var $team_max_count;
     var $game_max_char;
+    var $scene_message_count;
+    var $long_exist_message;
     var $offline_time;
     var $player_send_global_msg_interval;
     var $near_player_show;
@@ -1763,6 +1770,8 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('pet_max_count',$gameconfig->pet_max_count);
     $cxjg->bindColumn('team_max_count',$gameconfig->team_max_count);
     $cxjg->bindColumn('game_max_char',$gameconfig->game_max_char);
+    $cxjg->bindColumn('scene_message_count',$gameconfig->scene_message_count);
+    $cxjg->bindColumn('long_exist_message',$gameconfig->long_exist_message);
     $cxjg->bindColumn('player_offline_time',$gameconfig->offline_time);
     $cxjg->bindColumn('player_send_global_msg_interval',$gameconfig->player_send_global_msg_interval);
     $cxjg->bindColumn('near_player_show',$gameconfig->near_player_show);

@@ -41,7 +41,7 @@ if ($result->num_rows > 0) {
         $area_count = \gm\getregion_qy($dblj,$last_id)['area_count'];
         // 构建每个区域的HTML
         $region_name = $row['name'];
-        $rename_road_hide = $row['road_hide'] == '0'?'[路]':'[隐]';
+        $rename_road_hide = $row['road_hide'] == '0'?'[陆]':'[隐]';
         $rename_sail_hide = $row['sail_hide'] == '0'?'[海]':'[隐]';
         $rename_sky_hide = $row['sky_hide'] == '0'?'[空]':'[隐]';
         $remove_region = $encode->encode("cmd=region_post&gm_post_canshu=2&remove_id=$last_id&sid=$sid");
