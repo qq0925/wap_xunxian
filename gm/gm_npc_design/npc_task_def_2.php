@@ -1,5 +1,5 @@
 <?php
-
+if(!$del_type){
 if($_POST){
     
 if($old_ttype != $ttype){
@@ -23,6 +23,32 @@ $stmt->bindParam(':tcmmt2', $tcmmt2);
 $stmt->bindParam(':task_id', $task_id);
 $stmt->execute();
 echo "修改成功！<br/>";
+}
+
+if($del_sure){
+
+switch($del_event_type){
+    case '1':
+        $dblj->exec("UPDATE system_task set ttarget_event_accept = 0 where tid = '$task_id'");
+        $dblj->exec("delete from system_event_self where id = '$del_sure'");
+        $dblj->exec("delete from system_event_evs_self where belong = '$del_sure'");
+        echo "已成功删除任务的接受事件！<br/>";
+        break;
+    case '2':
+        $dblj->exec("UPDATE system_task set ttarget_event_giveup = 0 where tid = '$task_id'");
+        $dblj->exec("delete from system_event_self where id = '$del_sure'");
+        $dblj->exec("delete from system_event_evs_self where belong = '$del_sure'");
+        echo "已成功删除任务的放弃事件！<br/>";
+        break;
+    case '3':
+        $dblj->exec("UPDATE system_task set ttarget_event_finish = 0 where tid = '$task_id'");
+        $dblj->exec("delete from system_event_self where id = '$del_sure'");
+        $dblj->exec("delete from system_event_evs_self where belong = '$del_sure'");
+        echo "已成功删除任务的完成事件！<br/>";
+        break;
+}
+
+
 }
 
 if($add ==1){
@@ -127,22 +153,43 @@ HTML;
 if($task_event_accept ==0){
 $task_name_event = "[".$task_name."]"."的接受";
 $npc_task_events_1 = $encode->encode("cmd=game_main_event&add_event=1&add_value=$task_name_event&gm_post_canshu=npc_task_accept&main_id=$task_id&event_id=$task_event_accept&sid=$sid");
+$event_html = <<<HTML
+接受事件：<a href="?cmd=$npc_task_events_1">定义事件</a><br/>
+HTML;
 }else{
 $npc_task_events_1 = $encode->encode("cmd=game_main_event&gm_post_canshu=npc_task_accept&main_id=$task_id&event_id=$task_event_accept&sid=$sid");
+$npc_task_events_1_del = $encode->encode("cmd=system_task_detail&task_id=$task_id&del_type=1&del_event=$task_event_accept&sid=$sid");
+$event_html = <<<HTML
+接受事件：<a href="?cmd=$npc_task_events_1">修改事件</a> <a href="?cmd=$npc_task_events_1_del">删除事件</a><br/>
+HTML;
 }
 
 if($task_event_giveup ==0){
 $task_name_event = "[".$task_name."]"."的放弃";
 $npc_task_events_2 = $encode->encode("cmd=game_main_event&add_event=1&add_value=$task_name_event&gm_post_canshu=npc_task_giveup&main_id=$task_id&event_id=$task_event_giveup&sid=$sid");
+$event_html .= <<<HTML
+放弃事件：<a href="?cmd=$npc_task_events_2">定义事件</a><br/>
+HTML;
 }else{
 $npc_task_events_2 = $encode->encode("cmd=game_main_event&gm_post_canshu=npc_task_giveup&main_id=$task_id&event_id=$task_event_giveup&sid=$sid");
+$npc_task_events_2_del = $encode->encode("cmd=system_task_detail&task_id=$task_id&del_type=2&del_event=$task_event_giveup&sid=$sid");
+$event_html .= <<<HTML
+放弃事件：<a href="?cmd=$npc_task_events_2">修改事件</a> <a href="?cmd=$npc_task_events_2_del">删除事件</a><br/>
+HTML;
 }
 
 if($task_event_finish ==0){
 $task_name_event = "[".$task_name."]"."的完成";
 $npc_task_events_3 = $encode->encode("cmd=game_main_event&add_event=1&add_value=$task_name_event&gm_post_canshu=npc_task_finish&main_id=$task_id&event_id=$task_event_finish&sid=$sid");
+$event_html .= <<<HTML
+完成事件：<a href="?cmd=$npc_task_events_3">定义事件</a><br/>
+HTML;
 }else{
 $npc_task_events_3 = $encode->encode("cmd=game_main_event&gm_post_canshu=npc_task_finish&main_id=$task_id&event_id=$task_event_finish&sid=$sid");
+$npc_task_events_3_del = $encode->encode("cmd=system_task_detail&task_id=$task_id&del_type=3&del_event=$task_event_finish&sid=$sid");
+$event_html .= <<<HTML
+完成事件：<a href="?cmd=$npc_task_events_3">修改事件</a> <a href="?cmd=$npc_task_events_3_del">删除事件</a><br/>
+HTML;
 }
 
 $task_list = $encode->encode("cmd=gm_type_npc&gm_post_canshu=4&npc_id=$task_tnpc_id&sid=$sid");
@@ -172,11 +219,40 @@ $task_type_text
 不能接受提示语:<textarea name="tcmmt1" maxlength="200" rows="4" cols="40">{$task_cmmt1}</textarea><br/>
 未完成提示语:<textarea name="tcmmt2" maxlength="200" rows="4" cols="40">{$task_cmmt2}</textarea><br/>
 $task_type_info
-接受事件：<a href="?cmd=$npc_task_events_1">定义事件</a><br/>
-放弃事件：<a href="?cmd=$npc_task_events_2">定义事件</a><br/>
-完成事件：<a href="?cmd=$npc_task_events_3">定义事件</a><br/>
+$event_html
 <input name="submit" type="submit" title="确定" value="确定"/><input name="submit" type="hidden" title="确定" value="确定"/></form><br/>
 <a href="?cmd=$task_list">返回任务列表</a><br/>
 HTML;
+}elseif($del_type == 1){
+$sure_del = $encode->encode("cmd=system_task_detail&task_id=$task_id&del_event_type=1&del_sure=$del_event&sid=$sid");
+$ret_last = $encode->encode("cmd=system_task_detail&task_id=$task_id&sid=$sid");
+$gm_main = $encode->encode("cmd=gm&sid=$sid");
+$task_html =<<<HTML
+真的要删除任务的接受事件吗?<br/>
+<a href="?cmd=$sure_del">确定</a>|<a href="?cmd=$ret_last">取消</a><br/>
+<a href="?cmd=$ret_last">返回上级</a><br/>
+<a href="?cmd=$gm_main">设计大厅</a>
+HTML;
+}elseif($del_type == 2){
+$sure_del = $encode->encode("cmd=system_task_detail&task_id=$task_id&del_event_type=2&del_sure=$del_event&sid=$sid");
+$ret_last = $encode->encode("cmd=system_task_detail&task_id=$task_id&sid=$sid");
+$gm_main = $encode->encode("cmd=gm&sid=$sid");
+$task_html =<<<HTML
+真的要删除任务的放弃事件吗?<br/>
+<a href="?cmd=$sure_del">确定</a>|<a href="?cmd=$ret_last">取消</a><br/>
+<a href="?cmd=$ret_last">返回上级</a><br/>
+<a href="?cmd=$gm_main">设计大厅</a>
+HTML;
+}elseif($del_type == 3){
+$sure_del = $encode->encode("cmd=system_task_detail&task_id=$task_id&del_event_type=3&del_sure=$del_event&sid=$sid");
+$ret_last = $encode->encode("cmd=system_task_detail&task_id=$task_id&sid=$sid");
+$gm_main = $encode->encode("cmd=gm&sid=$sid");
+$task_html =<<<HTML
+真的要删除任务的完成事件吗?<br/>
+<a href="?cmd=$sure_del">确定</a>|<a href="?cmd=$ret_last">取消</a><br/>
+<a href="?cmd=$ret_last">返回上级</a><br/>
+<a href="?cmd=$gm_main">设计大厅</a>
+HTML;
+}
 echo $task_html;
 ?>

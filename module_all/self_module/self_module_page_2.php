@@ -2,6 +2,19 @@
 
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
+if(isset($del_event)){
+//删除操作元素事件，先删除事件步骤，然后删除事件表，最后将对应模板数据库中的target_event字段置0；
+echo "已删除！<br/>";
+$sql = "delete from system_event_evs_self where belong = '$del_event'";
+$dblj->exec($sql);
+
+$sql = "delete from system_event_self where id = '$del_event'";
+$dblj->exec($sql);
+
+$del_module = 'game_self_page_'.$self_id;
+$sql = "update `$del_module` set target_event = 0 where target_event = '$del_event'";
+$dblj->exec($sql);
+}
 
 $get_main_page = '';
 $get_main_page = \gm\get_self_page($dblj,$self_id);
@@ -62,8 +75,15 @@ break;
     case '2':
         if(!empty($target_event) && !empty($main_id)){
         $game_main_event = $encode->encode("cmd=game_main_event&main_position=$main_position&event_name=$main_value&main_id=$main_id&main_type=$main_type&event_id=$target_event&sid=$sid");
+        $game_main_event_del = $encode->encode("cmd=game_main_event&del_event=1&gm_post_canshu=$table_id&main_id=$main_id&main_type=$main_type&event_id=$target_event&sid=$sid");
+        $event_show_text = <<<HTML
+<a href="?cmd=$game_main_event">修改事件</a><a href="?cmd=$game_main_event_del">删除事件</a>
+HTML;
         }else{
         $game_main_event = $encode->encode("cmd=game_main_event&add_event=1&add_value=$main_value&gm_post_canshu=$self_id&main_id=$main_id&main_type=$main_type&sid=$sid");
+        $event_show_text = <<<HTML
+<a href="?cmd=$game_main_event">定义事件</a>
+HTML;
         }
         $game_main = $encode->encode("cmd=game_self_page&self_id=$self_id&sid=$sid");
         $page=<<<HTML
@@ -74,7 +94,7 @@ break;
 <input type="hidden" name="op_type" value="$op_type"> 
 元素名称:<textarea name="text" maxlength="1024" rows="4" cols="40">$main_value</textarea><br/>
 显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">$main_cond</textarea><br/>
-触发事件:<a href="?cmd=$game_main_event">定义事件</a><br/>
+触发事件:{$event_show_text}<br/>
 触发任务:<a href="">定义任务</a><br/>
 位置:<input name="position" maxlength="3" value="$last_pos"><br/>
 <input name="submit" type="submit" title="确定" value="确定"/>
