@@ -96,8 +96,10 @@ $game_main<br/>
 HTML;
 if($uis_designer ==1){
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
+$gm_main_module = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=11&sid=$sid");
 $all .=<<<HTML
 <a href="?cmd=$gm_main">设计游戏</a><br/>
+<a href="?cmd=$gm_main_module">设计首页模板</a><br/>
 HTML;
 }
 $all .=<<<HTML

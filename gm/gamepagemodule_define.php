@@ -270,8 +270,9 @@ for ($i=0;$i<count($get_main_page);$i++){
     <a href="?cmd=$attr_url" >$hangshu.$main_value</a>
 HTML;
 }
+$goscene = $encode->encode("cmd=gm_scene_new&sid=$sid");
 $all = <<<HTML
-<p>定义查看场景页面模板<br/>
+<p>定义查看场景页面模板<a href="?cmd=$goscene">GO</a><br/>
 ============<br/>
 $game_main<br/>
 ============<br/>
@@ -508,8 +509,9 @@ HTML;
 HTML;
 }
 }
+$myequiplist = $encode->encode("cmd=player_equip&sid=$sid");
 $all = <<<HTML
-<p>定义查看装备列表模板<br/>
+<p>定义查看装备列表模板<a href="?cmd=$myequiplist">GO</a><br/>
 ============<br/>
 $game_main<br/>
 ============<br/>
@@ -721,8 +723,9 @@ HTML;
 HTML;
 }
 }
+$gofunc = $encode->encode("cmd=function_html&sid=$sid");
 $all = <<<HTML
-<p>定义功能页面模板<br/>
+<p>定义功能页面模板<a href="?cmd=$gofunc">GO</a><br/>
 ============<br/>
 $game_main<br/>
 ============<br/>
@@ -828,8 +831,9 @@ HTML;
 HTML;
 }
 }
+$gobegin = $encode->encode("cmd=gm_game_firstpage&sid=$sid");
 $all = <<<HTML
-<p>定义首页页面模板<br/>
+<p>定义首页页面模板<a href="?cmd=$gobegin">GO</a><br/>
 ============<br/>
 $game_main<br/>
 ============<br/>
