@@ -3601,7 +3601,6 @@ echo "Database type: " . $dbType . "<br>";
 echo "Connection info: " . $connInfo . "<br>";
 */
 // 20-27ms
-
 ?>
 
 
@@ -3665,8 +3664,17 @@ echo $refresh_html;
         $nowdate = date('Y-m-d H:i:s');
         $gameconfig = \player\getgameconfig($dblj);
         $system_now_minute_time = $gameconfig->game_player_regular_minute;
-        $minute=floor((strtotime($nowdate)-strtotime($player->endtime))/60);//获取刷新分钟间隔
+        $secong_diff = strtotime($nowdate)-strtotime($player->endtime);
+        $minute=floor($secong_diff/60);//获取刷新间隔
         $system_offline_time = $gameconfig->offline_time;
+
+        if($system_offline_time ==0){
+        header("Cache-Control: public, max-age=2628000"); // 缓存离线时间
+        header("Expires: " . gmdate("D, d M Y H:i:s", time() + 2628000) . " GMT");
+        }else{
+        header("Cache-Control: public, max-age=$secong_diff"); // 缓存离线时间
+        header("Expires: " . gmdate("D, d M Y H:i:s", time() + $secong_diff) . " GMT");
+        }
         while(floor((strtotime($player->endtime)-strtotime($player->minutetime))/60 >0) &&$cmd!='login' && $cmd!='cjplayer' &&$cmd !='cj'){
         $parents_cmd = $cmd;
         \player\exec_global_event(24,'null',null,$sid,$dblj);
@@ -3685,6 +3693,11 @@ echo $refresh_html;
             //单位是秒
             echo '<meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">';
             echo "【哎呀！你好像进入了虚无领域!】<br/>".$player->uname."离线时间过长，请重新登陆";
+            // 强制不缓存内容
+            header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+            header("Pragma: no-cache");
+            header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // 设置过期时间为过去的时间
+
             //logout($sid);
             $sql = "update game1 set endtime='$nowdate',sfzx=0,ucmd='' WHERE sid='$sid'";
             $dblj->exec($sql);

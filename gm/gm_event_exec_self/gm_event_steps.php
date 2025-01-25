@@ -3,11 +3,13 @@
 
 if($_POST &&$add ==0){
     if($page_name){
+    $inside_page = ['state','equips','items','skills','tasks'];
+    
     $true_page_name = substr($page_name,3);
     $sql = "SELECT id FROM `system_self_define_module` where id = '$true_page_name';";
     $stmt = $dblj->query($sql);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    if(!$result['id']){
+    if(!$result['id']&&!in_array($page_name,$inside_page)){
         echo "请检查页面模板是否存在！<br/>";
         $mod_block = 1;
     }

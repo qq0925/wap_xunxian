@@ -128,9 +128,11 @@ foreach ($keyValuePairs as $pair) {
         //     } else {
         //     echo "无法匹配到小数点 '.'<br/>";
         //     }
+        if(!is_numeric($ele_2)){
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         $ele_2 = str_replace(array("'", "\""), '', $ele_2);
+        }
         switch ($ele_1_1) {
             case 'u':
                 if(strpos($ele_1_2, "c_msg") === 0){
@@ -445,7 +447,7 @@ return 1;
 function attrchanging($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
 $db = DB::conn();
-
+$dblj = DB::pdo();
 // 使用逗号分割字符串
 $keyValuePairs = explode(",", $input);
 $old_sid = $sid;
@@ -540,10 +542,11 @@ $sid = $old_sid;
         //     } else {
         //     echo "无法匹配到小数点 '.'<br/>";
         //     };
+        if(!is_numeric($ele_2)){
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
-        
         @$ele_2 = eval("return $ele_2;");
         $ele_2 = str_replace(array("'", "\""), '', $ele_2);
+        }
         switch ($ele_1_1) {
             case 'u':
                 if($ele_1_3 =='icc'){
@@ -571,7 +574,6 @@ $sid = $old_sid;
                     $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$sid')";
                     $db->query($alterQuery);
                 }
-                include "pdo.php";
                 if($echo_type !="self"){
                 if($ele_2 >0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
@@ -697,7 +699,6 @@ $sid = $old_sid;
                     $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$mid')";
                     $db->query($alterQuery);
                 }
-                include "pdo.php";
                 if($ele_2 >0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
                 \player\update_message_sql($mid,$dblj,$echo_mess,0);

@@ -1,6 +1,8 @@
 <?php
 // 这里是你的业务逻辑，设置 $text 变量
+ob_start();
 $text = $test_code_text;
+ob_clean();
 // 以下是 HTML 和 JavaScript 部分
 ?>
 <!DOCTYPE html>

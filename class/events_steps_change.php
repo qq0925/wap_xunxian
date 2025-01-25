@@ -243,20 +243,39 @@ HTML;
                             //$not_ret_canshu =1;
                             include_once $ym;
                             }
-                            
-                            $page_id = str_replace('ct_', '', $step_page_name);
-                            //这里写事件核心
-                            if($page_id !=''){
-                                $return_canshu = 1;
-                                if($steps_page >=$count){
+                            if($step_page_name){
+                            $return_canshu = 1;
+                            if($steps_page >=$count){
                             $sql = "delete from system_player_inputs where sid = '$sid'";
                             $dblj->exec($sql);
-                                }
-                            $dblj->exec("update system_self_define_module set call_sum = call_sum + 1 where id = '$page_id'");
-                            $ym = 'module_all/self_page.php';
+                            }
+                            switch($step_page_name){
+                                case 'state':
+                                    $ym = 'module_all/scene_player_detail.php';
+                                    break;
+                                case 'equips':
+                                    $ym = 'module_all/player_equip_list.php';
+                                    break;
+                                case 'items':
+                                    $ym = 'module_all/scene_item.php';
+                                    break;
+                                case 'skills':
+                                    $ym = 'module_all/player_skill.php';
+                                    break;
+                                case 'tasks':
+                                    $ym = 'module_all/task.php';
+                                    break;
+                                default:
+                                    $page_id = str_replace('ct_', '', $step_page_name);
+                                    //这里写事件核心
+                                    if($page_id !=''){
+                                    $dblj->exec("update system_self_define_module set call_sum = call_sum + 1 where id = '$page_id'");
+                                    $ym = 'module_all/self_page.php';
+                                    }
+                                    break;
+                            }
                             include_once $ym;
                             }
-                            
                             
                             //可以参考读取$module_id的值,非自定模板页面统一返回主界面，其余返回自定模板页面
                             if($step_just_return ==1){
