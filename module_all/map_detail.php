@@ -258,7 +258,8 @@ if ($nowmid_arr['map_lower'] > 0) {
             if ($maps1['mleft'] > 0) {
                 try {
                     $maps2 = map_find($maps1['mleft']);
-
+                    $map__2_name['m__3_name'] = '─';
+                    $map__2_name['m__4_name'] = $maps2['mname'];
                     if ($maps2['mdown'] > 0) {
                         try {
                             $maps3 = map_find($maps2['mdown']);
