@@ -1,5 +1,133 @@
 <?php
 namespace gm;
+
+
+function update_redis($db,$attr,$sid,$oid,$mid,$jid,$type,$para){
+
+//redis数据格式：数据归属::数据标识::原始体，比如：player::959c9277a3e15eacff9e5f117e51f5bb::u.lvl,scene::255::o.name
+//oid取值：scene,item,npc_scene,npc_monster,skill,scene_oplayer,pet
+global $redis;
+        // 检查缓存中是否已有值
+            // 如果缓存中没有，则查询数据库并缓存
+$firstDotPosition = strpos($attr, '.');
+if ($firstDotPosition !== false) {
+    $attr1 = \lexical_analysis\getSubstringBetweenDots($attr, 0, 1);
+    $attr2 = \lexical_analysis\getSubstringBetweenDots($attr, 1);
+    $attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
+    switch($attr1){
+        case 'u':
+            $cacheKey = 'player::'.$sid.'::'.$attr;
+            break;
+        case 'o':
+            $cacheKey = $oid."::".$mid.'::'.$attr;
+            break;
+        // case 'e':
+        //     $cacheKey = 'expr::'.$attr;
+        //     break;
+        case 'c':
+            $cacheKey = 'system::'.$attr;
+            break;
+        case 'g':
+            $cacheKey = 'global::'.$attr;
+            break;
+        case 'm':
+            $cacheKey = 'm_type::'.$oid.'::'.'m_value::'.$mid.'m_j::'.$jid.'::'.$attr;
+            break;
+    }
+    if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'||$attr1 =='ut'||$attr1=='ot'){
+    
+    // 使用 process_attribute 处理单个属性
+    $op = \lexical_analysis\process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
+    // 替换字符串中的变量
+     // 将查询的结果存储在 Redis 中，使用 JSON 序列化
+    $redis->set($cacheKey, json_encode($op));
+    }else {
+// 从 Redis 缓存中获取值
+$op = json_decode($redis->get($cacheKey), true);
+}
+}
+return $op;
+}
+
+function check_redis($db,$attr,$sid,$oid,$mid,$jid,$type,$para){
+
+//redis数据格式：数据归属::数据标识::原始体，比如：player::959c9277a3e15eacff9e5f117e51f5bb::u.lvl,scene::255::o.name
+//oid取值：scene,item,npc_scene,npc_monster,skill,scene_oplayer,pet
+global $redis;
+        // 检查缓存中是否已有值
+            // 如果缓存中没有，则查询数据库并缓存
+$firstDotPosition = strpos($attr, '.');
+if ($firstDotPosition !== false) {
+    $attr1 = \lexical_analysis\getSubstringBetweenDots($attr, 0, 1);
+    $attr2 = \lexical_analysis\getSubstringBetweenDots($attr, 1);
+    $attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
+    switch($attr1){
+        case 'u':
+            $cacheKey = 'player::'.$sid.'::'.$attr;
+            break;
+        case 'o':
+            $cacheKey = $oid."::".$mid.'::'.$attr;
+            break;
+        // case 'e':
+        //     $cacheKey = 'expr::'.$attr;
+        //     break;
+        case 'c':
+            $cacheKey = 'system::'.$attr;
+            break;
+        case 'g':
+            $cacheKey = 'global::'.$attr;
+            break;
+        case 'm':
+            $cacheKey = 'm_type::'.$oid.'::'.'m_value::'.$mid.'m_j::'.$jid.'::'.$attr;
+            break;
+    }
+    if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'||$attr1 =='ut'||$attr1=='ot'){
+    return 0;
+    }else {
+return $cacheKey;
+}
+}
+}
+
+function del_redis($db,$attr,$sid,$oid,$mid,$jid,$type,$para){
+
+//redis数据格式：数据归属::数据标识::原始体，比如：player::959c9277a3e15eacff9e5f117e51f5bb::u.lvl,scene::255::o.name
+//oid取值：scene,item,npc_scene,npc_monster,skill,scene_oplayer,pet
+global $redis;
+        // 检查缓存中是否已有值
+            // 如果缓存中没有，则查询数据库并缓存
+$firstDotPosition = strpos($attr, '.');
+if ($firstDotPosition !== false) {
+    $attr1 = \lexical_analysis\getSubstringBetweenDots($attr, 0, 1);
+    $attr2 = \lexical_analysis\getSubstringBetweenDots($attr, 1);
+    $attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
+    switch($attr1){
+        case 'u':
+            $cacheKey = 'player::'.$sid.'::'.$attr;
+            break;
+        case 'o':
+            $cacheKey = $oid."::".$mid.'::'.$attr;
+            break;
+        // case 'e':
+        //     $cacheKey = 'expr::'.$attr;
+        //     break;
+        case 'c':
+            $cacheKey = 'system::'.$attr;
+            break;
+        case 'g':
+            $cacheKey = 'global::'.$attr;
+            break;
+        case 'm':
+            $cacheKey = 'm_type::'.$oid.'::'.'m_value::'.$mid.'m_j::'.$jid.'::'.$attr;
+            break;
+    }
+    if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'||$attr1 =='ut'||$attr1=='ot'){
+    }else {
+    $redis->del($cacheKey);
+}
+}
+}
+
 class gm
 {
     var $game_name;

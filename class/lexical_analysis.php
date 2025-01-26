@@ -530,45 +530,7 @@ $expr = preg_replace_callback('/\{eval\((.*?)\)\}/', function($matches) use ($db
 $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     $attr = $matches[1]; // 获取匹配到的变量名
     global $redis;
-        // 检查缓存中是否已有值
-            // 如果缓存中没有，则查询数据库并缓存
-            $firstDotPosition = strpos($attr, '.');
-            if ($firstDotPosition !== false) {
-                $attr1 = getSubstringBetweenDots($attr, 0, 1);
-                $attr2 = getSubstringBetweenDots($attr, 1);
-                $attr3 = getSubstringBetweenDots($attr, 1, 2);
-                switch($attr1){
-    case 'u':
-        $cacheKey = 'user:'.$sid.':'.$attr;
-        break;
-    case 'o':
-        $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$attr;
-        break;
-    case 'e':
-        $cacheKey = 'expr:'.':'.$attr2;
-        break;
-    case 'c':
-        $cacheKey = 'system:'.':'.$attr2;
-        break;
-    case 'g':
-        $cacheKey = 'global:'.':'.$attr2;
-        break;
-    case 'm':
-        $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$attr;
-        break;
-}
-                if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'||$attr1 =='ut'||$attr1=='ot'){
-                
-                // 使用 process_attribute 处理单个属性
-                $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
-                // 替换字符串中的变量
-                 // 将查询的结果存储在 Redis 中，使用 JSON 序列化
-                $redis->set($cacheKey, json_encode($op));
-                }else {
-            // 从 Redis 缓存中获取值
-            $op = json_decode($redis->get($cacheKey), true);
-        }
-            }
+    $op = \gm\update_redis($db,$attr,$sid,$oid,$mid,$jid,$type,$para);
 
     // 在这里根据变量名获取对应的值，例如从数据库中查询
     // 假设你从数据库中获取了 $attr_value]

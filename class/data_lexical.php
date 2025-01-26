@@ -55,7 +55,8 @@ function checkTriggerCondition($condition,$dblj=null,$sid,$oid=null,$mid=null) {
 function attrsetting($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
 $db = DB::conn();
-
+global $redis;
+$updateAll = [];
 // 使用逗号分割字符串
 $keyValuePairs = explode(",", $input);
 
@@ -65,6 +66,7 @@ foreach ($keyValuePairs as $pair) {
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
+        $check_cache = \gm\check_redis($db,$ele_1,$sid,$oid,$mid,$jid,$type,$para);
 
         //$parts = explode(".", $ele_1);
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
@@ -90,30 +92,6 @@ foreach ($keyValuePairs as $pair) {
 
         $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
         $ele_1_2 = substr($ele_1, $SecondEqualsPos + 1);
-//                 switch($ele_1_1){
-//     case 'u':
-//         $cacheKey = 'user:'.$sid.':'.$ele_1;
-//         break;
-//     case 'o':
-//         $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$ele_1;
-//         break;
-//     case 'e':
-//         $cacheKey = 'expr:'.':'.$ele_1_2;
-//         break;
-//     case 'c':
-//         $cacheKey = 'system:'.':'.$ele_1_2;
-//         break;
-//     case 'g':
-//         $cacheKey = 'global:'.':'.$ele_1_2;
-//         break;
-//     case 'm':
-//         $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$ele_1;
-//         break;
-// }
-//                 if($cacheKey){
-//     global $redis;
-// $redis->del($cacheKey);
-// }
         $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
         //@$ele_1_2 = eval("return $ele_1_2;");
         $ele_1_2 = str_replace('.', '', $ele_1_2);
@@ -129,10 +107,16 @@ foreach ($keyValuePairs as $pair) {
         //     echo "无法匹配到小数点 '.'<br/>";
         //     }
         if(!is_numeric($ele_2)){
+        $redis->del($check_cache);
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         $ele_2 = str_replace(array("'", "\""), '', $ele_2);
+        }else{
+            $redis->set($check_cache,$ele_2);
+            
         }
+
+        
         switch ($ele_1_1) {
             case 'u':
                 if(strpos($ele_1_2, "c_msg") === 0){
@@ -143,9 +127,9 @@ foreach ($keyValuePairs as $pair) {
                     $player_uid = $row['uid'];
                     
                     $send_time = date('Y-m-d H:i:s');
-                    $sql = "insert into system_chat_data (name,msg,send_time,uid,chat_type)values('$player_name','$ele_2','$send_time','$player_uid',6)";
+                    $updateQuery = "insert into system_chat_data (name,msg,send_time,uid,chat_type)values('$player_name','$ele_2','$send_time','$player_uid',6)";
                     // 使用预处理语句
-                    $stmt = $db->prepare($sql);
+                    $stmt = $db->prepare($updateQuery);
                     // 执行查询
                     $stmt->execute();
                     
@@ -157,9 +141,9 @@ foreach ($keyValuePairs as $pair) {
                     $player_uid = $row['uid'];
                     
                     $send_time = date('Y-m-d H:i:s');
-                    $sql = "insert into system_chat_data (name,msg,send_time,uid,imuid,chat_type)values('系统','$ele_2','$send_time','0','$player_uid','1')";
+                    $updateQuery = "insert into system_chat_data (name,msg,send_time,uid,imuid,chat_type)values('系统','$ele_2','$send_time','0','$player_uid','1')";
                     // 使用预处理语句
-                    $stmt = $db->prepare($sql);
+                    $stmt = $db->prepare($updateQuery);
                     // 执行查询
                     $stmt->execute();
                     
@@ -176,14 +160,14 @@ foreach ($keyValuePairs as $pair) {
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0 ) {
                     $updateQuery = "UPDATE game1 SET `$ele_1_2` = '$ele_2' WHERE sid = '$sid'";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 } elseif($result_2->num_rows > 0){
                     $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE sid = '$sid' and name = '$ele_1_2'";
                     $db->query($updateQuery);
                 } else{
                     // 字段不存在，添加新字段并更新值
-                    $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$sid')";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$sid')";
+                    $db->query($updateQuery);
                 }
 }
                 break;
@@ -197,9 +181,9 @@ foreach ($keyValuePairs as $pair) {
                     $player_uid = $row['uid'];
                     
                     $send_time = date('Y-m-d H:i:s');
-                    $sql = "insert into system_chat_data (name,msg,send_time,uid,chat_type)values('$player_name','$ele_2','$send_time','$player_uid',6)";
+                    $updateQuery = "insert into system_chat_data (name,msg,send_time,uid,chat_type)values('$player_name','$ele_2','$send_time','$player_uid',6)";
                     // 使用预处理语句
-                    $stmt = $db->prepare($sql);
+                    $stmt = $db->prepare($updateQuery);
                     // 执行查询
                     $stmt->execute();
                     
@@ -211,9 +195,9 @@ foreach ($keyValuePairs as $pair) {
                     $player_uid = $row['uid'];
                     
                     $send_time = date('Y-m-d H:i:s');
-                    $sql = "insert into system_chat_data (name,msg,send_time,uid,imuid,chat_type)values('系统','$ele_2','$send_time','0','$player_uid','1')";
+                    $updateQuery = "insert into system_chat_data (name,msg,send_time,uid,imuid,chat_type)values('系统','$ele_2','$send_time','0','$player_uid','1')";
                     // 使用预处理语句
-                    $stmt = $db->prepare($sql);
+                    $stmt = $db->prepare($updateQuery);
                     // 执行查询
                     $stmt->execute();
                     
@@ -272,8 +256,8 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($updateQuery);
                 } else{
                     // 字段不存在，添加新字段并更新值
-                    $alterQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
+                    $db->query($updateQuery);
                 }
                 
                 }elseif($oid =='mosaic_equip'){
@@ -313,8 +297,8 @@ foreach ($keyValuePairs as $pair) {
                 $db->query($updateQuery);
                 } else {
                     // 字段不存在，添加新字段并更新值,这边还要做判断
-                    $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$mid')";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$mid')";
+                    $db->query($updateQuery);
                 }
                 }else{
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
@@ -325,8 +309,8 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($updateQuery);
                 } else {
                     // 字段不存在，添加新字段并更新值
-                    $alterQuery = "ALTER TABLE game1 ADD $ele_1_2 VARCHAR(255)";
-                    $db->query($alterQuery);
+                    $updateQuery = "ALTER TABLE game1 ADD $ele_1_2 VARCHAR(255)";
+                    $db->query($updateQuery);
 
                     $updateQuery = "UPDATE game1 SET $ele_1_2 = '$ele_2' WHERE sid = '$sid'";
                     $db->query($updateQuery);
@@ -344,8 +328,8 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($updateQuery);
                 } else {
                     // 不存在，执行插入操作
-                    $insertQuery = "INSERT INTO global_data (gid,gvalue) VALUES ('$ele_1_2', '$ele_2')";
-                    $db->query($insertQuery);
+                    $updateQuery = "INSERT INTO global_data (gid,gvalue) VALUES ('$ele_1_2', '$ele_2')";
+                    $db->query($updateQuery);
                 }
                 break;
             case 'c':
@@ -369,8 +353,8 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($updateQuery);
                 }else{
                     // 数据不存在，插入数据并更新值
-                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_type,attr_name,attr_value)values('$sid',1,'$ele_1_2',$ele_2)";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO player_temp_attr(obj_id,obj_type,attr_name,attr_value)values('$sid',1,'$ele_1_2',$ele_2)";
+                    $db->query($updateQuery);
                 }
                 break;
             case 'uland':
@@ -383,8 +367,8 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($updateQuery);
                 } else {
                     // 不存在，执行插入操作
-                    $insertQuery = "INSERT INTO system_player_land (sid,$new_value) VALUES ('$sid','$ele_2')";
-                    $db->query($insertQuery);
+                    $updateQuery = "INSERT INTO system_player_land (sid,$new_value) VALUES ('$sid','$ele_2')";
+                    $db->query($updateQuery);
                 }
                 break;
             case 'uboat':
@@ -397,8 +381,8 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($updateQuery);
                 } else {
                     // 不存在，执行插入操作
-                    $insertQuery = "INSERT INTO system_player_boat (sid,$new_value) VALUES ('$sid','$ele_2')";
-                    $db->query($insertQuery);
+                    $updateQuery = "INSERT INTO system_player_boat (sid,$new_value) VALUES ('$sid','$ele_2')";
+                    $db->query($updateQuery);
                 }
                 break;
             case 'ucraft':
@@ -411,8 +395,8 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($updateQuery);
                 } else {
                     // 不存在，执行插入操作
-                    $insertQuery = "INSERT INTO system_player_aircraft (sid,$new_value) VALUES ('$sid','$ele_2')";
-                    $db->query($insertQuery);
+                    $updateQuery = "INSERT INTO system_player_aircraft (sid,$new_value) VALUES ('$sid','$ele_2')";
+                    $db->query($updateQuery);
                 }
                 break;
             case 'ot':
@@ -425,13 +409,14 @@ foreach ($keyValuePairs as $pair) {
                     $db->query($updateQuery);
                 }else{
                     // 数据不存在，插入数据并更新值
-                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values('$sid','$mid',2,'$ele_1_2',$ele_2)";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values('$sid','$mid',2,'$ele_1_2',$ele_2)";
+                    $db->query($updateQuery);
                 }
                 break;
             default:
                 break;
         }
+        $updateAll [] = $updateQuery;
         // echo "ele_1: " . $ele_1 . "<br/>";
         // echo "ele_2: " . $ele_2 . "<br/>";
         //这里要获取到属性字段表中玩家属性类别下id等于$ele_1的name名称
@@ -440,7 +425,18 @@ foreach ($keyValuePairs as $pair) {
         break;
     }
 }
-
+if($updateAll){
+// 开启一个事务
+$db->autocommit(false);
+foreach($updateAll as $onesql){
+$db->query($onesql);
+}
+$db->commit();
+// 重新开启自动提交
+$db->autocommit(true);
+ 
+//var_dump($updateAll);
+}
 return 1;
 }
 
@@ -449,6 +445,8 @@ function attrchanging($input,$sid,$oid=null,$mid=null,$para=null){
 $db = DB::conn();
 $dblj = DB::pdo();
 // 使用逗号分割字符串
+global $redis;
+$updateAll = [];
 $keyValuePairs = explode(",", $input);
 $old_sid = $sid;
 foreach ($keyValuePairs as $pair) {
@@ -458,7 +456,7 @@ $sid = $old_sid;
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
-
+        $check_cache = \gm\check_redis($db,$ele_1,$sid,$oid,$mid,$jid,$type,$para);
         //$parts = explode(".", $ele_1);
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
@@ -542,10 +540,16 @@ $sid = $old_sid;
         //     } else {
         //     echo "无法匹配到小数点 '.'<br/>";
         //     };
+        
+        
         if(!is_numeric($ele_2)){
+        $redis->del($check_cache);
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         $ele_2 = str_replace(array("'", "\""), '', $ele_2);
+        }else{
+            $redis->set($check_cache,$ele_2);
+            
         }
         switch ($ele_1_1) {
             case 'u':
@@ -565,14 +569,14 @@ $sid = $old_sid;
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
                     $updateQuery = "UPDATE game1 SET $ele_1_2 = $ele_1_2 + '$ele_2' WHERE sid = '$sid'";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 }elseif($result_2->num_rows > 0){
                 $updateQuery = "UPDATE system_addition_attr SET value = value + '$ele_2' WHERE sid = '$sid' and name = '$ele_1_2'";
-                $db->query($updateQuery);
+                //$db->query($updateQuery);
                 } else {
                     // 字段不存在，添加新字段并更新值,这边还要做判断
-                    $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$sid')";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$sid')";
+                    //$db->query($updateQuery);
                 }
                 if($echo_type !="self"){
                 if($ele_2 >0 && $attr_name && $attr_show){
@@ -603,7 +607,7 @@ $sid = $old_sid;
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
                     $updateQuery = "UPDATE system_pet_scene SET $reg = $reg + '$ele_2' WHERE nsid = '$sid' and npid = $mid";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 }
                 }
                 elseif($oid =='npc'){
@@ -616,7 +620,7 @@ $sid = $old_sid;
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
                     $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = $reg + '$ele_2' WHERE ngid = '$guai_id' and nsid = ''";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 }
                 }
                 elseif($oid =='npc_scene'){
@@ -626,7 +630,7 @@ $sid = $old_sid;
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
                     $updateQuery = "UPDATE system_npc_scene SET $reg = $reg + '$ele_2' WHERE ncid = '$mid'";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 }
                 }
                 elseif($oid =='npc_monster'){
@@ -636,7 +640,7 @@ $sid = $old_sid;
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
                     $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = $reg + '$ele_2' WHERE ngid = '$mid'";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 }
                 }
                 elseif($oid =='item'){
@@ -650,11 +654,11 @@ $sid = $old_sid;
                 // 如果字段存在，则更新字段值
                 if($result->num_rows > 0){
                     $updateQuery = "UPDATE system_addition_attr SET value = value + '$ele_2' WHERE name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 } else{
                     // 字段不存在，添加新字段并更新值
-                    $alterQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
+                    //$db->query($updateQuery);
                 }
                 
                 }
@@ -669,11 +673,11 @@ $sid = $old_sid;
                 // 如果字段存在，则更新字段值
                 if($result->num_rows > 0){
                     $updateQuery = "UPDATE system_addition_attr SET value = value + '$ele_2' WHERE name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 } else{
                     // 字段不存在，添加新字段并更新值
-                    $alterQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
+                    //$db->query($updateQuery);
                 }
                 
                 }
@@ -690,14 +694,14 @@ $sid = $old_sid;
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
                     $updateQuery = "UPDATE game1 SET $ele_1_2 = $ele_1_2 + '$ele_2' WHERE sid = '$mid'";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 }elseif($result_2->num_rows > 0){
                 $updateQuery = "UPDATE system_addition_attr SET value = value + '$ele_2' WHERE sid = '$mid' and name = '$ele_1_2'";
-                $db->query($updateQuery);
+                //$db->query($updateQuery);
                 } else {
                     // 字段不存在，添加新字段并更新值,这边还要做判断
-                    $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$mid')";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$mid')";
+                    //$db->query($updateQuery);
                 }
                 if($ele_2 >0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
@@ -720,7 +724,7 @@ $sid = $old_sid;
                     } else {
                         $updateQuery = "UPDATE global_data SET gvalue = CONCAT(gvalue, '$ele_2') WHERE gid = '$ele_1_2'";
                     }
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 } else {
                      // 不存在，执行插入操作
                     $insertQuery = "INSERT INTO global_data (gid,gvalue) VALUES ('$ele_1_2', '$ele_2')";
@@ -736,11 +740,11 @@ $sid = $old_sid;
                 // 如果数据存在，更新该数据
                 if ($result->num_rows > 0 ) {
                     $updateQuery = "UPDATE player_temp_attr SET attr_value = attr_value + '$ele_2' WHERE obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 }else{
                     // 数据不存在，插入数据并更新值
-                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_type,attr_name,attr_value)values('$sid',1,'$ele_1_2',$ele_2)";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO player_temp_attr(obj_id,obj_type,attr_name,attr_value)values('$sid',1,'$ele_1_2',$ele_2)";
+                    //$db->query($updateQuery);
                 }
                 break;
             case 'ot':
@@ -752,16 +756,17 @@ $sid = $old_sid;
                 // 如果数据存在，更新该数据
                 if ($result->num_rows > 0 ) {
                     $updateQuery = "UPDATE player_temp_attr SET attr_value = attr_value + '$ele_2' WHERE obj_id = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
-                    $db->query($updateQuery);
+                    //$db->query($updateQuery);
                 }else{
                     // 数据不存在，插入数据并更新值
-                    $alterQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values('$sid','$mid',2,'$ele_1_2',$ele_2)";
-                    $db->query($alterQuery);
+                    $updateQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values('$sid','$mid',2,'$ele_1_2',$ele_2)";
+                    //$db->query($updateQuery);
                 }
                 break;
             default:
                 break;
         }
+        $updateAll [] = $updateQuery;
         if($ele_1_1 !='ut'){
          "ele_1: " . $ele_1 . "<br/>";
          "ele_2: " . $ele_2 . "<br/>";
@@ -771,7 +776,18 @@ $sid = $old_sid;
         break;
     }
 }
-
+if($updateAll){
+// 开启一个事务
+$db->autocommit(false);
+foreach($updateAll as $onesql){
+$db->query($onesql);
+}
+$db->commit();
+// 重新开启自动提交
+$db->autocommit(true);
+ 
+//var_dump($updateAll);
+}
 return 1;
 }
 
