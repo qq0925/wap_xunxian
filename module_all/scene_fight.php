@@ -330,6 +330,7 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     $huode .= "{$money_name}{$total_money}{$money_measure} <br/>";
     }
     $dblj->exec("DELETE from player_temp_attr where obj_id = '$sid' and attr_name = 'busy'");
+    $monster_name = \lexical_analysis\color_string($alive_monster->nname);
     switch ($zdjg){
         case 1:
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
@@ -344,7 +345,7 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
             \player\changeplayersx('ucmd','',$sid,$dblj);
             $fight_html = <<<HTML
 战斗胜利！<br/>
-你打死了{$alive_monster->nname}<br/>
+你打死了{$monster_name}<br/>
 你生命：({$player->uhp}/{$player->umaxhp})<br/>
 $pets
 $huode
@@ -375,7 +376,7 @@ HTML;
             //战败事件
             $fight_html = <<<HTML
 战斗失败！<br/>
-你被{$alive_monster->nname} 狠狠地教训了一顿!<br/>
+你被{$monster_name} 狠狠地教训了一顿!<br/>
 你生命：({$player->uhp}/{$player->umaxhp})<br/>
 <a href="?cmd=$gonowmid">返回游戏</a>
 HTML;
