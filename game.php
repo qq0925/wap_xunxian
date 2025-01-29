@@ -1115,51 +1115,74 @@ echo $refresh_html;
             break;
         case 'gm_post_2':
             $gm_default_value = $gm_default_value ?: 0;
+            $max_length_type  = $max_length_type ?:0;
             if(isset($gm_post_canshu_2) && $gm_post_canshu !=8){
             //属性更新过程实现
 
             $sql = "UPDATE gm_game_attr SET name = :gm_name, 
-                    default_value = :gm_default_value, if_show = :gm_attr_hidden 
+                    default_value = :gm_default_value,long_type  = :max_length_type, if_show = :gm_attr_hidden 
                     WHERE id = :gm_id AND value_type = :gm_post_type_2";
             $stmt = $dblj->prepare($sql);
             
             $stmt->bindParam(':gm_name', $gm_name);
             $stmt->bindParam(':gm_default_value', $gm_default_value);
+            $stmt->bindParam(':max_length_type', $max_length_type);
             $stmt->bindParam(':gm_attr_hidden', $gm_attr_hidden);
             $stmt->bindParam(':gm_id', $gm_id);
             $stmt->bindParam(':gm_post_type_2', $gm_post_type_2);
+            
+            switch($gm_attr_type){
+                case '数值型':
+                    if($max_length_type=='0'){
+                        $modify_type = 'INT(11)';
+                    }else{
+                        $modify_type = 'BIGINT(20)';
+                    }
+                    break;
+                case '字符串型':
+                    if($max_length_type=='0'){
+                        $modify_type = 'VARCHAR(255)';
+                    }else{
+                        $modify_type = 'VARCHAR(2000)';
+                    }
+                    break;
+                case '逻辑值型':
+                    $modify_type = 'TINYINT(1)';
+                    break;
+            }
+            
             
             $cxjg = $stmt->execute();
             
             switch($gm_post_type_2){
                 case '1':
                     $update_column = "u".$gm_id;
-                    $sql = "ALTER TABLE game1 ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $sql = "ALTER TABLE game1 MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
                     break;
                 case '3':
                     $update_column = "n".$gm_id;
-                    $sql = "ALTER TABLE system_npc ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
-                    $sql2 = "ALTER TABLE system_npc_midguaiwu ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $sql = "ALTER TABLE system_npc MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
+                    $sql2 = "ALTER TABLE system_npc_midguaiwu MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
                     $cxjg =$dblj->exec($sql2);
-                    $sql3 = "ALTER TABLE system_npc_scene ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $sql3 = "ALTER TABLE system_npc_scene MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
                     $cxjg =$dblj->exec($sql3);
-                    $sql4 = "ALTER TABLE system_pet_scene ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $sql4 = "ALTER TABLE system_pet_scene MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
                     $cxjg =$dblj->exec($sql4);
                     break;
                 case '4':
                     $update_column = "i".$gm_id;
-                    $sql = "ALTER TABLE system_item ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
-                    $sql2 = "ALTER TABLE system_item_module ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $sql = "ALTER TABLE system_item MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
+                    $sql2 = "ALTER TABLE system_item_module MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
                     $cxjg =$dblj->exec($sql2);
                     break;
                 case '5':
                     $update_column = "m".$gm_id;
-                    $sql = "ALTER TABLE system_map ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $sql = "ALTER TABLE system_map ALTER COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
                     break;
                 case '6':
                     $update_column = "j".$gm_id;
-                    $sql = "ALTER TABLE system_skill ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
-                    $sql2 = "ALTER TABLE system_skill_module ALTER COLUMN `$update_column` SET DEFAULT '$gm_default_value';";
+                    $sql = "ALTER TABLE system_skill MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
+                    $sql2 = "ALTER TABLE system_skill_module MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
                     $cxjg =$dblj->exec($sql2);
                     break;
             }
@@ -1179,7 +1202,7 @@ echo $refresh_html;
             } else {
             switch($gm_attr_type){
                     case '0':
-                        $add_type = "INT DEFAULT '{$gm_default_value}'";
+                        $add_type = "INT(11) DEFAULT '{$gm_default_value}'";
                         break;
                     case '1':
                         $add_type = "VARCHAR(255) DEFAULT '{$gm_default_value}'";
@@ -1200,8 +1223,6 @@ echo $refresh_html;
                 case '1':
                     $update_column = "u".$gm_id;
                     $sql = "ALTER TABLE game1 ADD `$update_column` $add_type NOT NULL;";
-                    //$sql2 = "ALTER TABLE system_player ADD `$update_column` $add_type NOT NULL;";
-                    //$cxjg =$dblj->exec($sql);
                     break;
                 case '3':
                     $update_column = "n".$gm_id;
@@ -3658,8 +3679,8 @@ echo $refresh_html;
             include "$ym";
         }
         }else{
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
-        $dblj->exec("update game4 set device_agent = '$userAgent' where sid = '$sid'");
+        // $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        // $dblj->exec("update game4 set device_agent = '$userAgent' where sid = '$sid'");
         $player = \player\getplayer($sid,$dblj);
         $nowdate = date('Y-m-d H:i:s');
         $gameconfig = \player\getgameconfig($dblj);

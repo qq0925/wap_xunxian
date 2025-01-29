@@ -15,6 +15,20 @@
         $stmt->execute();
     }
 
+
+    // 检查 equip 是否存在 eqpid 字段
+    $sql = "SHOW COLUMNS FROM gm_game_attr LIKE 'long_type'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE gm_game_attr ADD COLUMN long_type INT(1) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
     $sql = "SHOW COLUMNS FROM game1 LIKE 'uis_roading'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();

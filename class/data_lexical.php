@@ -132,7 +132,8 @@ foreach ($keyValuePairs as $pair) {
                     $stmt = $db->prepare($updateQuery);
                     // 执行查询
                     $stmt->execute();
-                    
+                    $sql_type = 'insert';
+                    $op_sql = 'system_chat_data';
                     }
                 elseif(strpos($ele_1_2, "p_msg") === 0){
                     $sql = "select uid from game1 where sid ='$sid'";

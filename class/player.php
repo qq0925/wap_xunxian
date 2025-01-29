@@ -2100,11 +2100,21 @@ if(!empty($event_data['system_event']['link_evs'])){
             if($step_cmmt){
         echo $step_cmmt."<br/>";
             }
+        if($step_s_attrs){
         $ret = attrsetting($step_s_attrs,$sid,$event_type,$event_obj);
+        }
+        if($step_m_attrs){
         $ret = attrchanging($step_m_attrs,$sid,$event_type,$event_obj);
+        }
+        if($step_items){
         $ret = itemchanging($step_items,$sid,$event_type,$event_obj);
+        }
+        if($step_a_skills){
         $ret = skillschanging($step_a_skills,$sid,1,$event_type,$event_obj);
+        }
+        if($step_r_skills){
         $ret = skillschanging($step_r_skills,$sid,2,$event_type,$event_obj);
+        }
         }
     }
 }

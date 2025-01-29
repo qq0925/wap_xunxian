@@ -178,6 +178,7 @@ case '7':
     $gm_game_default_value = $gm_ret[0]['default_value'];
     $gm_game_show = $gm_ret[0]['if_show'];
     $gm_if_basic = $gm_ret[0]['if_basic'];
+    $gm_long_type = $gm_ret[0]['long_type'];
     if($gm_game_show=="0"){
         $gm_select_1 = "selected";
     }else {
@@ -199,6 +200,36 @@ case '7':
     </select>";
     }else{
         $default_value = "<input name='gm_default_value' type='text' value='$gm_game_default_value' maxlength='50'>";
+    }
+    
+    if($gm_game_attr_type =="数值型"){
+
+    if($gm_long_type=="0"){
+        $gm_length_select = "selected";
+    }else{
+        $gm_length_select_2 = "selected";
+    }
+
+        $num_long =<<<HTML
+最大值类别:<select name="max_length_type" value="$gm_long_type">
+<option value="0" $gm_length_select>常规整数(11)</option>
+<option value="1" $gm_length_select_2>超大型整数(20)</option>
+</select><br/>
+HTML;
+    }
+    if($gm_game_attr_type =="字符串型"){
+    if($gm_long_type=="0"){
+        $gm_length_select = "selected";
+    }else{
+        $gm_length_select_2 = "selected";
+    }
+
+        $num_long =<<<HTML
+最大值类别:<select name="max_length_type" value="$gm_long_type">
+<option value="0" $gm_length_select>常规字符串(255)</option>
+<option value="1" $gm_length_select_2>超大型字符串(2000)</option>
+</select><br/>
+HTML;
     }
     
     if($gm_post_canshu_3!=0){
@@ -226,6 +257,7 @@ $gm_if_basic_html
 <option value="0" $gm_select_1>隐藏</option>
 <option value="1" $gm_select_2>显示</option>
 </select><br/>
+$num_long
 <input type="submit" value="确定"></form><br/>
 <a href="?cmd=$gm_delete_attr">删除属性</a><br/>
 <a href="?cmd=$gm_game_attrdefine">返回上级</a><br/>
