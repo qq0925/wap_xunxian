@@ -242,6 +242,7 @@ if($gm_if_basic ==1){
 HTML;
 }
 $gm_delete_attr = $encode->encode("cmd=gm_delete_attr&gm_game_attr_id=$gm_game_attr_id&gm_if_basic=$gm_if_basic&gm_post_canshu=$gm_post_type_2&sid=$sid");
+$copy_url = "game.php?cmd=$gm_delete_attr";
 $gm_post_change = $encode->encode("cmd=gm_post_2&gm_post_canshu=$gm_post_canshu&gm_post_canshu_2=$gm_post_canshu_2&gm_post_canshu_3=1&gm_post_type_2=$gm_post_type_2&sid=$sid");
 $gm_html = <<<HTML
 修改属性<br/>
@@ -259,7 +260,7 @@ $gm_if_basic_html
 </select><br/>
 $num_long
 <input type="submit" value="确定"></form><br/>
-<a href="?cmd=$gm_delete_attr">删除属性</a><br/>
+<a href="#" onclick="confirmAction()">删除属性</a><br/>
 <a href="?cmd=$gm_game_attrdefine">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
 HTML;
@@ -312,3 +313,15 @@ echo $gm_html;
 break;
 }
 ?>
+<script>
+function confirmAction() {
+    // 弹出确认框
+    if (confirm("你确定要删除该属性吗？")) {
+        // 如果点击“确认”，则跳转到PHP传递的链接
+        window.location.href = "<?php echo $copy_url; ?>";
+    } else {
+        // 如果点击“取消”，则什么也不做
+        return false;
+    }
+}
+</script>

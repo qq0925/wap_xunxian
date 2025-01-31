@@ -145,7 +145,7 @@ if ($reward_cons_type == 1) {
 <option value="3">属性</option>
 HTML;
     } elseif ($reward_cons_type == 2) {
-        
+        $reward_cons_type_detail_html_3 ="<input type = 'hidden' name='cons_id' value = '$reward_cons_id'>";
         $reward_cons_name = \player\getitem($reward_cons_id,$dblj)->iname;
         //$reward_cons_name = \lexical_analysis\color_string($reward_cons_name);
         $reward_cons_type_html .= <<<HTML
@@ -168,6 +168,7 @@ $other_html = <<<HTML
 [抽奖设置]<br/>
 <form action="?cmd=$other_set" method="POST">
 抽奖项目名称：<input type="text" name="reward_name" value="{$reward_name}"><br/>
+$reward_cons_type_detail_html_3
 消耗类别：{$reward_cons_type_html}<br/>
 消耗具体信息：<span name='cons_id_root' id='cons_id_root'></span><br/>
 消耗数量（多少/次）：<input type="tel" name="cons_count" value="{$reward_cons_count}"><br/>

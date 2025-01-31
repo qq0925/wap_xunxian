@@ -1019,12 +1019,15 @@ HTML;
 
 function reward_url($cmd,$page_id,$sid,$dblj,$value,&$cmid){
     $cmid = $cmid + 1;
-    $cdid[] = $cmid;    
+    $cdid[] = $cmid;
     $clj[] = $cmd;
     global $encode;
-    $reward_url = $encode->encode("cmd=system_reward&ucmd=$cmid&sid=$sid");
+    $reward_para = explode('|',$value);
+    $reward_name = $reward_para[0];
+    $reward_change = rtrim($reward_para[1]);
+    $reward_url = $encode->encode("cmd=system_reward&reward_change=$reward_change&ucmd=$cmid&sid=$sid");
     $reward_html=<<<HTML
-<a href="?cmd=$reward_url">{$value}</a>
+<a href="?cmd=$reward_url">{$reward_name}</a>
 HTML;
     return $reward_html;
 }
