@@ -265,10 +265,10 @@ async function startSpin() {
             throw new Error("服务器返回数据异常");
         }
         
-        if(result.index === '-1'){
+        if(result.error){
         Swal.fire({
             title: '🎉 错误！',
-            html: `当前不在活动时间！`,
+            html: result.error,
             icon: 'error',
             confirmButtonText: '确定',
         });

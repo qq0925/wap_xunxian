@@ -3561,7 +3561,12 @@ echo $refresh_html;
             $ym = "module_all/scene_oplayer_detail.php";
             break;
         case 'system_reward':
+            if($reward_change){
             $ym = "module_all/gm_reward_action.php";
+            }else{
+                echo "抽奖项目不存在！<br/>";
+            $ym = "module_all/main_page.php";
+            }
             break;
         case "nowonline"://当前在线人数
             $ym = "module_all/nowonline_player.php";

@@ -1025,7 +1025,11 @@ function reward_url($cmd,$page_id,$sid,$dblj,$value,&$cmid){
     $reward_para = explode('|',$value);
     $reward_name = $reward_para[0];
     $reward_change = rtrim($reward_para[1]);
+    if($reward_change){
     $reward_url = $encode->encode("cmd=system_reward&reward_change=$reward_change&ucmd=$cmid&sid=$sid");
+    }else{
+    $reward_url = $encode->encode("cmd=system_reward&reward_change=0&ucmd=$cmid&sid=$sid");
+    }
     $reward_html=<<<HTML
 <a href="?cmd=$reward_url">{$reward_name}</a>
 HTML;

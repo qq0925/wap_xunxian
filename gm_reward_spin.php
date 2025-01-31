@@ -56,7 +56,8 @@ $prizes = [];
 
 if ($current_time >=strtotime($reward_cons_open_time)  && $current_time <= strtotime($reward_cons_close_time)){
     
-    
+// 开始事务
+$dblj->beginTransaction();
 switch($reward_cons_type){
     case '1':
         $attr = 'u'.$reward_cons_count_type;
@@ -121,14 +122,26 @@ foreach ($reward_gift_para as $gift) {
     // 执行抽奖
     $prizeIndex = calculatePrize($prizes);
 }else{
-    $prizeIndex = '-1';
+    $final = '你没有足够的抽取消耗！<br/>';
 }
 }
 
 $prizeID = $prizes[$prizeIndex]['real_id'];
 $prizeCount = $prizes[$prizeIndex]['real_count'];
+ob_start();
 $get_ret = \player\additem($sid,$prizeID,$prizeCount,$dblj);
+$final = ob_get_clean();
+
+if($final){
+        // 如果发生异常，则回滚事务
+        $dblj->rollBack();
+}else{
+        // 提交事务
+        $dblj->commit();
+}
+
     die(json_encode([
+        'error' => $final,
         'index' => $prizeIndex,
         'prize' => $prizes[$prizeIndex]['real_name']
     ]));
