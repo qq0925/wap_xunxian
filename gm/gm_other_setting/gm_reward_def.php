@@ -4,12 +4,21 @@ $last_page = $encode->encode("cmd=gm_game_othersetting&sid=$sid");
 
 
 
-
+if(!$delete_canshu){
 if($reward_def ==0){
 if($delete_id !=0){
-    echo "加上删除确认，确保当前时间不在开放与关闭时间之间<br/>";
+$sql = "select * from system_draw where id = '$delete_id'";
+$cxjg = $dblj->query($sql);
+$ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+$reward_cons_open_time = $ret['cons_open_time'];
+$reward_cons_close_time = $ret['cons_close_time'];
+$current_time = time(); // 获取当前时间戳
+if (!($current_time >=strtotime($reward_cons_open_time)  && $current_time <= strtotime($reward_cons_close_time))){
     $sql = "delete from system_draw where id ='$delete_id'";
-    //$dblj->exec($sql);
+    $dblj->exec($sql);
+}else{
+    echo "目前该项目处于开放时间，请调整为过期后再删除！<br/>";
+}
 }
 if(isset($_POST['add_name'])){
     $add_name = $_POST['add_name'];
@@ -39,7 +48,7 @@ for($i=0;$i<@count($ret);$i++){
     $hangshu = $i +1;
     $name = $ret[$i]['name'];
     $id = $ret[$i]['id'];
-    $delete = $encode->encode("cmd=gm_game_othersetting&canshu=5&delete_id=$id&sid=$sid");
+    $delete = $encode->encode("cmd=gm_game_othersetting&canshu=5&delete_id=$id&delete_canshu=1&sid=$sid");
     $detail = $encode->encode("cmd=gm_game_othersetting&canshu=5&reward_def=$id&sid=$sid");
     $reward_detail .=<<<HTML
     <p>{$hangshu}.<a href="?cmd=$detail">[{$name}]</a>(ID:{$id})<a href="?cmd=$delete">删除</a></p>
@@ -115,6 +124,13 @@ $reward_html = <<<HTML
 HTML;
 echo $reward_html;
 }
-
-
+}else{
+    $sure_main = $encode->encode("cmd=gm_game_othersetting&canshu=5&delete_id=$delete_id&sid=$sid");
+    $cancel_main = $encode->encode("cmd=gm_game_othersetting&canshu=5&sid=$sid");
+    $gm_html =<<<HTML
+    是否删除该抽奖项目？id:{$delete_id}<br/>
+<a href="?cmd=$sure_main">确定</a> | <a href="?cmd=$cancel_main">取消</a><br/>
+HTML;
+echo $gm_html;
+}
 ?>
