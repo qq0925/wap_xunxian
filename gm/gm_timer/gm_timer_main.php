@@ -1,5 +1,4 @@
 <?php
-
 class PhpRunner {
     private $pidFile;
     private $lockFile;
@@ -8,7 +7,7 @@ class PhpRunner {
     public function __construct() {
         $this->pidFile = __DIR__ . '/daemon.pid';  // 守护进程的PID文件
         $this->lockFile = __DIR__ . '/daemon.lock'; // 文件锁
-        $this->phpBinary = 'php74'; // 你希望执行的 PHP 版本命令
+        $this->phpBinary = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? 'php.exe' : 'php74'; // 自动选择 PHP 执行命令
     }
 
     // 启动守护进程
@@ -26,20 +25,34 @@ class PhpRunner {
             exit;  // 退出当前进程，避免重复执行
         }
 
-        // 执行命令，确保进程常驻后台
-        $cmd = sprintf(
-            'nohup %s %s > /dev/null 2>&1 & echo $!',
-            escapeshellarg($this->phpBinary),  // PHP 命令
-            escapeshellarg($scriptPath)        // 需要执行的 PHP 脚本
-        );
-
-        // 执行后台任务，并获取PID
-        $pid = (int) shell_exec($cmd);
-        if ($pid > 0) {
-            file_put_contents($this->pidFile, $pid);  // 保存PID
-            echo "守护进程已启动 (PID: $pid)<br/>";
+        // 如果是 Windows 平台
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $cmd = sprintf(
+                '%s %s > NUL 2>&1 &',
+                escapeshellarg($this->phpBinary),  // PHP 命令
+                escapeshellarg($scriptPath)        // 需要执行的 PHP 脚本
+            );
+            $pid = shell_exec($cmd);
+            if ($pid > 0) {
+                file_put_contents($this->pidFile, $pid);  // 保存PID
+                echo "守护进程已启动 (PID: $pid)<br/>";
+            } else {
+                echo "启动失败！windows环境限制，建议使用linux环境！<br/>";
+            }
         } else {
-            echo "启动失败！权限不足或你正在使用windows环境！请注释掉或者删除php.ini中disable_functions的：shell_exec函数！<br/>";
+            // Linux 系统使用 nohup 运行命令
+            $cmd = sprintf(
+                'nohup %s %s > /dev/null 2>&1 & echo $!',
+                escapeshellarg($this->phpBinary),  // PHP 命令
+                escapeshellarg($scriptPath)        // 需要执行的 PHP 脚本
+            );
+            $pid = (int) shell_exec($cmd);
+            if ($pid > 0) {
+                file_put_contents($this->pidFile, $pid);  // 保存PID
+                echo "守护进程已启动 (PID: $pid)<br/>";
+            } else {
+                echo "启动失败！请放行php.ini中disable_functions的shell_exe！<br/>";
+            }
         }
 
         // 释放文件锁
@@ -54,7 +67,13 @@ class PhpRunner {
         $pid = (int) file_get_contents($this->pidFile);
         if ($pid <= 0) return false;
 
-        // 使用 posix_kill 检查进程是否存在
+        // 在 Windows 上我们需要用 tasklist 来检查进程是否存在
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $output = shell_exec("tasklist /FI \"PID eq $pid\"");
+            return strpos($output, (string)$pid) !== false;
+        }
+
+        // 使用 posix_kill 检查进程是否存在（Linux）
         return posix_kill($pid, 0);  // 如果进程存活，返回 true
     }
 
@@ -66,7 +85,12 @@ class PhpRunner {
         }
 
         $pid = (int) file_get_contents($this->pidFile);
-        posix_kill($pid, SIGTERM);
+        // 在 Windows 上使用 taskkill 终止进程
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            shell_exec("taskkill /PID $pid");
+        } else {
+            posix_kill($pid, SIGTERM);
+        }
         unlink($this->pidFile);
         echo "守护进程已停止<br/>";
     }
@@ -91,11 +115,10 @@ $status = $runner->isDaemonRunning() ?
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 echo <<<HTML
 <h3>定时任务控制面板</h3>
-当前守护进程状态: {$status}<br/>
-
+当前系统分钟定时器状态: {$status}
 <form method="post">
-    <button type="submit" name="action" value="start">启动任务</button>
-    <button type="submit" name="action" value="stop">停止任务</button>
+    <button type="submit" name="action" value="start">启动</button>
+    <button type="submit" name="action" value="stop">停止</button>
 </form>
 <a href="game.php?cmd=$gm_main">返回设计大厅</a><br/>
 HTML;
