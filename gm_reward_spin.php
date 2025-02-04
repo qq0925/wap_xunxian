@@ -129,8 +129,13 @@ foreach ($reward_gift_para as $gift) {
 $prizeID = $prizes[$prizeIndex]['real_id'];
 $prizeCount = $prizes[$prizeIndex]['real_count'];
 ob_start();
+if($prizeID){
 $get_ret = \player\additem($sid,$prizeID,$prizeCount,$dblj);
+}else{
+echo '你没有足够的抽取消耗！<br/>';
+}
 $final = ob_get_clean();
+
 
 if($final){
         // 如果发生异常，则回滚事务
