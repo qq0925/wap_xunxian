@@ -50,7 +50,7 @@ while (true) {
             }
         }
     }
-    
+    $dblj->exec("UPDATE gm_game_basic SET game_temp_notice_time = game_temp_notice_time - 1 WHERE game_temp_notice_time >0 and game_id = '19980925'");
     // 每分钟执行一次
     sleep(60);
 }
