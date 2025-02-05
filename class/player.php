@@ -525,10 +525,16 @@ function getskill_default($dblj,$sid){
     $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
     return $ret;
 }
-function getmoney_type_all($dblj){
+function getmoney_type_all($dblj,$type=null){
+    if(!$type){
     $sql = "select * from `system_money_type`";
     $cxjg = $dblj->query($sql);
     $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
+    }else{
+    $sql = "select * from `system_money_type` where rid = '$type'";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    }
     return $ret;
 }
 

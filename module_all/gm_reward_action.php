@@ -16,20 +16,18 @@ $cons_type_detail = explode("|",$reward_cons)[0];
 $cons_type_detail_count = explode("|",$reward_cons)[1];
 if ($reward_cons_type == 1) {
     $cons_type = "金钱";
-    
+    $cons_type_detail = \player\getmoney_type_all($dblj,$cons_type_detail)['rname'];
     //货币表取得货币名
     
 } elseif ($reward_cons_type == 2) {
     $cons_type = "物品";
-    
+    $cons_type_detail = \lexical_analysis\color_string(\player\getitem($cons_type_detail,$dblj)->iname);
     //物品表取得物品名
     
 } else {
     $cons_type = "属性";
-    
+    $cons_type_detail = \gm\get_gm_attr_info(1,$cons_type_detail,$dblj)['name'];
     //属性表取得属性名
-    
-    
 }
 
 $prizes = [];
