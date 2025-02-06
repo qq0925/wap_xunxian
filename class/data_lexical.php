@@ -430,7 +430,9 @@ if($updateAll){
 // 开启一个事务
 $db->autocommit(false);
 foreach($updateAll as $onesql){
+if($onesql){
 $db->query($onesql);
+}
 }
 $db->commit();
 // 重新开启自动提交
@@ -781,7 +783,9 @@ if($updateAll){
 // 开启一个事务
 $db->autocommit(false);
 foreach($updateAll as $onesql){
+if($onesql){
 $db->query($onesql);
+}
 }
 $db->commit();
 // 重新开启自动提交

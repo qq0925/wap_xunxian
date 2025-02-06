@@ -123,7 +123,7 @@ function getplayer($sid,$dblj,$uid=null){
     $cxjg->bindColumn('uhp',$player->uhp);
     $cxjg->bindColumn('umaxhp',$player->umaxhp);
     $cxjg->bindColumn('ump',$player->ump);
-    $cxjg->bindColumn('umaxmp',$player->umaxmp);    
+    $cxjg->bindColumn('umaxmp',$player->umaxmp);
     $cxjg->bindColumn('ugj',$player->ugj);
     $cxjg->bindColumn('ufy',$player->ufy);
     $cxjg->bindColumn('usex',$player->usex);
@@ -1754,6 +1754,7 @@ class gameconfig{
     var $scene_message_count;
     var $long_exist_message;
     var $offline_time;
+    var $can_verify;
     var $player_send_global_msg_interval;
     var $near_player_show;
     var $equip_mosaic_link;
@@ -1779,6 +1780,7 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('scene_message_count',$gameconfig->scene_message_count);
     $cxjg->bindColumn('long_exist_message',$gameconfig->long_exist_message);
     $cxjg->bindColumn('player_offline_time',$gameconfig->offline_time);
+    $cxjg->bindColumn('can_verify',$gameconfig->can_verify);
     $cxjg->bindColumn('player_send_global_msg_interval',$gameconfig->player_send_global_msg_interval);
     $cxjg->bindColumn('near_player_show',$gameconfig->near_player_show);
     $cxjg->bindColumn('equip_mosaic_link',$gameconfig->equip_mosaic_link);
@@ -2100,11 +2102,11 @@ if(!empty($event_data['system_event']['link_evs'])){
         }
     if(!$step_triggle){
         if($step_cmmt2){
-        echo $step_cmmt2."<br/>";
+        echo \lexical_analysis\process_photoshow(\lexical_analysis\process_string($step_cmmt2,$sid))."<br/>";
         }
         }elseif($step_triggle){
             if($step_cmmt){
-        echo $step_cmmt."<br/>";
+        echo \lexical_analysis\process_photoshow(\lexical_analysis\process_string($step_cmmt,$sid))."<br/>";
             }
         if($step_s_attrs){
         $ret = attrsetting($step_s_attrs,$sid,$event_type,$event_obj);

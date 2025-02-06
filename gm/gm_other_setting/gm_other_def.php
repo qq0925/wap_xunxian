@@ -19,6 +19,10 @@ foreach ($_POST as $key => $value) {
             $sql = "update  gm_game_basic set player_offline_time = '$value' where game_id = 19980925";
             $dblj->exec($sql);
             break;
+        case 'can_verify':
+            $sql = "update  gm_game_basic set can_verify = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
         case 'player_send_global_msg_interval':
             $sql = "update  gm_game_basic set player_send_global_msg_interval = '$value' where game_id = 19980925";
             $dblj->exec($sql);
@@ -101,11 +105,15 @@ $selectedOption_3 = ($game_config->item_op_br == "1") ? 'selected' : '';
 $selectedOption_4 = ($game_config->npc_list_br == "1") ? 'selected' : '';
 $selectedOption_5 = ($game_config->equip_mosaic_link == "1") ? 'selected' : '';
 $selectedOption_6 = ($game_config->long_exist_message == "1") ? 'selected' : '';
+$selectedOption_7 = ($game_config->can_verify == "1") ? 'selected' : '';
 $other_html = <<<HTML
 [杂项设置]<br/><br/>
 <form action="?cmd=$other_set" method="POST">
 玩家离线时间(0为永久)：<input type="tel" name="offline_time" size="5" value="{$game_config->offline_time}">分钟
 <input type="submit" value="保存"/>
+</form>
+<form action="?cmd=$other_set" method="POST">
+是否开启防挂验证：<select name="can_verify"><option value =0>否</option><option value =1 {$selectedOption_7}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
 <form action="?cmd=$other_set" method="POST">
 发送公共信息间隔(秒)：<input type="tel" name="player_send_global_msg_interval" size="5" value="{$game_config->player_send_global_msg_interval}">秒

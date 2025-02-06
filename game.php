@@ -276,6 +276,8 @@ HTML;
             if($cmdd >=1){
                 // 13-15ms
             if($ucmd >10000){
+                $can_verify = \player\getgameconfig($dblj)->can_verify;
+                if($can_verify ==1){
                 echo "触发防挂验证<br/>";
                 $refresh_cmid = $encode->encode("cmd=$cmd&ucmd=1&refresh_cmid=1&sid=$sid");
                 $html = <<<HTML
@@ -285,6 +287,7 @@ HTML;
                 <a href="?cmd=$refresh_cmid">清除验证</a>
 HTML;
                 exit($html);
+                }
             }
             goto THEMAINTASK;
             }else{
