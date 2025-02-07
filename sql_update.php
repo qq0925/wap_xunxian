@@ -15,19 +15,6 @@
         $stmt->execute();
     }
 
-
-    $sql = "SHOW COLUMNS FROM gm_game_attr LIKE 'long_type'";
-    $stmt = $dblj->prepare($sql);
-    $stmt->execute();
-    $column = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if (!$column) {
-        // 如果字段不存在，执行添加字段操作
-        $sql = "ALTER TABLE gm_game_attr ADD COLUMN long_type INT(1) NOT NULL";
-        $stmt = $dblj->prepare($sql);
-        $stmt->execute();
-    }
-
     $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'can_verify'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
@@ -510,6 +497,44 @@ if ($stmt->rowCount() == 0) {
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
     }
+
+    $sql = "SHOW COLUMNS FROM game1 LIKE 'uspeed'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$column) {
+        // 如果 designer 字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE game1 ADD COLUMN uspeed INT(11) DEFAULT 1 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
+    $sql = "SHOW COLUMNS FROM system_npc_midguaiwu LIKE 'nspeed'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$column) {
+        $sql = "ALTER TABLE system_npc_midguaiwu ADD COLUMN nspeed INT(11) DEFAULT 1 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $sql = "ALTER TABLE system_pet_scene ADD COLUMN nspeed INT(11) DEFAULT 1 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $sql = "ALTER TABLE system_npc_scene ADD COLUMN nspeed INT(11) DEFAULT 1 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $sql = "ALTER TABLE system_npc ADD COLUMN nspeed INT(11) DEFAULT 1 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $sql = "insert into gm_game_attr (id,name,value_type,default_value,if_item_use_attr,if_basic,if_show,attr_type,long_type) values ('speed','出招速度','1','1','1','1','1','0','0'),('speed','出招速度','3','1','1','1','1','0','0')";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+
+    }
+
+
 
     // 检查表是否存在 jpid 字段
     $sql = "SHOW COLUMNS FROM system_skill_user LIKE 'jpid'";
