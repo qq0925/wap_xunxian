@@ -35,6 +35,7 @@ class player
     var $umaxhp;//最大生命
     var $ump;//法力
     var $umaxmp;//最大法力
+    var $uspeed;//出招速度
     var $ugj;//攻击
     var $ufy;//防御
     var $usex;//性别
@@ -124,6 +125,7 @@ function getplayer($sid,$dblj,$uid=null){
     $cxjg->bindColumn('umaxhp',$player->umaxhp);
     $cxjg->bindColumn('ump',$player->ump);
     $cxjg->bindColumn('umaxmp',$player->umaxmp);
+    $cxjg->bindColumn('uspeed',$player->uspeed);
     $cxjg->bindColumn('ugj',$player->ugj);
     $cxjg->bindColumn('ufy',$player->ufy);
     $cxjg->bindColumn('usex',$player->usex);
@@ -1800,7 +1802,7 @@ function getgameconfig($dblj){
 }
 
 function getfightpara($sid,$dblj){
-    $sql = "SELECT ngid,nid,nname,nlvl,nhp,nmp,ndesc from system_npc_midguaiwu where nsid = '$sid' and nhp >0";
+    $sql = "SELECT ngid,nid,nname,nlvl,nhp,nmp,ndesc,nspeed from system_npc_midguaiwu where nsid = '$sid' and nhp >0";
     $result = $dblj->query($sql);
     $row = $result->fetchAll(\PDO::FETCH_ASSOC);
     return $row;
