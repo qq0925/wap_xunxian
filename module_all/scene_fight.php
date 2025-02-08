@@ -225,7 +225,7 @@ if($player->uis_designer==1){
     for($i=0;$i<$monster_count;$i++){
     $monster_id = $monster_ids[$i];
     $alive_monster = player\getnpcguaiwu_attr($monster_id,$dblj);
-    if ($alive_monster->nhp<=0){//怪物死亡
+    if ($alive_monster->nhp<=0 &&$player->uhp>0){//怪物死亡
         $alive_id = $alive_monster->nid;
         $defeat_id = $alive_monster->ndefeat_event_id;
         $cmid = $cmid + 1;
@@ -284,8 +284,6 @@ if($player->uis_designer==1){
         $drop_add_map_item_str = implode(',', $drop_add_map_item);
         // 使用参数化查询，避免 SQL 注入，同时处理 mitem_now 为空的情况
         $nowdate = date('Y-m-d H:i:s');
-        // 开始事务
-        $dblj->beginTransaction();
         $stmt = $dblj->prepare("insert into system_npc_drop_list(drop_npc_id,drop_item_data,drop_player_sid,drop_time,drop_mid)values(?,?,?,?,?)");
         $stmt->execute([$alive_id,$drop_add_map_item_str,$sid,$nowdate,$drop_map_id]);
         }
@@ -413,8 +411,6 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     $monster_name = \lexical_analysis\color_string($alive_monster->nname);
     switch ($zdjg){
         case 1:
-            // 提交事务
-            $dblj->commit();
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
             $sql = "delete from system_npc_midguaiwu where nsid='$sid'";
             $dblj->exec($sql);
@@ -436,8 +432,6 @@ $rwts
 HTML;
             break;
         case 0:
-            // 如果发生异常，则回滚事务
-            $dblj->rollBack();
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
             $sql = "delete from system_npc_midguaiwu where nsid='$sid'";
             $dblj->exec($sql);
