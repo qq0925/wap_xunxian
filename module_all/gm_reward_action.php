@@ -219,7 +219,7 @@ endforeach;
         </div>
     </div>
     <button id="spin-btn" onclick="startSpin()">立即抽奖</button>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/sweetalert2.js"></script>
     <script>
     
         let isSpinning = false;

@@ -2,7 +2,7 @@
 
 function generateAreaLinks($dblj, $currentBelong, $encode, $cmid, $mid, $sid) {
     // 获取所有区域
-    $sql = "SELECT `id`,`name` FROM `system_region` WHERE `road_hide` = 0 and `id` != 0 ORDER BY `pos` ASC";
+    $sql = "SELECT `id`,`name` FROM `system_region` WHERE `road_hide` = 0 ORDER BY `pos` ASC";
     $regions = $dblj->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     $links = '';
     foreach ($regions as $region) {
@@ -31,10 +31,11 @@ $map_area_id = \player\getmid($mid,$dblj)->marea_id;
 $map_area_belong = \gm\getqy($dblj,$map_area_id)['belong'];
 
 // 生成区域链接
-if($choose_area_belong){
+if(isset($choose_area_belong)){
 $road_area_html = generateAreaLinks($dblj, $choose_area_belong, $encode, $cmid, $mid, $sid);
 }else{
-$road_area_html = generateAreaLinks($dblj, $map_area_belong, $encode, $cmid, $mid, $sid);
+$choose_area_belong = $map_area_belong;
+$road_area_html = generateAreaLinks($dblj, $choose_area_belong, $encode, $cmid, $mid, $sid);
 }
 
 $road_list = \player\getoutgoing($mid,$choose_area_belong,$dblj,1);

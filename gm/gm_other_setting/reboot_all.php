@@ -236,7 +236,7 @@ $data = [
         $stmt->execute();
         echo "表 system_region 已成功清空。<br>";
     
-        $sql = "INSERT INTO system_region (belong,pos,id, name,sail_hide,sky_hide,road_hide) VALUES (0,0,0, '失落之地',0,0,0)";
+        $sql = "INSERT INTO system_region (belong,pos,id, name,sail_hide,sky_hide,road_hide) VALUES (0,0,0, '失落之地',1,1,1)";
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
         echo "表 system_region 已插入未分区初始值。<br>";
