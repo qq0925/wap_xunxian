@@ -362,6 +362,36 @@ try {
 
 try {
     // 1. 查询表是否存在
+    $query = $dblj->prepare("SHOW TABLES LIKE 'system_fight_record'");
+    $query->execute();
+    $table_exists = $query->fetch();
+
+    if (!$table_exists) {
+        // 2. 表不存在，复制 system_npc 表的结构
+        $sql = "CREATE TABLE IF NOT EXISTS system_fight_record (
+                record_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+                record_belong_sid TEXT NOT NULL,
+                record_win_type INT(1) NOT NULL,
+                record_text TEXT NOT NULL,
+                record_create_time DATETIME NOT NULL)";
+        // 使用事务来保证所有操作的原子性
+        //$dblj->beginTransaction();
+
+        //$dblj->exec($sql);
+        // 提交事务
+        //$dblj->commit();
+    }
+} catch (PDOException $e) {
+    // 回滚事务（如果有进行事务处理）
+    // if ($dblj->inTransaction()) {
+    //     $dblj->rollBack();
+    // }
+    echo "操作时出错: " . $e->getMessage();
+}
+
+
+try {
+    // 1. 查询表是否存在
     $query = $dblj->prepare("SHOW TABLES LIKE 'system_region'");
     $query->execute();
     $table_exists = $query->fetch();

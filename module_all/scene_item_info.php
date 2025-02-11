@@ -9,6 +9,20 @@ require_once 'class/basic_function_todo.php';
 $parents_page = $currentFilePath;
 // $encode = new \encode\encode();
 // $player = new \player\player();
+
+
+if(isset($_POST['change_count'])){
+    if($change_count >0 && is_int((int)$change_count)){
+    echo "修改成功!<br/>";
+    $dblj->exec("update system_item set icount = '$change_count' where item_true_id = '$item_true_id' and sid = '$sid'");
+    $item_burthen = \player\update_item_burthen($sid,$dblj);
+    $sql = "update game1 set uburthen = '$item_burthen' WHERE sid='$sid'";
+    $cxjg = $dblj->exec($sql);
+    }else{
+    echo "不能输入负数，小数，0！<br/>";
+    }
+}
+
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_item_page($dblj);
@@ -133,8 +147,19 @@ $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 
 if($player->uis_designer ==1){
     $itemid = \player\getitem_root($item_true_id,$sid,$dblj);
+    $item_type = \player\getitem($itemid,$dblj)->itype;
     $modify = $encode->encode("cmd=game_item_list&item_id=$itemid&sid=$sid");
     $modify_module = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=4&sid=$sid");
+    if($item_type !="兵器"&&$item_type !="防具"){
+    $itemcount = \player\getitem_count($itemid,$sid,$dblj)['icount'];
+    $modify_count = $encode->encode("cmd=iteminfo_new&item_id=$itemid&uid=$uid&canshu=$canshu&list_page=$list_page&item_true_id=$item_true_id&sid=$sid");
+    $gm_count_html = <<<HTML
+    <form action="?cmd=$modify_count" method="post">
+    数量：<input name="change_count" type="TEXT" value="{$itemcount}" size="5" maxlength="8">
+    <input type="submit" value="修改">
+    </form>
+HTML;
+}
     $gm_item_design = <<<HTML
 ----------<br/>
     <a href = "?cmd=$modify">设计该物品</a><br/>
@@ -148,6 +173,7 @@ $all = <<<HTML
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="css/gamecss.css">
 </head>
+$gm_count_html
 $game_main
 $gm_item_design
 <a href="?cmd=$item_html">返回列表</a><br/>
