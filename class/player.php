@@ -1757,6 +1757,7 @@ class gameconfig{
     var $long_exist_message;
     var $offline_time;
     var $can_verify;
+    var $npc_seg;
     var $player_send_global_msg_interval;
     var $near_player_show;
     var $equip_mosaic_link;
@@ -1783,6 +1784,7 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('long_exist_message',$gameconfig->long_exist_message);
     $cxjg->bindColumn('player_offline_time',$gameconfig->offline_time);
     $cxjg->bindColumn('can_verify',$gameconfig->can_verify);
+    $cxjg->bindColumn('npc_seg',$gameconfig->npc_seg);
     $cxjg->bindColumn('player_send_global_msg_interval',$gameconfig->player_send_global_msg_interval);
     $cxjg->bindColumn('near_player_show',$gameconfig->near_player_show);
     $cxjg->bindColumn('equip_mosaic_link',$gameconfig->equip_mosaic_link);

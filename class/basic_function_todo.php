@@ -1118,7 +1118,7 @@ $stmt->execute();
 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 $nowmid = $row['nowmid'];
 $clmid = player\getmid($nowmid,$dblj);
-
+$npc_seg = \player\getgameconfig($dblj)->npc_seg;
 $npc_list = '';
 if ($clmid->mnpc_now !=""){
     $npc_list_br = \player\getgameconfig($dblj)->npc_list_br;
@@ -1161,17 +1161,21 @@ if ($clmid->mnpc_now !=""){
 
         if($nkill ==0){
                 $npchtml.=<<<HTML
-<a href="?cmd=$npccmd">{$nname}</a> 
+<a href="?cmd=$npccmd">{$nname}</a>{$npc_seg}
 HTML;
         }else{
                 $npchtml.=<<<HTML
-<a href="?cmd=$npccmd">*{$nname}</a> 
+<a href="?cmd=$npccmd">*{$nname}</a>{$npc_seg}
 HTML;
         }
 }
 
 if($npc_list_br ==1){
-    $npchtml .="<br/>";
+    if($npc_seg){
+    $npchtml = rtrim($npchtml,"$npc_seg") ."<br/>";
+    }else{
+    $npchtml .= "<br/>";
+    }
 }
 }
     }
@@ -1181,7 +1185,7 @@ if($npc_list_br ==1){
     $cxjg = $dblj->query($sql);
     $cxpetall = $cxjg->fetchAll(PDO::FETCH_ASSOC);
     if($cxpetall){
-for ($i=0;$i < count($cxpetall);$i++){
+        for ($i=0;$i < count($cxpetall);$i++){
         $nname = $cxpetall[$i]['nname'];
         $npid = $cxpetall[$i]['npid'];
         $cmid = $cmid + 1;
@@ -1189,11 +1193,14 @@ for ($i=0;$i < count($cxpetall);$i++){
         $clj[] = $cmd;
         $petcmd = $encode->encode("cmd=pet_view&ucmd=$cmid&petid=$npid&sid=$sid");
                 $npchtml.=<<<HTML
-<a href="?cmd=$petcmd">{$nname}(宠)</a>
+<a href="?cmd=$petcmd">{$nname}(宠)</a>{$npc_seg}
 HTML;
 }
 }
 if($npchtml){
+    if($npc_seg){
+    $npchtml = rtrim($npchtml,"$npc_seg");
+    }
 $npchtml = preg_replace('/<br\s*\/?>$/', '', $npchtml); // 去掉结尾的 <br>
 }
 return $npchtml;

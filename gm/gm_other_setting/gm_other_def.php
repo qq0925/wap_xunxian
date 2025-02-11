@@ -47,6 +47,10 @@ foreach ($_POST as $key => $value) {
             $sql = "update  gm_game_basic set npc_list_br = '$value' where game_id = 19980925";
             $dblj->exec($sql);
             break;
+        case 'npc_seg':
+            $sql = "update  gm_game_basic set npc_seg = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
         case 'item_op_br':
             $sql = "update  gm_game_basic set item_op_br = '$value' where game_id = 19980925";
             $dblj->exec($sql);
@@ -138,6 +142,7 @@ $other_html = <<<HTML
 附近玩家显示：<input type="tel" name="near_player_show" size="5" value="{$game_config->near_player_show}">人
 <input type="submit" value="保存"/>
 </form>
+---<br/>
 <form action="?cmd=$other_set" method="POST">
 城市默认仓库容量：<input type="tel" name="default_storage" size="5" value="{$game_config->default_storage}">
 <input type="submit" value="保存"/>
@@ -153,6 +158,7 @@ $other_html = <<<HTML
 <form action="?cmd=$other_set" method="POST">
 卸装是否同步卸下镶嵌物：<select name="equip_mosaic_link"><option value =0>否</option><option value =1 {$selectedOption_5}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
+---<br/>
 <form action="?cmd=$other_set" method="POST">
 场景操作列表是否换行：<select name="scene_op_br"><option value =0>否</option><option value =1 {$selectedOption}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
@@ -161,6 +167,10 @@ $other_html = <<<HTML
 </form>
 <form action="?cmd=$other_set" method="POST">
 场景电脑人物列表是否换行：<select name="npc_list_br"><option value =0>否</option><option value =1 {$selectedOption_4}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
+</form>
+<form action="?cmd=$other_set" method="POST">
+场景电脑人物分隔符：：<input type="text" name="npc_seg" size="5" value="{$game_config->npc_seg}">
+<input type="submit" value="保存"/>
 </form>
 <form action="?cmd=$other_set" method="POST">
 查看物品操作列表是否换行：<select name="item_op_br"><option value =0>否</option><option value =1 {$selectedOption_3}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
