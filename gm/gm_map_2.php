@@ -347,10 +347,19 @@ for ($i = 1; $i <= $map_x; $i++) {
     elseif($_POST['modify'] ==2){
         $marea_name = $_POST['marea_name'];
         $qy_id = $_POST['qy_id'];
+        if($marea_name){
         $sql = "update system_area set name = '$marea_name' where id = '$qy_id'";
+        $dblj->exec($sql);
+        $sql = "update system_npc set narea_name = '$marea_name' where narea_id = '$qy_id'";
+        $dblj->exec($sql);
+        $sql = "update system_item_module set iarea_name = '$marea_name' where iarea_id = '$qy_id'";
         $dblj->exec($sql);
         $sql = "update system_map set marea_name = '$marea_name' where marea_id = '$qy_id'";
         $dblj->exec($sql);
+        echo "修改成功！<br/>";
+        }else{
+        echo "输入有误！<br/>";
+        }
     }
     elseif($_POST['modify'] ==3){
     $cxalladdmaps = \player\getmid_detail($dblj,$qy_id);
