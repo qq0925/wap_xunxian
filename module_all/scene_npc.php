@@ -247,7 +247,6 @@ HTML;
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $old_scene = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
-$npc_design = $encode->encode("cmd=gm_npc_second&npc_id=$nid&npc_designer_mid=$player->nowmid&sid=$sid");
 $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
@@ -257,8 +256,13 @@ $game_main<br/>
 <a href="game.php?cmd=$old_scene">返回游戏</a><br/>
 HTML;
 if($player->uis_designer ==1){
+$npc_design = $encode->encode("cmd=gm_npc_second&npc_id=$nid&npc_designer_mid=$player->nowmid&sid=$sid");
+$npc_module_design = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=2&sid=$sid");
 $all .=<<<HTML
+----------<br/>
 <a href="?cmd=$npc_design">设计当前人物</a><br/>
+<a href="?cmd=$npc_module_design">设计电脑人物模板</a><br/>
+----------<br/>
 HTML;
 }
 if($npc_hide ==0 ||$npc_hide ==2){
