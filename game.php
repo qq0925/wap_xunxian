@@ -3118,6 +3118,7 @@ echo $refresh_html;
             }
             $targetPath = $targetDirectory .'/'. $fileName;
             $check_sql = "select * from system_photo where id = '$check_id'";
+            $default_style = "height: 128px;width: 128px";
             $result = $dblj->query($check_sql);
             $row = $result->fetch(PDO::FETCH_ASSOC);
             $photo_id = $row['id'];
@@ -3125,18 +3126,18 @@ echo $refresh_html;
             $dblj->exec("DELETE from system_photo where id = '$check_id'");
             $dblj->exec("UPDATE game1 set uimage = '' where sid = '$sid'");
             }
-            $sql = "INSERT INTO system_photo set id = '$check_id',type = '$type',name = '$check_name',photo_url = '$targetPath',format_type = '$extension';";
+            $sql = "INSERT INTO system_photo set id = '$check_id',type = '$type',name = '$check_name',photo_url = '$targetPath',photo_style = '$default_style',format_type = '$extension';";
             $cxjg = $dblj->exec($sql);
             // 移动上传文件到目标路径
             if (move_uploaded_file($file['tmp_name'], $targetPath)) {
                 echo '文件上传成功<br/>';
                 if(!$photo_id){
-                $update_image = '玩家形象照|'.$check_id;
                 $sql = "UPDATE system_photo_type set contains = contains + 1 where name = '$type'";
                 $cxjg = $dblj->exec($sql);
+                }
+                $update_image = '玩家形象照|'.$check_id;
                 $sql = "UPDATE game1 set uimage = '$update_image'  where sid = '$sid'";
                 $cxjg = $dblj->exec($sql);
-                }
             } else {
                 echo '照片上传失败！请联系管理员！<br/>';
             }
