@@ -3123,6 +3123,7 @@ echo $refresh_html;
             $photo_id = $row['id'];
             if($photo_id){
             $dblj->exec("DELETE from system_photo where id = '$check_id'");
+            $dblj->exec("UPDATE game1 set uimage = '' where sid = '$sid'");
             }
             $sql = "INSERT INTO system_photo set id = '$check_id',type = '$type',name = '$check_name',photo_url = '$targetPath',format_type = '$extension';";
             $cxjg = $dblj->exec($sql);
@@ -3130,7 +3131,10 @@ echo $refresh_html;
             if (move_uploaded_file($file['tmp_name'], $targetPath)) {
                 echo '文件上传成功<br/>';
                 if(!$photo_id){
+                $update_image = '玩家形象照|'.$check_id;
                 $sql = "UPDATE system_photo_type set contains = contains + 1 where name = '$type'";
+                $cxjg = $dblj->exec($sql);
+                $sql = "UPDATE game1 set uimage = '$update_image'  where sid = '$sid'";
                 $cxjg = $dblj->exec($sql);
                 }
             } else {
@@ -3150,6 +3154,8 @@ echo $refresh_html;
             $sql = "DELETE FROM system_photo WHERE id = '$check_id' and type = '$type'";
             $cxjg = $dblj->exec($sql);
             $sql = "UPDATE system_photo_type SET contains = contains - 1 where name = '$type';";
+            $cxjg = $dblj->exec($sql);
+            $sql = "UPDATE game1 SET uimage = '' where sid = '$sid';";
             $cxjg = $dblj->exec($sql);
             echo "图片删除成功。<br/>";
             } else {
