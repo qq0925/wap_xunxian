@@ -42,7 +42,10 @@ if($photo_id){
     $player_photo_url =<<<HTML
 <img style="width:160px;height:80px;" src="$imageSrc"><br/>
 HTML;
-$del_url = $encode->encode("cmd=player_photo_upload&upload=2&uid=$uid&type=$type&sid=$sid");
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+$del_url = $encode->encode("cmd=player_photo_upload&ucmd=$cmid&upload=2&uid=$uid&type=$type&sid=$sid");
 $copy_url = "game.php?cmd=$del_url";
 $del_html =<<<HTML
 <a href="#" onclick="confirmAction()">删除形象照</a><br/>
@@ -60,7 +63,10 @@ $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
 $ret_game = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
-$photo_upload = $encode->encode("cmd=player_photo_upload&upload=1&uid=$uid&type=$type&sid=$sid");
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+$photo_upload = $encode->encode("cmd=player_photo_upload&ucmd=$cmid&upload=1&uid=$uid&type=$type&sid=$sid");
 $upload_html = <<<HTML
 [上传形象照](请勿上传非法,涉黄等图片.否则一切后果自负)<br/>
 $player_photo_url
