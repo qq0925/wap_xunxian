@@ -320,6 +320,18 @@ function chat_list($cmd,$page_id,$sid,$dblj,$value,&$cmid){
     return $chat_list;
 }
 
+function self_photo($cmd,$page_id,$sid,$dblj,$value,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;    
+    $clj[] = $cmd;
+    global $encode;
+    $photo_url = $encode->encode("cmd=photo_html&ucmd=$cmid&sid=$sid");
+    $photo_html=<<<HTML
+<a href="?cmd=$photo_url">{$value}</a>
+HTML;
+    return $photo_html;
+}
+
 function function_url($cmd,$page_id,$sid,$dblj,$value,&$cmid){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;    

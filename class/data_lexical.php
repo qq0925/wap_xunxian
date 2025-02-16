@@ -67,7 +67,6 @@ foreach ($keyValuePairs as $pair) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
         $check_cache = \gm\check_redis($db,$ele_1,$sid,$oid,$mid,$jid,$type,$para);
-
         //$parts = explode(".", $ele_1);
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
@@ -552,7 +551,6 @@ $sid = $old_sid;
         $ele_2 = str_replace(array("'", "\""), '', $ele_2);
         }else{
             $redis->set($check_cache,$ele_2);
-            
         }
         switch ($ele_1_1) {
             case 'u':

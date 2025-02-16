@@ -169,12 +169,13 @@ $other_html = <<<HTML
 场景电脑人物列表是否换行：<select name="npc_list_br"><option value =0>否</option><option value =1 {$selectedOption_4}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
 <form action="?cmd=$other_set" method="POST">
-场景电脑人物分隔符：：<input type="text" name="npc_seg" size="5" value="{$game_config->npc_seg}">
+场景电脑人物分隔符：<input type="text" name="npc_seg" size="5" value="{$game_config->npc_seg}">
 <input type="submit" value="保存"/>
 </form>
 <form action="?cmd=$other_set" method="POST">
 查看物品操作列表是否换行：<select name="item_op_br"><option value =0>否</option><option value =1 {$selectedOption_3}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
+---<br/>
 css样式编写:<br/>
 <form action="?cmd=$other_set" method="POST">
 <textarea name="gm_css_text" maxlength="-1" rows="8" cols="40" >{$gm_css_text}</textarea>

@@ -450,12 +450,15 @@ function process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, $context,$n
     $sql = "UPDATE system_npc_midguaiwu SET nhp = nhp - ?, nsid = ? WHERE ngid = ?";
     $stmt = $dblj->prepare($sql);
     $stmt->execute([$hurt_cut, $sid, $attack_gid]);
-
-    $j_umsg = \lexical_analysis\process_string($j_umsg, $sid, $context, $attack_gid,1);
-    $j_umsg = str_replace(["'", "\""], '', $j_umsg);
-
-    $sql = "insert into game2(hurt_hp,sid,gid,pid,fight_umsg,round,type)values('-$hurt_cut','$sid','$attack_gid','$p_one','$j_umsg','$next_round','1')";
+    $p_one = $p_one?:0;
+    $sql = "insert into game2(hurt_hp,sid,gid,pid,round,type)values('-$hurt_cut','$sid','$attack_gid','$p_one','$next_round','1')";
     $dblj->exec($sql);
+    $j_umsg = \lexical_analysis\process_string($j_umsg, $sid, $context, $attack_gid,1);
+    
+    $j_umsg = str_replace(["'", "\""], '', $j_umsg);
+    $sql = "UPDATE game2 SET fight_umsg = ? WHERE round = ? and sid = ? and pid = ? and gid = ?";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute([$j_umsg,$next_round, $sid,$p_one, $attack_gid]);
 }
 
 //处理怪物伤害
@@ -520,7 +523,10 @@ function evaluate_expression($expr, $db, $sid,$oid,$mid,$jid,$type,$para=null){
 $expr = preg_replace_callback('/\{eval\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     // /\{eval\(([^)]+)\)\}/
     $eval_expr = $matches[1]; // 获取 eval 中的表达式
+    
     $eval_result = @eval("return $eval_expr;"); // 计算 eval 表达式的结果
+    //var_dump($eval_result);
+
     if(is_float($eval_result) && !is_string($eval_result)){
         return (int)$eval_result;
     }else{
@@ -531,33 +537,46 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     $attr = $matches[1]; // 获取匹配到的变量名
     global $redis;
     $op = \gm\update_redis($db,$attr,$sid,$oid,$mid,$jid,$type,$para);
-
+    if(!is_int((int)$op)){
+    
+    $op = str_replace("'", '', $op);
+    $op = $op?"'".$op."'":"''";
+    }else{
+    $op = str_replace("''", '0', $op);
+    $op = str_replace("'", '', $op);
+    $op = "'".$op."'";
+    //$op = $op?"'".$op."'":"''";
+    }
+    
     // 在这里根据变量名获取对应的值，例如从数据库中查询
     // 假设你从数据库中获取了 $attr_value]
-    $temp = $op;
-    if (strpos($temp, '"') === false){
-    $op = "\"".$temp."\"";
-    }
-    $op = str_replace(array("''", "\"\""), '0', $op);
-    // 使用正则表达式，去掉内部的单引号
-    $op = preg_replace("/'(.*?)'/", '$1', $op);
-    $op = str_replace(array("\""), '\'', $op);
+    
+    
+    // $temp = $op;
+    // if (strpos($temp, '"') === false){
+    // $op = "\"".$temp."\"";
+    // }
+    // $op = str_replace(array("''", "\"\""), '0', $op);
+    // // 使用正则表达式，去掉内部的单引号
+    // $op = preg_replace("/'(.*?)'/", '$1', $op);
+    // $op = str_replace(array("\""), '\'', $op);
+    
     return $op;
 }, $expr);
 
 // 现在 $expr 中的 {eval(...)} 和 {...} 部分已经被替换成了对应的值
 $result = $expr;
 //var_dump($result);
-try{
+// try{
 
-//$result = eval("return $expr;");
-}catch (ParseError $e){
-                print("语法错误: ". $e->getMessage());
+// $result = eval("return $expr;");
+// }catch (ParseError $e){
+//                 print("语法错误: ". $e->getMessage());
                 
-            }
-            catch (Error $e){
-                print("执行错误: ". $e->getMessage());
-}
+//             }
+//             catch (Error $e){
+//                 print("执行错误: ". $e->getMessage());
+// }
 return $result;
 }
 
@@ -579,7 +598,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $row = $result->fetch_assoc();
                     $row_result = $row[$attr3];
                     if ($row_result === null ||$row_result ==='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }else{
                     $op = nl2br($row_result);
                         }
@@ -810,7 +829,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $row = $result->fetch_assoc();
                     $op = $row[$attr3];
                     if ($op === null||$op =='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }
                     }
                     elseif(strpos($attr2, "boat.") === 0){
@@ -830,7 +849,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $row = $result->fetch_assoc();
                     $op = $row[$attr3];
                     if ($op === null||$op =='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }
                     }
                     elseif(strpos($attr2, "craft.") === 0){
@@ -850,7 +869,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $row = $result->fetch_assoc();
                     $op = $row[$attr3];
                     if ($op === null||$op =='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }
                     }
                     elseif(strpos($attr2, "input.") === 0){
@@ -870,7 +889,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $row = $result->fetch_assoc();
                     $op = $row['value'];
                     if ($op === null||$op =='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }
                     }
                     elseif(strpos($attr2, "refresh_time") === 0){
@@ -972,7 +991,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $op = $row["tstate"];
                     }
                     if(is_null($op)){
-                        $op = "\"\"";
+                        //$op = "\"\"";
                     }else{
                         if($ttype ==3){
                         $op = 2;
@@ -997,7 +1016,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $row = $result->fetch_assoc();
                     $op = $row["icount"];
                     if(is_null($op)){
-                        $op = "\"\"";
+                        //$op = "\"\"";
                     }
                     }elseif(strpos($attr2, "jv.") === 0){
                     $attr3 = substr($attr2, 3); // 提取 "jv." 后面的部分
@@ -1018,7 +1037,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $row = $result->fetch_assoc();
                     $op = $row["jlvl"];
                     if(is_null($op)){
-                        $op = "\"\"";
+                        //$op = "\"\"";
                     }
                     }elseif(strpos($attr2, "enemys.") === 0){
                     $attr3 = substr($attr2, 7); // 提取 "enemys." 后面的部分
@@ -1056,7 +1075,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $op = $row[$attr_guai];
                     }
                     if(is_null($op)){
-                        $op = "\"\"";
+                        //$op = "\"\"";
                     }
                     }elseif(strpos($attr2, "alive_enemys.") === 0){
                     $attr3 = substr($attr2, 13); // 提取 "alive_enemys." 后面的部分
@@ -1094,7 +1113,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $op = $row[$attr_guai];
                     }
                     if(is_null($op)){
-                        $op = "\"\"";
+                        //$op = "\"\"";
                     }
                     }elseif(strpos($attr2, "equips.") === 0){
                     $attr3 = substr($attr2, 7); // 提取 "equips." 后面的部分
@@ -1114,7 +1133,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $row = $result->fetch_assoc();
                         $op = $row["eq_true_id"];
                         if(!$op){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         if (strpos($attr4, 'embed.') === 0){
                         //镶物属性相关
@@ -1137,7 +1156,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $mosaic_list = $row['equip_mosaic'];
                         $mosaic_para = explode('|',$mosaic_list);
                         if(!$mosaic_para[$mosaic_pos]){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         $mosaic_id = $mosaic_para[$mosaic_pos];
                         $xid = "i".$attr6;
@@ -1151,7 +1170,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
                         if ($row === null||$row =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                         }else{
                             $op = nl2br($row[$xid]);
                         }
@@ -1185,11 +1204,11 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         if($row){
                         $op = count(explode('|',$row['equip_mosaic']));
                         }else{
-                        $op = "\"\"";
+                        //$op = "\"\"";
                         }
                         }else{
                         if ($row === null||$row =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                         }else{
                             $op = nl2br($row[$bid]);
                         }
@@ -1233,7 +1252,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $row = $result->fetch_assoc();
                         $op = $row["eq_true_id"];
                         if(!$op){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         if (strpos($attr4, 'embed.') === 0){
                         $attr5 = substr($attr4, 6); // 提取 "embed." 后面的部分
@@ -1255,7 +1274,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $mosaic_list = $row['equip_mosaic'];
                         $mosaic_para = explode('|',$mosaic_list);
                         if(!$mosaic_para[$mosaic_pos]){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         $mosaic_id = $mosaic_para[$mosaic_pos];
                         $xid = "i".$attr6;
@@ -1269,7 +1288,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
                         if ($row === null||$row =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                         }else{
                             $op = nl2br($row[$xid]);
                         }
@@ -1301,11 +1320,11 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         if($row){
                         $op = count(explode('|',$row['equip_mosaic']));
                         }else{
-                        $op = "\"\"";
+                        //$op = "\"\"";
                         }
                         }else{
                         if ($row === null||$row =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                         }else{
                             $op = nl2br($row[$fid]);
                         }
@@ -1329,7 +1348,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $row = $result->fetch_assoc();
                         $op = $row["total_callout"];
                         if(!$op){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                     }
@@ -1383,7 +1402,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $mosaic_list = $row['equip_mosaic'];
                         $mosaic_para = explode('|',$mosaic_list);
                         if(!$mosaic_para[$mosaic_pos]){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         $mosaic_id = $mosaic_para[$mosaic_pos];
                         $xid = "i".$attr6;
@@ -1397,7 +1416,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
                         if ($row === null||$row =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                         }else{
                             $op = nl2br($row[$xid]);
                         }
@@ -1416,7 +1435,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $row = $result->fetch_assoc();
                         
                         if ($row === null||$row =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                         }else{
                             $op = nl2br($row[$pid]);
                         }
@@ -1445,7 +1464,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     }
                     $row = $result_2->fetch_assoc();
                     if ($row === null||$row =='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }else{
                             if($attr_type !=1){
                     $op = nl2br($row[$attr3]);
@@ -1465,7 +1484,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $userAgent = $_SERVER['HTTP_USER_AGENT'];
                         if (strpos($userAgent, 'Mobile') !== false) {
                             // 用户正在使用移动设备（手机或平板）
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         } else {
                             // 用户正在使用桌面设备（电脑）
                             $op = 1;
@@ -1518,7 +1537,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $total_cut_hp = $row["total_cut_hp"];
                         $op = $total_cut_hp;
                         if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
@@ -1548,7 +1567,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op = $total_cut_mp;
                         
                         if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
@@ -1591,7 +1610,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op .= $row["fight_umsg"];
                         }
                         if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }else{
                         $op = nl2br($op);
                             }
@@ -1615,7 +1634,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op .= $row["fight_omsg"];
                         }
                         if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }else{
                         $op = nl2br($op);
                             }
@@ -1653,7 +1672,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $userAgent = $row["device_agent"];
                         if (strpos($userAgent, 'Mobile') !== false) {
                             // 用户正在使用移动设备（手机或平板）
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         } else {
                             // 用户正在使用桌面设备（电脑）
                             $op = 1;
@@ -1664,12 +1683,13 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }
                             break;
                         case 'cut_hp':
+                        $dblj = DB::pdo();
+                        $round = \player\getnowround($sid,$dblj);
                         // 构建 SQL 查询语句
-                        $sql = "SELECT * FROM game2 WHERE sid = ?";
-                        
+                        $sql = "SELECT hurt_hp FROM game2 WHERE sid = ? and gid = ? and pid = 0 and round = '$round'";
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
-                        $stmt->bind_param("s", $sid);
+                        $stmt->bind_param("ss", $sid,$mid);
                         
                         // 执行查询
                         $stmt->execute();
@@ -1677,9 +1697,9 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         // 获取查询结果
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
-                        $op = $row["hurt_hp"];
+                        $op = abs($row["hurt_hp"]);
                         if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                         break;
                     }
@@ -1728,7 +1748,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                     }
                                 }
                                 if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                             }
                             else{
@@ -1743,12 +1763,12 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             }
                             $row = $result->fetch_assoc();
                             if ($row == null||$row =='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
                             if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                                 }
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
@@ -1869,7 +1889,7 @@ if(!$bagequiphtml){
                             
                             
                             if ($row == null||$row =='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                             if ($attr2 == "is_adopt") {
@@ -1877,7 +1897,7 @@ if(!$bagequiphtml){
                             } 
                                 }
                             if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                                 }
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
@@ -1944,7 +1964,7 @@ if(!$bagequiphtml){
 }
 
                             if ($row_result === null ||$row_result ==='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row_result);
                                 }
@@ -2002,7 +2022,7 @@ if(!$bagequiphtml){
 }
 
                             if ($row_result === null ||$row_result ==='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row_result);
                                 }
@@ -2062,7 +2082,7 @@ if(!$bagequiphtml){
 }
 
                             if ($row_result === null ||$row_result ==='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row_result);
                                 }
@@ -2100,7 +2120,7 @@ if(!$bagequiphtml){
                         $mosaic_list = $row['equip_mosaic'];
                         $mosaic_para = explode('|',$mosaic_list);
                         if(!$mosaic_para[$mosaic_pos]){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         $mosaic_id = $mosaic_para[$mosaic_pos];
                         $xid = "i".$attr5;
@@ -2157,7 +2177,7 @@ if(!$bagequiphtml){
                                 }
                             }
                             if ($row_result === null ||$row_result ==='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row_result);
                                 }
@@ -2195,7 +2215,7 @@ if(!$bagequiphtml){
                         $mosaic_list = $row['equip_mosaic'];
                         $mosaic_para = explode('|',$mosaic_list);
                         if(!$mosaic_para[$mosaic_pos]){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         $mosaic_id = $mosaic_para[$mosaic_pos];
                         $xid = "i".$attr5;
@@ -2252,7 +2272,7 @@ if(!$bagequiphtml){
                                 }
                             }
                             if ($row_result === null ||$row_result ==='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row_result);
                                 }
@@ -2276,7 +2296,7 @@ if(!$bagequiphtml){
                             $row_result = $row['value'];
                             }
                             if ($row_result === null ||$row_result ==='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row_result);
                                 }
@@ -2450,7 +2470,7 @@ if(!$bagequiphtml){
                             }
                             $row = $result_2->fetch_assoc();
                             if ($row == null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                                     if($attr_type !=1){
                             $op = nl2br($row[$attr3]);
@@ -2459,7 +2479,7 @@ if(!$bagequiphtml){
                                     }
                                 }
                                 if($op ==''){
-                                    $op = "\"\"";
+                                    //$op = "\"\"";
                                 }
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                             // 替换字符串中的变量
@@ -2478,7 +2498,7 @@ if(!$bagequiphtml){
                             }
                             $row = $result->fetch_assoc();
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -2508,7 +2528,6 @@ if(!$bagequiphtml){
                             }
                             $row = $result->fetch_assoc();
                             $row_result = $row[$attr3];
-                            
                         }else{
                             // 首先从 system_skill 表中查询
                             $sql = "SELECT $attr3 FROM system_skill WHERE jid = ?";
@@ -2543,11 +2562,18 @@ if(!$bagequiphtml){
                                 }
                             }
                         }
+                        
                         if ($row_result === null ||$row_result ==='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }else{
                         $op = nl2br($row_result);
                             }
+                        //功能表达式处理方式
+                        if($attr3 == 'jpromotion'){
+                        $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                        $op = str_replace(array("'",), '', $op);
+                        $op = @eval("return $op;");
+                        }
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         if($attr3 == "jgroup_attack"){
                             if($row_result == -1){
@@ -2594,7 +2620,7 @@ if(!$bagequiphtml){
                         $row = $result->fetch_assoc();
                         $row_result = $row[$attr3];
                         if ($row_result === null ||$row_result ==='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }else{
                         $op = nl2br($row_result);
                             }
@@ -2646,7 +2672,7 @@ if(!$bagequiphtml){
                         $row_result = $row[$attr3];
                         }
                         if ($row_result === null ||$row_result ==='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }else{
                         $op = nl2br($row_result);
                             }
@@ -2702,7 +2728,7 @@ if(!$bagequiphtml){
                             }
                             $row = $result->fetch_assoc();
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -2729,7 +2755,7 @@ if(!$bagequiphtml){
                     }
                     $row = $result->fetch_assoc();
                     if ($row === null) {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }else{
                     $op = nl2br($row['gvalue']);
                         }
@@ -2738,7 +2764,7 @@ if(!$bagequiphtml){
                     //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'e':
-                    $sql = "SELECT value FROM system_exp_def WHERE id = ?";
+                    $sql = "SELECT value,type FROM system_exp_def WHERE id = ?";
                     $stmt = $db->prepare($sql);
                     $stmt->bind_param("s", $attr2);
                     $stmt->execute();
@@ -2748,10 +2774,32 @@ if(!$bagequiphtml){
                     }
                     $row = $result->fetch_assoc();
                     $op = nl2br($row['value']);
-                    
+                    $e_type = $row['type'];
                     // 替换字符串中的变量
+                    //var_dump("表达式类型：".$e_type."<br/>");
+                    //var_dump("未处理前：".$op."<br/>");
                     $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                    
+                    //var_dump("process_string处理后：".$op."<br/>");
+                    if($e_type ==1){
+                    $op = str_replace(array("''"), '0', $op);
+                    $op = str_replace(array("'"), '', $op);
+                    
+                    //$op = $op?"'".$op."'":"''";
+                    //var_dump($op);
                     $op = @eval("return $op;");
+                    //var_dump($op);
+                    }elseif($e_type ==2){
+                    $op = str_replace(array("'"), '', $op);
+                    $op = $op?"'".$op."'":"''";
+                    $op = @eval("return $op;");
+                    }elseif($e_type ==3){
+                    $op = str_replace(array("'"), '', $op);
+                    $op = $op?"'".$op."'":"''";
+                    $op = @eval("return $op;");
+                    //$op = @eval("return $op;");
+                    }
+                    //var_dump("递归前值：".$op."<br/>");
                     //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'r':
@@ -2762,7 +2810,7 @@ if(!$bagequiphtml){
                     if(intval($attr2) <=0){
                     $attr2 = 1;
                     }
-                    $op = rand(0, intval($attr2) - 1); // 生成随机整数
+                    $op ="'". rand(0, intval($attr2) - 1)."'"; // 生成随机整数
                     //$op = "\"$op\"";
                     break;
                 case 'gph':
@@ -2960,15 +3008,16 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 $attr2 = substr($match, $firstDotPosition + 1);
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
-                if($op =='' || $op == "" || $op ==null){
-                    $op = "\"\"";
-                }
-                $op = str_replace(array("''", "\"\""), '0', $op);
+                //var_dump($op);
+                $op = $op?"'".$op."'":"'0'";
+                // if($op =='' || $op == "" || $op ==null){
+                //     //$op = "\"\"";
+                // }
+                //$op = str_replace(array("''", "\"\""), '0', $op);
                 //  var_dump($match);
                 //  var_dump($op);
                 // 替换字符串中的变量
                 $input = str_replace("v({$match})", $op, $input);
-                
             }
         }
     }
@@ -2988,9 +3037,10 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
                 if($op =='' || $op == "" || $op ==null){
-                    $op = "\"\"";
+                    ////$op = "\"\"";
+                    $op = '0';
                 }
-                // var_dump($op);
+                //var_dump($op);
                 // 替换字符串中的变量
                 switch ($op[0]) {
                     case 's':
@@ -3002,7 +3052,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         }
                         $row = $cxjg->fetch_assoc();
                         $temp_mid = $row['mid'];
-                        $op = str_replace(array("'", "\"\""), '0', $op);
+                        //$op = str_replace(array("'", "\"\""), '0', $op);
                         $op = str_replace("f({$match})", "o", $f_temp);
                         if($temp_mid){
                         $f_input = process_string($op, $sid, 'scene', $temp_mid, $jid, $type, $para);
@@ -3018,7 +3068,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         }
                         $row = $cxjg->fetch_assoc();
                         $temp_iid = $row['iid'];
-                        $op = str_replace(array("'", "\"\""), '0', $op);
+                        //$op = str_replace(array("'", "\"\""), '0', $op);
                         $op = str_replace("f({$match})", "o", $f_temp);
                         if($temp_iid){
                         $f_input = process_string($op, $sid, 'item_module', $temp_iid, $jid, $type, $para);
@@ -3034,13 +3084,12 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         }
                         $row = $cxjg->fetch_assoc();
                         $temp_nid = $row['nid'];
-                        $op = str_replace(array("'", "\"\""), '0', $op);
+                        //$op = str_replace(array("'", "\"\""), '0', $op);
                         $op = str_replace("f({$match})", "o", $f_temp);
                         if($temp_nid){
                         $f_input = process_string($op, $sid, 'npc', $temp_nid, $jid, $type, $para);
                         }
                         $input = str_replace($f_temp, $f_input, $input);
-                        break;
                         break;
                     default:
                         $sql = "SELECT sid FROM game1 where uid = '$op'";
@@ -3050,7 +3099,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         }
                         $row = $cxjg->fetch_assoc();
                         $temp_sid = $row['sid'];
-                        $op = str_replace(array("'", "\"\""), '0', $op);
+                        //$op = str_replace(array("'", "\"\""), '0', $op);
                         $op = str_replace("f({$match})", "u", $f_temp);
                         if($temp_sid){
                         $f_input = process_string($op, $temp_sid, $oid, $mid, $jid, $type, $para);
@@ -3080,9 +3129,9 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                     $op = convertNumber($op);
                 }
                 if($op =='' || $op == "" || $op ==null){
-                    $op = "\"\"";
+                    $op = '0';
                 }
-                $op = str_replace(array("''", "\"\""), '0', $op);
+                //$op = str_replace(array("''", "\"\""), '0', $op);
 
                 $input = str_replace("{stru({$match})}", $op, $input);
             }
@@ -3097,7 +3146,7 @@ if($input){
 $input = preg_replace_callback('/#"(.*?)"/', function ($matches) use ($sid, $oid, $mid, $jid, $type, $db, $para) {
     // 获取原内容
     //var_dump($matches);
-   $op = str_replace(array("'"), '', $matches[1]);
+   //$op = str_replace(array("'"), '', $matches[1]);
    $op = "'".$op."'";
    return $op;
 }, $input);
@@ -3287,7 +3336,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             $equip_bid = end($matches[1]);
                         }
                         if(!$equip_bid){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         $bid = "i".$bid;
                         $sql = "SELECT * FROM system_item_module WHERE iid = '$equip_bid'";
@@ -3304,7 +3353,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         }else{
                             $op = nl2br($row[$bid]);
                         if ($row === null||$row =='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }
                         }
                         }
@@ -3357,7 +3406,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             $equip_xid = end($matches[1]);
                         }
                         if(!$equip_xid){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         $fid = "i".$fid;
                         $sql = "SELECT * FROM system_item_module WHERE iid = '$equip_xid'";
@@ -3373,7 +3422,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             $op = $op?1:0;
                         }else{
                         if ($row === null||$row =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                         }else{
                             $op = nl2br($row[$fid]);
                         }
@@ -3412,7 +3461,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                     }
                     $row = $result->fetch_assoc();
                     if ($row === null||$row =='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }else{
                     $op = nl2br($row[$attr3]);
                         }
@@ -3437,7 +3486,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         $row = $result->fetch_assoc();
                         $op = $row["total_hurt_hp"];
                         if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                         break;
                         case 'fight_umsg':
@@ -3455,7 +3504,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         $row = $result->fetch_assoc();
                         $op = $row["fight_omsg"];
                         if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                         break;
                         case 'fight_omsg':
@@ -3473,7 +3522,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         $row = $result->fetch_assoc();
                         $op = $row["fight_umsg"];
                         if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                         break;
                     }
@@ -3508,7 +3557,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         $row = $result->fetch_assoc();
                         $op = $row["cut_hp"];
                         if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                         break;
                     }
@@ -3527,7 +3576,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             }
                             $row = $result->fetch_assoc();
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -3586,7 +3635,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
 
 
                             if ($row_result === null ||$row_result ==='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row_result);
                                 }
@@ -3617,7 +3666,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             $row = $result->fetch_assoc();
                             $row_result = $row[$attr3];
                             if ($row_result === null ||$row_result ==='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row_result);
                                 }
@@ -3637,7 +3686,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             }
                             $row = $result->fetch_assoc();
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -3657,7 +3706,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             }
                             $row = $result->fetch_assoc();
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -3677,7 +3726,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             }
                             $row = $result->fetch_assoc();
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -3715,7 +3764,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             }
                             
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -3758,7 +3807,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                     $row = $result->fetch_assoc();
                     $row_result = $row[$attr3];
                     if ($row_result === null ||$row_result ==='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }else{
                     $op = nl2br($row_result);
                         }
@@ -3808,7 +3857,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             }
                             $row = $result->fetch_assoc();
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -3836,7 +3885,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                     }
                     $row = $result->fetch_assoc();
                     if ($row === null) {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }else{
                     $op = nl2br($row['value']);
                         }
@@ -3894,9 +3943,9 @@ function process_string_2($input, $gid, $oid = null, $mid = null, $jid = null, $
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute_2($attr1,$attr2,$gid, $oid, $mid,$jid,$type,$db,$para);
                 if($op =='' || $op == "" || $op ==null){
-                    $op = "\"\"";
+                    //$op = "\"\"";
                 }
-                $op = str_replace(array("'", "\"\""), '0', $op);
+                //$op = str_replace(array("'", "\"\""), '0', $op);
                 // 替换字符串中的变量
                 $input = str_replace("v({$match})", $op, $input);
             }
@@ -4066,7 +4115,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             $equip_bid = end($matches[1]);
                         }
                         if(!$equip_bid){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         $bid = "i".$bid;
                         $sql = "SELECT * FROM system_item_module WHERE iid = $equip_bid";
@@ -4083,7 +4132,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                         }else{
                             $op = nl2br($row[$bid]);
                         if ($row === null||$row =='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }
                         }
                         }
@@ -4136,7 +4185,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             $equip_xid = end($matches[1]);
                         }
                         if(!$equip_xid){
-                            $op = "\"\"";
+                            //$op = "\"\"";
                         }else{
                         $fid = "i".$fid;
                         $sql = "SELECT * FROM system_item_module WHERE iid = '$equip_xid'";
@@ -4152,7 +4201,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             $op = $op?1:0;
                         }else{
                         if ($row === null||$row =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                         }else{
                             $op = nl2br($row[$fid]);
                         }
@@ -4191,7 +4240,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                     }
                     $row = $result->fetch_assoc();
                     if ($row === null||$row =='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }else{
                     $op = nl2br($row[$attr3]);
                         }
@@ -4217,7 +4266,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                         $row = $result->fetch_assoc();
                         $op = $row["hurt_hp"];
                         if ($op === null||$op =='') {
-                            $op = "\"\""; // 或其他默认值
+                            //$op = "\"\""; // 或其他默认值
                             }
                         break;
                     }
@@ -4236,7 +4285,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             }
                             $row = $result->fetch_assoc();
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -4295,7 +4344,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
 
 
                             if ($row_result === null ||$row_result ==='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row_result);
                                 }
@@ -4320,7 +4369,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             $row = $result->fetch_assoc();
                             $row_result = $row[$attr3];
                             if ($row_result === null ||$row_result ==='') {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row_result);
                                 }
@@ -4360,7 +4409,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             }
                             
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -4403,7 +4452,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                     $row = $result->fetch_assoc();
                     $row_result = $row[$attr3];
                     if ($row_result === null ||$row_result ==='') {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }else{
                     $op = nl2br($row_result);
                         }
@@ -4453,7 +4502,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             }
                             $row = $result->fetch_assoc();
                             if ($row === null) {
-                                $op = "\"\""; // 或其他默认值
+                                //$op = "\"\""; // 或其他默认值
                                 }else{
                             $op = nl2br($row[$attr3]);
                                 }
@@ -4481,7 +4530,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                     }
                     $row = $result->fetch_assoc();
                     if ($row === null) {
-                        $op = "\"\""; // 或其他默认值
+                        //$op = "\"\""; // 或其他默认值
                         }else{
                     $op = nl2br($row['value']);
                         }
@@ -4538,9 +4587,9 @@ function process_string_3($input, $pid, $oid = null, $mid = null, $jid = null, $
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute_3($attr1,$attr2,$pid, $oid, $mid,$jid,$type,$db,$para);
                 if($op =='' || $op == "" || $op ==null){
-                    $op = "\"\"";
+                    //$op = "\"\"";
                 }
-                $op = str_replace(array("'", "\"\""), '0', $op);
+                //$op = str_replace(array("'", "\"\""), '0', $op);
                 // 替换字符串中的变量
                 $input = str_replace("v({$match})", $op, $input);
             }
@@ -4609,7 +4658,7 @@ function generate_image_style($hashtag){
 }
 
 function process_photoshow($input) {
-    $input = str_replace(array("'", "\""), '', $input);
+    $input = str_replace(array("'"), '', $input);
     $pattern = '/#([^#]+)#/'; // 匹配以 # 开头和结尾的内容，括号内部为捕获组，表示文本内容
     $matches = array();
     preg_match_all($pattern, $input, $matches, PREG_SET_ORDER);

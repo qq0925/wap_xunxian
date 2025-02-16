@@ -960,20 +960,12 @@ echo $refresh_html;
             if($gm_map_canshu == 1){
                 foreach ($_POST as $column_name => $column_value) {
                     $column_name = 'm' . $column_name;
-                    if (strpos($column_value, '"') !== false) {
-                        $column_value = preg_replace('/"([^"]*)"/', '“${1}”', $column_value);
-                    }
-                    if (strpos($column_value, "'") !== false) {
-                        $column_value = str_replace("'", "", $column_value);
-                    }
 
-
-
-                $sql2 = "UPDATE system_map SET $column_name = :column_value WHERE mid = :mid";
-                $stmt = $dblj->prepare($sql2);
-                $stmt->bindParam(':column_value', $column_value);
-                $stmt->bindParam(':mid', $target_midid);
-                $stmt->execute();
+                    $sql2 = "UPDATE system_map SET $column_name = :column_value WHERE mid = :mid";
+                    $stmt = $dblj->prepare($sql2);
+                    $stmt->bindParam(':column_value', $column_value);
+                    $stmt->bindParam(':mid', $target_midid);
+                    $stmt->execute();
                 }
                 $sql = "UPDATE system_map SET marea_name = '$area_name' WHERE mid ='$target_midid'";
                 $stmt = $dblj->exec($sql);
@@ -990,8 +982,13 @@ echo $refresh_html;
             if($gm_npc_canshu == 1){
                 foreach ($_POST as $column_name => $column_value) {
                     $column_name = 'n' . $column_name;
-                    $sql2 = "UPDATE system_npc SET $column_name = '$column_value' WHERE nid ='$npc_id'";
-                            $stmt = $dblj->exec($sql2);
+
+                    $sql2 = "UPDATE system_npc SET $column_name = :column_value WHERE nid = :nid";
+                    $stmt = $dblj->prepare($sql2);
+                    $stmt->bindParam(':column_value', $column_value);
+                    $stmt->bindParam(':nid', $npc_id);
+                    $stmt->execute();
+
                 }
                 $sql = "UPDATE system_npc SET narea_name = '$area_name' WHERE nid ='$npc_id'";
                 $stmt = $dblj->exec($sql);
@@ -1907,6 +1904,9 @@ echo $refresh_html;
         case 'player_equip'://装备
             $ym = 'module_all/player_equip_list.php';
             break;
+        case 'photo_html'://形象照
+            $ym = 'module_all/player_photo.php';
+            break;
         case 'gm_type_map'://地图设计相关
             switch($gm_post_canshu){
                 
@@ -2124,7 +2124,11 @@ echo $refresh_html;
             }
             break;
         case 'lexical_post'://词法解析测试
+        if($canshu =='new'){
+            $ym = 'class/lexical_analysis_test.php';
+        }else{
             $ym = 'lexical_test.php';
+        }
             break;
         case 'global_value_design'://公共数据设计
             $ym = 'gm/gm_data_player/global_value_design.php';
@@ -3079,6 +3083,80 @@ echo $refresh_html;
                     break;
             }
             $ym = "module_all/main_page.php";
+            break;
+        case 'player_photo_upload':
+            if($upload ==1){
+            $check_id = 'player_'.$uid;
+            $check_name ='玩家'.$uid;
+
+                //实现上传或者覆盖
+            $sql = "select * from system_photo_type where name ='$type'";
+            $stmt = $dblj->prepare($sql);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $file = $_FILES['file'];
+            $fileType = $file['type'];
+            $fileSize = $file['size'];
+            // 验证文件类型为图片
+            $allowedTypes = ['image/jpeg','image/jpg','image/webp', 'image/png', 'image/gif'];
+            if (!in_array($fileType, $allowedTypes)) {
+                echo '只允许上传图片文件(jpeg,jpg,webp,png,gif)';
+                exit;
+            }
+            // 验证文件大小在5000KB以下
+            $maxSize = 5000 * 1024; // 5000KB
+            if ($fileSize > $maxSize) {
+                echo '图片大小不能超过5M';
+                exit;
+            }
+
+            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $fileName = $type."-"."$check_id"."-".$check_name.".".$extension;
+            $targetDirectory = 'images/'.$type;
+            if (!is_dir($targetDirectory)) {
+                mkdir($targetDirectory, 0777, true);
+            }
+            $targetPath = $targetDirectory .'/'. $fileName;
+            $check_sql = "select * from system_photo where id = '$check_id'";
+            $result = $dblj->query($check_sql);
+            $row = $result->fetch(PDO::FETCH_ASSOC);
+            $photo_id = $row['id'];
+            if($photo_id){
+            $dblj->exec("DELETE from system_photo where id = '$check_id'");
+            }
+            $sql = "INSERT INTO system_photo set id = '$check_id',type = '$type',name = '$check_name',photo_url = '$targetPath',format_type = '$extension';";
+            $cxjg = $dblj->exec($sql);
+            // 移动上传文件到目标路径
+            if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                echo '文件上传成功<br/>';
+                if(!$photo_id){
+                $sql = "UPDATE system_photo_type set contains = contains + 1 where name = '$type'";
+                $cxjg = $dblj->exec($sql);
+                }
+            } else {
+                echo '照片上传失败！请联系管理员！<br/>';
+            }
+            }
+            elseif($upload ==2){
+            $check_id = 'player_'.$uid;
+            $check_name ='玩家'.$uid;
+            $sql = "select * from system_photo where id ='$check_id' and type = '$type'";
+            $stmt = $dblj->prepare($sql);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $filePath = $row['photo_url']; // 图片文件路径
+            $type = $row['type'];
+            if (unlink($filePath)) {
+            $sql = "DELETE FROM system_photo WHERE id = '$check_id' and type = '$type'";
+            $cxjg = $dblj->exec($sql);
+            $sql = "UPDATE system_photo_type SET contains = contains - 1 where name = '$type';";
+            $cxjg = $dblj->exec($sql);
+            echo "图片删除成功。<br/>";
+            } else {
+            echo "图片删除失败。<br/>";
+                }
+            }
+            $ym = "module_all/player_photo.php";
             break;
         case 'photo_detail'://照片相关
             if($upload ==1){

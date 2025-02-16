@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 
 if($canshu =="lexical"){
@@ -29,7 +29,7 @@ if($canshu =="eval"){
 $lexical_test = $encode->encode("cmd=lexical_post&canshu=lexical&para=post&sid=$sid");
 $eval_test = $encode->encode("cmd=lexical_post&canshu=eval&para=post&sid=$sid");
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
-
+$new_lex= $encode->encode("cmd=lexical_post&canshu=new&sid=$sid");
 $gm_html =<<<HTML
 <form action="?cmd=$lexical_test" method="post">
 测试解析字符串:<textarea name="lexical_text" maxlength="4096" rows="4" cols="40">{$lexical_text}</textarea><br/>
@@ -40,6 +40,7 @@ $gm_html =<<<HTML
 <input type="submit" value="提交">
 </form>
 <a href="?cmd=$gm_main">设计大厅</a><br/>
+<a href="?cmd=$new_lex">新解析器测试</a><br/>
 HTML;
 echo $gm_html;
 

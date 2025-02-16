@@ -192,10 +192,10 @@ $gm_html =<<<HTML
 收养宠物对象:<a href="?cmd=$gm_game_selfeventdefine_petadd">添加({$a_adopt_count})</a><br/>
 删除宠物对象:<a href="">添加({$r_adopt_count})</a><br/>
 移动目标:<a href="?cmd=$gm_game_selfeventdefine_scenemove">修改({$dests_count})</a><br/>
-查看玩家的ID表达式:<textarea name="view_user_exp" maxlength="4096" rows="4" cols="40">$step_view_user_exp</textarea><br/>
+查看玩家的ID表达式:<textarea name="view_user_exp" maxlength="4096" rows="4" cols="40">{$step_view_user_exp}</textarea><br/>
 显示页面模板:<input name="page_name" type="text" maxlength="20" value="{$step_page_name}"><br/>
-刷新场景NPC:<input name="refresh_scene_npcs" type="text" value="$step_refresh_scene_npcs"/><br/>
-刷新场景物品:<input name="refresh_scene_items" type="text" value="$step_refresh_scene_items"/><br/>
+刷新场景NPC:<input name="refresh_scene_npcs" type="text" value="{$step_refresh_scene_npcs}"/><br/>
+刷新场景物品:<input name="refresh_scene_items" type="text" value="{$step_refresh_scene_items}"/><br/>
 用户输入:<a href="?cmd=$gm_game_selfeventdefine_inputs">修改({$inputs_count})</a><br/>
 <input name="submit" type="submit" title="确定" value="确定"/><input name="submit" type="hidden" title="确定" value="确定"/></form><br/>
 <button onclick = "window.location.assign('?cmd=$gm_main')">返回上一级</button><br/>

@@ -79,10 +79,14 @@ break;
         $event_show_text = <<<HTML
 <a href="?cmd=$game_main_event">修改事件</a><a href="?cmd=$game_main_event_del">删除事件</a>
 HTML;
-        }else{
+        }elseif(empty($target_event) && !empty($main_id)){
         $game_main_event = $encode->encode("cmd=game_main_event&add_event=1&add_value=$main_value&gm_post_canshu=$self_id&main_id=$main_id&main_type=$main_type&sid=$sid");
         $event_show_text = <<<HTML
 <a href="?cmd=$game_main_event">定义事件</a>
+HTML;
+        }elseif(empty($target_event) && empty($main_id)){
+         $event_show_text = <<<HTML
+定义事件
 HTML;
         }
         $game_main = $encode->encode("cmd=game_self_page&self_id=$self_id&sid=$sid");

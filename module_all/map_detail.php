@@ -525,11 +525,13 @@ $nowmid_photo = \lexical_analysis\process_photoshow($nowmid_photo);
 $nowmid_photo = $nowmid_photo."<br/>";
 }
 
-if($nowmid_arr['desc']){
-$nowmid_arr['desc'] = \lexical_analysis\process_string($nowmid_arr['desc'],$sid);
-$nowmid_arr['desc'] =\lexical_analysis\process_photoshow($nowmid_arr['desc']);
-$nowmid_arr['desc'] =\lexical_analysis\color_string($nowmid_arr['desc']);
-$nowmid_desc = nl2br($nowmid_arr['desc'])."<br/>";
+$nowmid_arr_desc = $nowmid_arr['desc'];
+if($nowmid_arr_desc){
+var_dump($nowmid_arr_desc);
+$nowmid_arr_desc = \lexical_analysis\process_string($nowmid_arr_desc,$sid,'scene',$mid);
+$nowmid_arr_desc =\lexical_analysis\process_photoshow($nowmid_arr_desc);
+$nowmid_arr_desc =\lexical_analysis\color_string($nowmid_arr_desc);
+$nowmid_desc = nl2br($nowmid_arr_desc)."<br/>";
 }
 if($nowmid_arr['tianqi']){
 $nowmid_desc .="天气：".$nowmid_arr['tianqi']."<br/>";

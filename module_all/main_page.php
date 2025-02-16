@@ -332,6 +332,7 @@ for ($i=0;$i<$page_count;$i++){
     $show_ret = $main_show_cond !== ''
         ? \lexical_analysis\process_string($main_show_cond, $sid, $oid, $mid, null, null, "check_cond") 
         : 1;
+    //var_dump($show_ret."<br/>");
     try{
         @$ret = eval("return $show_ret;");
     }

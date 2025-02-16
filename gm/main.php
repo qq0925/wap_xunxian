@@ -107,13 +107,20 @@ HTML;
 elseif($remove_canshu ==3){
     $sure_main = $encode->encode("cmd=gm&remove_canshu=4&sid=$sid");
     $cancel_main = $encode->encode("cmd=gm&sid=$sid");
+    if($redis){
     $gm_html =<<<HTML
     是否清空缓存信息<br/>
 <a href="?cmd=$sure_main">确定</a> | <a href="?cmd=$cancel_main">取消</a><br/>
 HTML;
+}else{
+    $gm_html =<<<HTML
+    redis不存在！<br/>
+<a href="?cmd=$cancel_main">返回设计大厅</a><br/>
+HTML;
+}
 }
 elseif($remove_canshu ==5){
-
+if($redis){
 $iterator = null; // 初始化迭代器
 $pattern = '*';   // 匹配所有键
 
@@ -135,6 +142,14 @@ do {
 <a href="?cmd=$ret_main">返回设计大厅</a><br/>
 $all_cache
 HTML;
+}else{
+    $ret_main = $encode->encode("cmd=gm&sid=$sid");
+    $gm_html =<<<HTML
+    你没有开启redis服务！<br/>
+<a href="?cmd=$ret_main">返回设计大厅</a><br/>
+$all_cache
+HTML;
+}
 }
 echo $gm_html;
 ?>
