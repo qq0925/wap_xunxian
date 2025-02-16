@@ -3122,9 +3122,11 @@ echo $refresh_html;
             $result = $dblj->query($check_sql);
             $row = $result->fetch(PDO::FETCH_ASSOC);
             $photo_id = $row['id'];
+            $photo_url = $row['photo_url'];
             if($photo_id){
-            $dblj->exec("DELETE from system_photo where id = '$check_id'");
+            $dblj->exec("DELETE from system_photo where id = '$check_id' and type = '玩家形象照'");
             $dblj->exec("UPDATE game1 set uimage = '' where sid = '$sid'");
+            unlink($photo_url);
             }
             $sql = "INSERT INTO system_photo set id = '$check_id',type = '$type',name = '$check_name',photo_url = '$targetPath',photo_style = '$default_style',format_type = '$extension';";
             $cxjg = $dblj->exec($sql);
