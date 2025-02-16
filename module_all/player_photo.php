@@ -40,7 +40,7 @@ $imageSrc = "images/"."$type"."/".$image_url;
 if($photo_id){
     $imageSrc = 
     $player_photo_url =<<<HTML
-<img style="width:160px;height:80px;" src="$imageSrc"><br/>
+<img style="width:128px;height:128px;" src="$imageSrc"><br/>
 HTML;
 $cmid = $cmid + 1;
 $cdid[] = $cmid;

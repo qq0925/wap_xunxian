@@ -67,7 +67,7 @@ $select
 样式:<input name="photo_style" id="photo_style" type="text" maxlength="100" value = "{$image_style}"><br/>
 <button type="button" onclick="changeStyleToHeight4em()">默认样式1</button>
 <button type="button" onclick="changeStyleToHeight72pxWidth128px()">默认样式2</button><br/>
-<img style="width:160px;height:80px;" src="$imageSrc"><br/>
+<img style="{$image_style};" src="$imageSrc"><br/>
 <input name="submit" type="submit" title="确定修改" value="确定修改"/><input name="submit" type="hidden" title="确定修改" value="确定修改"/></form><br/>
 <a href="?cmd=$delete_photo">删除图片</a><br/><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>

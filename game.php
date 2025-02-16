@@ -3256,6 +3256,7 @@ echo $refresh_html;
             } else {
                 echo '文件上传失败<br/>';
             }
+            $ym = 'gm/gamephoto_manage_2.php';
             }elseif($upload ==2){
                 if(empty($_POST['name'])){
                 echo "name不能为空！";
@@ -3283,6 +3284,7 @@ echo $refresh_html;
             }else{
             echo "修改失败！<br/>";
             }
+            $ym = 'gm/gamephoto_manage_3.php';
             }elseif($upload ==3){
             $sql = "select * from system_photo where id ='$id' and type = '$type'";
             $stmt = $dblj->prepare($sql);
@@ -3299,8 +3301,11 @@ echo $refresh_html;
             } else {
             echo "图片删除失败。<br/>";
                 }
-            }
             $ym = 'gm/gamephoto_manage_2.php';
+            }
+            else{
+                $ym = 'gm/gamephoto_manage_2.php';
+            }
             break;
         case 'photo_type_add'://照片类别
             $ym = 'gm/gamephoto_manage.php';
