@@ -71,7 +71,6 @@ $upload_html = <<<HTML
 [上传形象照](请勿上传非法,涉黄等图片.否则一切后果自负)<br/>
 $player_photo_url
 <form action="?cmd=$photo_upload" method="post" enctype="multipart/form-data">
-<input name="sid" type="hidden" value="$sid">
 上传图片(5000k内):<input name="file" type="file"/><br/>
 <input name="submit" type="submit" title="上传" value="上传"/>
 <input name="submit" type="hidden" title="上传" value="上传"/>
