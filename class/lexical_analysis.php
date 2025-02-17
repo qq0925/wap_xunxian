@@ -36,7 +36,12 @@ class Cache {
 }
 
 function hurt_calc($sid, $gid, $type, $dblj,$next_round, $jid = null, $pid = null) {
+    
+    if($type!=2){
     $ngid = explode(',', $gid);
+    }else{
+    $ngid = $gid;
+    }
     $db = DB::conn();
     if($pid){
         $members = $sid.",".$pid;
@@ -302,9 +307,8 @@ function handle_members_attack($gid,$sid, $members, $dblj, $skill_id,$db,$next_r
 }
 
 //处理怪物攻击
-function handle_monster_attack($ngid,$sid, $members, $dblj, $db,$next_round) {
+function handle_monster_attack($monster_id,$sid, $members, $dblj, $db,$next_round) {
     // Loop through each monster in the group
-    foreach ($ngid as $monster_id) {
         // Get monster details
         $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = '$monster_id' AND nhp > 0";
         $result = $db->query($sql);
@@ -324,7 +328,7 @@ function handle_monster_attack($ngid,$sid, $members, $dblj, $db,$next_round) {
             }
             handle_members_attack($monster_id,$sid, $members, $dblj, $skill_id,$db,$next_round);
         }
-    }
+    
 }
 
 //处理宠物攻击
@@ -332,8 +336,11 @@ function handle_pet_attack($ngid, $pid, $sid, $dblj, $db,$next_round) {
         // -1表示群体攻击
 
         // 宠物循环，获取宠物技能参数。宠物出招生效的是?
+        if(is_numeric($pid)){
+        $pet_id = $pid;
+        }else{
         $pet_id = explode(",", $pid);
-        
+        }
         foreach ($pet_id as $p_one) {
             // 查询宠物技能
             $sql = "SELECT * FROM system_skill_user WHERE jpid = ?";
@@ -472,11 +479,18 @@ function process_monster_damage($hurt_exp, $effect_comment,$jid, $gid, $dblj, $m
     $stmt = $dblj->prepare($sql);
     $stmt->execute([$hurt_cut, $member_id]);
 
+
+
+    $sql = "insert into game2(cut_hp,gid,sid,round,type)values('-$hurt_cut','$gid','$sid','$next_round','2')";
+    $dblj->exec($sql);
+
     $j_omsg = process_string_2($effect_comment, $gid, 'monstertouser',$member_id,$jid);
     $j_omsg = str_replace(["'", "\""], '', $j_omsg);
 
-    $sql = "insert into game2(cut_hp,gid,sid,fight_omsg,round,type)values('-$hurt_cut','$gid','$sid','$j_omsg','$next_round','2')";
-    $dblj->exec($sql);
+    $sql = "UPDATE game2 SET fight_omsg = ? WHERE round = ? and sid = ? and pid = 0 and gid = ?";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute([$j_omsg,$next_round, $sid, $gid]);
+
 }
     else{
     $hurt_cut = process_string_2($hurt_exp, $gid,'monstertopet', $member_id,$jid);
@@ -486,11 +500,18 @@ function process_monster_damage($hurt_exp, $effect_comment,$jid, $gid, $dblj, $m
     $sql = "UPDATE system_pet_scene SET nhp = nhp - ? WHERE npid = ?";
     $stmt = $dblj->prepare($sql);
     $stmt->execute([$hurt_cut, $member_id]);
+
+
+    $sql = "insert into game2(cut_hp,gid,sid,pid,round,type)values('-$hurt_cut','$gid','$sid','$member_id','$next_round','3')";
+    $dblj->exec($sql);
+
     $j_omsg = process_string_2($effect_comment, $gid, 'monstertopet',$member_id,$jid);
     $j_omsg = str_replace(["'", "\""], '', $j_omsg);
 
-    $sql = "insert into game2(cut_hp,gid,sid,pid,fight_omsg,round,type)values('-$hurt_cut','$gid','$sid','$member_id','$j_omsg','$next_round','3')";
-    $dblj->exec($sql);
+    $sql = "UPDATE game2 SET fight_omsg = ? WHERE round = ? and sid = ? and pid = ? and gid = ?";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute([$j_omsg,$next_round, $sid,$member_id,$gid]);
+
 
     }
 }

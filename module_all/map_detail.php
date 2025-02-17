@@ -527,7 +527,6 @@ $nowmid_photo = $nowmid_photo."<br/>";
 
 $nowmid_arr_desc = $nowmid_arr['desc'];
 if($nowmid_arr_desc){
-var_dump($nowmid_arr_desc);
 $nowmid_arr_desc = \lexical_analysis\process_string($nowmid_arr_desc,$sid,'scene',$mid);
 $nowmid_arr_desc =\lexical_analysis\process_photoshow($nowmid_arr_desc);
 $nowmid_arr_desc =\lexical_analysis\color_string($nowmid_arr_desc);
