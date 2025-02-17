@@ -4638,7 +4638,9 @@ function generate_image_link($hashtag) {
     $result = $db ->query($sql);
     $row = $result->fetch_assoc();
     $photo_url = $row['photo_url'];
-    $imageLink = urlencode($photo_url);
+    $timestamp = time();
+    //$imageLink = urlencode($photo_url);
+    $imageLink = $photo_url."?time=$timestamp";
     return $imageLink;
 }
 

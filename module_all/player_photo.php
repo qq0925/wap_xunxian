@@ -35,7 +35,8 @@ $photo_type = $row['type'];
 $format_type = $row['format_type'];
 
 $image_url = "$type"."-"."$photo_id"."-"."$photo_name".".$format_type";
-$imageSrc = "images/"."$type"."/".$image_url;
+$timestamp = time();
+$imageSrc = "images/"."$type"."/".$image_url."?time=$timestamp";
 
 if($photo_id){
     $imageSrc = 

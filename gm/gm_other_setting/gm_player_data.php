@@ -1,6 +1,16 @@
 <?php
 
 if($delete_id !=0){
+    $delete_image_id = 'player_'.$delete_id;
+    $sql = "select photo_url from system_photo where id = '$delete_image_id'";
+    $result = $dblj->query($sql);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $photo_url = $row['photo_url'];
+    if($photo_url){
+    unlink($photo_url);
+    }
+    $sql = "DELETE FROM system_photo WHERE id = '$delete_image_id';";
+    $dblj->exec($sql);
     $sql = "DELETE FROM userinfo WHERE token = '$u_token';";
     $dblj->exec($sql);
     $sql = "DELETE FROM game1 WHERE uid = '$delete_id';";
