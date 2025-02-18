@@ -586,7 +586,7 @@ if(!isset($zdjg) &&!empty($fight_arr)){
     //     }
     // }
 if($player->uauto_fight ==1 &&$look_canshu !=1){
-    $sql = "select * from system_skill_user WHERE jsid = '$sid' and jdefault = 1";
+    $sql = "select * from system_skill_user WHERE jsid = '$sid' and jdefault = 1 and jpid = 0";
     $cxjg = $dblj->query($sql);
     if ($cxjg){
         $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
