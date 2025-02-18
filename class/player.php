@@ -691,12 +691,12 @@ function getnpcguaiwu_attr($nid,$dblj){
 
 
 function getnowequiptrueid($eq_true_id,$sid,$dblj){ 
-    $sql = "select eq_true_id,equiped_pos_id from system_equip_user where eqsid = '$sid' and eq_true_id = '$eq_true_id' and eqpid = 0";
+    $sql = "select eq_true_id,equiped_pos_id from system_equip_user where eqsid = '$sid' and eq_true_id = '$eq_true_id'";
     $stmt = $dblj->query($sql);
     $result = $stmt->fetch(\PDO::FETCH_ASSOC);
     if(!is_numeric($result['equiped_pos_id'])){
         //装备位置错误文本修正
-    $sql = "UPDATE system_equip_user set equiped_pos_id = (select isubtype from system_item_module where iid = (select iid from system_item where sid = '$sid' and item_true_id = '$eq_true_id')) where eqsid = '$sid' and eq_true_id = '$eq_true_id' and eqpid = 0";
+    $sql = "UPDATE system_equip_user set equiped_pos_id = (select isubtype from system_item_module where iid = (select iid from system_item where sid = '$sid' and item_true_id = '$eq_true_id')) where eqsid = '$sid' and eq_true_id = '$eq_true_id'";
     $dblj->exec($sql);
     }
     if($result['eq_true_id']){
@@ -707,7 +707,7 @@ function getnowequiptrueid($eq_true_id,$sid,$dblj){
 }
 
 
-function changeequipstate($sid,$dblj,$equip_root_id,$equip_id,$type,$pet_id=null){
+function changeequipstate($sid,$dblj,$equip_root_id,$equip_id,$type,$pet_id=0){
     $equip = getitem($equip_root_id,$dblj);
     $equip_type = $equip->itype;
     $equip_subtype = $equip->isubtype;

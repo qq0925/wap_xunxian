@@ -573,6 +573,35 @@ $expr = preg_replace_callback('/\{eval\((.*?)\)\}/', function($matches) use ($db
     return $eval_result; // 返回计算结果
     }
 }, $expr);
+
+
+$expr = preg_replace_callback('/\{inarr\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
+    // 获取括号内的参数
+    $params = explode(',', $matches[1]);
+    
+    // 确保至少有两个参数
+    if (count($params) < 2) {
+        return 0;
+    }
+    
+    // 处理参数
+    $params = array_map(function($param) {
+        return trim($param);
+    }, $params);
+    
+    // 获取左边的值
+    $value = @eval("return {$params[0]};");
+    
+    // 获取右边的数组
+    $array_str = $params[1];
+    $array_str = str_replace(array("'","\""), '', $array_str);
+    $array = explode('|', $array_str);
+    
+    // 检查值是否在数组中
+    return in_array($value, $array) ? 1 : 0;
+}, $expr);
+
+
 $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     $attr = $matches[1]; // 获取匹配到的变量名
     global $redis;
@@ -587,7 +616,9 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     $op = "'".$op."'";
     //$op = $op?"'".$op."'":"''";
     }
-    
+    return $op;
+},$expr);
+
     // 在这里根据变量名获取对应的值，例如从数据库中查询
     // 假设你从数据库中获取了 $attr_value]
     
@@ -601,9 +632,6 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     // $op = preg_replace("/'(.*?)'/", '$1', $op);
     // $op = str_replace(array("\""), '\'', $op);
     
-    return $op;
-}, $expr);
-
 // 现在 $expr 中的 {eval(...)} 和 {...} 部分已经被替换成了对应的值
 $result = $expr;
 //var_dump($result);
@@ -1554,7 +1582,6 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                             break;
                         case 'cut_hp':
-                        $db = DB::conn();
                         $round = \player\getnowround($sid,$dblj,$db);
                         // 构建 SQL 查询语句
                         $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = ? and pid = 0 and round = '$round' and type = 2";
@@ -1578,7 +1605,6 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
                         case 'cut_mp':
-                        $db = DB::conn();
                         $round = \player\getnowround($sid,$dblj,$db);
                         // 构建 SQL 查询语句
                         $sql = "SELECT cut_mp as total_cut_mp FROM game3 WHERE sid = ? and pid = 0 and round = '$round' and type = 1";
