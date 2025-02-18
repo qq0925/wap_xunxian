@@ -55,7 +55,7 @@ while (true) {
     JOIN (SELECT player_offline_time FROM gm_game_basic WHERE game_id = '19980925' LIMIT 1) AS g
     SET game1.sfzx = 0
     WHERE g.player_offline_time > 0
-      AND TIMESTAMPDIFF(MINUTE, game1.endtime, NOW()) > g.player_offline_time");
+      AND TIMESTAMPDIFF(MINUTE, game1.endtime, NOW()) > g.player_offline_time and game1.uis_designer = 0");
 
     // 每分钟执行一次
     sleep(60);

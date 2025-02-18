@@ -9,7 +9,6 @@ require_once 'class/basic_function_todo.php';
 include_once 'class/global_event_step_change.php';
 
 $parents_page = $currentFilePath;
-
 $player = \player\getplayer($sid,$dblj);
 $pet = \player\getpet_fight($sid,$dblj,'alive');//活着的宠物
 $clmid = player\getmid($player->nowmid,$dblj);
@@ -192,14 +191,14 @@ if(!$be_feat){
             echo $use_cmmt;
             $player = \player\getplayer($sid,$dblj);
             //这里要更新game3中的伤害值
-            switch($use_attr){
-                case 'hp':
+            // switch($use_attr){
+            //     case 'hp':
                     //$dblj->exec("update game2 set cut_hp = cut_hp + $use_value where sid = '$sid' and round = '$round'");
-                    break;
-                case 'mp':
+                    // break;
+                // case 'mp':
                     //$dblj->exec("update game2 set cut_mp = '$use_value' where sid = '$sid' and round = '$round'");
-                    break;
-            }
+            //         break;
+            // }
             $item_true_id = \player\getplayeritem_attr('item_true_id',$sid,$qtype_id,$dblj)['item_true_id'];
             \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
             \player\addplayersx('uburthen',-$use_item_iweight,$sid,$dblj);
@@ -217,20 +216,22 @@ if(!$be_feat){
             }
             $test_text .= "玩家（ID: {$item['id']}）使用物品，速度：{$item['speed']}<br/>";
         } elseif ($item['type'] == 'monster') {
-            if($ngid){
-                $ngidArr = explode(',',$ngid);
-                foreach ($ngidArr as $ngid_one){
-            \lexical_analysis\hurt_calc($sid,$ngid_one,2,$dblj,$next_round,null,$npid);//怪对你的伤害,单体判别
-                }
-            }
+            // if($ngid){
+            //     $ngidArr = explode(',',$ngid);
+            //     foreach ($ngidArr as $ngid_one){
+            // \lexical_analysis\hurt_calc($sid,$ngid_one,2,$dblj,$next_round,null,$npid);//怪对你的伤害,单体判别
+            //     }
+            // }
+            \lexical_analysis\hurt_calc($sid,$item['id'],2,$dblj,$next_round,null,$npid);//怪对你的伤害,单体判别
             $test_text .= "怪物（ID: {$item['id']}）出手，速度：{$item['speed']}<br/>";
         } elseif ($item['type'] == 'pet') {
-                if($npid){
-                    $npidArr = explode(',',$npid);
-                    foreach ($npidArr as $npid_one){
-                \lexical_analysis\hurt_calc($sid,$ngid,3,$dblj,$next_round,null,$npid_one);//宠对怪的伤害
-                    }
-                }
+                // if($npid){
+                //     $npidArr = explode(',',$npid);
+                //     foreach ($npidArr as $npid_one){
+                // \lexical_analysis\hurt_calc($sid,$ngid,3,$dblj,$next_round,null,$npid_one);//宠对怪的伤害
+                //     }
+                // }
+                \lexical_analysis\hurt_calc($sid,$ngid,3,$dblj,$next_round,null,$item['id']);//宠对怪的伤害
             $test_text .= "宠物（ID: {$item['id']}）出手，速度：{$item['speed']}<br/>";
         }
     }

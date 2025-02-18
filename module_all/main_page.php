@@ -1,7 +1,6 @@
 <?php
 //20-23ms
-
-
+//require_once 'class/lexical_analysis_test.php';
 require_once 'class/basic_function_todo.php';
 // require_once 'class/player.php';
 // require_once 'class/encode.php';
@@ -358,8 +357,8 @@ for ($i=0;$i<$page_count;$i++){
     $main_target_event = $get_main_page[$i]['target_event'];
     $main_target_func = $get_main_page[$i]['target_func'];
     $main_link_value = $get_main_page[$i]['link_value'];
+    //$main_value = process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
-    //$main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
     
