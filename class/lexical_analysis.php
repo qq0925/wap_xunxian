@@ -35,57 +35,46 @@ class Cache {
     }
 }
 
-function hurt_calc($sid, $gid, $type, $dblj,$next_round, $jid = null, $pid = null) {
-    
-    if($type!=2){
-    $ngid = explode(',', $gid);
-    }else{
-    $ngid = $gid;
+function hurt_calc($sid, $gid, $type, $dblj, $next_round, $jid = null, $pid = null) {
+    // 参数验证
+    if (!in_array($type, [1, 2, 3])) {
+        throw new InvalidArgumentException('Invalid attack type');
     }
+    
+    // 简化 gid 处理
+    $ngid = $type != 2 ? explode(',', $gid) : $gid;
+    
     $db = DB::conn();
-    if($pid){
-        $members = $sid.",".$pid;
-    }else{
-        $members = $sid;
-    }
-    // 获取伤害公式
-    $skill_data = get_skill_data($jid, $db);
-    if (!$skill_data['j_hurt_exp']) {
-        $skill_data['j_hurt_exp'] = get_default_skill_hurt($db, 2)['j_hurt_exp'];
-    }
-    if (!$skill_data['j_deplete_exp']) {
-        $skill_data['j_deplete_exp'] = get_default_skill_hurt($db, 2)['j_deplete_exp'];
-    }
+    $members = $pid ? "$sid,$pid" : $sid;
     
-    if (!$skill_data['j_add_point_exp']) {
-        $skill_data['j_add_point_exp'] = get_default_skill_hurt($db, 2)['j_add_point_exp'];
+    // 获取技能数据并设置默认值
+    $skill_data = get_skill_data($jid, $db);
+    $default_skill = get_default_skill_hurt($db, 2);
+    
+    // 使用数组合并来设置默认值
+    $skill_fields = [
+        'j_hurt_exp', 'j_deplete_exp', 'j_add_point_exp',
+        'j_promotion', 'j_promotion_cond', 'j_group_attack',
+        'j_umsg', 'j_event_use_id'
+    ];
+    
+    foreach ($skill_fields as $field) {
+        if (!isset($skill_data[$field]) || $skill_data[$field] === '') {
+            $skill_data[$field] = $default_skill[$field];
+        }
     }
 
-    if (!$skill_data['j_promotion']) {
-        $skill_data['j_promotion'] = get_default_skill_hurt($db, 2)['j_promotion'];
-    }
-
-    if (!$skill_data['j_promotion_cond']) {
-        $skill_data['j_promotion_cond'] = get_default_skill_hurt($db, 2)['j_promotion_cond'];
-    }
-
-    if (!$skill_data['j_group_attack']) {
-        $skill_data['j_group_attack'] = get_default_skill_hurt($db, 2)['j_group_attack'];
-    }
-    if (!$skill_data['j_umsg']) {
-        $skill_data['j_umsg'] = get_default_skill_hurt($db, 2)['j_umsg'];
-    }
-    if (!$skill_data['j_event_use_id']) {
-        $skill_data['j_event_use_id'] = get_default_skill_hurt($db, 2)['j_event_use_id'];
-    }
-
-    // 处理操作
-    if ($type == 1) {
-        handle_attack($ngid, $sid, $dblj, $skill_data, $jid,$next_round);
-    } elseif ($type == 2) {
-        handle_monster_attack($ngid,$sid, $members, $dblj,$db,$next_round,null);
-    } elseif ($type == 3) {
-        handle_pet_attack($ngid, $pid, $sid, $dblj,$db,$next_round);
+    // 使用 switch 来处理不同类型的攻击
+    switch ($type) {
+        case 1:
+            handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round);
+            break;
+        case 2:
+            handle_monster_attack($ngid, $sid, $members, $dblj, $db, $next_round, null);
+            break;
+        case 3:
+            handle_pet_attack($ngid, $pid, $sid, $dblj, $db, $next_round);
+            break;
     }
 }
 
@@ -117,7 +106,7 @@ function get_skill_data($jid, $db) {
 }
 
 
-// 获取默认技能伤害
+// 获取默认技能参数
 function get_default_skill_hurt($db, $default_jid) {
     $sql = "SELECT * FROM system_skill_module WHERE jid = ?";
     $stmt = $db->prepare($sql);
@@ -146,292 +135,316 @@ function get_default_skill_hurt($db, $default_jid) {
 }
 
 // 处理群体攻击
-function handle_attack($ngid, $sid, $dblj, $skill_data, $jid,$next_round) {
+function handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round) {
+    // 提取技能数据
     $j_group_attack = $skill_data['j_group_attack'];
     $j_event_use_id = $skill_data['j_event_use_id'];
     $j_deplete_exp = $skill_data['j_deplete_exp'];
     $j_deplete_attr = $skill_data['j_deplete_attr'];
-    if (!is_numeric($j_deplete_exp)) {
-        $hurt_m_cut = process_string($j_deplete_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight',null);
-        $hurt_m_cut = eval("return $hurt_m_cut;");
-    } else {
-        $hurt_m_cut = $j_deplete_exp;
-    }
-    $hurt_m_cut = (int)floor($hurt_m_cut);
+    
+    // 计算消耗值
+    $hurt_m_cut = !is_numeric($j_deplete_exp)
+        ? (int)floor(eval("return " . process_string($j_deplete_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null) . ";"))
+        : (int)floor($j_deplete_exp);
 
-
-    $u_skill_attr = "u".$j_deplete_attr;
-    $attr_name = \gm\get_gm_attr_info('1',$j_deplete_attr,$dblj)['name'];
-    $u_attr = \player\getplayer($sid,$dblj)->$u_skill_attr;
-    $diff = $u_attr - $hurt_m_cut;
-    if($diff <0){
+    // 检查属性消耗
+    $u_skill_attr = "u" . $j_deplete_attr;
+    $attr_name = \gm\get_gm_attr_info('1', $j_deplete_attr, $dblj)['name'];
+    $u_attr = \player\getplayer($sid, $dblj)->$u_skill_attr;
+    
+    if ($u_attr < $hurt_m_cut) {
         echo "没有足够的{$attr_name}！<br/>";
         return 'no';
-    }else{
-    \player\addplayertable('game1',$u_skill_attr,-$hurt_m_cut,$sid,$dblj);
-    $sql = "insert into game2(cut_mp,sid,gid,round,type)values('-$hurt_m_cut','$sid','$ngid','$next_round','1')";
+    }
+
+    // 扣除属性并记录
+    \player\addplayertable('game1', $u_skill_attr, -$hurt_m_cut, $sid, $dblj);
+    $sql = "insert into game3(cut_mp,sid,gid,round,type)values('-$hurt_m_cut','$sid','$ngid','$next_round','1')";
     $dblj->exec($sql);
+
+    // 获取技能升级相关数据
     $j_add_point_exp = $skill_data['j_add_point_exp'];
     $j_promotion = $skill_data['j_promotion'];
     $j_promotion_cond = $skill_data['j_promotion_cond'];
     $jname = $skill_data['j_name'];
 
-    if (!is_numeric($j_add_point_exp)) {
-        $j_point_exp = process_string($j_add_point_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight',null);
-        $j_point_exp = eval("return $j_point_exp;");
-    } else {
-        $j_point_exp = $j_add_point_exp;
-    }
-    $j_point_exp = (int)floor($j_point_exp);
+    // 计算技能经验
+    $j_point_exp = !is_numeric($j_add_point_exp)
+        ? (int)floor(eval("return " . process_string($j_add_point_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null) . ";"))
+        : (int)floor($j_add_point_exp);
 
-    if (!is_numeric($j_promotion)) {
-        $j_promotion_add = process_string($j_promotion, $sid, 'npc_monster', $ngid[0], $jid, 'fight',null);
-        $j_promotion_add = eval("return $j_promotion_add;");
-    } else {
-        $j_promotion_add = $j_promotion;
-    }
-    $j_promotion_add = (int)floor($j_promotion_add);
-    if (!is_numeric($j_promotion_cond)) {
-        $j_promotion_cond_add = process_string($j_promotion_cond, $sid, 'npc_monster', $ngid[0], $jid, 'fight',1);
-        $j_promotion_cond_add = eval("return $j_promotion_cond_add;");
-    } else {
-        $j_promotion_cond_add = $j_promotion_cond;
-    }
-    $j_promotion_cond_add = (int)floor($j_promotion_cond_add);
+    // 计算升级所需经验
+    $j_promotion_add = !is_numeric($j_promotion)
+        ? (int)floor(eval("return " . process_string($j_promotion, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null) . ";"))
+        : (int)floor($j_promotion);
 
-    if($j_promotion_cond_add){
-    $sql = "update system_skill_user set jpoint = jpoint + '$j_point_exp' where jsid = '$sid' and jid = '$jid'";
-    $dblj->exec($sql);
-    $sql = "select jpoint,jlvl from system_skill_user where jid = '$jid' and jsid = '$sid'";
-    $cxjg = $dblj->query($sql);
-    if ($cxjg){
-    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
-    $jnowpoint = $ret['jpoint'];
-    $jnowlvl = $ret['jlvl'];
-    if($jnowpoint >=$j_promotion_add){
-        $jnowlvl +=1;
-        echo "你的技能[{$jname}]升级啦！当前为{$jnowlvl}级<br/>";
-        $sql = "update system_skill_user set jpoint = jpoint - '$j_promotion_add',jlvl = jlvl + 1 where jsid = '$sid' and jid = '$jid'";
-        $cxjg = $dblj->exec($sql);
-    }
-    }
+    // 计算升级条件
+    $j_promotion_cond_add = !is_numeric($j_promotion_cond)
+        ? (int)floor(eval("return " . process_string($j_promotion_cond, $sid, 'npc_monster', $ngid[0], $jid, 'fight', 1) . ";"))
+        : (int)floor($j_promotion_cond);
+
+    // 处理技能升级
+    if ($j_promotion_cond_add) {
+        $sql = "update system_skill_user set jpoint = jpoint + '$j_point_exp' where jsid = '$sid' and jid = '$jid'";
+        $dblj->exec($sql);
+        
+        $sql = "select jpoint,jlvl from system_skill_user where jid = '$jid' and jsid = '$sid'";
+        if ($ret = $dblj->query($sql)->fetch(\PDO::FETCH_ASSOC)) {
+            if ($ret['jpoint'] >= $j_promotion_add) {
+                $new_level = $ret['jlvl'] + 1;
+                echo "你的技能[{$jname}]升级啦！当前为{$new_level}级<br/>";
+                $sql = "update system_skill_user set jpoint = jpoint - '$j_promotion_add', jlvl = jlvl + 1 where jsid = '$sid' and jid = '$jid'";
+                $dblj->exec($sql);
+            }
+        }
     }
 
-
-    }
-
+    // 处理群体攻击
+    $ngid_count = count($ngid);
     if ($j_group_attack == '-1') {
-        $ngid_count = count($ngid);
-        for ($i = 0; $i < $ngid_count; $i++) {
-            $attack_gid = $ngid[$i];
+        // 全体攻击
+        foreach ($ngid as $attack_gid) {
             if ($attack_gid) {
                 process_event($j_event_use_id, $sid, $dblj, $attack_gid);
-                process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, 'npc_monster',$next_round);
+                process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, 'npc_monster', $next_round);
             }
         }
-    } else {
-        $ngid_count = count($ngid);
-        if ($ngid_count > 0 && $j_group_attack > 0){
-            $random_keys = array_rand($ngid, min($j_group_attack, $ngid_count));
-        if ($j_group_attack == 1||$ngid_count ==1) {
-            $random_keys = [$random_keys]; // 如果只选择一个 ID，确保 $random_keys 是数组
-            }
-        foreach ($random_keys as $key){
-            $attack_gid = $ngid[$key];
-            if ($attack_gid) {
-                        process_event($j_event_use_id, $sid, $dblj, $attack_gid);
-                        process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, 'npc_monster',$next_round);
-                    }
-        }
+    } elseif ($ngid_count > 0 && $j_group_attack > 0) {
+        // 随机目标攻击
+        $random_keys = array_rand($ngid, min($j_group_attack, $ngid_count));
+        if (!is_array($random_keys)) {
+            $random_keys = [$random_keys];
         }
         
+        foreach ($random_keys as $key) {
+            $attack_gid = $ngid[$key];
+            if ($attack_gid) {
+                process_event($j_event_use_id, $sid, $dblj, $attack_gid);
+                process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, 'npc_monster', $next_round);
+            }
+        }
     }
 }
 
 //处理怪物群体攻击
-function handle_members_attack($gid,$sid, $members, $dblj, $skill_id,$db,$next_round) {
-            // Fetch skill details
-        $skill_sql = "SELECT jhurt_exp, jeffect_cmmt, jgroup_attack FROM system_skill WHERE jid = '$skill_id'";
-        $skill_result = $db->query($skill_sql);
-        $skill = $skill_result->fetch_assoc();
+function handle_members_attack($gid, $sid, $members, $dblj, $skill_id, $db, $next_round) {
+    
+    // 获取技能数据并设置默认值
+    $skill = get_skill_data($skill_id, $db);
+    $default_skill = get_default_skill_hurt($db, 2);
+    
+    // 使用数组合并来设置默认值
+    $skill_fields = [
+        'j_hurt_exp', 'j_deplete_exp', 'j_add_point_exp',
+        'j_promotion', 'j_promotion_cond', 'j_group_attack',
+        'j_umsg', 'j_event_use_id'
+    ];
+    
+    foreach ($skill_fields as $field) {
+        if (!isset($skill[$field]) || $skill[$field] === '') {
+            $skill[$field] = $default_skill[$field];
+        }
+    }
+    
+    $hurt_exp = $skill['j_hurt_exp'];
+    $deplete_exp = $skill['j_deplete_exp'];
+    $deplete_attr = $skill['j_deplete_attr'];
+    // 计算消耗值
+    $hurt_m_cut = !is_numeric($deplete_exp)
+        ? (int)floor(eval("return " . process_string_2($deplete_exp, $gid, 'monstertouser', $sid, $skill_id) . ";"))
+        : (int)floor($deplete_exp);
 
-            $hurt_exp = $skill['jhurt_exp'];
-            $effect_comment = $skill['jeffect_cmmt'];
-            $j_group_attack = $skill['jgroup_attack'];
-            
-            
-            if(!$hurt_exp){
-            $hurt_exp = get_default_skill_hurt($db, 2)['j_hurt_exp'];
-        }
-        
-            if(!$effect_comment){
-            $effect_comment = get_default_skill_hurt($db, 2)['j_umsg'];
-        }
+    // 检查属性消耗
+    $n_skill_attr = "n" . $deplete_attr;
+    $n_attr = \player\getguaiwu_alive($gid, $dblj)->$n_skill_attr;
+    
+    if ($n_attr < $hurt_m_cut) {
+        return;
+    }
 
-            if(!$j_group_attack){
-            $j_group_attack = get_default_skill_hurt($db, 2)['j_group_attack'];
+    // 扣除属性并记录
+    \player\addmonstertable($n_skill_attr, -$hurt_m_cut, $gid, $dblj);
+    $sql = "insert into game3(cut_mp,sid,gid,round,type)values('-$hurt_m_cut','$sid','$gid','$next_round','2')";
+    $dblj->exec($sql);
+    
+    $effect_comment = $skill['j_umsg'];
+    $j_group_attack = $skill['j_group_attack'];
+    // 处理目标成员
+    $member_ids = array_filter(explode(',', $members)); // 移除空值
+    $members_count = count($member_ids);
+    
+    if ($members_count === 0) {
+        return;
+    }
+    // 全体攻击
+    if ($j_group_attack === '-1') {
+        foreach ($member_ids as $attack_member) {
+            process_monster_damage(
+                $hurt_exp,
+                $effect_comment,
+                $skill_id,
+                $gid,
+                $dblj,
+                $attack_member,
+                $sid,
+                $next_round
+            );
         }
-            
-            // 将 members 字符串转换为数组
-            $member_ids = explode(',', $members);
-            if ($j_group_attack == '-1') {
-                $members_count = count($member_ids);
-                for ($i = 0; $i < $members_count; $i++) {
-                    $attack_member = $member_ids[$i];
-                    if ($attack_member) {
-                        //process_event($j_event_use_id, $sid, $dblj, $attack_gid);
-                        process_monster_damage($hurt_exp,$effect_comment,$skill_id, $gid, $dblj, $attack_member,$sid,$next_round);
-                    }
-                }
-            } else {
-                
-                
-        // 随机选择 $j_group_attack 个 ID
-        $count = count($member_ids);
-        if ($count > 0 && $j_group_attack > 0) {
-            $random_keys = array_rand($member_ids, min($j_group_attack, $count));
-            if ($j_group_attack == 1||$count==1) {
-                $random_keys = [$random_keys]; // 如果只选择一个 ID，确保 $random_keys 是数组
-            }
-            foreach ($random_keys as $key) {
-                $member_id = $member_ids[$key];
-                // 在这里处理每个 $member_id
-                if($member_id){
-                process_monster_damage($hurt_exp,$effect_comment,$skill_id, $gid, $dblj, $member_id,$sid,$next_round);
-                }
-                
-            }
-        }
-            }
+        return;
+    }
+    
+    // 随机目标攻击
+    if ($j_group_attack > 0) {
+        $target_count = min($j_group_attack, $members_count);
+        $random_keys = array_rand($member_ids, $target_count);
         
+        // 确保 random_keys 是数组
+        $random_keys = is_array($random_keys) ? $random_keys : [$random_keys];
+        
+        foreach ($random_keys as $key) {
+            process_monster_damage(
+                $hurt_exp,
+                $effect_comment,
+                $skill_id,
+                $gid,
+                $dblj,
+                $member_ids[$key],
+                $sid,
+                $next_round
+            );
+        }
+    }
 }
 
 //处理怪物攻击
 function handle_monster_attack($monster_id,$sid, $members, $dblj, $db,$next_round) {
-    // Loop through each monster in the group
-        // Get monster details
-        $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = '$monster_id' AND nhp > 0";
+        $sql = "SELECT nskills FROM system_npc_midguaiwu WHERE ngid = '$monster_id' AND nhp > 0";
         $result = $db->query($sql);
-        if ($result && $monster = $result->fetch_assoc()) {
-            $monster_skills = $monster['nskills'];
-
-            // Get default skill if no skills are available
-            if (empty($monster_skills)) {
-                $default_skill_sql = "SELECT default_skill_id FROM gm_game_basic";
-                $default_result = $db->query($default_skill_sql);
-                $default_skill = $default_result->fetch_assoc();
-                $skill_id = $default_skill['default_skill_id'];
-            } else {
-                // Choose a random skill
-                $skills_list = explode(',', $monster_skills);
-                $skill_id = explode('|', $skills_list[array_rand($skills_list)])[0];
-            }
-            handle_members_attack($monster_id,$sid, $members, $dblj, $skill_id,$db,$next_round);
+        $monster = $result->fetch_assoc();
+        $monster_skills = $monster['nskills'];
+        if ($monster_skills) {
+            // Choose a random skill
+            $skills_list = explode(',', $monster_skills);
+            $skill_id = explode('|', $skills_list[array_rand($skills_list)])[0];
         }
-    
+        else{
+            $default_skill_sql = "SELECT default_skill_id FROM gm_game_basic";
+            $default_result = $db->query($default_skill_sql);
+            $default_skill = $default_result->fetch_assoc();
+            $skill_id = $default_skill['default_skill_id'];
+            }
+        handle_members_attack($monster_id,$sid, $members, $dblj, $skill_id,$db,$next_round);
 }
 
-//处理宠物攻击
-function handle_pet_attack($ngid, $pid, $sid, $dblj, $db,$next_round) {
-        // -1表示群体攻击
 
-        // 宠物循环，获取宠物技能参数。宠物出招生效的是?
-        if(is_numeric($pid)){
-        $pet_id = $pid;
-        }else{
-        $pet_id = explode(",", $pid);
+
+//处理怪物攻击
+function handle_pet_attack($monster_id,$pid, $sid, $dblj, $db,$next_round) {
+        $sql = "SELECT nskills FROM system_pet_scene WHERE npid = '$pid' AND nhp > 0";
+        $result = $db->query($sql);
+        $pet = $result->fetch_assoc();
+        $pet_skills = $pet['nskills'];
+        if ($pet_skills) {
+            // Choose a random skill
+            $skills_list = explode(',', $pet_skills);
+            $skill_id = explode('|', $skills_list[array_rand($skills_list)])[0];
         }
-        foreach ($pet_id as $p_one) {
-            // 查询宠物技能
-            $sql = "SELECT * FROM system_skill_user WHERE jpid = ?";
-            $stmt = $dblj->prepare($sql);
-            $stmt->execute([$p_one]);
-            $ret = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-            // 如果查询为空，执行默认操作
-            if (!$ret) {
-                $sql = "SELECT default_skill_id FROM gm_game_basic";
-                $stmt = $dblj->query($sql);
-                $default_skill = $stmt->fetch(\PDO::FETCH_ASSOC);
-                $pet_jid = $default_skill['default_skill_id'];
-            } else {
-                // 随机选择一个技能
-                $pet_jid = $ret[array_rand($ret)]['jid'];
+        else{
+            $default_skill_sql = "SELECT default_skill_id FROM gm_game_basic";
+            $default_result = $db->query($default_skill_sql);
+            $default_skill = $default_result->fetch_assoc();
+            $skill_id = $default_skill['default_skill_id'];
             }
+        handle_pet_members_attack($monster_id,$pid, $sid, $dblj, $skill_id,$db,$next_round);
+}
 
-            // 获取技能详细信息
-            $sql = "SELECT * FROM system_skill WHERE jid = '$pet_jid'";
-            $result = $db->query($sql);
-            if ($result) {
-                $row = $result->fetch_assoc();
-                $j_hurt_exp = $row['jhurt_exp'];
-                $j_group_attack = $row['jgroup_attack'];
-                $j_umsg = $row['jeffect_cmmt'];
-            }
 
-            if(!$hurt_exp){
-            $hurt_exp = get_default_skill_hurt($db, 2)['j_hurt_exp'];
+
+
+//处理宠物技能攻击
+function handle_pet_members_attack($ngid, $p_one, $sid, $dblj,$skill_id, $db, $next_round) {
+    
+    // 获取技能数据并设置默认值
+    $skill = get_skill_data($skill_id, $db);
+    $default_skill = get_default_skill_hurt($db, 2);
+    
+    // 使用数组合并来设置默认值
+    $skill_fields = [
+        'j_hurt_exp', 'j_deplete_exp', 'j_add_point_exp',
+        'j_promotion', 'j_promotion_cond', 'j_group_attack',
+        'j_umsg', 'j_event_use_id'
+    ];
+    
+    foreach ($skill_fields as $field) {
+        if (!isset($skill[$field]) || $skill[$field] === '') {
+            $skill[$field] = $default_skill[$field];
         }
+    }
+    $j_umsg = $skill['j_umsg'];
+    $j_group_attack = $skill['j_group_attack'];
+    $hurt_exp = $skill['j_hurt_exp'];
+    $deplete_exp = $skill['j_deplete_exp'];
+    $deplete_attr = $skill['j_deplete_attr'];
+    
+    // 计算消耗值
+    $hurt_m_cut = !is_numeric($deplete_exp)
+        ? (int)floor(eval("return " . process_string_3($deplete_exp,$p_one,'pet_fight',  $ngid[0], $skill_id) . ";"))
+        : (int)floor($deplete_exp);
+    // 检查属性消耗
+    $n_skill_attr = "n" . $deplete_attr;
+    $n_attr = \player\getpet_once($sid,$dblj,$p_one)[$n_skill_attr];
+    if ($n_attr < $hurt_m_cut) {
+        return;
+    }
+
+    // 扣除属性并记录
+    \player\addpettable($n_skill_attr, -$hurt_m_cut, $p_one, $dblj);
+    $sql = "insert into game3(cut_mp,sid,pid,gid,round,type)values('-$hurt_m_cut','$sid','$p_one','$ngid','$next_round','4')";
+    $dblj->exec($sql);
+
+
+    // 处理目标选择
+    $targets = [];
+    if ($j_group_attack == '-1') {
+        // 全体攻击
+        $targets = array_filter($ngid);
+    } else if ($j_group_attack > 0 && !empty($ngid)) {
+        // 随机目标攻击
+        $target_count = min($j_group_attack, count($ngid));
+        $random_keys = array_rand($ngid, $target_count);
+        $random_keys = is_array($random_keys) ? $random_keys : [$random_keys];
+        foreach ($random_keys as $key) {
+            if ($ngid[$key]) {
+                $targets[] = $ngid[$key];
+            }
+        }
+    }
+
+    // 处理每个目标的攻击
+    foreach ($targets as $attack_gid) {
+        // 计算伤害
+        $hurt_cut = process_string_3($hurt_exp, $p_one, 'pet_fight', $attack_gid, $skill_id, 'fight');
+        $hurt_cut = (int)floor(@eval("return $hurt_cut;"));
+        $hurt_cut = max(1, $hurt_cut);  // 确保最小伤害为1
         
-            if(!$j_umsg){
-            $j_umsg = get_default_skill_hurt($db, 2)['j_umsg'];
-        }
+        // 更新怪物生命值
+        $sql = "UPDATE system_npc_midguaiwu SET nhp = nhp - {$hurt_cut}, nsid = '$sid' WHERE ngid = '$attack_gid'";
+        $dblj->exec($sql);
 
-            if(!$j_group_attack){
-            $j_group_attack = get_default_skill_hurt($db, 2)['j_group_attack'];
-        }
-
-            if ($j_group_attack == '-1') {
-                $ngid_count = count($ngid);
-
-                for ($i = 0; $i < $ngid_count; $i++) {
-                    $attack_gid = $ngid[$i];
-                    if ($attack_gid) {
-                        $hurt_cut = process_string_3($j_hurt_exp, $p_one, 'pet_fight', $attack_gid, $pet_jid, 'fight');
-                        $hurt_cut = (int)floor(@eval("return $hurt_cut;"));
-                        $hurt_cut = $hurt_cut <= 0 ? 1 : $hurt_cut;
-                        
-                        $sql = "UPDATE system_npc_midguaiwu SET nhp = nhp - {$hurt_cut}, nsid = '$sid' WHERE ngid='$attack_gid'";
-                        $dblj->exec($sql);
-                        
-                        $j_umsg = \lexical_analysis\process_string_3($j_umsg, $p_one, 'pet_fight', $attack_gid, $pet_jid);
-                        $j_umsg = str_replace(array("'", "\""), '', $j_umsg);
-                        $sql = "insert into game2(hurt_hp,sid,gid,pid,fight_umsg,type)values('-$hurt_cut','$sid','$attack_gid','$p_one','$j_umsg','4')";
-                        $dblj->exec($sql);
-                    }
-                }
-            } else {
-                
-        $ngid_count = count($ngid);
-        if ($ngid_count > 0 && $j_group_attack > 0){
-            $random_keys = array_rand($ngid, min($j_group_attack, $ngid_count));
-        if ($j_group_attack == 1||$ngid_count==1) {
-            $random_keys = [$random_keys]; // 如果只选择一个 ID，确保 $random_keys 是数组
-            }
-        foreach ($random_keys as $key){
-            $attack_gid = $ngid[$key];
-            if ($attack_gid) {
-                        $hurt_cut = process_string_3($j_hurt_exp, $p_one, 'pet_fight', $attack_gid, $pet_jid, 'fight');
-                        $hurt_cut = (int)floor(@eval("return $hurt_cut;"));
-                        $hurt_cut = $hurt_cut <= 0 ? 1 : $hurt_cut;
-                        
-                        $sql = "UPDATE system_npc_midguaiwu SET nhp = nhp - {$hurt_cut}, nsid = '$sid' WHERE ngid='$attack_gid'";
-                        $dblj->exec($sql);
-
-                        $j_umsg = \lexical_analysis\process_string_3($j_umsg, $p_one, 'pet_fight', $attack_gid, $pet_jid);
-                        $j_umsg = str_replace(array("'", "\""), '', $j_umsg);
-                        
-                        $sql = "insert into game2(hurt_hp,sid,gid,pid,fight_umsg,round,type)values('-$hurt_cut','$sid','$attack_gid','$p_one','$j_umsg','$next_round','4')";
-                        $dblj->exec($sql);
-                    }
-        }
-        }
-            }
-        }
-    
+        // 记录战斗日志
+        $sql = "INSERT INTO game2(hurt_hp, sid, gid, pid, round, type) 
+                VALUES ('-$hurt_cut', '$sid', '$attack_gid', '$p_one', '$next_round', '4')";
+        $dblj->exec($sql);
+        
+        // 处理并更新战斗消息
+        $battle_msg = \lexical_analysis\process_string_3($j_umsg, $p_one, 'pet_fight', $attack_gid, $skill_id);
+        $battle_msg = str_replace(["'", "\""], '', $battle_msg);
+        
+        $sql = "UPDATE game2 SET fight_umsg = ? WHERE round = ? AND sid = ? AND pid = ? AND gid = ?";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute([$battle_msg, $next_round, $sid, $p_one, $attack_gid]);
+    }
 }
-
-
 
 
 // 处理事件
@@ -469,51 +482,57 @@ function process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, $context,$n
 }
 
 //处理怪物伤害
-function process_monster_damage($hurt_exp, $effect_comment,$jid, $gid, $dblj, $member_id,$sid,$next_round) {
-    if(!is_numeric($member_id)){
-    $hurt_cut = process_string_2($hurt_exp, $gid,'monstertouser', $member_id,$jid);
-    $hurt_cut = eval("return $hurt_cut;");
-    $hurt_cut = (int)floor($hurt_cut);
-    $hurt_cut = $hurt_cut <= 0 ? 1 : $hurt_cut;
-    $sql = "UPDATE game1 SET uhp = uhp - ? WHERE sid = ?";
-    $stmt = $dblj->prepare($sql);
-    $stmt->execute([$hurt_cut, $member_id]);
-
-
-
-    $sql = "insert into game2(cut_hp,gid,sid,round,type)values('-$hurt_cut','$gid','$sid','$next_round','2')";
-    $dblj->exec($sql);
-
-    $j_omsg = process_string_2($effect_comment, $gid, 'monstertouser',$member_id,$jid);
-    $j_omsg = str_replace(["'", "\""], '', $j_omsg);
-
-    $sql = "UPDATE game2 SET fight_omsg = ? WHERE round = ? and sid = ? and pid = 0 and gid = ?";
-    $stmt = $dblj->prepare($sql);
-    $stmt->execute([$j_omsg,$next_round, $sid, $gid]);
-
-}
-    else{
-    $hurt_cut = process_string_2($hurt_exp, $gid,'monstertopet', $member_id,$jid);
-    $hurt_cut = eval("return $hurt_cut;");
-    $hurt_cut = (int)floor($hurt_cut);
-    $hurt_cut = $hurt_cut <= 0 ? 1 : $hurt_cut;
-    $sql = "UPDATE system_pet_scene SET nhp = nhp - ? WHERE npid = ?";
-    $stmt = $dblj->prepare($sql);
-    $stmt->execute([$hurt_cut, $member_id]);
-
-
-    $sql = "insert into game2(cut_hp,gid,sid,pid,round,type)values('-$hurt_cut','$gid','$sid','$member_id','$next_round','3')";
-    $dblj->exec($sql);
-
-    $j_omsg = process_string_2($effect_comment, $gid, 'monstertopet',$member_id,$jid);
-    $j_omsg = str_replace(["'", "\""], '', $j_omsg);
-
-    $sql = "UPDATE game2 SET fight_omsg = ? WHERE round = ? and sid = ? and pid = ? and gid = ?";
-    $stmt = $dblj->prepare($sql);
-    $stmt->execute([$j_omsg,$next_round, $sid,$member_id,$gid]);
-
-
+function process_monster_damage($hurt_exp, $effect_comment, $jid, $gid, $dblj, $member_id, $sid, $next_round) {
+    // 确定目标类型和处理参数
+    $is_pet = is_numeric($member_id);
+    $target_type = $is_pet ? 'monstertopet' : 'monstertouser';
+    
+    // 计算伤害值
+    $hurt_cut = process_string_2($hurt_exp, $gid, $target_type, $member_id, $jid);
+    $hurt_cut = (int)floor(eval("return $hurt_cut;"));
+    $hurt_cut = max(1, $hurt_cut);  // 确保最小伤害为1
+    
+    // 更新目标生命值
+    if ($is_pet) {
+        $update_sql = "UPDATE system_pet_scene SET nhp = nhp - ? WHERE npid = ?";
+        $stmt = $dblj->prepare($update_sql);
+        $stmt->execute([$hurt_cut, $member_id]);
+    } else {
+        $update_sql = "UPDATE game1 SET uhp = uhp - ? WHERE sid = ?";
+        $stmt = $dblj->prepare($update_sql);
+        $stmt->execute([$hurt_cut, $member_id]);
     }
+    
+    // 记录伤害日志
+    $pid_value = $is_pet ? $member_id : 0;
+    $type_value = $is_pet ? '3' : '2';
+    $log_sql = "INSERT INTO game2(cut_hp, gid, sid, pid, round, type) 
+                VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = $dblj->prepare($log_sql);
+    $stmt->execute([
+        "-$hurt_cut",
+        $gid,
+        $sid,
+        $pid_value,
+        $next_round,
+        $type_value
+    ]);
+    
+    // 处理战斗消息
+    
+    $j_omsg = process_string_2($effect_comment, $gid, $target_type, $member_id, $jid);
+    $j_omsg = str_replace(["'", "\""], '', $j_omsg);
+    // 更新战斗消息
+    $msg_sql = $is_pet 
+        ? "UPDATE game2 SET fight_omsg = ? WHERE round = ? AND sid = ? AND pid = ? AND gid = ? and type = 3"
+        : "UPDATE game2 SET fight_omsg = ? WHERE round = ? AND sid = ? AND pid = 0 AND gid = ? and type = 2";
+    
+    $stmt = $dblj->prepare($msg_sql);
+    $stmt->execute(
+        $is_pet 
+            ? [$j_omsg, $next_round, $sid, $member_id, $gid]
+            : [$j_omsg, $next_round, $sid, $gid]
+    );
 }
 
 function getSubstringBetweenDots($str, $startDotIndex = 0, $endDotIndex = null) {
@@ -1538,7 +1557,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $db = DB::conn();
                         $round = \player\getnowround($sid,$dblj,$db);
                         // 构建 SQL 查询语句
-                        $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = ? and pid = 0 and round = '$round'";
+                        $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = ? and pid = 0 and round = '$round' and type = 2";
                         
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
@@ -1555,18 +1574,14 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $stmt->close();
                         
                         // 获取总和并处理结果
-                        $total_cut_hp = $row["total_cut_hp"];
-                        $op = $total_cut_hp;
-                        if ($op === null||$op =='') {
-                            //$op = "\"\""; // 或其他默认值
-                            }
+                        $op = $row["total_cut_hp"];
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
                         case 'cut_mp':
                         $db = DB::conn();
                         $round = \player\getnowround($sid,$dblj,$db);
                         // 构建 SQL 查询语句
-                        $sql = "SELECT SUM(cut_mp) as total_cut_mp FROM game2 WHERE sid = ? and pid = 0 and round = '$round'";
+                        $sql = "SELECT cut_mp as total_cut_mp FROM game3 WHERE sid = ? and pid = 0 and round = '$round' and type = 1";
                         
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
@@ -1583,13 +1598,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $stmt->close();
                         
                         // 获取总和并处理结果
-                        $total_cut_mp = $row["total_cut_mp"];
-                        
-                        $op = $total_cut_mp;
-                        
-                        if ($op === null||$op =='') {
-                            //$op = "\"\""; // 或其他默认值
-                            }
+                        $op = $row["total_cut_mp"];
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
                         case 'busy':
@@ -3356,9 +3365,6 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             // 获取最后一个匹配的数值
                             $equip_bid = end($matches[1]);
                         }
-                        if(!$equip_bid){
-                            //$op = "\"\"";
-                        }else{
                         $bid = "i".$bid;
                         $sql = "SELECT * FROM system_item_module WHERE iid = '$equip_bid'";
                         // 使用预处理语句
@@ -3373,11 +3379,8 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             $op = $op?1:0;
                         }else{
                             $op = nl2br($row[$bid]);
-                        if ($row === null||$row =='') {
-                        //$op = "\"\""; // 或其他默认值
                         }
-                        }
-                        }
+                        
                         $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
                     }
                     elseif(preg_match('/^(\d+\.)?(.*)/', $attr3, $matches)){
@@ -3426,9 +3429,6 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             // 获取第一个匹配的数值
                             $equip_xid = end($matches[1]);
                         }
-                        if(!$equip_xid){
-                            //$op = "\"\"";
-                        }else{
                         $fid = "i".$fid;
                         $sql = "SELECT * FROM system_item_module WHERE iid = '$equip_xid'";
                         // 使用预处理语句
@@ -3449,7 +3449,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         }
                         }
                         
-                        }
+                        
                         $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
                     }
                     }
@@ -3481,13 +3481,10 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         die('查询失败: ' . $db->error);
                     }
                     $row = $result->fetch_assoc();
-                    if ($row === null||$row =='') {
-                        //$op = "\"\""; // 或其他默认值
-                        }else{
-                    $op = nl2br($row[$attr3]);
-                        }
-                    $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
-                    // 替换字符串中的变量
+                    $op = isset($row[$attr3]) ? nl2br($row[$attr3]) : "";
+                    if ($op) {
+                        $op = process_string_2($op, $gid, $oid, $mid, $jid, $type, $para);
+                    }
                     }
                     break;
                 case 'ut':
@@ -3506,12 +3503,9 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
                         $op = $row["total_hurt_hp"];
-                        if ($op === null||$op =='') {
-                            //$op = "\"\""; // 或其他默认值
-                            }
                         break;
-                        case 'fight_umsg':
-                        $sql = "SELECT * FROM game2 WHERE gid = ?";
+                        case 'fight_umsg'://单次怪物攻击描述
+                        $sql = "SELECT fight_umsg FROM game2 WHERE gid = ?";
                         
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
@@ -3524,12 +3518,9 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
                         $op = $row["fight_omsg"];
-                        if ($op === null||$op =='') {
-                            //$op = "\"\""; // 或其他默认值
-                            }
                         break;
-                        case 'fight_omsg':
-                        $sql = "SELECT * FROM game2 WHERE sid = ?";
+                        case 'fight_omsg'://单次怪物攻击对象描述
+                        $sql = "SELECT fight_omsg FROM game2 WHERE sid = ?";
                         
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
@@ -3542,9 +3533,6 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
                         $op = $row["fight_umsg"];
-                        if ($op === null||$op =='') {
-                            //$op = "\"\""; // 或其他默认值
-                            }
                         break;
                     }
                     break;
@@ -3555,7 +3543,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         
                         if($oid=="monstertouser"){
                         
-                        $sql = "SELECT * FROM game2 WHERE sid = ?";
+                        $sql = "SELECT cut_hp FROM game2 WHERE sid = ?";
                         
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
@@ -3564,7 +3552,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         // 执行查询
                         $stmt->execute();
                         }else{
-                        $sql = "SELECT * FROM game2 WHERE pid = ?";
+                        $sql = "SELECT cut_hp FROM game2 WHERE pid = ?";
                         
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
@@ -3577,9 +3565,6 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
                         $op = $row["cut_hp"];
-                        if ($op === null||$op =='') {
-                            //$op = "\"\""; // 或其他默认值
-                            }
                         break;
                     }
                     break;
@@ -3587,7 +3572,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                     switch($oid){
                         case 'scene':
                             $attr3 = 'm'.$attr2;
-                            $sql = "SELECT * FROM system_map WHERE mid = ?";
+                            $sql = "SELECT $attr3 FROM system_map WHERE mid = ?";
                             $stmt = $db->prepare($sql);
                             $stmt->bind_param("s", $mid);
                             $stmt->execute();
@@ -3596,18 +3581,12 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                                 die('查询失败: ' . $db->error);
                             }
                             $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row[$attr3]);
-                                }
                             $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
                             break;
                         case 'npc':
                             $attr3 = 'n'.$attr2;
-                            $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = ?";
+                            $sql = "SELECT $attr3 FROM system_npc_midguaiwu WHERE ngid = ?";
                             $stmt = $db->prepare($sql);
                             $stmt->bind_param("s", $gid);
                             $stmt->execute();
@@ -3654,14 +3633,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                                 $row_result = $row[$attr3];
 }
 
-
-                            if ($row_result === null ||$row_result ==='') {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row_result);
-                                }
-                                
-                                
                             $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
                             // 替换字符串中的变量
                             //$input = str_replace("{{$match}}", $op, $input);
@@ -3669,13 +3641,13 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         case 'item':
                             $attr3 = 'i'.$attr2;
                             if($attr3 =="icount"){
-                                $sql = "SELECT * FROM system_item WHERE item_true_id = ? and sid = ?";
+                                $sql = "SELECT $attr3 FROM system_item WHERE item_true_id = ? and sid = ?";
                                 $stmt = $db->prepare($sql);
                                 $stmt->bind_param("ss", $mid,$sid);
                                 $stmt->execute();
                                 $result = $stmt->get_result();
                             }else{
-                                $sql = "SELECT * FROM system_item_module WHERE iid = ( SELECT iid from system_item where item_true_id = ? and sid = ?)";
+                                $sql = "SELECT $attr3 FROM system_item_module WHERE iid = ( SELECT iid from system_item where item_true_id = ? and sid = ?)";
                                 $stmt = $db->prepare($sql);
                                 $stmt->bind_param("ss", $mid,$sid);
                                 $stmt->execute();
@@ -3686,14 +3658,8 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             }
                             $row = $result->fetch_assoc();
                             $row_result = $row[$attr3];
-                            if ($row_result === null ||$row_result ==='') {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row_result);
-                                }
                             $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
                             break;
                         case 'scene_oplayer':
                             $attr3 = 'u'.$attr2;
@@ -3706,14 +3672,8 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                                 die('查询失败: ' . $db->error);
                             }
                             $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row[$attr3]);
-                                }
                             $op = process_string_2($op,$sid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
                             break;
                         case 'monstertouser':
                             $attr3 = 'u'.$attr2;
@@ -3726,11 +3686,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                                 die('查询失败: ' . $db->error);
                             }
                             $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row[$attr3]);
-                                }
                             $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
                             // 替换字符串中的变量
                             //$input = str_replace("{{$match}}", $op, $input);
@@ -3746,14 +3702,8 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                                 die('查询失败: ' . $db->error);
                             }
                             $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row[$attr3]);
-                                }
                             $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
                             break;
                         default:
                             $attr3 = 'u'.$attr2;
@@ -3762,33 +3712,28 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             $result_2 = $db->query("SELECT value from system_addition_attr where name = '$attr3' and sid = '$mid'");
                             // 如果字段存在，则更新字段值
                             if ($result->num_rows > 0 ) {
-                                            $sql = "SELECT * FROM game1 WHERE sid = ?";
-                                            $stmt = $db->prepare($sql);
-                                            $stmt->bind_param("s",$mid);
-                                            $stmt->execute();
-                                            $result = $stmt->get_result();
-                                            if (!$result) {
-                                                die('查询失败: ' . $db->error);
-                                            }
-                                            $row = $result->fetch_assoc();
-                            } elseif($result_2->num_rows > 0){
-                                            $sql = "SELECT value FROM system_addition_attr WHERE sid = ? and name = ?";
-                                            $stmt = $db->prepare($sql);
-                                            $stmt->bind_param("ss",$mid,$attr3);
-                                            $stmt->execute();
-                                            $result = $stmt->get_result();
-                                            if (!$result) {
-                                                die('查询失败: ' . $db->error);
-                                            }
-                                            $row = $result->fetch_assoc();
-                                            $attr3 = "value";
-                            }
-                            
-                            if ($row === null) {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
-                            $op = nl2br($row[$attr3]);
+                                $sql = "SELECT * FROM game1 WHERE sid = ?";
+                                $stmt = $db->prepare($sql);
+                                $stmt->bind_param("s",$mid);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                if (!$result) {
+                                    die('查询失败: ' . $db->error);
                                 }
+                                $row = $result->fetch_assoc();
+                            } elseif($result_2->num_rows > 0){
+                                $sql = "SELECT value FROM system_addition_attr WHERE sid = ? and name = ?";
+                                $stmt = $db->prepare($sql);
+                                $stmt->bind_param("ss",$mid,$attr3);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+                                if (!$result) {
+                                    die('查询失败: ' . $db->error);
+                                }
+                                $row = $result->fetch_assoc();
+                                $attr3 = "value";
+                            }
+                            $op = nl2br($row[$attr3]);
                             $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
                             // 替换字符串中的变量
                             //$input = str_replace("{{$match}}", $op, $input);
@@ -3799,7 +3744,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                     $monster_skills_lvls="";
                     $attr3 = 'j'.$attr2;
                     if($attr3 =="jlvl"){
-                        $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = ?";
+                        $sql = "SELECT nskills FROM system_npc_midguaiwu WHERE ngid = ?";
                         $stmt = $db->prepare($sql);
                         $stmt->bind_param("s", $gid);
                         $stmt->execute();
@@ -3816,7 +3761,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             }
                         }
                     }else{
-                        $sql = "SELECT * FROM system_skill WHERE jid = ?";
+                        $sql = "SELECT $attr3 FROM system_skill WHERE jid = ?";
                         $stmt = $db->prepare($sql);
                         $stmt->bind_param("s", $jid);
                         $stmt->execute();
@@ -3827,11 +3772,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                     }
                     $row = $result->fetch_assoc();
                     $row_result = $row[$attr3];
-                    if ($row_result === null ||$row_result ==='') {
-                        //$op = "\"\""; // 或其他默认值
-                        }else{
                     $op = nl2br($row_result);
-                        }
                     $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
                     }
                     break;
@@ -3862,7 +3803,6 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             $op = 1 *date('s');
                             break;
                         case 'online_user_count':
-                            
                             break;
                             default:
                             $game_id = '19980925';
@@ -3877,13 +3817,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                                 die('查询失败: ' . $db->error);
                             }
                             $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row[$attr3]);
-                                }
-                                
-                                
                         }
                     // 使用正则表达式匹配字符串中的时间格式部分
                     $pattern = '/nowtime_([UNYnjGHhist:]+)/';
@@ -3892,11 +3826,9 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         $op = date($matches[1]);
                     }
                     $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
-                    // 替换字符串中的变量
-                    //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'g':
-                    $sql = "SELECT * FROM global_data WHERE gid = ?";
+                    $sql = "SELECT value FROM global_data WHERE gid = ?";
                     $stmt = $db->prepare($sql);
                     $stmt->bind_param("s", $attr2);
                     $stmt->execute();
@@ -3905,17 +3837,11 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                         die('查询失败: ' . $db->error);
                     }
                     $row = $result->fetch_assoc();
-                    if ($row === null) {
-                        //$op = "\"\""; // 或其他默认值
-                        }else{
                     $op = nl2br($row['value']);
-                        }
                     $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
-                    // 替换字符串中的变量
-                    //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'e':
-                    $sql = "SELECT * FROM system_exp_def WHERE id = ?";
+                    $sql = "SELECT value FROM system_exp_def WHERE id = ?";
                     $stmt = $db->prepare($sql);
                     $stmt->bind_param("s", $attr2);
                     $stmt->execute();
@@ -3928,7 +3854,6 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                     // 替换字符串中的变量
                     $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
                     $op = @eval("return $op;");
-                    //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'r':
                     if(!is_numeric($attr2)){
@@ -3943,9 +3868,6 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                     return 0;
                     break;
             }
-    // 在这里根据属性的不同进行处理
-    // ...
-    // 返回属性值，处理过程中可能会嵌套调用 process_string
     return $op;
 }
 
@@ -4363,17 +4285,8 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                                 $row_result = $row[$attr3];
 }
 
-
-                            if ($row_result === null ||$row_result ==='') {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row_result);
-                                }
-                                
-                                
                             $op = process_string_3($op,$pid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
                             break;
                         case 'item':
                             $attr3 = 'i'.$attr2;
@@ -4389,19 +4302,13 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             }
                             $row = $result->fetch_assoc();
                             $row_result = $row[$attr3];
-                            if ($row_result === null ||$row_result ==='') {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row_result);
-                                }
                             $op = process_string_3($op,$pid,$oid,$mid,$jid,$type,$para);
                             // 替换字符串中的变量
                             //$input = str_replace("{{$match}}", $op, $input);
                             break;
                         default:
                             $attr3 = 'n'.$attr2;
-                            
-                            
                             // 检查字段是否存在
                             $result = $db->query("SHOW COLUMNS FROM system_npc_midguaiwu LIKE '$attr3'");
                             $result_2 = $db->query("SELECT value from system_addition_attr where name = '$attr3' and oid = '$mid'");
@@ -4428,15 +4335,8 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                                             $row = $result->fetch_assoc();
                                             $attr3 = "value";
                             }
-                            
-                            if ($row === null) {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row[$attr3]);
-                                }
                             $op = process_string_3($op,$pid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
                             break;
                     }
                     break;
@@ -4472,11 +4372,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                     }
                     $row = $result->fetch_assoc();
                     $row_result = $row[$attr3];
-                    if ($row_result === null ||$row_result ==='') {
-                        //$op = "\"\""; // 或其他默认值
-                        }else{
                     $op = nl2br($row_result);
-                        }
                     $op = process_string_3($op,$pid,$oid,$mid,$jid,$type,$para);
                     }
                     break;
@@ -4507,7 +4403,6 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             $op = 1 *date('s');
                             break;
                         case 'online_user_count':
-                            
                             break;
                             default:
                             $game_id = '19980925';
@@ -4522,11 +4417,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                                 die('查询失败: ' . $db->error);
                             }
                             $row = $result->fetch_assoc();
-                            if ($row === null) {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row[$attr3]);
-                                }
                                 
                                 
                         }
@@ -4537,11 +4428,9 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                         $op = date($matches[1]);
                     }
                     $op = process_string_3($op,$pid,$oid,$mid,$jid,$type,$para);
-                    // 替换字符串中的变量
-                    //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'g':
-                    $sql = "SELECT * FROM global_data WHERE gid = ?";
+                    $sql = "SELECT value FROM global_data WHERE gid = ?";
                     $stmt = $db->prepare($sql);
                     $stmt->bind_param("s", $attr2);
                     $stmt->execute();
@@ -4550,17 +4439,11 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                         die('查询失败: ' . $db->error);
                     }
                     $row = $result->fetch_assoc();
-                    if ($row === null) {
-                        //$op = "\"\""; // 或其他默认值
-                        }else{
                     $op = nl2br($row['value']);
-                        }
                     $op = process_string_3($op,$pid,$oid,$mid,$jid,$type,$para);
-                    // 替换字符串中的变量
-                    //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'e':
-                    $sql = "SELECT * FROM system_exp_def WHERE id = ?";
+                    $sql = "SELECT value FROM system_exp_def WHERE id = ?";
                     $stmt = $db->prepare($sql);
                     $stmt->bind_param("s", $attr2);
                     $stmt->execute();

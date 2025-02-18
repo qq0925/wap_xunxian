@@ -204,22 +204,6 @@ HTML;
                                     if($ret){
                                     global_events_steps_change(26,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_monster',$ngid,$para);
                                     }
-                                    
-                                    $pet = \player\getpet_fight($sid,$dblj);
-                                    if($pet){
-                                    $fight_pet_count = count($pet);
-                                    for($i=0;$i<$fight_pet_count;$i++){
-                                    $pid = $pet[$i]['npid'];
-                                    $sql = "insert into game2(sid,gid,pid) values ('$sid','$ngid','$pid')";
-                                    $dblj->exec($sql);
-                                    $sql = "insert into game3(sid,gid,pid) values ('$ngid','$sid','$pid')";
-                                    $dblj->exec($sql);
-                                    }
-                                        }
-                                    $sql = "insert into game2(sid,gid) values ('$sid','$ngid')";
-                                    $dblj->exec($sql);
-                                    $sql = "insert into game3(sid,gid) values ('$ngid','$sid')";
-                                    $dblj->exec($sql);
                                 }
     }
                                $cmd = "pve_fight";

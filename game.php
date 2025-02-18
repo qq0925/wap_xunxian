@@ -127,7 +127,7 @@ $dblj->exec($sql);
 if($cmd !="pve_fighting"&&$cmd !="pve_fight"&&$player->uis_pve==0){
 $sql = "delete from game2 where sid = '$sid'";
 $dblj->exec($sql);
-$sql = "delete from game3 where gid = '$sid'";
+$sql = "delete from game3 where sid = '$sid'";
 $dblj->exec($sql);
 }
 if($cmd =='logout'){

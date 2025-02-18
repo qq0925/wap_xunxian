@@ -15,6 +15,18 @@
         $stmt->execute();
     }
 
+    $sql = "SHOW COLUMNS FROM game3 LIKE 'round'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        $sql = "ALTER TABLE game3 DROP COLUMN fight_umsg,DROP COLUMN fight_omsg,ADD COLUMN round INT(11),ADD COLUMN type INT(1)";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
+
     $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'can_verify'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();

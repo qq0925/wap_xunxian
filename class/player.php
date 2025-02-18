@@ -1331,6 +1331,25 @@ function addplayertable($db,$sx,$gaibian,$sid,$dblj){
     }
 }
 
+function addmonstertable($sx,$gaibian,$gid,$dblj){
+    $sql = "update `system_npc_midguaiwu` set $sx = $sx + '$gaibian' WHERE ngid='$gid'";//增减怪物表属性
+    $ret = $dblj->exec($sql);
+    if($ret){
+        return true;
+    }else{
+        return false;
+    }
+}
+function addpettable($sx,$gaibian,$gid,$dblj){
+    $sql = "update `system_pet_scene` set $sx = $sx + '$gaibian' WHERE npid='$gid'";//增减宠物表表属性
+    $ret = $dblj->exec($sql);
+    if($ret){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 function changepetsx($sx,$gaibian,$petid,$sid,$dblj){
     $sql = "update system_pet_player set $sx = '$gaibian' WHERE petid='$petid' and petsid = '$sid'";//改变宠物属性
     $ret = $dblj->exec($sql);
@@ -1809,6 +1828,52 @@ function getfightpara($sid,$dblj){
     $row = $result->fetchAll(\PDO::FETCH_ASSOC);
     return $row;
 }
+
+
+function getfighthm($sid, $gid, $pid, $round, $dblj,$type1, $type2) {
+    // 查询 game2 表中的 cut_hp
+    $sql_game2 = "SELECT SUM(cut_hp) AS total_cut_hp
+                  FROM game2
+                  WHERE sid = :sid
+                    AND type = :type1
+                    AND round = :round
+                    AND pid = :pid";
+    
+    // 查询 game3 表中的 cut_mp
+    $sql_game3 = "SELECT cut_mp AS total_cut_mp
+                  FROM game3
+                  WHERE sid = :sid
+                    AND type = :type2
+                    AND round = :round
+                    AND pid = :pid";
+    
+    // 执行 game2 查询
+    $stmt_game2 = $dblj->prepare($sql_game2);
+    $stmt_game2->bindParam(':sid', $sid);
+    $stmt_game2->bindParam(':round', $round);
+    $stmt_game2->bindParam(':type1', $type1);
+    $stmt_game2->bindParam(':pid', $pid);
+    $stmt_game2->execute();
+    $result_game2 = $stmt_game2->fetch(\PDO::FETCH_ASSOC);
+
+    // 执行 game3 查询
+    $stmt_game3 = $dblj->prepare($sql_game3);
+    $stmt_game3->bindParam(':sid', $sid);
+    $stmt_game3->bindParam(':round', $round);
+    $stmt_game3->bindParam(':type2', $type2);
+    $stmt_game3->bindParam(':pid', $pid);
+    $stmt_game3->execute();
+    $result_game3 = $stmt_game3->fetch(\PDO::FETCH_ASSOC);
+    
+    // 返回结果
+    return [
+        'total_cut_hp' => $result_game2['total_cut_hp'] ?? 0, // 如果没有结果，返回 0
+        'total_cut_mp' => $result_game3['total_cut_mp'] ?? 0  // 如果没有结果，返回 0
+    ];
+}
+
+
+
 
 function getpet_fight($sid,$dblj,$para=null){
     if($para =='alive'){

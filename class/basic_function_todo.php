@@ -1683,13 +1683,9 @@ function self_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
 HTML;
     if($cmd =="pve_fighting"){
     $round = \player\getnowround($sid,$dblj);
-    $sql = "SELECT SUM(cut_hp) AS total_cut_hp,cut_mp FROM game2 WHERE sid = :sid and pid = 0 and round = '$round'";
-    $stmt = $dblj->prepare($sql);
-    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
-    $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $cut_hp = $row['total_cut_hp'];
-    $cut_mp = $row['cut_mp'];
+    $cut_arr = \player\getfighthm($sid, $gid, 0, $round,$dblj,'2','1');
+    $cut_hp = $cut_arr['total_cut_hp'];
+    $cut_mp = $cut_arr['total_cut_mp'];
     $cut_hp = $cut_hp >0?"+".$cut_hp:$cut_hp;
     $cut_mp = $cut_mp >0?"+".$cut_mp:$cut_mp;
     $cut_hp = $cut_hp ==0?'':$cut_hp;
@@ -1711,15 +1707,16 @@ HTML;
     $pet_name = $pet_row[$i]['nname'];
     $pet_hp = $pet_row[$i]['nhp'];
     $pet_maxhp = $pet_row[$i]['nmaxhp'];
-    $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = :sid and pid = :pid and round = '$round'";
-    $stmt = $dblj->prepare($sql);
-    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
-    $stmt->bindParam(':pid', $pet_id,PDO::PARAM_INT);
-    $stmt->execute();
-    $pet_row_2 = $stmt->fetch(PDO::FETCH_ASSOC);
-    $pcut_hp = $pet_row_2['total_cut_hp'];
+    $pet_mp = $pet_row[$i]['nmp'];
+    $pet_maxmp = $pet_row[$i]['nmaxmp'];
+    $pcut_arr = \player\getfighthm($sid, $gid, $pet_id, $round,$dblj,'3','4');
+    $pcut_hp = $pcut_arr['total_cut_hp'];
+    $pcut_mp = $pcut_arr['total_cut_mp'];
+
     $pcut_hp = $pcut_hp >0?"+".$pcut_hp:$pcut_hp;
+    $pcut_mp = $pcut_mp >0?"+".$pcut_mp:$pcut_mp;
     $pcut_hp = $pcut_hp ==0?'':$pcut_hp;
+    $pcut_mp = $pcut_mp ==0?'':$pcut_mp;
     
     if($pet_hp <=0){
     $player_text .=<<<HTML
@@ -1727,7 +1724,9 @@ HTML;
 HTML;
     }else{
     $player_text .=<<<HTML
-<br/>[{$pet_name}]:({$pet_hp}/{$pet_maxhp}){$pcut_hp}
+<br/>[{$pet_name}]：<br/>
+{$attr_hp_name}：({$pet_hp}/{$pet_maxhp}){$pcut_hp}<br/>
+{$attr_mp_name}：({$pet_mp}/{$pet_maxmp}){$pcut_mp}
 HTML;
 }
     }
@@ -1753,16 +1752,32 @@ function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $monster_nowmid = $monster_list[$i]['nmid'];
     if($cmd =="pve_fighting"){
     $round = \player\getnowround($sid,$dblj);
-    $sql = "SELECT SUM(hurt_hp) as total_hurt_hp from game2 where sid = :sid and gid = :gid and round = '$round'";
+
+    $sql = "SELECT 
+    SUM(g2.hurt_hp) AS total_hurt_hp,
+    g3.cut_mp AS cut_mp
+FROM 
+    game2 g2
+JOIN 
+    game3 g3 ON g2.round = g3.round AND g2.gid = g3.gid AND g2.sid = g3.sid
+WHERE 
+    g2.gid = :gid 
+    AND g2.sid = :sid 
+    AND g2.round = :round 
+    AND (g2.type = 1 OR g2.type = 4)
+    AND (g3.type = 2 OR g3.type = 3);
+";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
-    $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
+    $stmt->bindParam(':gid', $monster_id,PDO::PARAM_INT);
+    $stmt->bindParam(':round', $round,PDO::PARAM_STR);
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $hurt_hp = $row['total_hurt_hp'];
-    $hurt_hp = $hurt_hp ==0?'':$hurt_hp;
+    $hurt_hp = $row['total_hurt_hp']?:'';
+    $hurt_mp = $row['cut_mp']?:'';
     if($hurt_hp){
-    $hurt_hp = $hurt_hp >0?"+".$hurt_hp:$hurt_hp;
+    $cut_hp = $hurt_hp >0?"+".$hurt_hp:$hurt_hp;
+    $cut_mp = $hurt_mp >0?"+".$hurt_mp:$hurt_mp;
     }
     }
     $sql = "SELECT * from system_npc_midguaiwu where nsid = :sid and ngid = :ngid";
@@ -1781,10 +1796,9 @@ function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
 [{$monster_name}]已经战死！<br/>
 HTML;
     }else{
-    $cut_hp = $hurt_hp."<br/>";
     $enemy_text .=<<<HTML
 [{$monster_name}]:<br/>
-{$attr_hp_name}：({$monster_hp}/{$monster_maxhp}){$cut_hp}
+{$attr_hp_name}：({$monster_hp}/{$monster_maxhp}){$cut_hp}<br/>
 {$attr_mp_name}：({$monster_mp}/{$monster_maxmp}){$cut_mp}<br/>
 HTML;
 }
@@ -1846,7 +1860,7 @@ function enemy_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
 }
 
 function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
-    $sql = "SELECT * from system_npc_midguaiwu where nsid = '$sid'";
+    $sql = "SELECT nid,ngid,nmid from system_npc_midguaiwu where nsid = '$sid'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
     $monster_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -1857,7 +1871,7 @@ function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
 
     if($cmd =="pve_fighting"){
     $round = \player\getnowround($sid,$dblj);
-    $sql = "SELECT * from game2 where sid = :sid and gid = :gid AND pid = 0 and round = '$round' and type = 1";
+    $sql = "SELECT fight_umsg from game2 where sid = :sid and gid = :gid AND pid = 0 and round = '$round' and type = 1";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
@@ -1867,7 +1881,7 @@ function player_attack_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $fight_umsg .= $row['fight_umsg']."<br/>";
     }
     
-    $sql = "SELECT * from game2 where sid = :sid and gid = :gid AND pid != 0 and round =  '$round' and type = 4";
+    $sql = "SELECT fight_umsg from game2 where sid = :sid and gid = :gid AND pid != 0 and round =  '$round' and type = 4";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
     $stmt->bindParam(':gid', $monster_id,PDO::PARAM_STR);
