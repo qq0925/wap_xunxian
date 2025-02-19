@@ -308,7 +308,7 @@ THEMAINTASK:
             $player = \player\getplayer($sid,$dblj);
             // 用户登录成功后生成并存储会话标识
             // $ret = check_if_logged($sid);
-            // $deviceInfo = $_SERVER['HTTP_USER_AGENT'];// 使用设备信息作为标识
+            //$deviceInfo = $_SERVER['HTTP_USER_AGENT'];// 使用设备信息作为标识
             // if(!$ret || $ret !=$_SESSION['sessionID']){
             // session_start();
             // $sessionID = uniqid();
@@ -374,6 +374,14 @@ echo $refresh_html;
             // 清空所有临时变量
             $dblj->exec("DELETE from player_temp_attr where obj_id = '$sid'");
             echo '正在进入游戏...<br/>';
+            $deviceInfo = $_SERVER['HTTP_USER_AGENT'];// 使用设备信息作为标识
+            $dblj->exec("DELETE from game4 where sid = '$sid'");
+            $sql = "insert into game4 (device_agent,sid)values(:userAgent,:sid)";
+            // 绑定参数值到命名参数
+            $stmt =$dblj->prepare($sql);
+            $stmt->bindParam(':userAgent', $deviceInfo);
+            $stmt->bindParam(':sid', $sid);
+            $stmt->execute();
             $refresh_html =<<<HTML
             <meta http-equiv="refresh" content="1;URL=?cmd=$gofirst">
 HTML;
@@ -425,7 +433,14 @@ HTML;
                     }
                     
                     $userAgent = $_SERVER['HTTP_USER_AGENT'];
-                    $dblj->exec("insert into game4 (device_agent,sid)values('$userAgent','$sid')");
+                    $dblj->exec("DELETE from game4 where sid = '$sid'");
+                    $sql = "insert into game4 (device_agent,sid)values(:userAgent,:sid)";
+                    // 绑定参数值到命名参数
+                    $stmt =$dblj->prepare($sql);
+                    $stmt->bindParam(':userAgent', $userAgent);
+                    $stmt->bindParam(':sid', $sid);
+                    // 执行预处理语句
+                    $stmt->execute();
                     //注册事件逻辑
                     $event_data = global_event_data_get(1,$dblj);
                     $event_cond = $event_data['system_event']['cond'];

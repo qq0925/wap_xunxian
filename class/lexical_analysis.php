@@ -1752,8 +1752,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $row = $result->fetch_assoc();
                         $userAgent = $row["device_agent"];
                         if (strpos($userAgent, 'Mobile') !== false) {
-                            // 用户正在使用移动设备（手机或平板）
-                            //$op = "\"\"";
+                            $op = 0;
                         } else {
                             // 用户正在使用桌面设备（电脑）
                             $op = 1;
