@@ -60,21 +60,32 @@ function get_npc_event_data($event_id,$dblj) {
     }
 }
 
-function get_system_event_evs_data($link_evs,$dblj) {
+function get_system_event_evs_data($link_evs, $dblj) {
+    if (empty($link_evs)) {
+        return [];
+    }
+
     // 构建 IN 子句的占位符
     $placeholders = implode(',', array_fill(0, count($link_evs), '?'));
+    
+    // 使用 FIELD 函数来保持原始顺序
+    $query = "SELECT * FROM system_event_evs 
+              WHERE id IN ($placeholders) 
+              ORDER BY FIELD(id, $placeholders)";
+              
     // 准备查询语句
-    $query = "SELECT * FROM system_event_evs WHERE id IN ($placeholders)";
     $stmt = $dblj->prepare($query);
-
-    // 绑定 link_evs 数组的值作为参数
-    $stmt->execute($link_evs);
+    
+    // 绑定参数两次（一次为 IN 子句，一次为 FIELD 函数）
+    $params = array_merge($link_evs, $link_evs);
+    $stmt->execute($params);
 
     // 获取所有匹配的数据
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    return $result;
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+
+
 
 function get_self_event_evs_data($link_evs, $dblj) {
     if (empty($link_evs)) {
