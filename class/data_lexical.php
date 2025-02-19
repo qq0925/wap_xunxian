@@ -158,16 +158,24 @@ foreach ($keyValuePairs as $pair) {
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
                 $result_2 = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$sid'");
                 // 如果字段存在，则更新字段值
-                if ($result->num_rows > 0 ) {
-                    $updateQuery = "UPDATE game1 SET `$ele_1_2` = '$ele_2' WHERE sid = '$sid'";
-                    //$db->query($updateQuery);
-                } elseif($result_2->num_rows > 0){
-                    $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE sid = '$sid' and name = '$ele_1_2'";
-                    $db->query($updateQuery);
-                } else{
-                    // 字段不存在，添加新字段并更新值
-                    $updateQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$sid')";
-                    $db->query($updateQuery);
+                if ($result->num_rows > 0) {
+                    // 字段存在于 game1 表
+                    $sql = "UPDATE game1 SET `$ele_1_2` = ? WHERE sid = ?";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param('ss', $ele_2, $sid);
+                    $stmt->execute();
+                } elseif ($result_2->num_rows > 0) {
+                    // 记录存在于 system_addition_attr 表
+                    $sql = "UPDATE system_addition_attr SET value = ? WHERE sid = ? AND name = ?";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param('sss', $ele_2, $sid, $ele_1_2);
+                    $stmt->execute();
+                } else {
+                    // 需要插入新记录
+                    $sql = "INSERT INTO system_addition_attr(name, value, sid) VALUES (?, ?, ?)";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param('sss', $ele_1_2, $ele_2, $sid);
+                    $stmt->execute();
                 }
 }
                 break;
@@ -317,21 +325,30 @@ foreach ($keyValuePairs as $pair) {
                 }
                 }
                 break;
-            case 'g':
-                // 检查表中是否存在 gid=$ele_1_2 的数据
-                $checkQuery = "SELECT * FROM global_data WHERE gid = '$ele_1_2'";
-                $result = $db->query($checkQuery);
-            
-                // 如果存在，执行更新操作
-                if ($result->num_rows > 0) {
-                    $updateQuery = "UPDATE global_data SET gvalue = '$ele_2' WHERE gid = '$ele_1_2'";
-                    $db->query($updateQuery);
-                } else {
-                    // 不存在，执行插入操作
-                    $updateQuery = "INSERT INTO global_data (gid,gvalue) VALUES ('$ele_1_2', '$ele_2')";
-                    $db->query($updateQuery);
-                }
-                break;
+                case 'g':
+                    // 先检查是否存在
+                    $sql = "SELECT COUNT(*) as count FROM global_data WHERE gid = ?";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param('s', $ele_1_2);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $stmt->close();
+                    
+                    if ($row['count'] > 0) {
+                        // 存在则更新
+                        $sql = "UPDATE global_data SET gvalue = ? WHERE gid = ?";
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param('ss', $ele_2, $ele_1_2);
+                    } else {
+                        // 不存在则插入
+                        $sql = "INSERT INTO global_data (gid, gvalue) VALUES (?, ?)";
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param('ss', $ele_1_2, $ele_2);
+                    }
+                    $stmt->execute();
+                    $stmt->close();
+                    break;
             case 'c':
                 if(strpos($ele_1_2, "c_msg") === 0){
                     $send_time = date('Y-m-d H:i:s');
@@ -412,6 +429,9 @@ foreach ($keyValuePairs as $pair) {
                     $updateQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values('$sid','$mid',2,'$ele_1_2',$ele_2)";
                     $db->query($updateQuery);
                 }
+                break;
+            case 'pusharr':
+                
                 break;
             default:
                 break;

@@ -601,6 +601,31 @@ $expr = preg_replace_callback('/\{inarr\((.*?)\)\}/', function($matches) use ($d
     return in_array($value, $array) ? 1 : 0;
 }, $expr);
 
+$expr = preg_replace_callback('/\{getarr\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
+    // 获取括号内的参数
+    $params = explode(',', $matches[1]);
+    
+    // 确保至少有两个参数
+    if (count($params) < 2) {
+        return 0;
+    }
+    
+    // 处理参数
+    $params = array_map(function($param) {
+        return trim($param);
+    }, $params);
+    
+    // 获取左边的值
+    $value = @eval("return {$params[0]};");
+    
+    // 获取右边的数组
+    $array_str = $params[1];
+    $array_str = str_replace(array("'","\""), '', $array_str);
+    $array = explode('|', $array_str);
+    
+    // 检查值是否在数组中
+    return $array[$value - 1] ? : 0;
+}, $expr);
 
 $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     $attr = $matches[1]; // 获取匹配到的变量名
@@ -3058,23 +3083,26 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
     while(preg_match_all('/v\(([\w.]+)\)/', $input, $matches)){
     if (!empty($matches[1])) {
         foreach ($matches[1] as $match) {
-            $firstDotPosition = strpos($match, '.');
-            if (!empty($firstDotPosition)) {
-                $attr1 = substr($match, 0, $firstDotPosition);
-                $attr2 = substr($match, $firstDotPosition + 1);
-                // 使用 process_attribute 处理单个属性
-                $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
-                //var_dump($op);
-                $op = $op?"'".$op."'":"'0'";
-                // if($op =='' || $op == "" || $op ==null){
-                //     //$op = "\"\"";
-                // }
-                //$op = str_replace(array("''", "\"\""), '0', $op);
-                //  var_dump($match);
-                //  var_dump($op);
-                // 替换字符串中的变量
-                $input = str_replace("v({$match})", $op, $input);
-            }
+            $op = \gm\update_redis($db,$match,$sid,$oid,$mid,$jid,$type,$para);
+            $op = $op?"'".$op."'":"'0'";
+            $input = str_replace("v({$match})", $op, $input);
+            // $firstDotPosition = strpos($match, '.');
+            // if (!empty($firstDotPosition)) {
+            //     $attr1 = substr($match, 0, $firstDotPosition);
+            //     $attr2 = substr($match, $firstDotPosition + 1);
+            //     // 使用 process_attribute 处理单个属性
+            //     $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
+            //     //var_dump($op);
+            //     $op = $op?"'".$op."'":"'0'";
+            //     // if($op =='' || $op == "" || $op ==null){
+            //     //     //$op = "\"\"";
+            //     // }
+            //     //$op = str_replace(array("''", "\"\""), '0', $op);
+            //     //  var_dump($match);
+            //     //  var_dump($op);
+            //     // 替换字符串中的变量
+            //     $input = str_replace("v({$match})", $op, $input);
+            // }
         }
     }
     }
