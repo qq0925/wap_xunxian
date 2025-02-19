@@ -20,7 +20,7 @@ if($_POST &&$add ==0){
     $sql = "UPDATE system_event_evs_self SET cond = '$cond', exec_cond = '$exec_cond',
     cmmt = '$gm_event_cmmt',cmmt2 = '$gm_event_cmmt_2', not_return_link = '$not_return_link',
     just_return = '$just_return', view_user_exp = '$view_user_exp', page_name = '$page_name', 
-    refresh_scene_npcs = '$refresh_scene_npcs', refresh_scene_items = '$refresh_scene_items' WHERE belong ='$event_id' and id = '$step_id'";
+    refresh_scene_npcs = '$refresh_scene_npcs', refresh_scene_items = '$refresh_scene_items',next_text = '$next_text' WHERE belong ='$event_id' and id = '$step_id'";
     // var_dump($sql);
     $cxjg = $dblj->exec($sql);
     echo "修改成功!<br/>";
@@ -28,7 +28,7 @@ if($_POST &&$add ==0){
 }
 
 if($add ==1){
-    $sql = "INSERT INTO system_event_evs_self set id = '$max_id',belong = '$event_id';";
+    $sql = "INSERT INTO system_event_evs_self set id = '$max_id',belong = '$event_id',next_text = '继续';";
     $cxjg =$dblj->exec($sql);
     $sql = "SELECT link_evs FROM system_event_self WHERE `id` = '$event_id'";
     $stmt = $dblj->query($sql);
@@ -146,6 +146,7 @@ $step_r_adopt = $row['r_adopt'];
     $step_page_name = $row['page_name'];
     $step_refresh_scene_npcs = $row['refresh_scene_npcs'];
     $step_refresh_scene_items = $row['refresh_scene_items'];
+    $step_next_text = $row['next_text'];
     $gm_select_1 = $step_not_return_link ==1?"selected":"";
     $gm_select_2 = $step_just_return ==1?"selected":"";
     
@@ -196,6 +197,7 @@ $gm_html =<<<HTML
 显示页面模板:<input name="page_name" type="text" maxlength="20" value="{$step_page_name}"><br/>
 刷新场景NPC:<input name="refresh_scene_npcs" type="text" value="{$step_refresh_scene_npcs}"/><br/>
 刷新场景物品:<input name="refresh_scene_items" type="text" value="{$step_refresh_scene_items}"/><br/>
+下一步骤链接文本:<input name="next_text" type="text" value="{$step_next_text}"/><br/>
 用户输入:<a href="?cmd=$gm_game_selfeventdefine_inputs">修改({$inputs_count})</a><br/>
 <input name="submit" type="submit" title="确定" value="确定"/><input name="submit" type="hidden" title="确定" value="确定"/></form><br/>
 <button onclick = "window.location.assign('?cmd=$gm_main')">返回上一级</button><br/>

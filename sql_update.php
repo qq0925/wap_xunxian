@@ -15,6 +15,19 @@
         $stmt->execute();
     }
 
+
+    $sql = "SHOW COLUMNS FROM system_event_evs_self LIKE 'next_text'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE system_event_evs_self ADD COLUMN next_text VARCHAR(255) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
     $sql = "SHOW COLUMNS FROM game3 LIKE 'round'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
@@ -759,5 +772,4 @@ AFTER nwin_event_id ;";
         $sql = "insert into system_function (belong,id,name,link_function,default_value) values (14,88,'装备页面镶嵌功能',88,'装备页面镶嵌功能')";
         $dblj->exec($sql);
     }
-
 ?>

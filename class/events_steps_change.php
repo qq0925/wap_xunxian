@@ -96,6 +96,7 @@ HTML;
                         $step_just_return = $event['just_return'];
                         $step_inputs = $event['inputs'];
                         $step_dests = $event['dests'];
+                        $step_next_text = $event['next_text']?:'继续';
                         $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,$oid,$mid);
                         $step_exec_triggle = checkTriggerCondition($step_exec_cond,$dblj,$sid,$oid,$mid);
                         $step_cmmt = $event['cmmt'];
@@ -312,7 +313,7 @@ HTML;
                                 $cdid[] = $cmid;
                                 $page_continue = $encode->encode("cmd=main_target_event&mid=$mid&oid=$oid&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
                                 $page_continue =<<<HTML
-                    <a href="?cmd=$page_continue">继续</a><br/>
+                    <a href="?cmd=$page_continue">{$step_next_text}</a><br/>
 HTML;
                             if($step_not_return_link ==0 && $not_ret_canshu!=1){
                             $sql = "delete from system_player_inputs where sid = '$sid'";
