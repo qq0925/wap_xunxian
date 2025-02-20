@@ -601,10 +601,10 @@ $expr = preg_replace_callback('/\{inarr\((.*?)\)\}/', function($matches) use ($d
     return in_array($value, $array) ? 1 : 0;
 }, $expr);
 
+
 $expr = preg_replace_callback('/\{getarr\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     // 获取括号内的参数
     $params = explode(',', $matches[1]);
-    
     // 确保至少有两个参数
     if (count($params) < 2) {
         return 0;
@@ -614,7 +614,6 @@ $expr = preg_replace_callback('/\{getarr\((.*?)\)\}/', function($matches) use ($
     $params = array_map(function($param) {
         return trim($param);
     }, $params);
-    
     // 获取左边的值
     $value = @eval("return {$params[0]};");
     
@@ -622,17 +621,21 @@ $expr = preg_replace_callback('/\{getarr\((.*?)\)\}/', function($matches) use ($
     $array_str = $params[1];
     $array_str = str_replace(array("'","\""), '', $array_str);
     $array = explode('|', $array_str);
-    
+    var_dump($array);
     // 检查值是否在数组中
     return $array[$value - 1] ? : 0;
 }, $expr);
 
 $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     $attr = $matches[1]; // 获取匹配到的变量名
+
     global $redis;
+    if(is_numeric($attr)){
+    $op = $attr;
+    }else{
     $op = \gm\update_redis($db,$attr,$sid,$oid,$mid,$jid,$type,$para);
+    }
     if(!is_int((int)$op)){
-    
     $op = str_replace("'", '', $op);
     $op = $op?"'".$op."'":"''";
     }else{
@@ -1963,22 +1966,12 @@ if(!$bagequiphtml){
                             }
                             $row = $result->fetch_assoc();
                             
-                            
-                            if ($row == null||$row =='') {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
-                            $op = nl2br($row[$attr3]);
+                            $op = nl2br($row[$attr3])?:0;
                             if ($attr2 == "is_adopt") {
                                 $op = $row['ncan_shouyang'];
                             } 
                                 }
-                            if ($op === null||$op =='') {
-                            //$op = "\"\""; // 或其他默认值
-                            }
-                                }
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
                             break;
                         case 'npc':
                             $attr3 = 'n'.$attr2;
@@ -3231,6 +3224,24 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
                 $op = count(explode('|',$op));
                 $input = str_replace("count({$match})", $op, $input);
+            }
+        }
+    }
+}
+
+    $matches_5 = [];
+    if($input){
+    preg_match_all('/end\(([\w.]+)\)/', $input, $matches_5);
+    if (!empty($matches_5[1])) {
+        foreach ($matches_5[1] as $match) {
+            $firstDotPosition = strpos($match, '.');
+            if (!empty($firstDotPosition)) {
+                $attr1 = substr($match, 0, $firstDotPosition);
+                $attr2 = substr($match, $firstDotPosition + 1);
+                // 使用 process_attribute 处理单个属性
+                $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
+                $op = end(explode('|',$op));
+                $input = str_replace("end({$match})", $op, $input);
             }
         }
     }
