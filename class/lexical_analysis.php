@@ -1538,7 +1538,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     }
                     }else{
                     $attr3 = $attr1.$attr2;
-                    $attr3 = str_replace('.', '', $attr3);
+                    $attr3 = str_replace('\'', '', $attr3);
                     $sql = "SHOW COLUMNS FROM game1 LIKE '$attr3'";
                     $result = $db->query($sql);
                     if($result->num_rows >0){
@@ -1556,15 +1556,11 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         die('查询失败: ' . $db->error);
                     }
                     $row = $result_2->fetch_assoc();
-                    if ($row === null||$row =='') {
-                        //$op = "\"\""; // 或其他默认值
-                        }else{
                             if($attr_type !=1){
                     $op = nl2br($row[$attr3]);
                             }else{
                     $op = nl2br($row['value']);
                             }
-                        }
                     $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                     // 替换字符串中的变量
                     }
@@ -3221,9 +3217,29 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
         }
     }
 }
+
+    $matches_4 = [];
+    if($input){
+    preg_match_all('/count\(([\w.]+)\)/', $input, $matches_4);
+    if (!empty($matches_4[1])) {
+        foreach ($matches_4[1] as $match) {
+            $firstDotPosition = strpos($match, '.');
+            if (!empty($firstDotPosition)) {
+                $attr1 = substr($match, 0, $firstDotPosition);
+                $attr2 = substr($match, $firstDotPosition + 1);
+                // 使用 process_attribute 处理单个属性
+                $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
+                $op = count(explode('|',$op));
+                $input = str_replace("count({$match})", $op, $input);
+            }
+        }
+    }
+}
+
 if($input){
 $input = evaluate_expression($input,$db,$sid,$oid,$mid,$jid,$type,$para);
 }
+
 // 使用 preg_replace_callback 进行匹配和替换
 if($input){
 $input = preg_replace_callback('/#"(.*?)"/', function ($matches) use ($sid, $oid, $mid, $jid, $type, $db, $para) {
