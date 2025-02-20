@@ -621,7 +621,6 @@ $expr = preg_replace_callback('/\{getarr\((.*?)\)\}/', function($matches) use ($
     $array_str = $params[1];
     $array_str = str_replace(array("'","\""), '', $array_str);
     $array = explode('|', $array_str);
-    var_dump($array);
     // 检查值是否在数组中
     return $array[$value - 1] ? : 0;
 }, $expr);
@@ -3240,7 +3239,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 $attr2 = substr($match, $firstDotPosition + 1);
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
-                $op = end(explode('|',$op));
+                $op = end(explode('|',$op))?:0;
                 $input = str_replace("end({$match})", $op, $input);
             }
         }
