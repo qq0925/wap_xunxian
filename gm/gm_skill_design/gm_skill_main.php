@@ -85,6 +85,18 @@ if($delete_equip_id){
     $delete_equip_id = 0;
 }
 
+if(isset($del_event)){
+
+echo "已删除！<br/>";
+$sql = "delete from system_event_evs_self where belong = '$del_event'";
+$dblj->exec($sql);
+$sql = "delete from system_event_self where id = '$del_event'";
+$dblj->exec($sql);
+$sql = "update `system_skill` set $del_type = 0 where jid = '$skill_id'";
+$dblj->exec($sql);
+}
+
+
 $gm = $encode->encode("cmd=gm&sid=$sid");
 $last_page = $encode->encode("cmd=gm_game_skilldefine&sid=$sid");
 $sql = "select * from system_skill where jid = '$skill_id'";
@@ -136,8 +148,6 @@ HTML;
             break;
         }
 }
-    
-    
     $skill_id = $gm_ret['jid'];
     $skill_name = $gm_ret['jname'];
     $skill_desc = $gm_ret['jdesc'];
@@ -165,6 +175,8 @@ HTML;
     $equip_appoint_name = $equip_appoint['iname'];
     $equip_appoint_id = $equip_appoint['iid'];
     $skill_specific_choose = $encode->encode("cmd=gm_skill_appoint_choose&skill_post_canshu=2&skill_id=$skill_id&sid=$sid");
+    $del_skill = $encode->encode("cmd=gm_game_skilldefine&del_skill_id=$skill_id&sid=$sid");
+    $del_url = "game.php?cmd=$del_skill";
     if(!$equip_appoint_id){
     $skill_specific_equip = <<<HTML
     <a href="?cmd=$skill_specific_choose">选择兵器</a><br/>
@@ -237,14 +249,28 @@ HTML;
 if($jevent_use_id ==0){
 $add_value = $skill_name."使用";
 $skill_use_event = $encode->encode("cmd=game_main_event&add_event=1&add_value=$add_value&gm_post_canshu=skill_use&main_id=$skill_id&event_id=$jevent_use_id&sid=$sid");
+$use_text =<<<HTML
+<a href="?cmd=$skill_use_event">定义事件</a>
+HTML;
 }else{
 $skill_use_event = $encode->encode("cmd=game_main_event&gm_post_canshu=skill_use&main_id=$skill_id&event_id=$jevent_use_id&sid=$sid");
+$skill_use_event_del = $encode->encode("cmd=game_main_event&gm_post_canshu=skill_use&del_event=1&main_id=$skill_id&event_id=$jevent_use_id&sid=$sid");
+$use_text =<<<HTML
+<a href="?cmd=$skill_use_event">修改事件</a><a href="?cmd=$skill_use_event_del">删除事件</a>
+HTML;
 }
 if($jevent_up_id ==0){
 $add_value = $skill_name."升级";
-$skill_up_event = $encode->encode("cmd=game_main_event&add_event=1&add_value=$add_value&gm_post_canshu=skill_up&main_id=$skill_id&event_id=$jevent_use_id&sid=$sid");
+$skill_up_event = $encode->encode("cmd=game_main_event&add_event=1&add_value=$add_value&gm_post_canshu=skill_up&main_id=$skill_id&event_id=$jevent_up_id&sid=$sid");
+$up_text =<<<HTML
+<a href="?cmd=$skill_up_event">定义事件</a>
+HTML;
 }else{
-$skill_up_event = $encode->encode("cmd=game_main_event&gm_post_canshu=skill_up&main_id=$skill_id&event_id=$jevent_use_id&sid=$sid");
+$skill_up_event = $encode->encode("cmd=game_main_event&gm_post_canshu=skill_up&main_id=$skill_id&event_id=$jevent_up_id&sid=$sid");
+$skill_up_event_del = $encode->encode("cmd=game_main_event&gm_post_canshu=skill_up&del_event=1&main_id=$skill_id&event_id=$jevent_up_id&sid=$sid");
+$up_text =<<<HTML
+<a href="?cmd=$skill_up_event">修改事件</a><a href="?cmd=$skill_up_event_del">删除事件</a>
+HTML;
 }
 $skill_html = <<<HTML
 </p>
@@ -258,7 +284,7 @@ $skill_html = <<<HTML
 <option value="1" $skill_occasion_choose>非战斗中</option>
 </select><br/>
 攻击范围(-1表示攻击所有):<input name="group_attack" type="text" value="{$skill_group_attack}" maxlength="6"/><br/>
-$self_attr
+{$self_attr}
 伤害系数:<input name="hurt_mod" type="text" value="{$skill_hurt_mod}" maxlength="6"/><br/>
 冷却时间(秒):<input name="cooling_time" type="text" value="{$skill_cooling_time}" maxlength="6"/><br/>
 冷却时间(回合):<input name="cooling_round" type="text" value="{$skill_cooling_round}" maxlength="6"/><br/>
@@ -269,8 +295,8 @@ $self_attr
 使用一次增加熟练度表达式:<textarea name="add_point_exp" maxlength="1024" rows="4" cols="40">{$skill_add_point_exp}</textarea><br/>
 使用兵器类型:{$skill_equip_type}<br/>
 使用特定兵器:{$skill_specific_equip}
-使用事件：<a href="?cmd=$skill_use_event">定义事件</a><br/>
-升级事件：<a href="?cmd=$skill_up_event">定义事件</a><br/>
+使用事件：{$use_text}<br/>
+升级事件：{$up_text}<br/>
 使用条件:<textarea name="use_cond" maxlength="1024" rows="4" cols="40">{$skill_use_cond}</textarea><br/>
 不满足使用条件时的提示语:<textarea name="cant_use_cmmt" maxlength="200" rows="4" cols="40">{$skill_cant_use_cmmt}</textarea><br/>
 使用效果描述:<textarea name="effect_cmmt" maxlength="200" rows="4" cols="40">{$skill_effect_cmmt}</textarea><br/>
@@ -278,11 +304,23 @@ $self_attr
 升级条件:<textarea name="promotion_cond" maxlength="1024" rows="4" cols="40">{$skill_promotion_cond}</textarea><br/>
 <input type="submit" title="确定" value="确定"/><br/><br/>
 </form>
-<a href="">查看定义数据</a><br/>
-<a href="">导入定义数据</a><br/>
-<a href="">删除该技能</a><br/>
+<a href="">！！！查看定义数据</a><br/>
+<a href="">！！！导入定义数据</a><br/>
+<a href="#" onclick="confirmAction()">删除该技能</a><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
 HTML;
 echo $skill_html;
 ?>
+<script>
+function confirmAction() {
+    // 弹出确认框
+    if (confirm("你确定要删除该技能吗？")) {
+        // 如果点击“确认”，则跳转到PHP传递的链接
+        window.location.href = "<?php echo $del_url; ?>";
+    } else {
+        // 如果点击“取消”，则什么也不做
+        return false;
+    }
+}
+</script>

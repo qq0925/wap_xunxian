@@ -108,9 +108,10 @@ for ($i = 0; $i < @count($tasks); $i++){
         $task_tnpc_id = $row['tnpc_id'];
         $task_list_detail = $encode->encode("cmd=system_task_detail&task_id=$task_id&sid=$sid");
         $task_delete = $encode->encode("cmd=gm_type_npc&gm_post_canshu=4&task_tnpc_id=$task_tnpc_id&remove_id=$task_id&sid=$sid");
+        $del_url = "game.php?cmd=$task_delete";
         $hangshu += 1;
         $task_list .=<<<HTML
-        <a href="?cmd=$task_list_detail">{$hangshu}.{$task_name}</a><a href = "?cmd=$task_delete">删除</a>
+        <a href="?cmd=$task_list_detail">{$hangshu}.{$task_name}</a><a href="#" onclick="return confirmAction('$del_url')">删除</a>
 HTML;
     if($index ==1 && count($tasks)>1){
     $next_pos = $tasks[1];
@@ -155,3 +156,13 @@ HTML;
 
 echo $npc_task_list;
 ?>
+<script>
+function confirmAction(del_url) {
+    // 弹出确认框
+    if (confirm("你确定要删除该任务吗？")) {
+        // 使用传入的具体删除链接
+        window.location.href = del_url;
+    }
+    return false;
+}
+</script>

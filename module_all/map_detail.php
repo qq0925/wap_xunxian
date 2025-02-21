@@ -343,9 +343,9 @@ if ($nowmid_arr['map_right'] > 0) {
                 $map_0_name['m_3_name'] = '─';
                 $map_0_name['m_4_name'] = $maps1['mname'];
 
-                if ($maps1['map_upper'] > 0) {
+                if ($maps1['mup'] > 0) {
                     try {
-                        $maps2 = map_find($maps1['map_upper']);
+                        $maps2 = map_find($maps1['mup']);
                         $map_1_name['m_4_name'] = '│';
                         $map_2_name['m_4_name'] = $maps2['mname'];
                     } catch (Exception $e) {

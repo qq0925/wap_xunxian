@@ -11,8 +11,10 @@ require_once 'class/basic_function_todo.php';
 include_once 'class/events_steps_change.php';
 
 $parents_page = $currentFilePath;
+$parents_cmd = 'gm_scene_new';
 // $encode = new \encode\encode();
 // $player = new \player\player();
+
 $player = \player\getplayer($sid,$dblj);
 $gm_html = '';
 $game_main = '';
@@ -70,73 +72,133 @@ if($u_sailing ==1){
     $cmd = 'pve_fight';
     include 'module_all/scene_fight.php';
 }else{
+
 if($player->tpsmid!=0){
 \player\changeplayersx('tpsmid',0,$sid,$dblj);
 }
-$parents_cmd = 'gm_scene_new';
+
+
+
+
+
 $ret = global_event_data_get(48,$dblj);
 if($ret){
 global_events_steps_change(48,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php',null,null,$para);
 }
-if($player->ucmd){
-    \player\changeplayersx('ucmd',"",$sid,$dblj);
-    $player = \player\getplayer($sid,$dblj);
-}
 
-        
+
+
+// if($player->ucmd){
+//     \player\changeplayersx('ucmd','',$sid,$dblj);
+//     $player = \player\getplayer($sid,$dblj);
+// }
+
+
  if ($player->uhp<=0){
      \player\changeplayersx('uhp',1,$sid,$dblj);
  }
 
-if (isset($newmid)){
-    if ($player->nowmid!=$newmid){
-        $clmid = player\getmid($newmid,$dblj); //获取即将走的地图信息
-        
-        $dblj->exec("update system_pet_scene set nmid = '$newmid' where nsid = '$sid' and nstate = 1;");
-        
-        if($clmid->minto_event_id !=0){
-        $parents_cmd = 'gm_scene_new';
-        events_steps_change($clmid->minto_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','scene',$clmid->mid,$para);
-        $player = player\getplayer($sid,$dblj);//获取玩家信息
-        $tpsmid = $player->tpsmid;
-        }
-        // if ($player->uhp<=0){
-        //     $retmid = \player\getmid($player->nowmid,$dblj);
-        //     $retqy = \player\getqy($retmid->id,$dblj);
-        //     echo("你已经重伤请治疗<br/>");
-        // }
-        $parents_cmd = 'gm_scene_new';
-        global_events_steps_change(49,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php',null,null,$para);
-        if($tpsmid!=0){
-        \player\changeplayersx('justmid',$player->nowmid,$sid,$dblj);//更新玩家justmid
-        \player\changeplayersx('nowmid',$tpsmid,$sid,$dblj);//更新玩家nowmid
-        \player\changeplayersx('tpsmid',0,$sid,$dblj);
-        }else{
-        \player\changeplayersx('justmid',$player->nowmid,$sid,$dblj);//更新玩家justmid
-        \player\changeplayersx('nowmid',$newmid,$sid,$dblj);//更新玩家nowmid
-        $oldclmid = player\getmid($player->nowmid,$dblj);//获取离开的地图信息
-            if($oldclmid->mout_event_id !=0){
-                $parents_cmd = 'gm_scene_new';
-                events_steps_change($oldclmid->mout_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','scene',$oldclmid->mid,$para);
-                $player = player\getplayer($sid,$dblj);//获取玩家信息
-                if($player->tpsmid!=0){
-                \player\changeplayersx('justmid',$player->nowmid,$sid,$dblj);//更新玩家justmid
-                \player\changeplayersx('nowmid',$player->tpsmid,$sid,$dblj);//更新玩家nowmid
-                \player\changeplayersx('tpsmid',0,$sid,$dblj);
-                }
-                }
-        }
-        $player = player\getplayer($sid,$dblj);//获取玩家信息
-    }
 
+
+
+if (isset($newmid) && $player->nowmid != $newmid) {
+    // 获取新地图信息
+    $clmid = player\getmid($newmid, $dblj);
+    
+    // 批量更新数据库操作
+    try {
+        $dblj->beginTransaction();
+        
+        // 更新宠物场景
+        $dblj->exec("UPDATE system_pet_scene SET nmid = '$newmid' WHERE nsid = '$sid' AND nstate = 1");
+        
+        // 处理进入地图事件
+        if ($clmid->minto_event_id != 0) {
+            events_steps_change(
+                $clmid->minto_event_id,
+                $sid,
+                $dblj,
+                $just_page,
+                $steps_page,
+                $cmid,
+                'module_all/main_page.php',
+                'scene',
+                $clmid->mid,
+                $para
+            );
+            
+            // 重新获取可能被事件改变的玩家数据
+            $player = player\getplayer($sid, $dblj);
+            $tpsmid = $player->tpsmid;
+        } else {
+            $tpsmid = 0;
+        }
+        
+        // 处理全局事件
+        global_events_steps_change(49, $sid, $dblj, $just_page, $steps_page, $cmid, 'module_all/main_page.php', null, null, $para);
+        
+        // 更新玩家位置信息
+        if ($tpsmid != 0) {
+            // 批量更新玩家状态
+            $updates = [
+                ['justmid', $player->nowmid],
+                ['nowmid', $tpsmid],
+                ['tpsmid', 0]
+            ];
+        } else {
+            $oldclmid = player\getmid($player->nowmid, $dblj);
+            $updates = [
+                ['justmid', $player->nowmid],
+                ['nowmid', $newmid]
+            ];
+            
+            // 处理离开地图事件
+            if ($oldclmid->mout_event_id != 0) {
+                events_steps_change(
+                    $oldclmid->mout_event_id,
+                    $sid,
+                    $dblj,
+                    $just_page,
+                    $steps_page,
+                    $cmid,
+                    'module_all/main_page.php',
+                    'scene',
+                    $oldclmid->mid,
+                    $para
+                );
+                
+                // 检查事件是否改变了玩家位置
+                $player = player\getplayer($sid, $dblj);
+                if ($player->tpsmid != 0) {
+                    $updates = [
+                        ['justmid', $player->nowmid],
+                        ['nowmid', $player->tpsmid],
+                        ['tpsmid', 0]
+                    ];
+                }
+            }
+        }
+        
+        // 批量执行玩家状态更新
+        foreach ($updates as [$field, $value]) {
+            \player\changeplayersx($field, $value, $sid, $dblj);
+        }
+        
+        $dblj->commit();
+    } catch (Exception $e) {
+        $dblj->rollback();
+        error_log("Error in map change: " . $e->getMessage());
+    }
+    
+    // 最后更新玩家信息
+    $player = player\getplayer($sid, $dblj);
+} else if (!isset($newmid)) {
+    \player\changeplayersx('justmid', $player->nowmid, $sid, $dblj);
 }
-else{
-\player\changeplayersx('justmid',$player->nowmid,$sid,$dblj);//更新玩家justmid
-}
+
 
 $clmid = player\getmid($player->nowmid,$dblj);
 if($clmid->mlook_event_id !=0){
-$parents_cmd = 'gm_scene_new';
 events_steps_change($clmid->mlook_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','scene',$clmid->mid,$para);
 }
 $sql = "select uname,sid,endtime,uis_designer from game1 where nowmid='$player->nowmid' AND sfzx = 1 AND sid !='$sid' and uis_sailing =0";//获取当前地图玩家
@@ -247,7 +309,6 @@ if($clmid->mnpc!=''){
             
             $npc_scene_creat_event = $npc_para->ncreat_event_id;
             if($npc_scene_creat_event!=0){
-            include_once 'class/events_steps_change.php';
             events_steps_change($npc_scene_creat_event,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$lastInsertId,$para);
             }
 

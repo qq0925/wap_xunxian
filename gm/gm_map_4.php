@@ -45,11 +45,14 @@ if ($result->num_rows > 0) {
         $rename_sail_hide = $row['sail_hide'] == '0'?'[海]':'[隐]';
         $rename_sky_hide = $row['sky_hide'] == '0'?'[空]':'[隐]';
         $remove_region = $encode->encode("cmd=region_post&gm_post_canshu=2&remove_id=$last_id&sid=$sid");
+        $del_url = "game.php?cmd=$remove_region";
         $rename_region = $encode->encode("cmd=region_post&gm_post_canshu=1&rename_canshu=1&rename_id=$last_id&rename_name=$region_name&rename_road_hide=$rename_road_hide&rename_sail_hide=$rename_sail_hide&rename_sky_hide=$rename_sky_hide&sid=$sid");
         if($last_id =="0"){
         $region_all .= "[$i].{$rename_road_hide}{$rename_sail_hide}{$rename_sky_hide}{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a>(默认大区域，不可移除)<br/>";
         }else{
-        $region_all .= "[$i].{$rename_road_hide}{$rename_sail_hide}{$rename_sky_hide}{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a><a href='?cmd=$remove_region'>移除</a><br/>";
+        $region_all .=<<<HTML
+[$i].{$rename_road_hide}{$rename_sail_hide}{$rename_sky_hide}{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a><a href="#" onclick="return confirmAction('$del_url')">移除</a><br/>
+HTML;
         }
         $i++;
     }
@@ -123,3 +126,13 @@ HTML;
 }
 echo $area_html;
 ?>
+<script>
+function confirmAction(del_url) {
+    // 弹出确认框
+    if (confirm("你确定要移除该大区域吗？")) {
+        // 使用传入的具体删除链接
+        window.location.href = del_url;
+    }
+    return false;
+}
+</script>

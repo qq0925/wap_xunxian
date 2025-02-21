@@ -1312,7 +1312,7 @@ function getplayeritem_attr($attr,$sid,$iid,$dblj){
 }
 
 function changeplayersx($sx,$gaibian,$sid,$dblj){
-    $sql = "update game1 set $sx = '$gaibian' WHERE sid='$sid'";//改变玩家属性
+    $sql = "update `game1` set $sx = '$gaibian' WHERE sid='$sid'";//改变玩家属性
     $ret = $dblj->exec($sql);
 }
 

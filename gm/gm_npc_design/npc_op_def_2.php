@@ -15,6 +15,17 @@ $stmt->execute();
 echo "修改成功！<br/>";
 }
 
+if(isset($del_event)){
+
+echo "已删除！<br/>";
+$sql = "delete from system_event_evs_self where belong = '$del_event'";
+$dblj->exec($sql);
+$sql = "delete from system_event_self where id = '$del_event'";
+$dblj->exec($sql);
+$sql = "update `system_npc_op` set link_event = 0 where id = '$op_id'";
+$dblj->exec($sql);
+}
+
 if($add ==1){
 $sql = "insert into system_npc_op(`belong`,`id`,`name`)values('$op_belong','$max_id','未命名')";
 $cxjg = $dblj->exec($sql);
@@ -54,8 +65,15 @@ $op_link_task = $ret['link_task'];
 
 if($op_link_event ==0){
 $npc_op_events = $encode->encode("cmd=game_main_event&add_event=1&add_value=$op_name&gm_post_canshu=npc_op&main_id=$op_id&event_id=$op_link_event&sid=$sid");
+$event_text =<<<HTML
+<a href="?cmd=$npc_op_events">定义事件</a>
+HTML;
 }else{
 $npc_op_events = $encode->encode("cmd=game_main_event&gm_post_canshu=npc_op&main_id=$op_id&event_id=$op_link_event&sid=$sid");
+$npc_op_events_del = $encode->encode("cmd=game_main_event&gm_post_canshu=npc_op&del_event=1&main_id=$op_id&event_id=$op_link_event&sid=$sid");
+$event_text =<<<HTML
+<a href="?cmd=$npc_op_events">修改事件</a><a href="?cmd=$npc_op_events_del">删除事件</a>
+HTML;
 }
 
 $op_list = $encode->encode("cmd=gm_type_npc&gm_post_canshu=2&npc_id=$op_belong&sid=$sid");
@@ -68,7 +86,7 @@ $op_html =<<<HTML
 <input name="op_id" type="hidden" value="{$op_id}">
 操作提示:<input name="op_name" type="text" value="{$op_name}" maxlength="50"/><br/>
 出现条件:<textarea name="show_cond" maxlength="1024" rows="4" cols="40">{$op_show_cond}</textarea><br/>
-触发事件:<a href="?cmd=$npc_op_events">定义事件</a><br/>
+触发事件:{$event_text}<br/>
 <br/>
 触发任务:<a href="?cmd=$npc_op_tasks">定义任务</a><br/>
 <input name="submit" type="submit" title="确定" value="确定"/><input name="submit" type="hidden" title="确定" value="确定"/></form><br/>

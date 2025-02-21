@@ -13,6 +13,10 @@ if ($list_page) {
 $offset = ($currentPage - 1) * $list_row;
 
 
+if(isset($del_skill_id)){
+    //首先删除该技能，其次移除和该技能相关的使用和升级事件，第三移除玩家和宠物，npc等拥有的该技能。
+}
+
 // 计算总行数
 $sqlCount = "SELECT COUNT(*) as total FROM system_skill";
 $countResult = $dblj->query($sqlCount);

@@ -107,9 +107,10 @@ $gm_main = $encode->encode("cmd=gm_game_globaleventdefine&gm_post_canshu=$event_
         $step = $steps[$i-1];
         $gm_steps_detail = $encode->encode("cmd=gm_game_globaleventdefine_steps&step_belong_id=$event_id&step_id=$step&sid=$sid");
         $gm_steps_delete = $encode->encode("cmd=game_event_page_1&gm_post_canshu_2=$gm_post_canshu_2&step_belong_id=$event_id&step_id=$step&if_delete=1&sid=$sid");
+        $step_order = '步骤'.$i;
         $gm_steps .= <<<HTML
         步骤{$i}:<a href="?cmd=$gm_steps_detail">修改</a>
-        <a href="?cmd=$gm_steps_delete">删除</a><br/>
+        <a href="#" onclick="return confirmAction('$gm_steps_delete', '{$step_order}')">删除</a><br/>
 HTML;
 }
     }
@@ -134,3 +135,13 @@ $gm_steps
 HTML;
 echo $gm_html;
 ?>
+<script>
+function confirmAction(del_url, step_order) {
+    // 在确认框中显示具体的操作名称
+    if (confirm("你确定要删除 “" + step_order + "” 这个步骤吗？")) {
+        // 使用传入的具体删除链接
+        window.location.href = del_url;
+    }
+    return false;
+}
+</script>

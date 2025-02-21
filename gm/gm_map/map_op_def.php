@@ -50,9 +50,9 @@ $dblj->exec($query);
 $target_midid = $op_belong;
 // 执行更新
 if ($stmt->execute()) {
-    echo "更新成功";
+    echo "删除操作成功！";
 } else {
-    echo "更新失败";
+    echo "删除失败！";
 }
 }
 
@@ -108,9 +108,10 @@ for ($i = 0; $i < @count($ops); $i++){
         $op_belong = $row['belong'];
         $op_list_detail = $encode->encode("cmd=system_map_op_detail&op_id=$op_id&sid=$sid");
         $op_delete = $encode->encode("cmd=gm_type_map&gm_post_canshu=2&op_belong=$op_belong&remove_id=$op_id&sid=$sid");
+        $del_url = "game.php?cmd=$op_delete";
         $hangshu += 1;
         $op_list .=<<<HTML
-        <a href="?cmd=$op_list_detail">{$hangshu}.{$op_name}</a><a href = "?cmd=$op_delete">删除</a>
+        <a href="?cmd=$op_list_detail">{$hangshu}.{$op_name}</a><a href="#" onclick="return confirmAction('$del_url')">删除</a>
 HTML;
     if($index ==1 && count($ops)>1){
     $next_pos = $ops[1];
@@ -155,3 +156,13 @@ HTML;
 
 echo $map_op_list;
 ?>
+<script>
+function confirmAction(del_url) {
+    // 弹出确认框
+    if (confirm("你确定要删除该操作吗？")) {
+        // 使用传入的具体删除链接
+        window.location.href = del_url;
+    }
+    return false;
+}
+</script>

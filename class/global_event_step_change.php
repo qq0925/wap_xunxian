@@ -114,14 +114,41 @@ HTML;
                             }
                             }elseif($step_triggle){
                             if($step_exec_triggle){
-                            $ret = attrsetting($step_s_attrs,$sid,$oid,$mid,$para);
-                            $ret_2 = attrchanging($step_m_attrs,$sid,$oid,$mid,$para);
-                            $ret_3 = itemchanging($step_items,$sid,$oid,$mid);
-                            $ret_4 = skillschanging($step_a_skills,$sid,1,$oid,$mid);
-                            $ret_6 = skillschanging($step_r_skills,$sid,2,$oid,$mid);
-                            $ret_7 = taskschanging($step_r_tasks,$sid,2);
-                            $ret_8 = adoptpeting($step_a_adopt,$sid,1,$oid,$mid);
-                            $ret_9 = adoptpeting($step_r_adopt,$sid,2,$oid,$mid);
+                            if ($step_s_attrs) {
+                                $ret = attrsetting($step_s_attrs, $sid, $oid, $mid, $para);
+                            }
+                            
+                            // 处理属性变更
+                            if ($step_m_attrs) {
+                                $ret_2 = attrchanging($step_m_attrs, $sid, $oid, $mid, $para);
+                            }
+                            
+                            // 处理物品变更
+                            if ($step_items) {
+                                $ret_3 = itemchanging($step_items, $sid, $oid, $mid);
+                            }
+                            
+                            // 处理技能添加和移除
+                            if ($step_a_skills) {
+                                $ret_4 = skillschanging($step_a_skills, $sid, 1, $oid, $mid);
+                            }
+                            if ($step_r_skills) {
+                                $ret_6 = skillschanging($step_r_skills, $sid, 2, $oid, $mid);
+                            }
+                            
+                            // 处理任务移除
+                            if ($step_r_tasks) {
+                                $ret_7 = taskschanging($step_r_tasks, $sid, 2);
+                            }
+                            
+                            // 处理宠物添加和移除
+                            if ($step_a_adopt) {
+                                $ret_8 = adoptpeting($step_a_adopt, $sid, 1, $oid, $mid);
+                                $success = $success && $ret_8;
+                            }
+                            if ($step_r_adopt) {
+                                $ret_9 = adoptpeting($step_r_adopt, $sid, 2, $oid, $mid);
+                            }
                             $step_cmmt = html_entity_decode($step_cmmt);
                             $step_cmmt = \lexical_analysis\process_string($step_cmmt,$sid,$oid,$mid);
                             $step_cmmt = \lexical_analysis\process_photoshow($step_cmmt);
