@@ -89,7 +89,7 @@ if($skill_id!=''){
 $sql = "SELECT * from system_skill where jid = '$skill_id'";
 $stmt = $dblj->query($sql);
 $skill_rows = $stmt->fetch(\PDO::FETCH_ASSOC);
-$skill_name = $skill_rows['jname'];
+$skill_name = $skill_rows['jname']?:'<font color="red"> 未知技能（请确保是否存在！）</font>';
 $skill_remove = $encode->encode("cmd=gm_type_npc&gm_post_canshu=5&remove_id=$skill_id&remove_lvl=$skill_lvl&npc_id=$npc_id&sid=$sid");
 $skill_list .=<<<HTML
 {$i}.{$skill_name}({$skill_lvl})<a href="?cmd=$skill_remove">移除</a><br/>

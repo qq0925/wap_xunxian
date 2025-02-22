@@ -1872,7 +1872,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                     $stmt2->execute();
                                     $result2 = $stmt2->get_result();
                                     $row2 = $result2->fetch_assoc();
-                                    $row_result .= "，" . $row2['jname'] ."(". "{$skill_lvl}".")";
+                                    $skill_name = $row2['jname']?:'未知技能！！！';
+                                    $row_result .= "，" . $skill_name ."(". "{$skill_lvl}".")";
                                     
                                     $skill_final = ltrim($row_result, "，");
                                     if(!$skill_final){
@@ -2005,7 +2006,8 @@ if(!$bagequiphtml){
                                         $stmt->execute();
                                         $result = $stmt->get_result();
                                         $row = $result->fetch_assoc();
-                                        $row_result .= "，" . $row['jname'] ."(". "{$skill_lvl}".")";
+                                        $skill_name = $row['jname']?:'未知技能！！！';
+                                        $row_result .= "，" . $skill_name ."(". "{$skill_lvl}".")";
                                     }
                                     $row_result = ltrim($row_result, "，");
                                 }
@@ -2065,7 +2067,8 @@ if(!$bagequiphtml){
                                         $stmt->execute();
                                         $result = $stmt->get_result();
                                         $row = $result->fetch_assoc();
-                                        $row_result .= "，" . $row['jname'] ."(". "{$skill_lvl}".")";
+                                        $skill_name = $row['jname']?:'未知技能！！！';
+                                        $row_result .= "，" . $skill_name ."(". "{$skill_lvl}".")";
                                     }
                                     $row_result = ltrim($row_result, "，");
                                 }
@@ -2123,7 +2126,8 @@ if(!$bagequiphtml){
                                         $stmt->execute();
                                         $result = $stmt->get_result();
                                         $row = $result->fetch_assoc();
-                                        $row_result .= "，" . $row['jname'] ."(". "{$skill_lvl}".")";
+                                        $skill_name = $row['jname']?:'未知技能！！！';
+                                        $row_result .= "，" . $skill_name ."(". "{$skill_lvl}".")";
                                     }
                                     $row_result = ltrim($row_result, "，");
                                 }

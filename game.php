@@ -208,14 +208,6 @@ $show_cmid = $iniFile->getItem('验证信息', 'cmid值');
                 $test_code_text = $user;
                 include_once 'gm/gm_test_code_show/gm_test_code_user.php';//user测试代码显示
                 }
-                $xyid = "";
-                $xyid = $user['uid'] ?? 0;
-                $b1 = $user['年'];
-                $b2 = $user['月'];
-                $b3 = $user['日'];
-                $b4 = $user['时'];
-                $b5 = $user['分'];
-                $b6 = $user['秒'];
                 $cid = $user['cmid值'];
                 $xcid = $user['xcmid值'];
                 $dcid = $user['dcmid值'];
@@ -234,13 +226,6 @@ $show_cmid = $iniFile->getItem('验证信息', 'cmid值');
                 if ($ucmd >= $xcid && $ucmd <= $dcid || $ucmd == 1) {
                     
                 $cmdd = $cid;
-                $y = date('Y') * 1;
-                $m = date('m') * 1;
-                $d = date('d') * 1;
-                $h = date('H') * 1;
-                $i = date('i') * 1;
-                $s = date('s') * 1;
-                $iniFile->updItem('验证信息', ['年' => $y, '月' => $m, '日' => $d, '时' => $h, '分' => $i, '秒' => $s]);
             } else {
                 $yymid = ($iniFile->getItem('最后页面id', '页面id'));
                 if($cmd =='cj' || $cmd == 'cjplayer' ||$cmd =='login'){

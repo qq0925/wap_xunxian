@@ -315,7 +315,7 @@ echo $skill_html;
 <script>
 function confirmAction() {
     // 弹出确认框
-    if (confirm("你确定要删除该技能吗？")) {
+    if (confirm("你确定要删除该技能吗？(请慎重！此操作不可逆！请确保已经移除了所有npc中的该技能！)")) {
         // 如果点击“确认”，则跳转到PHP传递的链接
         window.location.href = "<?php echo $del_url; ?>";
     } else {

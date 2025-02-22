@@ -14,7 +14,32 @@ $offset = ($currentPage - 1) * $list_row;
 
 
 if(isset($del_skill_id)){
-    //首先删除该技能，其次移除和该技能相关的使用和升级事件，第三移除玩家和宠物，npc等拥有的该技能。
+$sql = "select jevent_use_id,jevent_up_id from system_skill where jid = '$del_skill_id'";
+$ret = $dblj->query($sql);
+if ($ret){
+    $skill_ret = $ret->fetch(PDO::FETCH_ASSOC);
+    $jevent_use_id = $skill_ret['jevent_use_id'];
+    $jevent_up_id = $skill_ret['jevent_up_id'];
+    if($jevent_use_id){
+    $sql = "delete from system_event_evs_self where belong = '$jevent_use_id'";
+    $dblj->exec($sql);
+    $sql = "delete from system_event_self where id = '$jevent_use_id'";
+    $dblj->exec($sql);
+    }
+    if($jevent_up_id){
+    $sql = "delete from system_event_evs_self where belong = '$jevent_up_id'";
+    $dblj->exec($sql);
+    $sql = "delete from system_event_self where id = '$jevent_up_id'";
+    $dblj->exec($sql);
+    }
+    
+$dblj->exec("delete from system_skill where jid = '$del_skill_id'");
+$dblj->exec("delete from system_skill_user where jid = '$del_skill_id'");
+$dblj->exec("update system_event_evs set a_skills = '' where FIND_IN_SET($del_skill_id, a_skills) > 0");
+$dblj->exec("update system_event_evs set r_skills = '' where FIND_IN_SET($del_skill_id, r_skills) > 0");
+$dblj->exec("update system_event_evs_self set a_skills = '' where FIND_IN_SET($del_skill_id, a_skills) > 0");
+$dblj->exec("update system_event_evs_self set r_skills = '' where FIND_IN_SET($del_skill_id, r_skills) > 0");
+}
 }
 
 // 计算总行数

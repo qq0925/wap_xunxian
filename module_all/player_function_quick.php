@@ -15,8 +15,10 @@ $sql = "select * from system_fight_quick where sid = '$sid'";
 $stmt = $dblj->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 for($i=1;$i<@count($result) +1;$i++){
-unset($quick_cancel);
+$quick_text = '';
+$cancel_url = '';
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
@@ -25,8 +27,6 @@ $quick_para = explode('|',$quick_values);
 $quick_type = $quick_para[0];
 $quick_detail = $quick_para[1];
 if($quick_type){
-$cancel_url = $encode->encode("cmd=function_quick_html&cancel=$i&ucmd=$cmid&sid=$sid");
-$quick_cancel = "<a href='?cmd=$cancel_url'>取消</a>";
 switch($quick_type){
     case '1':
         $quick_sql = "select * from system_skill where jid = '$quick_detail'";
@@ -52,6 +52,10 @@ switch($quick_type){
         
         
 }
+}
+if($quick_text){
+$cancel_url = $encode->encode("cmd=function_quick_html&cancel=$i&ucmd=$cmid&sid=$sid");
+$quick_cancel = "<a href='?cmd=$cancel_url'>取消</a>";
 }else{
     $quick_text = "选择";
 }
