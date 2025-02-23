@@ -3862,7 +3862,42 @@ echo $refresh_html;
     
 <footer>
     <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+    <script>
+    // 等待页面加载完成
+    document.addEventListener("DOMContentLoaded", function() {
     
+        // 获取所有需要加载图片的 img 标签
+        const images = document.querySelectorAll('img');
+    
+        // 遍历每个 img 标签
+        images.forEach(function(img) {
+            // 获取图片的真实 URL (存储在 data-src 属性中)
+            const imageUrl = img.getAttribute('data-src');
+    
+            // 使用 Ajax 获取图片内容，或从服务器获取更多的图像数据
+            fetch(imageUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('网络错误或图片加载失败');
+                    }
+                    return response.blob(); // 返回二进制数据（图像）
+                })
+                .then(blob => {
+                    // 将返回的二进制数据转换为 URL
+                    const imageObjectURL = URL.createObjectURL(blob);
+                    // 设置 img 标签的 src 属性
+                    img.src = imageObjectURL;
+                    img.removeAttribute('data-src');
+                })
+                .catch(error => {
+                    console.error('图片加载失败:', error);
+                    // 可选：显示默认图片或错误提示
+                    img.src = 'UnLoaded..';
+                });
+        });
+    });
+</script>
+
     <?php 
     $player = \player\getplayer($sid,$dblj);
     $now_time = date('H:i:s');

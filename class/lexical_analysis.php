@@ -4650,7 +4650,7 @@ function process_photoshow($input) {
         if (!empty($hashtag)) {
             $imageLink = generate_image_link($hashtag);
             $imageStyle = generate_image_style($hashtag);
-            $input = str_replace($match[0], "<img src='$imageLink' alt='$hashtag' style='{$imageStyle}' loading='lazy'>", $input);
+            $input = str_replace($match[0], "<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/zzBk+oAAAAASUVORK5CYII=' data-src='$imageLink' alt='Loading...' style='{$imageStyle}'>", $input);
 
         }
     }
