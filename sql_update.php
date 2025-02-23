@@ -8,13 +8,12 @@
     $stmt->execute();
     $column = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    if (!$column) {
+    if ($column) {
         // 如果字段不存在，执行添加字段操作
-        $sql = "ALTER TABLE system_equip_user ADD COLUMN eqpid INT(11) NOT NULL";
+        $sql = "ALTER TABLE system_equip_user DROP COLUMN eqpid";
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
     }
-
 
     $sql = "SHOW COLUMNS FROM system_event_evs_self LIKE 'next_text'";
     $stmt = $dblj->prepare($sql);

@@ -193,7 +193,12 @@ $itemname = \lexical_analysis\color_string($itemname);
         $removeitem = $encode->encode("cmd=item_op_basic&target_event=remove&canshu=$canshu&list_page=$list_page&ucmd=$cmid&item_true_id=$item_true_id&iid=$itemid&parents_cmd=iteminfo_new&sid=$sid");
         $sale_state = \player\getitem_sale_state($item_true_id,$sid,$dblj);
         if($item_iequiped ==1&&$sale_state==0){
+        $if_pet = \player\getequiped_pet($eq_true_id,$sid,$dblj);
+        if($if_pet){
+        $itemhtml .="{$isale_text}<a href='?cmd=$chakanitem'>{$hangshu}.{$itemname}x{$itemsum}</a>[宠]|<a href='?cmd=$removeitem'>卸下</a><br/>";
+        }else{
         $itemhtml .="{$isale_text}<a href='?cmd=$chakanitem'>{$hangshu}.{$itemname}x{$itemsum}</a>[装]|<a href='?cmd=$removeitem'>卸下</a><br/>";
+        }
         }elseif($sale_state==0){
         $itemhtml .="{$isale_text}<a href='?cmd=$chakanitem'>{$hangshu}.{$itemname}x{$itemsum}</a>|<a href='?cmd=$useitem'>使用</a><br/>";
         }else{

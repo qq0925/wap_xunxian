@@ -218,6 +218,9 @@ $value = $value?$value:$func_name;
         case '83':
             $pet_equip_url = pet_equip_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $pet_equip_url;
+        case '87':
+            $pet_item_url = pet_item_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $pet_item_url;
         case '88':
             $equip_mosaic_url = equip_mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $equip_mosaic_url;
@@ -2193,11 +2196,26 @@ function pet_equip_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
     $clj[] = $cmd;
     //刷新功能实现
     global $encode;
-    $pet_equip_url = $encode->encode("cmd=player_petequip&pet_id=$mid&ucmd=$cmid&sid=$sid");
+    //$pet_equip_url = $encode->encode("cmd=player_petequip&pet_id=$mid&ucmd=$cmid&sid=$sid");
+    $pet_equip_url = $encode->encode("cmd=player_petinfo&pet_id=$mid&ucmd=$cmid&sid=$sid");
     $pet_equip_html=<<<HTML
 <a href="?cmd=$pet_equip_url">{$value}</a>
 HTML;
     return $pet_equip_html;
+}
+
+function pet_item_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    //刷新功能实现
+    global $encode;
+    //$pet_item_url = $encode->encode("cmd=player_petequip&pet_id=$mid&ucmd=$cmid&sid=$sid");
+    $pet_item_url = $encode->encode("cmd=player_petinfo&pet_id=$mid&ucmd=$cmid&sid=$sid");
+    $pet_item_html=<<<HTML
+<a href="?cmd=$pet_item_url">{$value}</a>
+HTML;
+    return $pet_item_html;
 }
 
 function equip_mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){

@@ -1,8 +1,29 @@
 <?php
 $global_value_design = $encode->encode("cmd=global_value_design&para=post&sid=$sid");
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
+$this_page = $encode->encode("cmd=global_value_design&sid=$sid");
+$change_html =<<<HTML
+[公共数据管理]<a href="?cmd=$this_page">刷新</a><br/>
+HTML;
 
-$change_html = "[公共数据管理]<br/>";
+if($_POST['gid']){
+$try_gid = $_POST['gid'];
+$sql = "SELECT gid FROM global_data where gid = '$try_gid'";
+$stmt = $dblj->prepare($sql);
+$stmt->execute();
+// 获取所有数据
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+$new_gid = $result['gid'];
+
+if($new_gid){
+    echo "创建失败！已存在同名g值！<br/>";
+}else{
+    $new_value = $_POST['gvalue'];
+    echo "创建成功！<br/>";
+    $dblj->exec("insert into global_data(gid,gvalue)value('$try_gid','$new_value')");
+}
+}
+
 
 if($delete_canshu){
     echo "删除成功！已成功删除ID为{$delete_canshu}的公共属性！<br/>";
@@ -28,7 +49,13 @@ $stmt->execute();
 
 // 获取所有数据
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+    $change_html .=<<<HTML
+<form method="post">
+ID:<input name="gid" placeholder="请输入gid" type="text" maxlength="50"/><br/>
+值:<textarea name="gvalue" placeholder="请输入值" type="text" maxlength="50" style="height: 63px; width: 229px;"></textarea><br/>
+<input name="submit" type="submit" title="确定" value="添加"></input></form>
+---<br/>
+HTML;
 // 遍历结果
 foreach ($result as $row) {
     $gid = $row['gid'];  // 获取gid字段的值
@@ -37,6 +64,7 @@ foreach ($result as $row) {
     $delete_op = $encode->encode("cmd=global_value_design&cmd_canshu=1&gid=$gid&sid=$sid");
     $delete_all = $encode->encode("cmd=global_value_design&cmd_canshu=2&gid=$gid&sid=$sid");
     $change_op = $encode->encode("cmd=global_value_design&cmd_canshu=3&gid=$gid&gvalue=$gvalue&sid=$sid");
+
     $change_html .= "ID: {$gid}，VALUE：{$gvalue}<a href='?cmd=$change_op'>修改</a>|<a href='?cmd=$delete_all'>清空</a>|<a href='?cmd=$delete_op'>删除</a><br/>";
 }
 }elseif ($cmd_canshu==1) {

@@ -2264,7 +2264,7 @@ echo $refresh_html;
                         case '兵器':
                             $iequip_cond = $item->iequip_cond;
                             $equip_ret = $iequip_cond !== '' 
-                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid, null, null, "check_cond"): 1;
+                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid): 1;
                             try{
                                 @$ret = eval("return $equip_ret;");
                             }
@@ -2305,7 +2305,7 @@ echo $refresh_html;
                         case '防具':
                             $iequip_cond = $item->iequip_cond;
                             $equip_ret = $iequip_cond !== '' 
-                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid, null, null, "check_cond"): 1;
+                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid): 1;
                             try{
                                 @$ret = eval("return $equip_ret;");
                             }
@@ -2680,9 +2680,6 @@ echo $refresh_html;
             break;
         case 'equip_op_basic'://装备相关操作
         
-            if(!$pet_id){
-                $pet_id = 0;
-            }
             $sql = "select * from system_item_module where iid = (select iid from system_item where item_true_id = '$equip_true_id')";
             $cxjg = $dblj->query($sql);
             if ($cxjg) {
@@ -2714,17 +2711,12 @@ echo $refresh_html;
                         }
                             $equip_bool = ($ret !== false && $ret !== null) ? 0 : 1;
                             if($equip_bool ==0){
-                            \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,1,$pet_id);
+                            \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,1);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$equip_true_id' and sid = '$sid'");
                             $canshu = '装备';
                             
-                            if(!$pet_id){
                             echo "你装备了{$iname}<br/>";
-                            }else{
-                            echo "宠物装备了{$iname}<br/>";
-                            }
-                            
-                            if(!$pet_id){
+
                             $mosaic_list = \player\get_player_equip_mosaic_once($equip_true_id,$sid,$dblj)['equip_mosaic'];
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
@@ -2733,7 +2725,7 @@ echo $refresh_html;
                                 }
                             }
                                 \player\exec_global_event(40,'item',$equip_true_id,$sid,$dblj);
-                            }
+                            
                             }else{
                                 echo "以你的水平暂时无法穿上该装备!<br/>";
                             }
@@ -2753,15 +2745,10 @@ echo $refresh_html;
                             $equip_bool = ($ret !== false && $ret !== null) ? 0 : 1;
                             if($equip_bool ==0){
                             
-                            \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,1,$pet_id);
+                            \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,1);
                             $dblj->exec("UPDATE system_item set iequiped = 1 where item_true_id = '$equip_true_id' and sid = '$sid'");
                             $canshu = '装备';
-                            if(!$pet_id){
                             echo "你装备了{$iname}<br/>";
-                            }else{
-                            echo "宠物装备了{$iname}<br/>";
-                            }
-                            if(!$pet_id){
                             $mosaic_list = \player\get_player_equip_mosaic_once($equip_true_id,$sid,$dblj)['equip_mosaic'];
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
@@ -2771,7 +2758,7 @@ echo $refresh_html;
                                 }
                             }
                                 \player\exec_global_event(40,'item',$equip_true_id,$sid,$dblj);
-                            }
+                            
                             }else{
                                 echo "以你的水平暂时无法穿上该装备!<br/>";
                             }
@@ -2781,11 +2768,7 @@ echo $refresh_html;
                             break;
                     }
                     
-                    if(!$pet_id){
                     $ym = "module_all/player_equip_list.php";
-                    }else{
-                    $ym = "module_all/player_pet_equip_list.php";
-                    }
                     break;
                 case 'remove':
                     switch($itype){
@@ -2896,14 +2879,9 @@ echo $refresh_html;
 
                     }
                     else{
-                        \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2,$pet_id);
+                        \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
-                        if(!$pet_id){
                         echo "你卸下了{$iname}<br/>";
-                        }else{
-                        echo "宠物卸下了{$iname}<br/>";
-                        }
-                        if(!$pet_id){
                             $mosaic_list = \player\get_player_equip_mosaic_once($equip_true_id,$sid,$dblj)['equip_mosaic'];
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
@@ -2913,7 +2891,7 @@ echo $refresh_html;
                             }
                         
                                 \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
-                        }
+                        
                     }
                         break;
                     case '防具':
@@ -3023,14 +3001,9 @@ echo $refresh_html;
                     }
                     else{
                         
-                        \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2,$pet_id);
+                        \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
-                        if(!$pet_id){
                         echo "你卸下了{$iname}<br/>";
-                        }else{
-                        echo "宠物卸下了{$iname}<br/>";
-                        }
-                        if(!$pet_id){
                             $mosaic_list = \player\get_player_equip_mosaic_once($equip_true_id,$sid,$dblj)['equip_mosaic'];
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
@@ -3040,16 +3013,12 @@ echo $refresh_html;
                             }
                         
                                 \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
-                        }
+                        
                     }
                         break;
                     }
                     
-                    if(!$pet_id){
                     $ym = "module_all/player_equip_list.php";
-                    }else{
-                    $ym = "module_all/player_pet_equip_list.php";
-                    }
                     break;
             }
             break;

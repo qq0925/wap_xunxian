@@ -707,7 +707,7 @@ function getnowequiptrueid($eq_true_id,$sid,$dblj){
 }
 
 
-function changeequipstate($sid,$dblj,$equip_root_id,$equip_id,$type,$pet_id=0){
+function changeequipstate($sid,$dblj,$equip_root_id,$equip_id,$type){
     $equip = getitem($equip_root_id,$dblj);
     $equip_type = $equip->itype;
     $equip_subtype = $equip->isubtype;
@@ -715,13 +715,13 @@ function changeequipstate($sid,$dblj,$equip_root_id,$equip_id,$type,$pet_id=0){
         $equip_add_gj = $equip->iattack_value;
         switch($type){
             case '1':
-                $ret = changeplayerequip($sid,$pet_id,$dblj,$equip_add_gj,$equip_id,$equip_subtype,1);
+                $ret = changeplayerequip($sid,$dblj,$equip_add_gj,$equip_id,$equip_subtype,1);
                 if($ret =='-1'){
                     return -1;
                 }
                 break;
             case '2':
-                changeplayerequip($sid,$pet_id,$dblj,$equip_add_gj,$equip_id,$equip_subtype,2);
+                changeplayerequip($sid,$dblj,$equip_add_gj,$equip_id,$equip_subtype,2);
                 break;
         }
     }
@@ -729,23 +729,23 @@ function changeequipstate($sid,$dblj,$equip_root_id,$equip_id,$type,$pet_id=0){
         $equip_add_fy = $equip->irecovery_value;
         switch($type){
             case '1':
-                $ret = changeplayerequip($sid,$pet_id,$dblj,$equip_add_fy,$equip_id,$equip_subtype,3);
+                $ret = changeplayerequip($sid,$dblj,$equip_add_fy,$equip_id,$equip_subtype,3);
                 if($ret =='-1'){
                     return -1;
                 }
                 break;
             case '2':
-                changeplayerequip($sid,$pet_id,$dblj,$equip_add_fy,$equip_id,$equip_subtype,4);
+                changeplayerequip($sid,$dblj,$equip_add_fy,$equip_id,$equip_subtype,4);
                 break;
         }
     }
 }
 
-function changeplayerequip($sid,$pet_id,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,$type){
+function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,$type){
     switch($type){
         case '1':
             // 检查是否存在符合条件的记录
-            $sql = "SELECT * FROM system_equip_user WHERE eqsid = ? AND eq_type = 1 and eqpid = '$pet_id'";
+            $sql = "SELECT * FROM system_equip_user WHERE eqsid = ? AND eq_type = 1";
             $stmt = $dblj->prepare($sql);
             $stmt->bindParam(1, $sid, \PDO::PARAM_STR);
             $stmt->execute();
@@ -843,19 +843,13 @@ function changeplayerequip($sid,$pet_id,$dblj,$equip_add_canshu,$equip_id,$equip
                 }
                 
                 
-                $dblj->exec("UPDATE system_equip_user set eq_true_id = '$equip_id' where eq_true_id = '$eq_true_id' and eqsid = '$sid' and eq_type = 1 and eqpid = '$pet_id'");
+                $dblj->exec("UPDATE system_equip_user set eq_true_id = '$equip_id' where eq_true_id = '$eq_true_id' and eqsid = '$sid' and eq_type = 1");
                 $sql = "select iattack_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['iattack_value']);
-                
-                if($pet_id){
-                \player\addpetsx('ngj',$sub_value,$sid,$pet_id,$dblj);
-                \player\addpetsx('ngj',$equip_add_canshu,$sid,$pet_id,$dblj);
-                }else{
                 \player\addplayersx('ugj',$sub_value,$sid,$dblj);
                 \player\addplayersx('ugj',$equip_add_canshu,$sid,$dblj);
-                }
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
                 
                 $mosaic_list = \player\get_player_equip_mosaic_once($eq_true_id,$sid,$dblj)['equip_mosaic'];
@@ -869,7 +863,7 @@ function changeplayerequip($sid,$pet_id,$dblj,$equip_add_canshu,$equip_id,$equip
                 \player\exec_global_event(41,'item',$eq_true_id,$sid,$dblj);//卸装事件
             } else {
                 // 记录不存在，插入新记录
-                $sql = "INSERT INTO system_equip_user (eqsid, eq_true_id, eq_type, equiped_pos_id,eqpid) VALUES (?, ?, 1, ?,'$pet_id')";
+                $sql = "INSERT INTO system_equip_user (eqsid, eq_true_id, eq_type, equiped_pos_id) VALUES (?, ?, 1, ?)";
                 $stmt = $dblj->prepare($sql);
                 $stmt->bindParam(1, $sid, \PDO::PARAM_STR);
                 $stmt->bindParam(2, $equip_id, \PDO::PARAM_INT);
@@ -877,13 +871,8 @@ function changeplayerequip($sid,$pet_id,$dblj,$equip_add_canshu,$equip_id,$equip
                 
                 if ($stmt->execute()) {
                     // 插入成功，获取新插入记录的 eq_true_id
-                    $eq_root_id = $dblj->lastInsertId();
-
-                if($pet_id){
-                \player\addpetsx('ngj',$equip_add_canshu,$sid,$pet_id,$dblj);
-                }else{
+                $eq_root_id = $dblj->lastInsertId();
                 \player\addplayersx('ugj',$equip_add_canshu,$sid,$dblj);
-                }
                 } else {
                     // 插入失败，进行错误处理
                     echo "装备失败!<br/>";
@@ -891,7 +880,7 @@ function changeplayerequip($sid,$pet_id,$dblj,$equip_add_canshu,$equip_id,$equip
             }
         break;
         case '2':
-            $sql = "SELECT * FROM system_equip_user WHERE eqsid = ? AND eq_type = 1 and eqpid = '$pet_id'";
+            $sql = "SELECT eq_true_id FROM system_equip_user WHERE eqsid = ? AND eq_type = 1";
             $stmt = $dblj->prepare($sql);
             $stmt->bindParam(1, $sid, \PDO::PARAM_STR);
             $stmt->execute();
@@ -904,20 +893,15 @@ function changeplayerequip($sid,$pet_id,$dblj,$equip_add_canshu,$equip_id,$equip
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['iattack_value']);
                 
-                if($pet_id){
-                \player\addpetsx('ngj',$sub_value,$sid,$pet_id,$dblj);
-                }else{
                 \player\addplayersx('ugj',$sub_value,$sid,$dblj);
-                }
-                
-                
-                $dblj->exec("delete from system_equip_user where eqsid = '$sid' AND eq_type = 1 and eqpid = '$pet_id'");
+
+                $dblj->exec("delete from system_equip_user where eqsid = '$sid' AND eq_type = 1");
             } else {
                 echo "非法操作！<br/>";
             }
         break;
         case '3':
-            $sql = "SELECT * FROM system_equip_user WHERE eqsid = ? AND eq_type = 2 and equiped_pos_id = '$equip_pos_id' and eqpid = '$pet_id'";
+            $sql = "SELECT eq_true_id FROM system_equip_user WHERE eqsid = ? AND eq_type = 2 and equiped_pos_id = '$equip_pos_id'";
             $stmt = $dblj->prepare($sql);
             $stmt->bindParam(1, $sid, \PDO::PARAM_STR);
             $stmt->execute();
@@ -1016,19 +1000,13 @@ function changeplayerequip($sid,$pet_id,$dblj,$equip_add_canshu,$equip_id,$equip
                 }
                 
                 
-                $dblj->exec("UPDATE system_equip_user set eq_true_id = '$equip_id' where eq_true_id = '$eq_true_id' and eqsid = '$sid' and eq_type = 2 and eqpid = '$pet_id'");
+                $dblj->exec("UPDATE system_equip_user set eq_true_id = '$equip_id' where eq_true_id = '$eq_true_id' and eqsid = '$sid' and eq_type = 2");
                 $sql = "select irecovery_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['irecovery_value']);
-                
-                if($pet_id){
-                \player\addpetsx('nfy',$sub_value,$sid,$pet_id,$dblj);
-                \player\addpetsx('nfy',$equip_add_canshu,$sid,$pet_id,$dblj);
-                }else{
                 \player\addplayersx('ufy',$sub_value,$sid,$dblj);
                 \player\addplayersx('ufy',$equip_add_canshu,$sid,$dblj);
-                }
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
                 
                 $mosaic_list = \player\get_player_equip_mosaic_once($eq_true_id,$sid,$dblj)['equip_mosaic'];
@@ -1042,7 +1020,7 @@ function changeplayerequip($sid,$pet_id,$dblj,$equip_add_canshu,$equip_id,$equip
                 \player\exec_global_event(41,'item',$eq_true_id,$sid,$dblj);//卸装事件
             } else {
                 // 记录不存在，插入新记录
-                $sql = "INSERT INTO system_equip_user (eqsid, eq_true_id, eq_type, equiped_pos_id,eqpid) VALUES (?, ?, 2, ?,'$pet_id')";
+                $sql = "INSERT INTO system_equip_user (eqsid, eq_true_id, eq_type, equiped_pos_id) VALUES (?, ?, 2, ?)";
                 $stmt = $dblj->prepare($sql);
                 $stmt->bindParam(1, $sid, \PDO::PARAM_STR);
                 $stmt->bindParam(2, $equip_id, \PDO::PARAM_INT);
@@ -1059,7 +1037,7 @@ function changeplayerequip($sid,$pet_id,$dblj,$equip_add_canshu,$equip_id,$equip
             }
         break;
         case '4':
-            $sql = "SELECT * FROM system_equip_user WHERE eqsid = ? AND eq_type = 2 and equiped_pos_id = '$equip_pos_id' and eqpid = '$pet_id'";
+            $sql = "SELECT eq_true_id FROM system_equip_user WHERE eqsid = ? AND eq_type = 2 and equiped_pos_id = '$equip_pos_id'";
             $stmt = $dblj->prepare($sql);
             $stmt->bindParam(1, $sid, \PDO::PARAM_STR);
             $stmt->execute();
@@ -1072,7 +1050,7 @@ function changeplayerequip($sid,$pet_id,$dblj,$equip_add_canshu,$equip_id,$equip
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['irecovery_value']);
                 \player\addplayersx('ufy',$sub_value,$sid,$dblj);
-                $dblj->exec("delete from system_equip_user where eqsid = '$sid' AND eq_type = 2 and equiped_pos_id = '$equip_pos_id' and eqpid = '$pet_id'");
+                $dblj->exec("delete from system_equip_user where eqsid = '$sid' AND eq_type = 2 and equiped_pos_id = '$equip_pos_id'");
             } else {
                 echo "非法操作！<br/>";
             }
