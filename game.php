@@ -791,11 +791,8 @@ echo $refresh_html;
                 $shop_triggle =1;
             }
             if(!$shop_triggle){
-            $cmid = $cmid + 1;
-            $cdid[] = $cmid;
-            $old_scene = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
             echo "{$npc_name}似乎并不想理你！"."<br/>";
-            echo "<a href='?cmd=$old_scene'>返回游戏</a><br/>";
+            $ym = 'module_all/scene_npc.php';
             }elseif($shop_triggle){
                 if(!$iid){
             echo "{$npc_name}:你好啊！{$player->uname}，想买点什么呢？<br/>";
@@ -804,6 +801,7 @@ echo $refresh_html;
                 }
             $ym = 'module_all/gm_shop_npc.php';
             }
+            
             break;
         case 'scene_npc'://npc
             $ym = 'module_all/scene_npc.php';

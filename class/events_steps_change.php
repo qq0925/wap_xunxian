@@ -112,11 +112,11 @@ HTML;
                             
                             $sql = "delete from system_player_inputs where sid = '$sid'";//input寿命终结
                             $dblj->exec($sql);
+                            if($step_cmmt2){
                             $step_cmmt2 = html_entity_decode($step_cmmt2);
                             $step_cmmt2 = \lexical_analysis\process_string($step_cmmt2,$sid,$oid,$mid);
                             $step_cmmt2 = \lexical_analysis\process_photoshow($step_cmmt2);
                             $step_cmmt2 = \lexical_analysis\color_string(nl2br($step_cmmt2));
-                            if($step_cmmt2){
                             echo $step_cmmt2."<br/>";
                             }
                             $cmid = $cmid + 1;
@@ -140,21 +140,36 @@ HTML;
                             if($step_exec_triggle){
                                 
                                 //这里可以进行输入非空判断
-                                
-                            $ret = attrsetting($step_s_attrs,$sid,$oid,$mid,$para);
-                            $ret_2 = attrchanging($step_m_attrs,$sid,$oid,$mid,$para);
-                            $ret_3 = itemchanging($step_items,$sid);
-                            $ret_4 = skillschanging($step_a_skills,$sid,1,$oid,$mid);
-                            $ret_6 = skillschanging($step_r_skills,$sid,2,$oid,$mid);
-                            $ret_7 = taskschanging($step_r_tasks,$sid,2);
-                            $ret_8 = adoptpeting($step_a_adopt,$sid,1,$oid,$mid);
-                            $ret_9 = adoptpeting($step_r_adopt,$sid,2,$oid,$mid);
+                            if($step_s_attrs){
+                                $ret = attrsetting($step_s_attrs,$sid,$oid,$mid,$para);
+                            }
+                            if($step_m_attrs){
+                                $ret_2 = attrchanging($step_m_attrs,$sid,$oid,$mid,$para);
+                            }
+                            if($step_items){
+                                $ret_3 = itemchanging($step_items,$sid);
+                            }
+                            if($step_a_skills){
+                                $ret_4 = skillschanging($step_a_skills,$sid,1,$oid,$mid);
+                            }
+                            if($step_r_skills){
+                                $ret_6 = skillschanging($step_r_skills,$sid,2,$oid,$mid);
+                            }
+                            if($step_r_tasks){
+                                $ret_7 = taskschanging($step_r_tasks,$sid,2);
+                            }
+                            if($step_a_adopt){
+                                $ret_8 = adoptpeting($step_a_adopt,$sid,1,$oid,$mid);
+                            }
+                            if($step_r_adopt){
+                                $ret_9 = adoptpeting($step_r_adopt,$sid,2,$oid,$mid);
+                            }
+
+                            if($step_cmmt){
                             $step_cmmt = html_entity_decode($step_cmmt);
                             $step_cmmt = \lexical_analysis\process_string($step_cmmt,$sid,$oid,$mid);
                             $step_cmmt = \lexical_analysis\process_photoshow($step_cmmt);
                             $step_cmmt = \lexical_analysis\color_string(nl2br($step_cmmt));
-                            
-                            if($step_cmmt){
                             echo $step_cmmt."<br/>";
                             }
                             if($step_fight_npcs !=''){

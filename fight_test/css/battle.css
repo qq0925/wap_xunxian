@@ -1,0 +1,360 @@
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* 添加角色样式 */
+.character {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: #666;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s ease;
+    padding: 5px;
+}
+
+/* 添加攻击动画 */
+@keyframes attack {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(100px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes damage {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.8); background: #ff0000; }
+    100% { transform: scale(1); }
+}
+
+/* 添加受击闪烁效果 */
+@keyframes hit-flash {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.attacking {
+    animation: attack 0.5s ease-in-out;
+}
+
+.damaged {
+    animation: damage 0.5s ease-in-out, hit-flash 0.2s ease-in-out 3;
+}
+
+/* 修改角色名称样式 */
+.character-name {
+    position: relative;
+    bottom: auto;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+/* 队伍1（我方）角色名称样式 */
+.character[data-team="1"] .character-name {
+    color: #4a90e2;  /* 蓝色 */
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+}
+
+/* 队伍2（敌方）角色名称样式 */
+.character[data-team="2"] .character-name {
+    color: #e24a4a;  /* 红色 */
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+}
+
+.battlefield {
+    position: relative;
+    width: 800px;
+    height: 500px;
+    border: 1px solid #ccc;
+    margin: 0 auto;
+    background: #f5f5f5;
+}
+
+/* 修改攻击特效样式，使用team而不是character name */
+.attack-effect[data-team="1"] {
+    background: #4a90e2;
+    box-shadow: 0 0 10px #4a90e2, 0 0 20px #4a90e2;
+}
+
+.attack-effect[data-team="2"] {
+    background: #e24a4a;
+    box-shadow: 0 0 10px #e24a4a, 0 0 20px #e24a4a;
+}
+
+.attack-effect {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    z-index: 100;
+    transition: all 0.5s linear;
+}
+
+/* 伤害数字样式 */
+.damage-number {
+    position: absolute;
+    color: #ff0000;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 2px 2px 0 #000;
+    animation: damage-float 1s ease-out;
+    z-index: 1000;
+}
+
+@keyframes damage-float {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
+}
+
+/* 死亡效果 */
+.dead {
+    opacity: 0.5;
+    filter: grayscale(100%);
+}
+
+/* 胜利文本样式 */
+.victory-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.projectile {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: #ff4444;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(255,68,68,0.5);
+}
+
+.hit-effect {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(255,68,68,0.8) 0%, rgba(255,68,68,0) 70%);
+    border-radius: 50%;
+    animation: hit 0.3s ease-out forwards;
+    z-index: 99;
+}
+
+@keyframes hit {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+.shake {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+    10%, 90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+    20%, 80% {
+        transform: translate3d(2px, 0, 0);
+    }
+    30%, 50%, 70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+    40%, 60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+/* 队伍1（我方）角色样式 */
+.character[data-team="1"] {
+    background: #4a90e2;
+    border: 2px solid #2171c7;
+}
+
+/* 队伍2（敌方）角色样式 */
+.character[data-team="2"] {
+    background: #e24a4a;
+    border: 2px solid #c72121;
+}
+
+/* 技能名称显示 */
+.skill-name {
+    position: absolute;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    z-index: 1000;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease-out;
+}
+
+/* 技能效果动画 */
+.skill-effect {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    pointer-events: none;
+    z-index: 90;
+}
+
+/* 风系技能效果 */
+.skill-effect.wind {
+    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(173,216,230,0) 70%);
+    animation: rotate 1s linear infinite;
+}
+
+/* 剑系技能效果 */
+.skill-effect.sword {
+    background: linear-gradient(45deg, #fff, #4a90e2);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    animation: slash 0.5s ease-out;
+}
+
+/* 龙系技能效果 */
+.skill-effect.dragon {
+    background: url('dragon-effect.png');
+    animation: dragon-move 1s ease-out;
+}
+
+/* 火系技能效果 */
+.skill-effect.fire {
+    background: radial-gradient(circle, rgba(255,69,0,0.8) 0%, rgba(255,69,0,0) 70%);
+    animation: flame 0.8s ease-out;
+}
+
+/* 暗影技能效果 */
+.skill-effect.shadow {
+    background: radial-gradient(circle, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%);
+    animation: shadow-move 0.5s ease-out;
+}
+
+/* 土系技能效果 */
+.skill-effect.earth {
+    background: radial-gradient(circle, rgba(139,69,19,0.8) 0%, rgba(139,69,19,0) 70%);
+    animation: earthquake 0.8s ease-out;
+}
+
+/* 动画关键帧 */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes slash {
+    0% { transform: scale(0) rotate(0deg); }
+    100% { transform: scale(1.5) rotate(180deg); }
+}
+
+@keyframes dragon-move {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.8); opacity: 0; }
+}
+
+@keyframes flame {
+    0% { transform: scale(0.5); opacity: 0.8; }
+    100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes shadow-move {
+    0% { transform: scale(0.5) translateX(-50px); opacity: 0; }
+    50% { transform: scale(1) translateX(0); opacity: 1; }
+    100% { transform: scale(0.5) translateX(50px); opacity: 0; }
+}
+
+@keyframes earthquake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+/* 速度控制器样式 */
+.speed-control {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.speed-control label {
+    font-size: 14px;
+    color: #333;
+}
+
+.speed-control input[type="range"] {
+    width: 100px;
+    cursor: pointer;
+}
+
+.speed-control #speed-value {
+    min-width: 30px;
+    text-align: right;
+    font-weight: bold;
+    color: #4a90e2;
+}
+
+/* 添加MP条样式 */
+.character-stats {
+    position: relative;
+    bottom: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-top: 5px;
+}
+
+.hp-bar, .mp-bar {
+    width: 40px;
+    height: 3px;
+    background: #ddd;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.hp-bar > div {
+    height: 100%;
+    background: #ff4444;
+    transition: width 0.3s ease;
+}
+
+.mp-bar > div {
+    height: 100%;
+    background: #4444ff;
+    transition: width 0.3s ease;
+}
+
+.stats-text {
+    font-size: 8px;
+    color: white;
+    text-align: center;
+    margin: 1px 0;
+}

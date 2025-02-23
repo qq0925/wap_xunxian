@@ -2152,15 +2152,8 @@ if(!$bagequiphtml){
                             }  else {
                                 $row_result = $row[$attr3];
 }
-
-                            if ($row_result === null ||$row_result ==='') {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row_result);
-                                }
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
                             break;
                         case 'item':
                             $attr3 = 'i'.$attr2;
@@ -4657,7 +4650,7 @@ function process_photoshow($input) {
         if (!empty($hashtag)) {
             $imageLink = generate_image_link($hashtag);
             $imageStyle = generate_image_style($hashtag);
-            $input = str_replace($match[0], "<img src='$imageLink' alt='$hashtag' style='{$imageStyle}'>", $input);
+            $input = str_replace($match[0], "<img src='$imageLink' alt='$hashtag' style='{$imageStyle}' loading='lazy'>", $input);
 
         }
     }

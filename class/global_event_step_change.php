@@ -1,10 +1,9 @@
 <?php
-$start_time = microtime(true);
 require_once 'lexical_analysis.php';
 require_once 'data_lexical.php';
 require_once 'event_data_get.php';
-require_once dirname(__DIR__) . '/pdo.php';
-$dblj = DB::pdo();
+// require_once dirname(__DIR__) . '/pdo.php';
+// $dblj = DB::pdo();
 
 $parents_cmd = \player\getplayer($sid,$dblj)->ulast_cmd;
 if(!$para){
@@ -39,12 +38,12 @@ function global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_p
                         $register_triggle =1;//若触发条件为空则默认true
                     }
                     if(!$register_triggle){
-                    $step_cmmt = html_entity_decode($step_cmmt);
+
+                    if($event_cmmt){
+                    $event_cmmt = html_entity_decode($event_cmmt);
                     $event_cmmt = \lexical_analysis\process_string($event_cmmt,$sid,$oid,$mid);
                     $event_cmmt = \lexical_analysis\process_photoshow($event_cmmt);
                     $event_cmmt = \lexical_analysis\color_string(nl2br($event_cmmt));
-                    
-                    if($event_cmmt){
                     echo $event_cmmt."<br/>";//不满足触发条件则输出cmmt
                     }
                     $cmid = $cmid + 1;
@@ -96,11 +95,12 @@ HTML;
                         if(!$step_triggle){
                             $sql = "delete from system_player_inputs where sid = '$sid'";
                             $dblj->exec($sql);
+
+                            if($step_cmmt2){
                             $step_cmmt2 = html_entity_decode($step_cmmt2);
                             $step_cmmt2 = \lexical_analysis\process_string($step_cmmt2,$sid,$oid,$mid);
                             $step_cmmt2 = \lexical_analysis\process_photoshow($step_cmmt2);
                             $step_cmmt2 = \lexical_analysis\color_string(nl2br($step_cmmt2));
-                            if($step_cmmt2){
                             echo $step_cmmt2."<br/>";
                             }
                             $cmid = $cmid + 1;
@@ -149,11 +149,12 @@ HTML;
                             if ($step_r_adopt) {
                                 $ret_9 = adoptpeting($step_r_adopt, $sid, 2, $oid, $mid);
                             }
+
+                            if($step_cmmt){
                             $step_cmmt = html_entity_decode($step_cmmt);
                             $step_cmmt = \lexical_analysis\process_string($step_cmmt,$sid,$oid,$mid);
                             $step_cmmt = \lexical_analysis\process_photoshow($step_cmmt);
                             $step_cmmt = \lexical_analysis\color_string(nl2br($step_cmmt));
-                            if($step_cmmt){
                             echo $step_cmmt."<br/>";
                             }
                             if($step_fight_npcs !=''){

@@ -303,14 +303,6 @@ if(!$be_feat){
                         $item_counts[$drop_item_name] = $drop_count;
                     }
             }
-            if($drop_add_map_item){
-                // 拼接掉落物品字符串
-            $drop_add_map_item_str = implode(',', $drop_add_map_item);
-            // 使用参数化查询，避免 SQL 注入，同时处理 mitem_now 为空的情况
-            $nowdate = date('Y-m-d H:i:s');
-            $stmt = $dblj->prepare("insert into system_npc_drop_list(drop_npc_id,drop_item_data,drop_player_sid,drop_time,drop_mid)values(?,?,?,?,?)");
-            $stmt->execute([$alive_id,$drop_add_map_item_str,$sid,$nowdate,$drop_map_id]);
-            }
             }else{
             for($j=0;$j<$drop_item_count;$j++){
                 $drop_para = explode('|',$drop_item[$j]);
@@ -402,7 +394,7 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     $exp_name = \gm\get_gm_attr_info(1,'exp',$dblj)['name'];
     $money_measure = \gm\gm_post($dblj)->money_measure;
     $money_name = \gm\gm_post($dblj)->money_name;
-    
+
     // 在循环外部生成输出字符串
     if($drop_item_type ==1){
     if($item_counts){
@@ -436,6 +428,16 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     $monster_name = \lexical_analysis\color_string($alive_monster->nname);
     switch ($zdjg){
         case 1:
+            
+            if($drop_add_map_item){
+                // 拼接掉落物品字符串
+            $drop_add_map_item_str = implode(',', $drop_add_map_item);
+            // 使用参数化查询，避免 SQL 注入，同时处理 mitem_now 为空的情况
+            $nowdate = date('Y-m-d H:i:s');
+            $stmt = $dblj->prepare("insert into system_npc_drop_list(drop_npc_id,drop_item_data,drop_player_sid,drop_time,drop_mid)values(?,?,?,?,?)");
+            $stmt->execute([$alive_id,$drop_add_map_item_str,$sid,$nowdate,$drop_map_id]);
+            }
+            
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
             $sql = "delete from system_npc_midguaiwu where nsid='$sid'";
             $dblj->exec($sql);

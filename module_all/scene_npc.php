@@ -6,7 +6,7 @@ include_once 'pdo.php';
 // require_once 'class/lexical_analysis.php';
 require_once 'class/basic_function_todo.php';
 include_once 'class/events_steps_change.php';
-
+$parents_cmd = 'gm_scene_new';
 $parents_page = $currentFilePath;
 // $encode = new \encode\encode();
 // $player = new \player\player();
@@ -70,9 +70,8 @@ if ($ntaskid!='' && $nkill ==0){
                 if($nowrw->tnpc_id == $nid){
                 $player_tnowcount = preg_replace('/\|(\d+)/', '|0', $nowrw->ttarget_obj);
                 \player\inserttask($ntaskarr[$order-1],$player_tnowcount,$sid,$dblj);
-                $parents_cmd = 'gm_scene_new';
                 //步骤中若放弃传值的问题
-                events_steps_change($task_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_module',$mid,$para);
+                events_steps_change($task_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$mid,$para);
                 $npc_hide = 1;
                 break;
                 }
@@ -111,10 +110,9 @@ if ($ntaskid!='' && $nkill ==0){
                     }
                     }
                     elseif($rw_check_done ==$rw_check_count &&$rw_type !=3){
-                    $parents_cmd = 'gm_scene_new';
                     //步骤中若放弃传值的问题
                     $task_finish_event_id = \player\getselfeventid($ntaskarr[$order-1],$dblj,'npc_task_finish');
-                    events_steps_change($task_finish_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$nid,$para);
+                    events_steps_change($task_finish_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','npc_scene',$mid,$para);
                     \player\updatettask_state(2,$ntaskarr[$order-1],$sid,$dblj);
                     \player\updatettask_tcount($nowrw->ttarget_obj,$ntaskarr[$order-1],$sid,$dblj);
                     $npc_hide = 1;
