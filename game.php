@@ -3862,39 +3862,40 @@ echo $refresh_html;
     
 <footer>
     <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
-    <script>
-    // 等待页面加载完成
+<script>
     document.addEventListener("DOMContentLoaded", function() {
-    
-        // 获取所有需要加载图片的 img 标签
         const images = document.querySelectorAll('img');
-    
-        // 遍历每个 img 标签
+        
         images.forEach(function(img) {
-            // 获取图片的真实 URL (存储在 data-src 属性中)
             const imageUrl = img.getAttribute('data-src');
-    
-            // 使用 Ajax 获取图片内容，或从服务器获取更多的图像数据
-            fetch(imageUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('网络错误或图片加载失败');
-                    }
-                    return response.blob(); // 返回二进制数据（图像）
-                })
-                .then(blob => {
-                    // 将返回的二进制数据转换为 URL
-                    const imageObjectURL = URL.createObjectURL(blob);
-                    // 设置 img 标签的 src 属性
-                    img.src = imageObjectURL;
-                    img.removeAttribute('data-src');
-                })
-                .catch(error => {
-                    console.error('图片加载失败:', error);
-                    // 可选：显示默认图片或错误提示
-                    img.src = 'UnLoaded..';
-                });
-        });
+            const imageStyle = img.getAttribute('data-style');
+            if (imageUrl) {
+                fetch(imageUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('网络错误或图片加载失败');
+                        }
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        const imageObjectURL = URL.createObjectURL(blob);
+                        img.src = imageObjectURL;
+                        img.style = imageStyle;
+                        img.removeAttribute('data-src');
+                        img.removeAttribute('data-style');
+                        // 图片加载完成后释放 ObjectURL 以节省内存
+                        img.onload = function() {
+                            URL.revokeObjectURL(imageObjectURL);
+                        };
+                    })
+                    .catch(error => {
+                        console.error('图片加载失败:', error);
+                        // 使用有效的占位图路径或隐藏图片
+                        img.src = 'placeholder.png'; // 替换为有效URL
+                        img.alt = '图片加载失败';
+                    });
+            }
+        }); // 修正此处括号
     });
 </script>
 
