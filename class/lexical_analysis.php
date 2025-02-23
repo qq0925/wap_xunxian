@@ -1215,7 +1215,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     if (strpos($attr3, 'b.') === 0) {
                         $attr4 = substr($attr3, 2); // 提取 "b." 后面的部分
                         $bid = $attr4;
-                        $sql = "SELECT eq_true_id FROM system_equip_user WHERE eq_type =  1 and eqsid = ? and eqpid = 0";
+                        $sql = "SELECT eq_true_id FROM system_equip_user WHERE eq_type =  1 and eqsid = ?";
                     
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
@@ -1334,7 +1334,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $equiped_pos = $idArray[$equiped_pos];
 
                         $fid = $attr4;
-                        $sql = "SELECT eq_true_id FROM system_equip_user WHERE eq_type =  2 and equiped_pos_id = ? and eqsid = ? and eqpid = 0";
+                        $sql = "SELECT eq_true_id FROM system_equip_user WHERE eq_type =  2 and equiped_pos_id = ? and eqsid = ?";
                     
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
@@ -1882,77 +1882,6 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                         $op = $skill_final;
                                     }
                                 }
-                            }elseif($attr2 == "equips_cmmt") {
-    $sql = "SELECT * FROM system_equip_def WHERE type = '1'";
-    $cxjg = $db->query($sql);
-    $ret = $cxjg ? $cxjg->fetch_all(MYSQLI_ASSOC) : [];
-    
-    $equipbid = null;
-    foreach ($ret as $row) {
-        $equiptypeid = $row['id'];
-        $equiptypename = $row['name'];
-        $sql = "SELECT * FROM system_equip_user WHERE eq_type = 1 AND equiped_pos_id = '$equiptypeid' AND eqsid = '$sid' AND eqpid = '$mid'";
-        $cxjg = $db->query($sql);
-        if ($cxjg) {
-            $row = $cxjg->fetch_assoc();
-            if ($row) {
-                $equipbid = $row['eq_true_id'];
-                break;
-            }
-        }
-    }
-    
-    if ($equipbid) {
-        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$equipbid')";
-        $cxjg = $db->query($sql);
-        if ($cxjg) {
-            $row = $cxjg->fetch_assoc();
-            if ($row) {
-                $equipbname = \lexical_analysis\color_string($row['iname']);
-                $equipbhtml = $equipbname . ",";
-            }
-        }
-    }
-    
-    $sql = "SELECT * FROM system_equip_def WHERE type = 2";
-    $cxjg = $db->query($sql);
-    $ret = $cxjg ? $cxjg->fetch_all(MYSQLI_ASSOC) : [];
-    
-    $equipfhtml = '';
-    foreach ($ret as $row) {
-        $equiptypeid = $row['id'];
-        $equiptypename = $row['name'];
-        $sql = "SELECT * FROM system_equip_user WHERE eq_type = 2 AND equiped_pos_id = '$equiptypeid' AND eqsid = '$sid' AND eqpid = '$mid'";
-        $cxjg = $db->query($sql);
-        if ($cxjg) {
-            $row = $cxjg->fetch_assoc();
-            if ($row) {
-                $equipfid = $row['eq_true_id'];
-                if ($equipfid) {
-                    $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$equipfid')";
-                    $cxjg = $db->query($sql);
-                    if ($cxjg) {
-                        $row = $cxjg->fetch_assoc();
-                        if ($row) {
-                            $equipfname = \lexical_analysis\color_string($row['iname']);
-                        }
-                    }
-                }
-                $equipfhtml .= $equipfname . ",";
-            }
-        }
-    }
-
-$equipbhtml = rtrim($equipbhtml,',');
-$equipfhtml = rtrim($equipfhtml,',');
-$bagequiphtml = $equipbhtml.",".$equipfhtml;
-$bagequiphtml = rtrim($bagequiphtml,',');
-
-if(!$bagequiphtml){
-    $op = "无";
-}else{
-    $op = $bagequiphtml;
-}
                             }else{
                             $attr3 = 'n'.$attr2;
                             $sql = "SELECT * FROM system_pet_scene WHERE npid = ?";
