@@ -35,13 +35,13 @@ $gm_html =<<<HTML
     <h1>GM修改器</h1>
     <form action="?cmd=$gm_cheat" method="post">
         <label for="id">ID:</label>
-        <input type="text" id="id" name="id"><br><br>
+        <input type="text" id="id" name="id">（这里填写玩家id比如1，2）<br><br>
         
         <label for="attr_name">属性名称:</label>
-        <input type="text" id="attr_name" name="attr_name"><br><br>
+        <input type="text" id="attr_name" name="attr_name">（前面的u不要填！比如uhp只填hp就好！）<br><br>
         
         <label for="attr_value">属性值:</label>
-        <input type="text" id="attr_value" name="attr_value"><br><br>
+        <input type="text" id="attr_value" name="attr_value">（留空是将属性值置空）<br><br>
         
         <input type="submit" value="提交">
     </form>

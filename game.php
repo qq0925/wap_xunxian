@@ -520,7 +520,7 @@ echo $refresh_html;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // 获取输入框的值
             $id = $_POST['id'];
-            $attr_name = $_POST['attr_name'];
+            $attr_name = 'u'.$_POST['attr_name'];
             $attr_value = $_POST['attr_value'];
             // 查询数据
             $up_sid = \player\getplayer($sid,$dblj,$id)->sid;
