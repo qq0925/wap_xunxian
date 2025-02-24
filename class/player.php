@@ -745,7 +745,7 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
     switch($type){
         case '1':
             // 检查是否存在符合条件的记录
-            $sql = "SELECT * FROM system_equip_user WHERE eqsid = ? AND eq_type = 1";
+            $sql = "SELECT eq_true_id FROM system_equip_user WHERE eqsid = ? AND eq_type = 1";
             $stmt = $dblj->prepare($sql);
             $stmt->bindParam(1, $sid, \PDO::PARAM_STR);
             $stmt->execute();
@@ -844,14 +844,15 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 
                 
                 $dblj->exec("UPDATE system_equip_user set eq_true_id = '$equip_id' where eq_true_id = '$eq_true_id' and eqsid = '$sid' and eq_type = 1");
-                $sql = "select iattack_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
+                $sql = "select iattack_value,iname from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['iattack_value']);
+                $equip_name = \lexical_analysis\color_string($sub_result['iname']);
                 \player\addplayersx('ugj',$sub_value,$sid,$dblj);
                 \player\addplayersx('ugj',$equip_add_canshu,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
-                
+                echo "你卸下了{$equip_name}<br/>";
                 $mosaic_list = \player\get_player_equip_mosaic_once($eq_true_id,$sid,$dblj)['equip_mosaic'];
                 if($mosaic_list){
                     $mosaic_ones = explode("|",$mosaic_list);
@@ -1001,14 +1002,15 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 
                 
                 $dblj->exec("UPDATE system_equip_user set eq_true_id = '$equip_id' where eq_true_id = '$eq_true_id' and eqsid = '$sid' and eq_type = 2");
-                $sql = "select irecovery_value from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
+                $sql = "select irecovery_value,iname from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['irecovery_value']);
+                $equip_name = \lexical_analysis\color_string($sub_result['iname']);
                 \player\addplayersx('ufy',$sub_value,$sid,$dblj);
                 \player\addplayersx('ufy',$equip_add_canshu,$sid,$dblj);
                 $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$eq_true_id' and sid = '$sid'");
-                
+                echo "你卸下了{$equip_name}<br/>";
                 $mosaic_list = \player\get_player_equip_mosaic_once($eq_true_id,$sid,$dblj)['equip_mosaic'];
                 if($mosaic_list){
                     $mosaic_ones = explode("|",$mosaic_list);
