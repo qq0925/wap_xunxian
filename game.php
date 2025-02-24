@@ -1349,6 +1349,7 @@ echo $refresh_html;
             $ym = 'module_all/self_module/self_module_page.php';
             }elseif($delete_all_canshu ==1){
             // 清空表的所有元素
+            $dblj->exec("UPDATE system_self_define_module set call_sum = 0,not_return = 0 where id = '$self_id'");
             $delete_table = "game_self_page_".$self_id;
             $dblj->exec("DELETE FROM `$delete_table`");
             // 将自增值置为 0
