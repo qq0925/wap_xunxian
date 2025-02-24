@@ -14,6 +14,7 @@ if($_POST['change_module_name']&&$change_name){
 $sql = "UPDATE system_self_define_module set name = '$change_name' where id = '$change_self_id'";
 $cxjg = $dblj->query($sql);
 echo "更改成功！<br/>";
+$self_id = $change_self_id;
 }
 
 if($_POST['change_module_id']&&$change_id){
@@ -23,7 +24,7 @@ $old_table_id = 'game_self_page_'.$change_self_id;
 $new_table_id = 'game_self_page_'.$change_id;
 $sql = "RENAME TABLE `$old_table_id` TO `$new_table_id`";;
 $cxjg = $dblj->exec($sql);
-$sql = "UPDATE system_event_self set module_id = '$new_id' where module_id = '$old_id'";
+$sql = "UPDATE system_event_self set module_id = '$new_table_id' where module_id = '$old_table_id'";
 $cxjg = $dblj->query($sql);
 $sql = "UPDATE system_event_evs set page_name = '$new_id' where page_name = '$old_id'";
 $cxjg = $dblj->query($sql);
