@@ -106,7 +106,7 @@ $gm_main = $encode->encode("cmd=gm_game_globaleventdefine&gm_post_canshu=$event_
     for ($i = 1; $i < count($steps) +1; $i++) {
         $step = $steps[$i-1];
         $gm_steps_detail = $encode->encode("cmd=gm_game_globaleventdefine_steps&step_belong_id=$event_id&step_id=$step&sid=$sid");
-        $gm_steps_delete = $encode->encode("cmd=game_event_page_1&gm_post_canshu_2=$gm_post_canshu_2&step_belong_id=$event_id&step_id=$step&if_delete=1&sid=$sid");
+        $gm_steps_delete = 'game.php?cmd='. $encode->encode("cmd=game_event_page_1&gm_post_canshu_2=$gm_post_canshu_2&step_belong_id=$event_id&step_id=$step&if_delete=1&sid=$sid");
         $step_order = '步骤'.$i;
         $gm_steps .= <<<HTML
         步骤{$i}:<a href="?cmd=$gm_steps_detail">修改</a>

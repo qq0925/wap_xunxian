@@ -26,7 +26,7 @@ for ($i=0;$i<count($gm_ret);$i++){
     $delete_url = $encode->encode("cmd=gm_equip_def&def_post_canshu=1&equip_id=$def_name&sid=$sid");
     $del_url = "game.php?cmd=$delete_url";
     $equip_html .=<<<HTML
-    {$def_name}<a href="#" onclick="return confirmAction('$del_url')">删除</a><br/>
+    {$def_name}<a href="#" onclick="return confirmAction('$del_url','$def_name')">删除</a><br/>
 HTML;
 }
 $add_url = $encode->encode("cmd=gm_equip_def&def_post_canshu=2&sid=$sid");
@@ -49,7 +49,7 @@ for ($i=0;$i<count($gm_ret);$i++){
     $delete_url = $encode->encode("cmd=gm_equip_def&def_post_canshu=4&equip_id=$def_name&sid=$sid");
     $del_url = "game.php?cmd=$delete_url";
     $equip_html .=<<<HTML
-    {$def_name}<a href="#" onclick="return confirmAction('$del_url')">删除</a><br/>
+    {$def_name}<a href="#" onclick="return confirmAction('$del_url','$def_name')">删除</a><br/>
 HTML;
 }
 $add_url = $encode->encode("cmd=gm_equip_def&def_post_canshu=5&sid=$sid");
@@ -66,9 +66,9 @@ echo $gm_html;
 ?>
 <script>
 
-function confirmAction(del_url) {
-    // 弹出确认框
-    if (confirm("你确定要删除该类型吗？")) {
+function confirmAction(del_url, step_order) {
+    // 在确认框中显示具体的操作名称
+    if (confirm("你确定要删除 “" + step_order + "” 这个类型吗？")) {
         // 使用传入的具体删除链接
         window.location.href = del_url;
     }

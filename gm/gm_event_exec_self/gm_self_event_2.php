@@ -352,7 +352,7 @@ foreach ($rows as $row) {
         $index = $i + 1;
         $step_order = '步骤'.$index;
         $gm_steps_detail = $encode->encode("cmd=gm_game_selfeventdefine_steps&main_id=$main_id&step_id=$step&event_id=$event_id&sid=$sid");
-        $gm_steps_delete = $encode->encode("cmd=gm_game_selfeventdefine_steps_delete&event_id=$event_id&step_id=$step&if_delete=1&sid=$sid");
+        $gm_steps_delete ='game.php?cmd='. $encode->encode("cmd=gm_game_selfeventdefine_steps_delete&event_id=$event_id&step_id=$step&if_delete=1&sid=$sid");
         $gm_steps .= <<<HTML
             步骤{$index}:<a href="?cmd=$gm_steps_detail">修改</a>
             <a href="#" onclick="return confirmAction('$gm_steps_delete', '{$step_order}')">删除</a>
