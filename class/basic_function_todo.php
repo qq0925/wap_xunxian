@@ -1755,29 +1755,27 @@ function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $monster_nowmid = $monster_list[$i]['nmid'];
     if($cmd =="pve_fighting"){
     $round = \player\getnowround($sid,$dblj);
-
+    $preround = $round - 1;
+    // 构建 SQL 查询语句
     $sql = "SELECT 
-    SUM(g2.hurt_hp) AS total_hurt_hp,
-    g3.cut_mp AS cut_mp
-FROM 
-    game2 g2
-JOIN 
-    game3 g3 ON g2.round = g3.round AND g2.gid = g3.gid AND g2.sid = g3.sid
-WHERE 
-    g2.gid = :gid 
-    AND g2.sid = :sid 
-    AND g2.round = :round 
-    AND (g2.type = 1 OR g2.type = 4)
-    AND (g3.type = 2 OR g3.type = 3);
-";
+        (SELECT now_hp FROM system_fight_state 
+         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :current_round) -
+        (SELECT now_hp FROM system_fight_state 
+         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :previous_round) AS hp_diff,
+        (SELECT now_mp FROM system_fight_state 
+         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :current_round) -
+        (SELECT now_mp FROM system_fight_state 
+         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :previous_round) AS mp_diff";
     $stmt = $dblj->prepare($sql);
-    $stmt->bindParam(':sid', $sid,PDO::PARAM_STR);
-    $stmt->bindParam(':gid', $monster_id,PDO::PARAM_INT);
-    $stmt->bindParam(':round', $round,PDO::PARAM_STR);
-    $stmt->execute();
+    $stmt->execute([
+        'sid' => $sid,
+        'gid' => $monster_id,
+        'current_round' => $round,  // e.g., current round
+        'previous_round' => $preround  // previous round
+    ]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $hurt_hp = $row['total_hurt_hp']?:'';
-    $hurt_mp = $row['cut_mp']?:'';
+    $hurt_hp = $row["hp_diff"]?:'';
+    $hurt_mp = $row['mp_diff']?:'';
     if($hurt_hp){
     $cut_hp = $hurt_hp >0?"+".$hurt_hp:$hurt_hp;
     $cut_mp = $hurt_mp >0?"+".$hurt_mp:$hurt_mp;

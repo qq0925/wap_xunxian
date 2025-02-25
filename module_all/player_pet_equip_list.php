@@ -14,7 +14,7 @@ $equipbid = null;
 foreach ($ret as $row) {
     $equiptypeid = $row['id'];
     $equiptypename = $row['name'];
-    $sql = "select * from system_equip_user where eq_type = 1 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid' and eqpid = '$pet_id'";
+    $sql = "select * from system_equip_user where eq_type = 1 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid'";
     $cxjg = $dblj->query($sql);
     if ($cxjg) {
         $row = $cxjg->fetch(PDO::FETCH_ASSOC);
@@ -48,7 +48,7 @@ $equipfhtml = '';
 foreach ($ret as $row) {
     $equiptypeid = $row['id'];
     $equiptypename = $row['name'];
-    $sql = "select * from system_equip_user where eq_type = 2 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid' and eqpid = '$pet_id'";
+    $sql = "select * from system_equip_user where eq_type = 2 and equiped_pos_id = '$equiptypeid' and eqsid = '$sid'";
     $cxjg = $dblj->query($sql);
     if ($cxjg) {
         $row = $cxjg->fetch(PDO::FETCH_ASSOC);

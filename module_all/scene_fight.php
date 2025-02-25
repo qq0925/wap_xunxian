@@ -23,11 +23,17 @@ $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $initial_player_hp = $player->uhp;
 
 if(!$be_feat){
+    $round = \player\getnowround($sid,$dblj);
+    $next_round = $round + 1;
     $fight_final_arr = [
         'player' => [$sid => $player->uspeed],
         'pet' => [],
         'monster' => []
     ];
+
+if($round ==0&&$cmd =='pve_fight'){
+    \player\update_fight_msg($sid,'0','0',0,1,$dblj);
+}
 
     // 优化宠物处理
     if($pet) {
@@ -35,6 +41,9 @@ if(!$be_feat){
         foreach($pet as $p) {
             $fight_final_arr['pet'][$p['npid']] = $p['nspeed'];
             $npid_arr[] = $p['npid'];
+            if($round ==0&&$cmd =='pve_fight'){
+                \player\update_fight_msg($sid,$p['npid'],'0',0,2,$dblj);
+            }
         }
         $npid = implode(',', $npid_arr);
     }
@@ -45,6 +54,9 @@ if(!$be_feat){
         foreach($fight_arr as $m) {
             $fight_final_arr['monster'][$m['ngid']] = $m['nspeed'];
             $ngid_arr[] = $m['ngid'];
+            if($round ==0&&$cmd =='pve_fight'){
+                \player\update_fight_msg($sid,'0',$m['ngid'],0,3,$dblj);
+            }
         }
         $ngid = implode(',', $ngid_arr);
     }
@@ -71,20 +83,11 @@ if(!$be_feat){
     $rwts = '';
     $game_main = '';
 
-    $round = \player\getnowround($sid,$dblj);
-    $next_round = $round + 1;
     $get_main_page = \gm\get_pve_page($dblj);
     $br = 0;
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $clj[] = $cmd;
-
-    //获取战斗回合数，获取所有能战斗的id（无死亡无异常状态），获取他们的speed属性，进行排序（遇到同值便随机），生成出招顺序表，依照出招顺序表执行出招，若死亡或处于异常无法出招状态则从顺序表中移除掉，然后继续执行之前，等到全部执行完开启下一轮计算。
-
-    // var_dump($sid);
-    // var_dump($npid);
-    // var_dump($guai_speed_para);
-    // var_dump($ngid);
 
     if($cmd=='pve_fight'){
         //如果玩家的血量小于等于0，则直接返回战斗结果
@@ -93,8 +96,7 @@ if(!$be_feat){
         }
     }elseif ($cmd == 'pve_fighting'){
         //技能攻击
-        
-        
+
         // 将多维数组扁平化到一个数组中，每个元素包含 type、id 和 speed（转换为整数）
         $flattened = array();
         foreach ($fight_final_arr as $type => $items) {
@@ -106,7 +108,6 @@ if(!$be_feat){
                 );
             }
         }
-        
         // 根据 speed 从大到小排序，如果 speed 相等，则随机返回 1 或 -1
         usort($flattened, function($a, $b) {
             if ($a['speed'] == $b['speed']) {
@@ -137,22 +138,9 @@ if(!$be_feat){
         }
             $test_text .= "玩家（ID: {$item['id']}）出手，速度：{$item['speed']}<br/>";
         } elseif ($item['type'] == 'monster') {
-            // if($ngid){
-            //     $ngidArr = explode(',',$ngid);
-            //     var_dump($ngid);
-            //     foreach ($ngidArr as $ngid_one){
-            // \lexical_analysis\hurt_calc($sid,$ngid_one,2,$dblj,$next_round,null,$npid);//怪对你的伤害,单体判别
-            //     }
-            // }
             \lexical_analysis\hurt_calc($sid,$item['id'],2,$dblj,$next_round,null,$npid);//怪对你的伤害,单体判别
             $test_text .= "怪物（ID: {$item['id']}）出手，速度：{$item['speed']}<br/>";
         } elseif ($item['type'] == 'pet') {
-                // if($npid){
-                //     $npidArr = explode(',',$npid);
-                //     foreach ($npidArr as $npid_one){
-                // \lexical_analysis\hurt_calc($sid,$ngid,3,$dblj,$next_round,null,$npid_one);//宠对怪的伤害
-                //     }
-                // }
             \lexical_analysis\hurt_calc($sid,$ngid,3,$dblj,$next_round,null,$item['id']);//宠对怪的伤害
             $test_text .= "宠物（ID: {$item['id']}）出手，速度：{$item['speed']}<br/>";
         }
@@ -240,6 +228,17 @@ if(!$be_feat){
         echo $test_text;
     }
         }
+        
+        foreach ($flattened as $item) {
+            if ($item['type'] == 'player') {
+                \player\update_fight_msg($sid,'0','0',$next_round,1,$dblj);
+            } elseif ($item['type'] == 'monster') {
+                \player\update_fight_msg($sid,'0',$item['id'],$next_round,3,$dblj);
+            } elseif ($item['type'] == 'pet') {
+                \player\update_fight_msg($sid,$item['id'],'0',$next_round,2,$dblj);
+            }
+        }
+        
         $player =  player\getplayer($sid,$dblj);
         //以下获取的怪物id均是活着的怪物id
         $monster_ids = explode(',',$ngid);

@@ -808,8 +808,6 @@ $db->query($onesql);
 $db->commit();
 // 重新开启自动提交
 $db->autocommit(true);
- 
-//var_dump($updateAll);
 }
 return 1;
 }

@@ -983,9 +983,6 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $result = $stmt->get_result();
                     $row = $result->fetch_assoc();
                     $op = $row['value'];
-                    if ($op === null||$op =='') {
-                        //$op = "\"\""; // 或其他默认值
-                        }
                     }
                     elseif(strpos($attr2, "refresh_time") === 0){
                     $sql = "SELECT mgtime,mrefresh_time FROM system_map WHERE mid = (SELECT nowmid FROM game1 WHERE sid = ?)";
@@ -1109,10 +1106,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     // 获取查询结果
                     $result = $stmt->get_result();
                     $row = $result->fetch_assoc();
-                    $op = $row["icount"];
-                    if(is_null($op)){
-                        //$op = "\"\"";
-                    }
+                    $op = $row["icount"]?:0;
                     }elseif(strpos($attr2, "jv.") === 0){
                     $attr3 = substr($attr2, 3); // 提取 "jv." 后面的部分
                     if (strpos($attr3, 'j') === 0) {
@@ -1604,7 +1598,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             }
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                             break;
-                        case 'cut_hp':
+                        case 'hurt_hp':
                         $round = \player\getnowround($sid,$dblj,$db);
                         // 构建 SQL 查询语句
                         $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = ? and pid = 0 and round = '$round' and type = 2";
@@ -1627,7 +1621,37 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op = $row["total_cut_hp"];
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
-                        case 'cut_mp':
+                        case 'cut_hp':
+                        $round = \player\getnowround($sid,$dblj,$db);
+                        // 构建 SQL 查询语句
+                        $sql = "SELECT 
+                                    (SELECT now_hp FROM system_fight_state 
+                                     WHERE sid = ? AND type = 1 AND round = ?) - 
+                                    (SELECT now_hp FROM system_fight_state 
+                                     WHERE sid = ? AND type = 1 AND round = ?) AS diff";
+                        $preround = $round - 1;
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param("sisi", $sid,$round,$sid,$preround);
+                        // 使用预处理语句
+                        
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if($round >1){
+                            $prere_round = $round - 2;
+                            $db->query("delete from system_fight_state where sid = '$sid' and round = '$prere_round'");
+                        }
+                        // 关闭第一个查询的结果集
+                        $stmt->close();
+                        
+                        // 获取总和并处理结果
+                        $op = $row["diff"];
+                        $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                        break;
+                        case 'hurt_mp':
                         $round = \player\getnowround($sid,$dblj,$db);
                         // 构建 SQL 查询语句
                         $sql = "SELECT cut_mp as total_cut_mp FROM game3 WHERE sid = ? and pid = 0 and round = '$round' and type = 1";
@@ -1648,6 +1672,36 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         
                         // 获取总和并处理结果
                         $op = $row["total_cut_mp"];
+                        $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
+                        break;
+                        case 'cut_mp':
+                        $round = \player\getnowround($sid,$dblj,$db);
+                        // 构建 SQL 查询语句
+                        $sql = "SELECT 
+                                    (SELECT now_mp FROM system_fight_state 
+                                     WHERE sid = ? AND type = 1 AND round = ?) - 
+                                    (SELECT now_mp FROM system_fight_state 
+                                     WHERE sid = ? AND type = 1 AND round = ?) AS diff";
+                        $preround = $round - 1;
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param("sisi", $sid,$round,$sid,$preround);
+                        // 使用预处理语句
+                        
+                        // 执行查询
+                        $stmt->execute();
+                        
+                        // 获取查询结果
+                        $result = $stmt->get_result();
+                        $row = $result->fetch_assoc();
+                        if($round >1){
+                            $prere_round = $round - 2;
+                            $db->query("delete from system_fight_state where sid = '$sid' and round = '$prere_round'");
+                        }
+                        // 关闭第一个查询的结果集
+                        $stmt->close();
+                        
+                        // 获取总和并处理结果
+                        $op = $row["diff"];
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
                         case 'busy':

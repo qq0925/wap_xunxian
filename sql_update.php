@@ -15,6 +15,7 @@
         $stmt->execute();
     }
 
+
     $sql = "SHOW COLUMNS FROM system_event_evs_self LIKE 'next_text'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
@@ -229,6 +230,40 @@ try {
 
         // 添加 `ncid` 列，设置为 `AUTO_INCREMENT` 和主键
         $dblj->exec("ALTER TABLE `system_npc_scene` ADD COLUMN `ncid` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY");
+
+        // 提交事务
+        $dblj->commit();
+    }
+} catch (PDOException $e) {
+    // 回滚事务（如果有进行事务处理）
+    if ($dblj->inTransaction()) {
+        $dblj->rollBack();
+    }
+    echo "操作时出错: " . $e->getMessage();
+}
+
+try {
+    // 1. 查询表是否存在
+    $query = $dblj->prepare("SHOW TABLES LIKE 'system_fight_state'");
+    $query->execute();
+    $table_exists = $query->fetch();
+
+    if (!$table_exists) {
+        // 2. 表不存在，复制 system_npc 表的结构
+
+        
+        // 使用事务来保证所有操作的原子性
+        $dblj->beginTransaction();
+
+        $sql = "CREATE TABLE IF NOT EXISTS system_fight_state (
+                sid TEXT NOT NULL,
+                pid INT(11) NOT NULL,
+                gid INT(11) NOT NULL,
+                round INT(11) NOT NULL,
+                type INT(1) NOT NULL,
+                now_hp INT(20) NOT NULL,
+                now_mp INT(20) NOT NULL)";
+        $dblj->exec($sql);
 
         // 提交事务
         $dblj->commit();

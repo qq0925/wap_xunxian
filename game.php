@@ -129,6 +129,8 @@ $sql = "delete from game2 where sid = '$sid'";
 $dblj->exec($sql);
 $sql = "delete from game3 where sid = '$sid'";
 $dblj->exec($sql);
+$sql = "delete from system_fight_state where sid = '$sid'";
+$dblj->exec($sql);
 }
 if($cmd =='logout'){
 //logout($sid);

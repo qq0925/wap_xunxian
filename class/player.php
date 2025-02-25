@@ -180,7 +180,7 @@ if (!$db) {
 if(!$latestRound){
     $latestRound = 0;
 }
-return $latestRound;
+return (int)$latestRound;
 }
 
 function get_temp_attr($obj_id,$attr_name,$obj_type,$dblj){
@@ -208,6 +208,35 @@ function update_message_sql($sid,$dblj,$input,$view_type=null){
     }
     $dblj->exec($sql);
 
+}
+
+function update_fight_msg($sid,$pid,$gid,$round,$type,$dblj){
+
+switch($type){
+    case '1':
+        $sql = "SELECT uhp,ump from game1 where sid = '$sid'";
+        $cxjg = $dblj->query($sql);
+        $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+        $update_hp = $ret['uhp'];
+        $update_mp = $ret['ump'];
+        break;
+    case '2':
+        $sql = "SELECT nhp,nmp from system_pet_scene where nsid = '$sid' and npid = '$pid'";
+        $cxjg = $dblj->query($sql);
+        $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+        $update_hp = $ret['nhp'];
+        $update_mp = $ret['nmp'];
+        break;
+    case '3':
+        $sql = "SELECT nhp,nmp from system_npc_midguaiwu where nsid = '$sid' and ngid = '$gid'";
+        $cxjg = $dblj->query($sql);
+        $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+        $update_hp = $ret['nhp'];
+        $update_mp = $ret['nmp'];
+        break;
+}
+
+$dblj->exec("insert into system_fight_state(sid,pid,gid,round,type,now_hp,now_mp)values('$sid','$pid','$gid','$round','$type','$update_hp','$update_mp')");
 }
 
 function put_system_message_sql($uid,$dblj){

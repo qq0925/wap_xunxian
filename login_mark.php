@@ -100,6 +100,7 @@ HTML;
 }
 }
 catch (Exception $e){
+    //var_dump($e);
         header("Location: index.php", true, 302);
         exit;
 }
