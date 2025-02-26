@@ -55,7 +55,10 @@ function checkTriggerCondition($condition,$dblj=null,$sid,$oid=null,$mid=null) {
 function attrsetting($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
 $db = DB::conn();
+$can_redis = $GLOBALS['can_redis'];
+if($can_redis == 1){
 global $redis;
+}
 $updateAll = [];
 // 使用逗号分割字符串
 $keyValuePairs = explode(",", $input);
@@ -66,7 +69,9 @@ foreach ($keyValuePairs as $pair) {
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
+        if($can_redis == 1){
         $check_cache = \gm\check_redis($db,$ele_1,$sid,$oid,$mid,$jid,$type,$para);
+        }
         //$parts = explode(".", $ele_1);
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
@@ -106,12 +111,16 @@ foreach ($keyValuePairs as $pair) {
         //     echo "无法匹配到小数点 '.'<br/>";
         //     }
         if(!is_numeric($ele_2)){
+        if($can_redis == 1){
         $redis->del($check_cache);
+        }
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         $ele_2 = str_replace(array("'", "\""), '', $ele_2);
         }else{
+            if($can_redis == 1){
             $redis->set($check_cache,$ele_2);
+            }
             
         }
 
@@ -467,7 +476,10 @@ function attrchanging($input,$sid,$oid=null,$mid=null,$para=null){
 $db = DB::conn();
 $dblj = DB::pdo();
 // 使用逗号分割字符串
+$can_redis = $GLOBALS['can_redis'];
+if($can_redis == 1){
 global $redis;
+}
 $updateAll = [];
 $keyValuePairs = explode(",", $input);
 $old_sid = $sid;
@@ -478,7 +490,9 @@ $sid = $old_sid;
     if ($firstEqualsPos !== false) {
         $ele_1 = substr($pair, 0, $firstEqualsPos);
         $ele_2 = substr($pair, $firstEqualsPos + 1);
+        if($can_redis == 1){
         $check_cache = \gm\check_redis($db,$ele_1,$sid,$oid,$mid,$jid,$type,$para);
+        }
         //$parts = explode(".", $ele_1);
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
@@ -565,12 +579,16 @@ $sid = $old_sid;
         
         
         if(!is_numeric($ele_2)){
+            if($can_redis == 1){
         $redis->del($check_cache);
+            }
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         $ele_2 = str_replace(array("'", "\""), '', $ele_2);
         }else{
+            if($can_redis == 1){
             $redis->set($check_cache,$ele_2);
+            }
         }
         switch ($ele_1_1) {
             case 'u':

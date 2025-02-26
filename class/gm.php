@@ -21,9 +21,9 @@ if ($firstDotPosition !== false) {
         case 'o':
             $cacheKey = $oid."::".$mid.'::'.$attr;
             break;
-        // case 'e':
-        //     $cacheKey = 'expr::'.$attr;
-        //     break;
+        case 'e':
+            $cacheKey = 'expr::'.$attr;
+            break;
         case 'c':
             $cacheKey = 'system::'.$attr;
             break;
@@ -68,9 +68,9 @@ if ($firstDotPosition !== false) {
         case 'o':
             $cacheKey = $oid."::".$mid.'::'.$attr;
             break;
-        // case 'e':
-        //     $cacheKey = 'expr::'.$attr;
-        //     break;
+         case 'e':
+            $cacheKey = 'expr::'.$attr;
+            break;
         case 'c':
             $cacheKey = 'system::'.$attr;
             break;

@@ -15,7 +15,7 @@ $player = \player\getplayer($sid,$dblj);
 $pet = \player\getpet_fight($sid,$dblj,'alive');//活着的宠物
 $clmid = player\getmid($player->nowmid,$dblj);
 $fight_arr = player\getfightpara($sid,$dblj);
-
+$can_redis = $GLOBALS['can_redis'];
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
@@ -358,7 +358,9 @@ if(empty($fight_arr)){
 $zdjg = 1;
 }
 while (\player\upplayerlvl($sid, $dblj) == 1) {
+    if($can_redis == 1){
     $redis->flushAll($cacheKey);
+    }
     $ret = $ret ?? global_event_data_get(22, $dblj);
     if ($ret) {
         global_events_steps_change(22, $sid, $dblj, $just_page, $steps_page, $cmid, 'module/gm_scene_new', null, null, $para);

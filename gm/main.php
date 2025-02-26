@@ -1,5 +1,5 @@
 <?php
-
+$can_redis = $GLOBALS['can_redis'];
 if($remove_canshu!=1&&$remove_canshu!=3&&$remove_canshu!=5){
     
     if($remove_canshu==2){
@@ -48,8 +48,19 @@ $remove_all_chat = $encode->encode("cmd=gm&remove_canshu=1&sid=$sid");
 $global_value_design = $encode->encode("cmd=global_value_design&sid=$sid");
 $gm_zip_update = $encode->encode("cmd=gm_game_zipfile&type=update&sid=$sid");
 $gm_zip_all = $encode->encode("cmd=gm_game_zipfile&type=all&sid=$sid");
+if($can_redis){
 $del_all_cache = $encode->encode("cmd=gm&remove_canshu=3&sid=$sid");
 $view_all_cache = $encode->encode("cmd=gm&remove_canshu=5&sid=$sid");
+$cache_page =<<<HTML
+<a href="?cmd=$del_all_cache">清空全部缓存</a><br/>
+<a href="?cmd=$view_all_cache">查看全部缓存</a><br/>
+HTML;
+}else{
+$cache_page =<<<HTML
+<a href="#">清空全部缓存</a><br/>
+<a href="#">查看全部缓存</a><br/>
+HTML;
+}
 $gm_game_timerdesign = $encode->encode("cmd=gm_game_timerdesign&sid=$sid");
 $gm_post_canshu = 0;
 $post_tishi = '';
@@ -83,8 +94,7 @@ $gm_html = <<<HTML
 <a href="?cmd=$gm_game_othersetting">功能设置</a><br/>
 <a href="?cmd=$gm_game_timerdesign">设计定时器</a><br/>
 <a href="?cmd=$gm_global_notice">发布临时公告</a><br/>
-<a href="?cmd=$del_all_cache">清空全部缓存</a><br/>
-<a href="?cmd=$view_all_cache">查看全部缓存</a><br/>
+$cache_page
 ---</br>
 <a href="?cmd=$lexical_test">词法解析</a><br/>
 <a href="?cmd=$self_module_api">自定模板模拟</a><br/>

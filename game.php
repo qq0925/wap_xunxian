@@ -44,7 +44,7 @@ $npc = new \player\npc();
 $Dcmd = $_SERVER['QUERY_STRING'];
 
 $allow_sep = "300";//间隔时间，单位毫秒。
-
+$can_redis = $GLOBALS['can_redis'];
 function getMillisecond() {
     list($t1, $t2) = explode(' ', microtime());
     return (float)sprintf('%.0f',(floatval($t1) + floatval($t2)) * 1000);
@@ -108,7 +108,9 @@ if (isset($cmd)&&!isset($sid)){
 //3-4ms
 
 while (\player\upplayerlvl($sid, $dblj) == 1) {
+    if($can_redis ==1){
     $redis->flushAll($cacheKey);
+    }
     $parents_cmd = 'gm_scene_new';
     $ret = $ret ?? global_event_data_get(22, $dblj);
     if ($ret) {
@@ -564,10 +566,12 @@ echo $refresh_html;
         case 'pve_fight'://打怪事件,一次打一个
         
             // 查找以 user:$sid 开头的所有键
+            if($can_redis ==1){
             $keys = $redis->keys("user:$sid*");
             // 删除所有匹配的键
             if (!empty($keys)) {
                 $redis->del($keys);
+            }
             }
             $player = \player\getplayer($sid,$dblj);
             $pet = \player\getpet_fight($sid,$dblj);
@@ -623,10 +627,12 @@ echo $refresh_html;
             break;
         case 'pve_fighting'://打怪事件
             // 查找以 user:$sid 开头的所有键
+            if($can_redis ==1){
             $keys = $redis->keys("user:$sid*");
             // 删除所有匹配的键
             if (!empty($keys)) {
                 $redis->del($keys);
+            }
             }
             $ym = 'module_all/scene_fight.php';
             break;
@@ -3794,11 +3800,13 @@ echo $refresh_html;
             $dblj->exec($sql);
             
             // 查找以 user:$sid 开头的所有键
+            if($can_redis ==1){
             $keys = $redis->keys("user:$sid*");
             
             // 删除所有匹配的键
             if (!empty($keys)) {
                 $redis->del($keys);
+            }
             }
 $refresh_html =<<<HTML
 <meta http-equiv="refresh" content="2;URL=index.php">
@@ -3925,9 +3933,11 @@ $q4 = $clj[$x];
 # 添加一个子项(如果子项存在，则覆盖;)
 $iniFile->addItem('超链接值', [$q3 => $q4]);
 }
-global $redis;
 
+//global $redis;
+if($can_redis ==1){
 $redis->flushAll($cacheKey);
+}
 //$static_page = ob_get_contents();
 //file_put_contents("static_page.html", $static_page);
 //ob_end_clean();

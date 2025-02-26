@@ -8,9 +8,12 @@ use mysqli;
 //input是原始输入，sid是用户识别码，uid用于特殊事件，oid用于o关键字，mid用于获取当前场景id或npc的id,para用于分辨是泛字符串解析还是纯变量解析
 
 // 全局 Redis 连接初始化，放在更高层级
+$GLOBALS['can_redis'] = -1; // 默认不可用
+if (class_exists('Redis')){
 $redis = new \Redis();
 $redis->connect('127.0.0.1', 6379);
-
+$GLOBALS['can_redis'] = 1; // 可用
+}
 
 
 class Cache {
@@ -628,11 +631,23 @@ $expr = preg_replace_callback('/\{getarr\((.*?)\)\}/', function($matches) use ($
 $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     $attr = $matches[1]; // 获取匹配到的变量名
 
-    global $redis;
+    
     if(is_numeric($attr)){
     $op = $attr;
     }else{
+    $can_redis = $GLOBALS['can_redis'];
+    if($can_redis ==1){
+    global $redis;
     $op = \gm\update_redis($db,$attr,$sid,$oid,$mid,$jid,$type,$para);
+    }else{
+    $firstDotPosition = strpos($attr, '.');
+    if ($firstDotPosition !== false) {
+        $attr1 = \lexical_analysis\getSubstringBetweenDots($attr, 0, 1);
+        $attr2 = \lexical_analysis\getSubstringBetweenDots($attr, 1);
+        //$attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
+        $op = \lexical_analysis\process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
+    }
+    }
     }
     if(!is_int((int)$op)){
     $op = str_replace("'", '', $op);
@@ -3044,13 +3059,23 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
 // 定义处理字符串的函数
 function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $type = null, $para = null) {
     $db = DB::conn();
-
+    $can_redis = $GLOBALS['can_redis'];
     $matches = [];
     if($input){
     while(preg_match_all('/v\(([\w.]+)\)/', $input, $matches)){
     if (!empty($matches[1])) {
         foreach ($matches[1] as $match) {
+        if($can_redis ==1){
             $op = \gm\update_redis($db,$match,$sid,$oid,$mid,$jid,$type,$para);
+        }else{
+            $firstDotPosition = strpos($match, '.');
+            if (!empty($firstDotPosition)) {
+                $attr1 = substr($match, 0, $firstDotPosition);
+                $attr2 = substr($match, $firstDotPosition + 1);
+                // 使用 process_attribute 处理单个属性
+                $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
+            }
+        }
             $op = $op?"'".$op."'":"'0'";
             $input = str_replace("v({$match})", $op, $input);
             // $firstDotPosition = strpos($match, '.');

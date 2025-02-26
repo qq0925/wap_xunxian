@@ -60,7 +60,7 @@ function events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$c
                     if($parents_cmd !=$pve_fighting){;
                     $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
                     $page_url =<<<HTML
-                    <a href="?cmd=$just_page">返回游戏</a><br/>
+<a href="?cmd=$just_page">返回游戏</a><br/>
 HTML;
                     echo $page_url;
                     }
@@ -131,7 +131,7 @@ HTML;
                             $just_page = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
                                 }
                              $page_url =<<<HTML
-                    <a href="?cmd=$just_page">返回游戏</a><br/>
+<a href="?cmd=$just_page">返回游戏</a><br/>
 HTML;
                     echo $page_url;
                             }
@@ -314,13 +314,22 @@ HTML;
                                 }
                                 $steps_page +=1;
                                 $input_para = substr($input_para, 0, -1);
+                                $step_next_text = $step_next_text?:"提交";
                                     $post_url = $encode->encode("cmd=main_target_event&mid=$mid&para=$input_para&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
                                     $form_html = <<<HTML
 <form action="?cmd=$post_url" method="post">
 $form_core_html
-<input name="submit" type="submit"value="提交">
+<input name="submit" type="submit"value="{$step_next_text}">
 </form>
 HTML;
+if($step_not_return_link ==0){
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
+    $form_html .=<<<HTML
+<a href="?cmd=$just_page">返回游戏</a><br/>
+HTML;
+}
                                     echo $form_html;
                                 }else{
                                 $steps_page +=1;
@@ -328,7 +337,7 @@ HTML;
                                 $cdid[] = $cmid;
                                 $page_continue = $encode->encode("cmd=main_target_event&mid=$mid&oid=$oid&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
                                 $page_continue =<<<HTML
-                    <a href="?cmd=$page_continue">{$step_next_text}</a><br/>
+<a href="?cmd=$page_continue">{$step_next_text}</a><br/>
 HTML;
                             if($step_not_return_link ==0 && $not_ret_canshu!=1){
                             $sql = "delete from system_player_inputs where sid = '$sid'";
@@ -338,7 +347,7 @@ HTML;
                             
                             $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
                                 $page_continue .=<<<HTML
-                    <a href="?cmd=$just_page">返回游戏</a><br/>
+<a href="?cmd=$just_page">返回游戏</a><br/>
 HTML;
                             }
                     echo $page_continue;
@@ -347,6 +356,7 @@ HTML;
                             elseif($steps_page >=$count && $step_just_return ==0){
                             if($step_inputs){
                                 $step_inputs_para = explode(',',$step_inputs);
+                                $step_next_text = $step_next_text?:"提交";
                                 foreach ($step_inputs_para as $step_input_para){
                                     $step_input = explode('|',$step_input_para);
                                     $form_id = $step_input[0];
@@ -364,11 +374,15 @@ HTML;
                                 $steps_page +=1;
                                 $input_para = substr($input_para, 0, -1);
                                     $post_url = $encode->encode("cmd=main_target_event&mid=$mid&para=$input_para&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
+                                $cmid = $cmid + 1;
+                                $cdid[] = $cmid;
+                                $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
                                     $form_html = <<<HTML
 <form action="?cmd=$post_url" method="post">
 $form_core_html
-<input name="submit" type="submit"value="提交">
+<input name="submit" type="submit"value="{$step_next_text}">
 </form>
+<a href="?cmd=$just_page">返回游戏</a><br/>
 HTML;
                                     echo $form_html;
                                 }else{
@@ -380,7 +394,7 @@ HTML;
                             
                             $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
                             $page_url =<<<HTML
-                    <a href="?cmd=$just_page">返回游戏</a><br/>
+<a href="?cmd=$just_page">返回游戏</a><br/>
 HTML;
                     echo $page_url;
 }
