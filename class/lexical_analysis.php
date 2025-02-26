@@ -37,6 +37,7 @@ class Cache {
 
 function hurt_calc($sid, $gid, $type, $dblj, $next_round, $jid = null, $pid = null) {
     // 参数验证
+   
     if (!in_array($type, [1, 2, 3])) {
         throw new InvalidArgumentException('Invalid attack type');
     }
@@ -161,7 +162,6 @@ function handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round) {
     \player\addplayertable('game1', $u_skill_attr, -$hurt_m_cut, $sid, $dblj);
     $sql = "insert into game3(cut_mp,sid,gid,round,type)values('-$hurt_m_cut','$sid','$ngid','$next_round','1')";
     $dblj->exec($sql);
-
     // 获取技能升级相关数据
     $j_add_point_exp = $skill_data['j_add_point_exp'];
     $j_promotion = $skill_data['j_promotion'];

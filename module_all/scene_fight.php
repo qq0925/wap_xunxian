@@ -1,14 +1,16 @@
 <?php
-require_once 'class/player.php';
-require_once 'class/encode.php';
-require_once 'class/gm.php';
-include_once 'pdo.php';
+// require_once 'class/player.php';
+// require_once 'class/encode.php';
+// require_once 'class/gm.php';
+// include_once 'pdo.php';
 
 // require_once 'class/lexical_analysis.php';
 require_once 'class/basic_function_todo.php';
-include_once 'class/global_event_step_change.php';
+include_once 'class/events_steps_change.php';
+//include_once 'class/global_event_step_change.php';
 
 $parents_page = $currentFilePath;
+$parents_cmd = 'gm_scene_new';
 $player = \player\getplayer($sid,$dblj);
 $pet = \player\getpet_fight($sid,$dblj,'alive');//活着的宠物
 $clmid = player\getmid($player->nowmid,$dblj);
@@ -18,9 +20,6 @@ $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
 $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
-
-// 1. 缓存玩家对象,避免重复查询
-$initial_player_hp = $player->uhp;
 
 if(!$be_feat){
     $round = \player\getnowround($sid,$dblj);
@@ -34,6 +33,7 @@ if(!$be_feat){
 if($round ==0&&$cmd =='pve_fight'){
     \player\update_fight_msg($sid,'0','0',0,1,$dblj);
 }
+
 
     // 优化宠物处理
     if($pet) {
@@ -117,14 +117,15 @@ if($round ==0&&$cmd =='pve_fight'){
         });
 
         if($qtype ==1){
-        $parents_cmd = 'gm_scene_new';
+        
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $clj[] = $cmd;
-        //global_events_steps_change(5,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new',null,null,$para);
 
     // 遍历排序后的数组，执行对应逻辑
     foreach ($flattened as $item) {
+        //刷新战场表，移除死亡对象，考虑用redis记录
+        
         // 例如，根据角色类型执行不同的伤害计算逻辑
         if ($item['type'] == 'player') {
             // 处理玩家的逻辑
@@ -178,15 +179,7 @@ if($round ==0&&$cmd =='pve_fight'){
             $use_cmmt = \lexical_analysis\color_string($use_cmmt);
             echo $use_cmmt;
             $player = \player\getplayer($sid,$dblj);
-            //这里要更新game3中的伤害值
-            // switch($use_attr){
-            //     case 'hp':
-                    //$dblj->exec("update game2 set cut_hp = cut_hp + $use_value where sid = '$sid' and round = '$round'");
-                    // break;
-                // case 'mp':
-                    //$dblj->exec("update game2 set cut_mp = '$use_value' where sid = '$sid' and round = '$round'");
-            //         break;
-            // }
+
             $item_true_id = \player\getplayeritem_attr('item_true_id',$sid,$qtype_id,$dblj)['item_true_id'];
             \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
             \player\addplayersx('uburthen',-$use_item_iweight,$sid,$dblj);
@@ -204,26 +197,14 @@ if($round ==0&&$cmd =='pve_fight'){
             }
             $test_text .= "玩家（ID: {$item['id']}）使用物品，速度：{$item['speed']}<br/>";
         } elseif ($item['type'] == 'monster') {
-            // if($ngid){
-            //     $ngidArr = explode(',',$ngid);
-            //     foreach ($ngidArr as $ngid_one){
-            // \lexical_analysis\hurt_calc($sid,$ngid_one,2,$dblj,$next_round,null,$npid);//怪对你的伤害,单体判别
-            //     }
-            // }
+
             \lexical_analysis\hurt_calc($sid,$item['id'],2,$dblj,$next_round,null,$npid);//怪对你的伤害,单体判别
             $test_text .= "怪物（ID: {$item['id']}）出手，速度：{$item['speed']}<br/>";
         } elseif ($item['type'] == 'pet') {
-                // if($npid){
-                //     $npidArr = explode(',',$npid);
-                //     foreach ($npidArr as $npid_one){
-                // \lexical_analysis\hurt_calc($sid,$ngid,3,$dblj,$next_round,null,$npid_one);//宠对怪的伤害
-                //     }
-                // }
                 \lexical_analysis\hurt_calc($sid,$ngid,3,$dblj,$next_round,null,$item['id']);//宠对怪的伤害
             $test_text .= "宠物（ID: {$item['id']}）出手，速度：{$item['speed']}<br/>";
         }
     }
-
     if($player->uis_designer==1){
         echo $test_text;
     }
@@ -372,14 +353,12 @@ if($round ==0&&$cmd =='pve_fight'){
         }
     }
 
-
 $fight_arr = player\getfightpara($sid,$dblj);
 if(empty($fight_arr)){
 $zdjg = 1;
 }
 while (\player\upplayerlvl($sid, $dblj) == 1) {
     $redis->flushAll($cacheKey);
-    $parents_cmd = 'gm_scene_new';
     $ret = $ret ?? global_event_data_get(22, $dblj);
     if ($ret) {
         global_events_steps_change(22, $sid, $dblj, $just_page, $steps_page, $cmid, 'module/gm_scene_new', null, null, $para);
@@ -436,7 +415,6 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
             $sql = "delete from system_npc_midguaiwu where nsid='$sid'";
             $dblj->exec($sql);
-            $parents_cmd = 'gm_scene_new';
             $player = \player\getplayer($sid,$dblj);
             if($player->uhp<=0){
             \player\changeplayersx('uhp',1,$sid,$dblj);
@@ -458,7 +436,6 @@ HTML;
             $sql = "delete from system_npc_midguaiwu where nsid='$sid'";
             $dblj->exec($sql);
             \player\changeplayersx('uhp',1,$sid,$dblj);
-            $parents_cmd = 'gm_scene_new';
             $ret = global_event_data_get(8,$dblj);
             if($ret){
             global_events_steps_change(8,$sid,$dblj,$just_page,$steps_page,$cmid,'module/gm_scene_new','npc',$alive_monster->nid,$para);
@@ -494,11 +471,10 @@ HTML;
     }
 }
 
+if(!isset($zdjg)){
+$oid = 'npc_monster';
+$mid = $ngid;
 for ($i=0;$i<count($get_main_page);$i++){
-    $oid = 'npc_monster';
-    if($ngid){
-    $mid = $ngid;
-    }
     $main_id = $get_main_page[$i]['id'];
     $main_type = $get_main_page[$i]['type'];
     $main_value = $get_main_page[$i]['value'];
@@ -571,17 +547,10 @@ HTML;
     }
 }
 }
+}
+
 
 if(!isset($zdjg) &&!empty($fight_arr)){
-    // $guaiwu_npc = player\getguaiwu_all($sid,$dblj);
-    // for($i=1;$i<@count($guaiwu_npc) +1;$i++){
-    //     $guai_hp = $guaiwu_npc[$i-1]['nhp'];
-    //     $guai_gid = $guaiwu_npc[$i-1]['ngid'];
-    //     if ($guai_hp){
-    //     $sql = "update game2 set fight_umsg = '',fight_omsg = '' where gid = '{$guai_gid}' AND sid='$sid'";
-    //     //$dblj->exec($sql);
-    //     }
-    // }
 if($player->uauto_fight ==1 &&$look_canshu !=1){
     $sql = "select * from system_skill_user WHERE jsid = '$sid' and jdefault = 1 and jpid = 0";
     $cxjg = $dblj->query($sql);
@@ -644,54 +613,4 @@ $all = <<<HTML
 HTML;
 }
 echo $all;
-
-// 5. 新增辅助函数处理战斗结果
-function generateFightResult($zdjg, $player, $monster_name, $item_drops, $total_exp, $total_money, $huode, $rwts, $gonowmid, $dblj) {
-    $result = '';
-    
-    switch($zdjg) {
-        case 1:
-            \player\changeplayersx('uis_pve', 0, $player->sid, $dblj);
-            $dblj->exec("DELETE FROM system_npc_midguaiwu WHERE nsid='{$player->sid}'");
-            
-            if($player->uhp <= 0) {
-                \player\changeplayersx('uhp', 1, $player->sid, $dblj);
-            }
-            
-            $result = "战斗胜利！<br/>你打死了{$monster_name}<br/>";
-            break;
-            
-        case 0:
-            // 处理战斗失败...
-            break;
-            
-        case -1:
-            // 处理重伤状态...
-            break;
-    }
-    
-    return $result . generateDropsOutput($item_drops, $total_exp, $total_money, $huode) . 
-           "<br/><a href='?cmd=$gonowmid'>返回游戏</a>";
-}
-
-// 6. 优化掉落输出
-function generateDropsOutput($item_drops, $total_exp, $total_money, $huode) {
-    $output = '';
-    
-    foreach($item_drops as $name => $count) {
-        if($count > 0) {
-            $output .= "获得：{$name} x {$count}<br/>";
-        }
-    }
-    
-    if($total_exp) {
-        $output .= "经验 +" . $total_exp . "<br/>";
-    }
-    
-    if($total_money) {
-        $output .= "金钱 +" . $total_money . "<br/>";
-    }
-    
-    return $output . $huode;
-}
 ?>

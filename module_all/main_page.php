@@ -19,30 +19,6 @@ $player = \player\getplayer($sid,$dblj);
 $gm_html = '';
 $game_main = '';
 
-
-// // 定义缓存文件路径
-// $cacheDir = 'cache';
-// $cacheFile = $cacheDir . '/get_main_page.cache';
-// $cacheTime = 3600; // 缓存时间，单位为秒（这里设置为1小时）
-
-// // 检查缓存目录是否存在，如果不存在则创建
-// if (!is_dir($cacheDir)) {
-//     mkdir($cacheDir, 0777, true); // 0777 表示目录权限，true 表示递归创建目录
-// }
-
-// // 检查缓存文件是否存在且未过期
-// if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTime) {
-//     // 从缓存文件中读取数据
-//     $get_main_page = unserialize(file_get_contents($cacheFile));
-// } else {
-//     // 从数据源获取数据
-//     $get_main_page = \gm\get_scene_page($dblj);
-
-//     // 将数据写入缓存文件
-//     file_put_contents($cacheFile, serialize($get_main_page));
-// }
-
-
 $get_main_page = \gm\get_scene_page($dblj);
 $br = 0;
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
@@ -201,7 +177,7 @@ $clmid = player\getmid($player->nowmid,$dblj);
 if($clmid->mlook_event_id !=0){
 events_steps_change($clmid->mlook_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','scene',$clmid->mid,$para);
 }
-$sql = "select uname,sid,endtime,uis_designer from game1 where nowmid='$player->nowmid' AND sfzx = 1 AND sid !='$sid' and uis_sailing =0";//获取当前地图玩家
+$sql = "select uname,sid,endtime,uis_designer from game1 where nowmid='$player->nowmid' AND sfzx = 1 AND sid !='$sid' and uis_sailing = 0 and uis_skying = 0 and uis_roading = 0";//获取当前地图玩家
 $cxjg = $dblj->query($sql);
 $playerhtml = '';
 if ($cxjg){
@@ -260,7 +236,7 @@ if($clmid->mnpc!=''){
         $npc_para = \player\getnpc($npc_id,$dblj);
         
         // 准备 SQL 查询
-        $sql = "SELECT * FROM system_npc_scene WHERE nid = :npc_id AND nmid = :nowmid";
+        $sql = "SELECT 1 FROM system_npc_scene WHERE nid = :npc_id AND nmid = :nowmid";
         
         // 预处理查询语句
         $stmt = $dblj->prepare($sql);
@@ -330,7 +306,6 @@ if($clmid->mitem!=''){
             $id = $parts[0];
             $item_count = $parts[1];
             $item_count = \lexical_analysis\process_string($item_count,$sid);
-            //$item_count = \lexical_analysis\process_string($item_count,$sid);
             @$item_count = eval("return $item_count;");
             
             // 更新处理后的值
@@ -380,19 +355,17 @@ $change_nowmid = $encode->encode("cmd=gm_map_2&sid=$sid");
 if($player->ucmd != "pve_fight"){
 //30-70ms
 $page_count = count($get_main_page);
+$oid = 'scene';
+$mid = $player->nowmid;
 for ($i=0;$i<$page_count;$i++){
-    $oid = 'scene';
-    $mid = $player->nowmid;
     $main_id = $get_main_page[$i]['id'];
     $main_type = $get_main_page[$i]['type'];
     $main_value = $get_main_page[$i]['value'];
     $main_show_cond = $get_main_page[$i]['show_cond'];
-    //var_dump($main_show_cond."<br/>");
 
     $show_ret = $main_show_cond !== ''
         ? \lexical_analysis\process_string($main_show_cond, $sid, $oid, $mid, null, null, "check_cond") 
         : 1;
-    //var_dump($show_ret."<br/>");
     try{
         @$ret = eval("return $show_ret;");
     }
@@ -423,25 +396,6 @@ for ($i=0;$i<$page_count;$i++){
     $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
     
-//     try{
-//         $matches = array();
-//                 $pattern = '/\[([^\[\]]*)\]/';
-//                 $main_value = preg_replace_callback($pattern, function($matches) {
-//                     $content = $matches[1]; // 获取方括号中的内容
-//                     // 进行处理，例如将内容转换为大写
-//                     $processedContent = @eval("return $content;");
-//                     return '[' . $processedContent . ']'; // 将处理后的内容放回原字符串中
-//                     }, $main_value);
-//             }
-//             catch (ParseError $e){
-//                 print("语法错误: ". $e->getMessage());
-                
-//             }
-//             catch (Error $e){
-//                 print("执行错误: ". $e->getMessage());
-// }
-
-
     if($main_target_event !=0){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;

@@ -1321,47 +1321,56 @@ function getplayeritem_attr($attr,$sid,$iid,$dblj){
 }
 
 function changeplayersx($sx,$gaibian,$sid,$dblj){
-    $sql = "update `game1` set $sx = '$gaibian' WHERE sid='$sid'";//改变玩家属性
-    $ret = $dblj->exec($sql);
+    $current = $dblj->query("SELECT $sx FROM game1 WHERE sid = '$sid'")->fetchColumn();
+    if ($current != $gaibian) {
+        $dblj->exec("UPDATE game1 SET $sx = '$gaibian' WHERE sid = '$sid'");
+        return true; // 实际更新
+    }
+        return false; // 跳过更新
 }
 
 function changeplayertable($db,$sx,$gaibian,$sid,$dblj){
-    $sql = "update `$db` set $sx = '$gaibian' WHERE sid='$sid'";//改变玩家任意表的属性
-    $ret = $dblj->exec($sql);
+    $current = $dblj->query("SELECT $sx FROM `$db` WHERE sid = '$sid'")->fetchColumn();
+    if ($current != $gaibian) {
+        $dblj->exec("UPDATE `$db` SET $sx = '$gaibian' WHERE sid = '$sid'");
+        return true; // 实际更新
+    }
+        return false; // 跳过更新
 }
 
 function addplayertable($db,$sx,$gaibian,$sid,$dblj){
+    if($gaibian!=0){
     $sql = "update `$db` set $sx = $sx + '$gaibian' WHERE sid='$sid'";//增减玩家任意表属性
-    $ret = $dblj->exec($sql);
-    if($ret){
-        return true;
-    }else{
-        return false;
+    $dblj->exec($sql);
+    return true;
     }
+    return false;
 }
 
 function addmonstertable($sx,$gaibian,$gid,$dblj){
+    if($gaibian!=0){
     $sql = "update `system_npc_midguaiwu` set $sx = $sx + '$gaibian' WHERE ngid='$gid'";//增减怪物表属性
-    $ret = $dblj->exec($sql);
-    if($ret){
-        return true;
-    }else{
-        return false;
+    $dblj->exec($sql);
+    return true;
     }
+    return false;
 }
 function addpettable($sx,$gaibian,$gid,$dblj){
+    if($gaibian!=0){
     $sql = "update `system_pet_scene` set $sx = $sx + '$gaibian' WHERE npid='$gid'";//增减宠物表表属性
-    $ret = $dblj->exec($sql);
-    if($ret){
-        return true;
-    }else{
-        return false;
+    $dblj->exec($sql);
+    return true;
     }
+    return false;
 }
 
 function changepetsx($sx,$gaibian,$petid,$sid,$dblj){
-    $sql = "update system_pet_player set $sx = '$gaibian' WHERE petid='$petid' and petsid = '$sid'";//改变宠物属性
-    $ret = $dblj->exec($sql);
+    $current = $dblj->query("SELECT $sx FROM `system_pet_player` WHERE petid='$petid' and sid = '$sid'")->fetchColumn();
+    if ($current != $gaibian) {
+        $dblj->exec("update system_pet_player set $sx = '$gaibian' WHERE petid='$petid' and petsid = '$sid'");
+        return true; // 实际更新
+    }
+        return false; // 跳过更新
 }
 
 function addcwsx($sx,$gaibian,$petid,$sid,$dblj){

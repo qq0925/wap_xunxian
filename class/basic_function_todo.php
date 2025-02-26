@@ -1692,6 +1692,7 @@ HTML;
     $cut_hp = $cut_hp >0?"+".$cut_hp:$cut_hp;
     $cut_mp = $cut_mp >0?"+".$cut_mp:$cut_mp;
     $cut_hp = $cut_hp ==0?'':$cut_hp;
+    $cut_mp = $cut_mp ==0?'':$cut_mp;
     $player_text =<<<HTML
 [{$player_name}]:<br/>
 {$attr_hp_name}：({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
@@ -1715,6 +1716,8 @@ HTML;
     $pcut_arr = \player\getfighthm($sid, $gid, $pet_id, $round,$dblj,'3','4');
     $pcut_hp = $pcut_arr['total_cut_hp'];
     $pcut_mp = $pcut_arr['total_cut_mp'];
+
+
 
     $pcut_hp = $pcut_hp >0?"+".$pcut_hp:$pcut_hp;
     $pcut_mp = $pcut_mp >0?"+".$pcut_mp:$pcut_mp;
