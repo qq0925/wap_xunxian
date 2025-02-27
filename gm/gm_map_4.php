@@ -51,7 +51,7 @@ if ($result->num_rows > 0) {
         $region_all .= "[$i].{$rename_road_hide}{$rename_sail_hide}{$rename_sky_hide}{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a>(默认大区域，不可移除)<br/>";
         }else{
         $region_all .=<<<HTML
-[$i].{$rename_road_hide}{$rename_sail_hide}{$rename_sky_hide}{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a><a href="#" onclick="return confirmAction('$del_url')">移除</a><br/>
+[$i].{$rename_road_hide}{$rename_sail_hide}{$rename_sky_hide}{$region_name}({$area_count})<a href='?cmd=$rename_region'>修改</a><a href="#" onclick="return confirmAction('$del_url', '{$region_name}')">移除</a><br/>
 HTML;
         }
         $i++;
@@ -80,6 +80,8 @@ $region_all<br/></p>
 <form action="?cmd=$region_add" method="post">
 <input name="last_id" type="hidden" title="id" value="$last_id"/>
 大区域名称:<input name="name" type="text" maxlength="50"/><br/>
+切换条件:<textarea name="change_cond" maxlength="200" rows="4" cols="20"></textarea><br/>
+不满足提示语:<textarea name="cmmt2" maxlength="200" rows="4" cols="20"></textarea><br/>
 陆:<select name="road_hide">
 <option value="0" >显</option>
 <option value="1" >隐</option>
@@ -108,6 +110,8 @@ $area_html = <<<HTML
 <form action="?cmd=$region_rename_sure" method="post">
 <input name="old_name" type="hidden" title="id" value="{$rename_name}">
 大区域名称:<input name="name" placeholder="{$rename_name}" type="text" maxlength="50"/><br/>
+切换条件:<textarea name="change_cond" maxlength="200" rows="4" cols="20">{$change_cond}</textarea><br/>
+不满足提示语:<textarea name="cmmt2" maxlength="200" rows="4" cols="20">{$cmmt2}</textarea><br/>
 陆:<select name="road_hide">
 <option value="0" >显</option>
 <option value="1" {$road_selected}>隐</option>
@@ -127,9 +131,9 @@ HTML;
 echo $area_html;
 ?>
 <script>
-function confirmAction(del_url) {
-    // 弹出确认框
-    if (confirm("你确定要移除该大区域吗？")) {
+function confirmAction(del_url, step_order) {
+    // 在确认框中显示具体的操作名称
+    if (confirm("你确定要移除 “" + step_order + "” 这个大区域吗？")) {
         // 使用传入的具体删除链接
         window.location.href = del_url;
     }

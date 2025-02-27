@@ -111,7 +111,7 @@ for ($i = 0; $i < @count($tasks); $i++){
         $del_url = "game.php?cmd=$task_delete";
         $hangshu += 1;
         $task_list .=<<<HTML
-        <a href="?cmd=$task_list_detail">{$hangshu}.{$task_name}</a><a href="#" onclick="return confirmAction('$del_url')">删除</a>
+        <a href="?cmd=$task_list_detail">{$hangshu}.{$task_name}</a><a href="#" onclick="return confirmAction('$del_url', '{$task_name}')">删除</a>
 HTML;
     if($index ==1 && count($tasks)>1){
     $next_pos = $tasks[1];
@@ -157,9 +157,9 @@ HTML;
 echo $npc_task_list;
 ?>
 <script>
-function confirmAction(del_url) {
-    // 弹出确认框
-    if (confirm("你确定要删除该任务吗？")) {
+function confirmAction(del_url, step_order) {
+    // 在确认框中显示具体的操作名称
+    if (confirm("你确定要删除 “" + step_order + "” 这个任务吗？")) {
         // 使用传入的具体删除链接
         window.location.href = del_url;
     }

@@ -109,9 +109,10 @@ for ($i = 0; $i < @count($ops); $i++){
         $op_list_detail = $encode->encode("cmd=system_map_op_detail&op_id=$op_id&sid=$sid");
         $op_delete = $encode->encode("cmd=gm_type_map&gm_post_canshu=2&op_belong=$op_belong&remove_id=$op_id&sid=$sid");
         $del_url = "game.php?cmd=$op_delete";
+        $op_order = '操作'.$index;
         $hangshu += 1;
         $op_list .=<<<HTML
-        <a href="?cmd=$op_list_detail">{$hangshu}.{$op_name}</a><a href="#" onclick="return confirmAction('$del_url')">删除</a>
+        <a href="?cmd=$op_list_detail">{$hangshu}.{$op_name}</a><a href="#" onclick="return confirmAction('$del_url', '{$op_order}')">删除</a>
 HTML;
     if($index ==1 && count($ops)>1){
     $next_pos = $ops[1];
@@ -157,9 +158,9 @@ HTML;
 echo $map_op_list;
 ?>
 <script>
-function confirmAction(del_url) {
-    // 弹出确认框
-    if (confirm("你确定要删除该操作吗？")) {
+function confirmAction(del_url, step_order) {
+    // 在确认框中显示具体的操作名称
+    if (confirm("你确定要删除 “" + step_order + "” 这个操作吗？")) {
         // 使用传入的具体删除链接
         window.location.href = del_url;
     }
