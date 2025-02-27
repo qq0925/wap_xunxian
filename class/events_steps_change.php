@@ -78,7 +78,7 @@ HTML;
                         if($steps_page <=$count){
                         $event =$system_event_evs[$steps_page-1];
                         $steps_count = count($system_event_evs);
-                        
+                        $step_id = $event['id'];
                         $step_cond = $event['cond'];//触发条件
                         $step_exec_cond = $event['exec_cond'];//执行条件
 
@@ -281,10 +281,23 @@ HTML;
                             
                             //可以参考读取$module_id的值,非自定模板页面统一返回主界面，其余返回自定模板页面
                             if($step_just_return ==1){
+                                $sql ="SELECT module_id from system_event_self where id = (SELECT belong from system_event_evs_self where id = '$step_id')";
+                                $stmt = $dblj->prepare($sql);
+                                $stmt->execute();
+                                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                                $module_id = $result['module_id'];
+                                if(strpos($module_id, 'game_self_page_') === 0){
+                                $page_id = substr($module_id, 15);
+                                if($page_id !=''){
+                                $dblj->exec("update system_self_define_module set call_sum = call_sum + 1 where id = '$page_id'");
+                                $ym = 'module_all/self_page.php';
+                                }
+                                }else{
                                 $return_canshu = 1;
                                 $cmd = $parents_cmd;
                                 $currentFilePath = $parents_page;
                                 $ym = $currentFilePath;
+                                }
                                 include_once $ym;
                                 return;
                             }
