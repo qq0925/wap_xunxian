@@ -587,7 +587,7 @@ $sid = $old_sid;
         $ele_2 = str_replace(array("'", "\""), '', $ele_2);
         }else{
             if($can_redis == 1){
-            $redis->set($check_cache,$ele_2);
+            $redis->del($check_cache);
             }
         }
         switch ($ele_1_1) {
