@@ -31,7 +31,7 @@ function events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$c
                     global $parents_cmd;
                     global $parents_page;
                     $event_data = self_event_data_get($target_event,$dblj);
-                    //var_dump($event_data['system_event']['module_id']);
+                    $module_id = $event_data['system_event']['module_id'];
                     $event_cond = $event_data['system_event']['cond'];
                     $event_cmmt = $event_data['system_event']['cmmt'];
                     $event_step_count = $event_data['system_event']['link_evs'];
@@ -281,11 +281,6 @@ HTML;
                             
                             //可以参考读取$module_id的值,非自定模板页面统一返回主界面，其余返回自定模板页面
                             if($step_just_return ==1){
-                                $sql ="SELECT module_id from system_event_self where id = (SELECT belong from system_event_evs_self where id = '$step_id')";
-                                $stmt = $dblj->prepare($sql);
-                                $stmt->execute();
-                                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                                $module_id = $result['module_id'];
                                 if(strpos($module_id, 'game_self_page_') === 0){
                                 $page_id = substr($module_id, 15);
                                 if($page_id !=''){
