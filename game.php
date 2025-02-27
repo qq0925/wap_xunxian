@@ -2,6 +2,7 @@
 session_start();
 //ob_start();
 $start_time = microtime(true);
+set_time_limit(0);
 //error_reporting(0);
 //ini_set('display_errors', '0');
 require 'class/player.php';
@@ -3696,10 +3697,8 @@ foreach($results as $row) {
     echo $row['Database'] . " " . $row['Table'] . " " . $row['In_use'] . "<br>";
 }
 //pdo数据库性能调试工具。
-$dbType = $dblj->getAttribute(PDO::ATTR_DRIVER_NAME);
 $connInfo = $dblj->getAttribute(PDO::ATTR_SERVER_INFO);
 // 输出结果
-echo "Database type: " . $dbType . "<br>";
 echo "Connection info: " . $connInfo . "<br>";
 */
 // 20-27ms
