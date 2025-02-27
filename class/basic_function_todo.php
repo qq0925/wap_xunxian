@@ -1457,7 +1457,7 @@ if($can_input ==1){
 ===<br/>
 <form action="?cmd=$all_post" method="post">
 <input type="hidden" name="ltlx" value="all">
-<textarea name="ltmsg" maxlength="200" rows="4" cols="20"></textarea>
+<input name="ltmsg" maxlength="200" rows="4" cols="20"></input>
 <input type="submit" value="发送">
 </form>
 HTML;
