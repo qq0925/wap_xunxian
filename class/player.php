@@ -1792,6 +1792,7 @@ class gameconfig{
     var $game_max_char;
     var $scene_message_count;
     var $long_exist_message;
+    var $can_input;
     var $offline_time;
     var $can_verify;
     var $npc_seg;
@@ -1819,6 +1820,7 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('game_max_char',$gameconfig->game_max_char);
     $cxjg->bindColumn('scene_message_count',$gameconfig->scene_message_count);
     $cxjg->bindColumn('long_exist_message',$gameconfig->long_exist_message);
+    $cxjg->bindColumn('can_input',$gameconfig->can_input);
     $cxjg->bindColumn('player_offline_time',$gameconfig->offline_time);
     $cxjg->bindColumn('can_verify',$gameconfig->can_verify);
     $cxjg->bindColumn('npc_seg',$gameconfig->npc_seg);

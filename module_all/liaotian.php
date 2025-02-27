@@ -136,12 +136,12 @@ if ($totalPages > 2 && $currentPage < $totalPages-1) {
     $page_html .=<<<HTML
 <a href="?cmd=$main_page">末页</a>
 HTML;
-}        
+}
 $lthtml .=<<<HTML
 $page_html<br/>
 HTML;
         $lthtml.=<<<HTML
-===
+===<br/>
 <form action="?cmd=$all_post" method="post">
 <input type="hidden" name="ltlx" value="all">
 <textarea name="ltmsg" maxlength="200" rows="4" cols="20"></textarea>

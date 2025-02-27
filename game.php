@@ -660,7 +660,12 @@ echo $refresh_html;
                             $least_time = $msg_interval - $second;
                             echo "每{$msg_interval}秒才能发言一次！下次发言还需要{$least_time}秒！<br/>";
                         }
+                        if($scene ==1){
+                        $cmd = 'gm_scene_new';
+                        $ym = 'module_all/main_page.php';
+                        }else{
                         $ym = 'module_all/liaotian.php';
+                        }
                         break;
                     case "im":
                         $check_uid = \player\getplayer(null,$dblj,$imuid)->uid;
@@ -3775,10 +3780,6 @@ echo $refresh_html;
         while(floor((strtotime($player->endtime)-strtotime($player->minutetime))/60 >0) &&$cmd!='login' && $cmd!='cjplayer' &&$cmd !='cj'){
         $parents_cmd = $cmd;
         \player\exec_global_event(24,'null',null,$sid,$dblj);
-        // $ret = global_event_data_get(24,$dblj);
-        // if($ret){
-        // global_events_steps_change(24,$sid,$dblj,$just_page,$steps_page,$cmid,$currentFilePath,null,null,$para);
-        // }
         $player->minutetime = date('Y-m-d H:i:s', strtotime($player->minutetime) + 60); // 增加 60 秒
         $sql = "UPDATE game1 SET minutetime = DATE_ADD(minutetime, INTERVAL 1 MINUTE) WHERE sid = '$sid'";
         $dblj->exec($sql);
@@ -3809,7 +3810,7 @@ echo $refresh_html;
             }
             }
 $refresh_html =<<<HTML
-<meta http-equiv="refresh" content="2;URL=index.php">
+<meta http-equiv="refresh" content="1;URL=index.php">
 HTML;
 echo $refresh_html;
         }else{

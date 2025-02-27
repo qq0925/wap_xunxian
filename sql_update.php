@@ -52,6 +52,19 @@
         $stmt->execute();
     }
 
+    $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'can_input'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE gm_game_basic ADD COLUMN can_input INT(1) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
+
     $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'npc_seg'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();

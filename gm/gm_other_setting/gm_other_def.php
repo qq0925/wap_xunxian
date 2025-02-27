@@ -71,6 +71,10 @@ foreach ($_POST as $key => $value) {
             $sql = "update  gm_game_basic set long_exist_message = '$value' where game_id = 19980925";
             $dblj->exec($sql);
             break;
+        case 'can_input':
+            $sql = "update  gm_game_basic set can_input = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
         case 'default_storage':
             $sql = "update  gm_game_basic set default_storage = '$value' where game_id = 19980925";
             $dblj->exec($sql);
@@ -110,6 +114,7 @@ $selectedOption_4 = ($game_config->npc_list_br == "1") ? 'selected' : '';
 $selectedOption_5 = ($game_config->equip_mosaic_link == "1") ? 'selected' : '';
 $selectedOption_6 = ($game_config->long_exist_message == "1") ? 'selected' : '';
 $selectedOption_7 = ($game_config->can_verify == "1") ? 'selected' : '';
+$selectedOption_8 = ($game_config->can_input == "1") ? 'selected' : '';
 $other_html = <<<HTML
 [杂项设置]<br/><br/>
 <form action="?cmd=$other_set" method="POST">
@@ -133,6 +138,9 @@ $other_html = <<<HTML
 </form>
 <form action="?cmd=$other_set" method="POST">
 场景信息持久显示：<select name="long_exist_message"><option value =0>否</option><option value =1 {$selectedOption_6}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
+</form>
+<form action="?cmd=$other_set" method="POST">
+是否显示输入框：<select name="can_input"><option value =0>否</option><option value =1 {$selectedOption_8}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
 <form action="?cmd=$other_set" method="POST">
 最大信息字符数：<input type="tel" name="game_max_char" size="5" value="{$game_config->game_max_char}">

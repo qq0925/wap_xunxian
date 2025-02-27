@@ -1335,6 +1335,7 @@ $player = player\getplayer($sid,$dblj);
 $gameconfig = player\getgameconfig($dblj);
 $scene_message_count = $gameconfig->scene_message_count;
 $long_exist_message = $gameconfig->long_exist_message;
+$can_input = $gameconfig->can_input;
 $sql = "SELECT * FROM system_chat_data where viewed = 0 ORDER BY id DESC LIMIT 0,$scene_message_count";//聊天列表获取
 $ltcxjg = $dblj->query($sql);
 $lthtml='';
@@ -1448,6 +1449,18 @@ if ($ltcxjg){
             
         }
     }
+}
+
+if($can_input ==1){
+    $all_post = $encode->encode("cmd=sendliaotian&scene=1&ucmd=$cmid&sid=$sid");
+    $lthtml .=<<<HTML
+===<br/>
+<form action="?cmd=$all_post" method="post">
+<input type="hidden" name="ltlx" value="all">
+<textarea name="ltmsg" maxlength="200" rows="4" cols="20"></textarea>
+<input type="submit" value="发送">
+</form>
+HTML;
 }
 
 if($lthtml){
