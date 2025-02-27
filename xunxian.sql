@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： localhost
--- 生成日期： 2025-02-27 02:13:38
+-- 生成日期： 2025-02-27 20:00:55
 -- 服务器版本： 5.5.62-log
 -- PHP 版本： 7.4.33
 
@@ -117,13 +117,13 @@ CREATE TABLE `game1` (
 --
 
 INSERT INTO `game1` (`uis_designer`, `uis_forum_gm`, `uid`, `ucmd`, `ulast_cmd`, `uphone`, `sid`, `token`, `utran_state`, `uname`, `uimage`, `unick_name`, `ulvl`, `uburthen`, `umax_burthen`, `ustorage`, `uis_pve`, `ukill`, `uauto_fight`, `uis_sailing`, `uauto_sailing`, `umoney`, `uteam_invited_id`, `uteam_id`, `uteam_putin_id`, `uclan_id`, `uexp`, `uhp`, `umaxhp`, `ump`, `umaxmp`, `ugj`, `ufy`, `usex`, `endtime`, `minutetime`, `nowmid`, `justmid`, `tpsmid`, `nowguaiwu`, `sfzx`, `allchattime`, `citychattime`, `areachattime`, `cw`, `ispvp`, `uwg_fj`, `uis_roading`, `uauto_roading`, `uis_skying`, `uauto_skying`, `ubj`, `uspeed`) VALUES
-(1, 1, 1, 'gm_game_zipfile', 'gm_game_firstpage', '18150040719', '959c9277a3e15eacff9e5f117e51f5bb', '6153c573c2237ed0422c426d6786dc4f', 1, '轩辕', '玩家形象照|player_1', 'GM小小', 146, 793, 999999, 0, 0, 0, 0, 0, 1, 3, 0, 0, 1, 1, 3241828, 47112, 47112, 6084, 6084, 1208, 57, '男', '2025-02-27 02:13:07', '2025-02-27 02:13:14', 338, 338, 0, 0, 1, '2025-02-26 12:36:48', '2023-12-14 14:59:02', '2023-12-14 15:00:25', 0, 0, 289, 0, 0, 0, 1, 0, 6),
+(1, 1, 1, 'gm', 'gm_scene_new', '18150040719', '959c9277a3e15eacff9e5f117e51f5bb', '6153c573c2237ed0422c426d6786dc4f', 1, '轩辕', '玩家形象照|player_1', 'GM小小', 146, 812, 999999, 0, 0, 0, 0, 0, 1, 4, 0, 0, 1, 1, 3249669, 47088, 47112, 6015, 6084, 1208, 57, '男', '2025-02-27 20:00:38', '2025-02-27 20:00:02', 575, 575, 0, 0, 1, '2025-02-27 17:22:15', '2023-12-14 14:59:02', '2023-12-14 15:00:25', 0, 0, 289, 0, 0, 0, 1, 0, 6),
 (0, 0, 3, '', 'gm_scene_new', '', '0277b7c43250e3bda5d7fb423ce14d92', '8d85deb95ac222630170d467d3ebf9ef', 0, '梦秋', '', '', 1, 2, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 0, 0, 12, 5, '女', '2024-12-07 19:13:08', '2024-12-07 19:13:55', 295, 295, 0, 0, 0, '2024-09-13 00:17:18', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 4, '', 'gm_scene_new', '', '214658c4375c343e280ae38e880ac4ba', '8fcae6b1a6f201d1b25d3186f1887f6a', 1, '心醉迷神', '', '', 2, 28, 50, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 292, 47, 168, 0, 0, 12, 5, '女', '2024-06-06 13:01:18', '2024-06-06 08:03:11', 671, 671, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 5, '', 'gm_scene_new', '', 'a8c7b0c51c60be7441214c0b0c671d88', '11de1b2d74bff722bf47c1fe0d7a1586', 1, 'xunxian', '', '', 1, 10, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 0, 0, 12, 5, '男', '2024-06-06 23:12:06', '2024-06-06 23:12:26', 226, 226, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 6, '', 'gm_scene_new', '', '01a0d4f5e64a677721a1089d4914bc6a', 'bd6ad1a2bd957d1af8f9029bd86054b2', 0, '规划', '', '', 1, 15, 50, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 100, 0, 0, 12, 5, '男', '2024-06-05 06:09:08', '2024-06-05 06:09:49', 671, 671, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 7, '', '', '', '79462faa70c368423c7f9fb106fa1f47', '8a3f0145cdd02d3a5b21faa47335ad5a', 0, 'aaa123', '', '', 1, 13, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 0, 0, 12, 5, '男', '2024-06-05 14:05:43', '2024-06-05 14:06:14', 225, 225, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
-(0, 0, 8, 'gm_game_firstpage', 'gm_scene_new', '', '945fd26d30e007abfed414cc1f2795f5', '5fd37cf7246fdd96c1a6808dd0a9776c', 0, '天涯', '', '', 5, 30, 50, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 0, 560, 300, 300, 0, 0, 12, -90, '男', '2025-01-27 06:47:42', '2025-01-27 05:08:50', 371, 371, 0, 0, 0, '2025-01-26 19:55:35', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
+(1, 0, 8, 'gm_design_guide', 'gm_scene_new', '', '945fd26d30e007abfed414cc1f2795f5', '5fd37cf7246fdd96c1a6808dd0a9776c', 0, '天涯', '玩家形象照|player_8', '', 5, 50, 50, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 0, 560, 288, 300, 0, 0, 12, -90, '男', '2025-02-27 16:22:52', '2025-02-27 14:03:08', 575, 575, 0, 0, 1, '2025-02-27 03:44:23', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 9, '', 'gm_scene_new', '', 'f55913444ef985484baf7580c60f15ce', '3bd64d874d8de07e0c000130eac39cd1', 0, '天涯小号', '', '', 2, 25, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 278, 1, 168, 0, 0, 17, 9, '男', '2024-06-05 22:33:44', '2024-06-05 22:33:55', 338, 338, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 10, '', 'gm_scene_new', '', 'fe3319b6dd10f68aaa36ee852cd79cc1', '7b69c4b07cd900f5b85f89e64e834d38', 0, '云澈', '', '', 1, 25, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 0, 0, 1000, 5, '男', '2024-06-27 15:19:03', '2024-06-27 15:18:57', 565, 565, 0, 0, 0, '0000-00-00 00:00:00', '2024-06-06 01:04:31', '2024-06-06 01:04:26', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 11, '', 'gm_scene_new', '', '01acd0637eb2b6a6a3055e4fc37e8457', 'a7d8a52f6f62b749aacd656156101e9e', 0, '蜉蝣', '', '', 1, 14, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 1, 100, 0, 0, 12, 5, '男', '2024-07-06 23:32:07', '2024-07-06 23:31:44', 672, 672, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
@@ -143,7 +143,8 @@ INSERT INTO `game1` (`uis_designer`, `uis_forum_gm`, `uid`, `ucmd`, `ulast_cmd`,
 (0, 0, 40, '', 'gm_scene_new', '', '11949d9ce6df5a06a3377325c71c7c4f', 'd7a145c2d6a9057895f5396f0a4f98b6', 0, '浪子阿伟', '', '', 1, 19, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 100, 12, 5, '男', '2025-02-10 18:15:11', '2025-02-10 18:15:55', 230, 230, 0, 0, 0, '2025-02-10 18:12:59', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 41, '', 'gm_scene_new', '', 'f3c4859c79f6f34ac79072571744bf8e', 'e9b4d3f3056b4f6d3184802a0a65ae9f', 0, 'igq6y1q', '', '', 1, 13, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 12, 5, '男', '2024-11-17 09:39:33', '2024-11-17 09:40:14', 225, 225, 0, 0, 0, '2024-11-17 09:38:29', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 42, '', 'gm_scene_new', '', '79ca852ae3c34e005ba8db7ca9f2429e', 'bc3006729315b7585b27d81bf0274990', 0, '深蓝V', '', '', 1, 12, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 12, 5, '男', '2024-12-04 21:48:26', '2024-12-04 21:49:04', 225, 225, 0, 0, 0, '2024-12-04 21:40:14', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
-(0, 0, 46, 'system_reward', 'npc_html', '', '4e792f072d10eb2f6addd8d04cf5cbe8', 'e0eaeb7d19fcde3fbd6075c91a6e7039', 0, '梦浅', '玩家形象照|player_46', '', 9, 111, 111, 0, 0, 1, 0, 0, 0, 3217, 0, 0, 0, 0, 1852, 526, 532, 6, 90, 22, 5, '女', '2025-02-26 14:35:53', '2025-02-26 14:36:10', 226, 226, 0, 0, 1, '2025-02-26 09:54:18', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 2);
+(0, 0, 46, 'gm_scene_new', 'npc_html', '', '4e792f072d10eb2f6addd8d04cf5cbe8', 'e0eaeb7d19fcde3fbd6075c91a6e7039', 0, '梦浅', '玩家形象照|player_46', '', 9, 111, 111, 0, 0, 1, 0, 0, 0, 3217, 0, 0, 0, 0, 1852, 526, 532, 6, 90, 22, 5, '女', '2025-02-27 17:20:16', '2025-02-27 17:13:26', 226, 226, 0, 0, 0, '2025-02-27 17:12:37', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 2),
+(0, 0, 47, 'npc_html', 'gm_scene_new', '', '0732ec1c98e6496b097d7bee1482d96d', '0515e74c53238527a0984ec7d0c2b40e', 0, '扫地魔', '', '', 1, 10, 50, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 100, 50, 50, 12, 5, '男', '2025-02-27 14:25:43', '2025-02-27 14:26:08', 225, 225, 0, 0, 0, '2025-02-27 14:25:13', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -199,6 +200,8 @@ CREATE TABLE `game4` (
 --
 
 INSERT INTO `game4` (`sid`, `device_agent`) VALUES
+('945fd26d30e007abfed414cc1f2795f5', 'Mozilla/5.0 (Linux; U; Android 13; zh-CN; M2102J2SC Build/TKQ1.221114.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/7.8.2.752 Mobile Safari/537.36'),
+('0732ec1c98e6496b097d7bee1482d96d', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0'),
 ('4e792f072d10eb2f6addd8d04cf5cbe8', 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4.1 Mobile/15E148 Safari/604.1'),
 ('959c9277a3e15eacff9e5f117e51f5bb', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36');
 
@@ -485,7 +488,7 @@ CREATE TABLE `game_player_page` (
 --
 
 INSERT INTO `game_player_page` (`position`, `id`, `type`, `show_cond`, `value`, `target_tasks`, `target_event`, `target_func`, `link_value`) VALUES
-(1, 1, '1', '', '[{eval(v(u.nick_name)?:\"无\")}]姓名：{u.name}\r\n状态：{eval(v(e.player_state))}\r\nid：{u.id}\r\n{eval(v(u.image)?\"#v(u.image)#\":\"该用户很懒，没有上传形象照。\")}\r\n性别：{u.sex}\r\n等级：{u.lvl}\r\n经验：{u.exp}/{eval(v(e.maxexp))}\r\n生命：{u.hp}/{u.maxhp}\r\n出招速度：{u.speed}/100\r\n法力：{u.mp}/{u.maxmp}\r\n信用币：{eval(v(u.money)/10000)}金点{eval(v(u.money)>=10000?(v(u.money)%10000/100):(v(u.money)/100))}银点{eval(v(u.money)>=100?(v(u.money)%100):(v(u.money)))}铜点\r\n未来币：{stru(u.money2)}枚\r\n负重：{u.burthen}/{u.max_burthen}\r\n攻击力：{u.gj}\r\n物攻附加：{u.wg_fj}\r\n防御力：{u.fy}\r\n暴击：{u.bj}%\r\n===\r\n在线时间：{u.zxsj}分\r\n===\r\n', NULL, '0', NULL, NULL),
+(1, 1, '1', '', '[{eval(v(u.nick_name)?:\"无\")}]姓名：{u.name}\r\n状态：{eval(v(e.player_state))}\r\nid：{u.id}\r\n{eval(v(u.image)?\"#v(u.image)#\":\"该用户很懒，没有上传形象照。\")}\r\n性别：{u.sex}\r\n等级：{u.lvl}\r\n经验：{u.exp}/{eval(v(e.maxexp))}\r\n生命：{u.hp}/{u.maxhp}\r\n法力：{u.mp}/{u.maxmp}\r\n出招速度：{u.speed}/100\r\n信用币：{eval(v(u.money)/10000)}金点{eval(v(u.money)>=10000?(v(u.money)%10000/100):(v(u.money)/100))}银点{eval(v(u.money)>=100?(v(u.money)%100):(v(u.money)))}铜点\r\n未来币：{stru(u.money2)}枚\r\n负重：{u.burthen}/{u.max_burthen}\r\n攻击力：{u.gj}\r\n物攻附加：{u.wg_fj}\r\n防御力：{u.fy}\r\n暴击：{u.bj}%\r\n===\r\n在线时间：{u.zxsj}分\r\n===\r\n', NULL, '0', NULL, NULL),
 (2, 2, '3', '', '物品', NULL, '0', '17', '0'),
 (3, 3, '3', '', '聊天', NULL, '0', '24', '0'),
 (4, 4, '3', '', '技能\r\n', NULL, '0', '15', '0'),
@@ -590,7 +593,7 @@ INSERT INTO `game_scene_page` (`position`, `id`, `type`, `show_cond`, `value`, `
 (34, 28, '3', '', '功能', NULL, '0', '28', NULL),
 (32, 29, '3', '', '好友', NULL, '0', '22', NULL),
 (35, 30, '3', '', '抽奖|1', NULL, '0', '70', NULL),
-(33, 31, '2', '', '签到\r\n', NULL, '1', NULL, NULL),
+(33, 31, '2', '', '数组\r\n', NULL, '1', NULL, NULL),
 (41, 34, '2', '{u.is_designer} == 1', 'GM传送\r\n', NULL, '16', NULL, NULL),
 (36, 35, '3', '', '队伍\r\n', NULL, '0', '19', NULL),
 (2, 36, '1', '{o.photo}!=\"\"', '#{o.photo}#\r\n', NULL, '0', NULL, NULL),
@@ -738,8 +741,9 @@ CREATE TABLE `game_self_page_szcs` (
 INSERT INTO `game_self_page_szcs` (`position`, `id`, `type`, `show_cond`, `value`, `target_tasks`, `target_event`, `target_func`, `link_value`) VALUES
 (1, 1, '1', '', '测试名字:{g.test_name}\r\n是否在数组里：{inarr(v(u.name),v(g.test_name)))}\r\n', NULL, '0', NULL, NULL),
 (3, 2, '2', '', '测试违禁词\r\n', NULL, '199', NULL, NULL),
-(4, 3, '2', '', '往末尾加元素（下次更新）\r\n', NULL, '200', NULL, NULL),
-(2, 4, '1', '{inarr(v(u.name),v(g.test_name)))}==1', '你的名字在数组里！\r\n', NULL, '0', NULL, NULL);
+(4, 3, '2', '', '往末尾加元素\r\n', NULL, '200', NULL, NULL),
+(2, 4, '1', '{inarr(v(u.name),v(g.test_name)))}==1', '你的名字在数组里！\r\n', NULL, '0', NULL, NULL),
+(5, 5, '2', '', '移除第n个元素\r\n', NULL, '203', '12', NULL);
 
 -- --------------------------------------------------------
 
@@ -790,7 +794,7 @@ CREATE TABLE `game_self_page_test` (
 --
 
 INSERT INTO `game_self_page_test` (`position`, `id`, `type`, `show_cond`, `value`, `target_tasks`, `target_event`, `target_func`, `link_value`) VALUES
-(1, 1, '1', '', '【签到福利】\r\n你好，【{u.name}】，欢迎来到签到页面！\r\n', NULL, '0', NULL, NULL),
+(1, 1, '1', '', '【签到福利】\r\n你好，【{u.name}】，欢迎来到签到页面！\r\n签到次数：{u.qd_cs}\r\n', NULL, '0', NULL, NULL),
 (2, 2, '2', '', '签到\r\n', NULL, '75', NULL, NULL);
 
 -- --------------------------------------------------------
@@ -892,9 +896,9 @@ CREATE TABLE `global_data` (
 --
 
 INSERT INTO `global_data` (`gid`, `gvalue`) VALUES
-('minute', '1344614'),
+('minute', '1344915'),
 ('qd_fanwei', '1|2|3|4|5|6|7'),
-('test_name', '轩辕|秋梦|梦浅'),
+('test_name', '轩辕|梦秋|梦浅'),
 ('qd_today', '2025-2-20');
 
 -- --------------------------------------------------------
@@ -1048,15 +1052,16 @@ CREATE TABLE `gm_game_basic` (
   `scene_message_count` int(2) NOT NULL,
   `long_exist_message` int(1) NOT NULL,
   `can_verify` int(1) NOT NULL,
-  `npc_seg` text NOT NULL
+  `npc_seg` text NOT NULL,
+  `can_input` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- 转存表中的数据 `gm_game_basic`
 --
 
-INSERT INTO `gm_game_basic` (`game_id`, `game_name`, `game_desc`, `game_creat_time`, `game_open_time`, `money_name`, `money_measure`, `promotion_exp`, `promotion_cond`, `mod_promotion_exp`, `mod_promotion_cond`, `clan_promotion_exp`, `clan_promotion_cond`, `default_skill_id`, `entrance_id`, `game_status`, `game_max_char`, `gm_post_canshu`, `game_forum_gm_id`, `game_status_string`, `pet_max_count`, `team_max_count`, `default_storage`, `player_offline_time`, `player_send_global_msg_interval`, `scene_op_br`, `npc_op_br`, `item_op_br`, `list_row`, `game_player_regular_minute`, `near_player_show`, `game_temp_notice`, `game_temp_notice_time`, `drop_protect_time`, `drop_disappear_time`, `npc_list_br`, `equip_mosaic_link`, `scene_message_count`, `long_exist_message`, `can_verify`, `npc_seg`) VALUES
-(19980925, '失色纪元', '〝&lt;b&gt;命运&lt;/b&gt;，如造物主的看不见的大手，穿针引线，映射于失色之地下的禁忌领域。\r\n粼粼的月光之下，是终局的开端，还是虚幻的重建?〞\r\n〝戈德兰的守护者们，是昨天还是今天，是明天还是后天？〞\r\n......', '2023-08-01 00:22:15', '2023-09-25 00:05:20', '信用币', '点', '{e.maxexp}', '{u.lvl}<150', '', '', '', '', 1, 225, 0, 20, 0, '959c9277a3e15eacff9e5f117e51f5bb', '开发中', 2, 2, 20, 5, 10, 1, 1, 1, 8, '2023-09-09 01:29:48', 1, 'aaa', 0, 30, 50, 0, 1, 4, 0, 0, ',');
+INSERT INTO `gm_game_basic` (`game_id`, `game_name`, `game_desc`, `game_creat_time`, `game_open_time`, `money_name`, `money_measure`, `promotion_exp`, `promotion_cond`, `mod_promotion_exp`, `mod_promotion_cond`, `clan_promotion_exp`, `clan_promotion_cond`, `default_skill_id`, `entrance_id`, `game_status`, `game_max_char`, `gm_post_canshu`, `game_forum_gm_id`, `game_status_string`, `pet_max_count`, `team_max_count`, `default_storage`, `player_offline_time`, `player_send_global_msg_interval`, `scene_op_br`, `npc_op_br`, `item_op_br`, `list_row`, `game_player_regular_minute`, `near_player_show`, `game_temp_notice`, `game_temp_notice_time`, `drop_protect_time`, `drop_disappear_time`, `npc_list_br`, `equip_mosaic_link`, `scene_message_count`, `long_exist_message`, `can_verify`, `npc_seg`, `can_input`) VALUES
+(19980925, '失色纪元', '〝&lt;b&gt;命运&lt;/b&gt;，如造物主的看不见的大手，穿针引线，映射于失色之地下的禁忌领域。\r\n粼粼的月光之下，是终局的开端，还是虚幻的重建?〞\r\n〝戈德兰的守护者们，是昨天还是今天，是明天还是后天？〞\r\n......', '2023-08-01 00:22:15', '2023-09-25 00:05:20', '信用币', '点', '{e.maxexp}', '{u.lvl}<150', '', '', '', '', 1, 225, 0, 20, 0, '959c9277a3e15eacff9e5f117e51f5bb', '开发中', 2, 2, 20, 5, 10, 1, 1, 1, 8, '2023-09-09 01:29:48', 1, 'aaa', 0, 30, 50, 0, 1, 4, 0, 0, ',', 1);
 
 -- --------------------------------------------------------
 
@@ -1084,6 +1089,13 @@ CREATE TABLE `player_clan_apply` (
   `apply_clan_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
+--
+-- 转存表中的数据 `player_clan_apply`
+--
+
+INSERT INTO `player_clan_apply` (`apply_id`, `apply_sid`, `apply_clan_id`) VALUES
+(0, '945fd26d30e007abfed414cc1f2795f5', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -1096,6 +1108,13 @@ CREATE TABLE `player_equip_mosaic` (
   `belong_sid` text NOT NULL,
   `equip_mosaic` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- 转存表中的数据 `player_equip_mosaic`
+--
+
+INSERT INTO `player_equip_mosaic` (`equip_id`, `equip_root`, `belong_sid`, `equip_mosaic`) VALUES
+(512, 5, '959c9277a3e15eacff9e5f117e51f5bb', '75');
 
 -- --------------------------------------------------------
 
@@ -1130,8 +1149,8 @@ CREATE TABLE `system_addition_attr` (
 --
 
 INSERT INTO `system_addition_attr` (`sid`, `oid`, `mid`, `name`, `value`) VALUES
-('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'uzxsj', '14946'),
-('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'uqd_daily', '26'),
+('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'uzxsj', '15185'),
+('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'uqd_daily', '27'),
 ('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'usubmit_bounty_01_item_01', '1'),
 ('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'upick_lj', '1738952834'),
 ('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'utomorrow_1_floor', '1'),
@@ -1148,7 +1167,7 @@ INSERT INTO `system_addition_attr` (`sid`, `oid`, `mid`, `name`, `value`) VALUES
 ('01a0d4f5e64a677721a1089d4914bc6a', '', 0, 'upick_lj', '1717538783'),
 ('01a0d4f5e64a677721a1089d4914bc6a', '', 0, 'uzxsj', '3'),
 ('a8c7b0c51c60be7441214c0b0c671d88', '', 0, 'uzxsj', '13'),
-('945fd26d30e007abfed414cc1f2795f5', '', 0, 'uzxsj', '452'),
+('945fd26d30e007abfed414cc1f2795f5', '', 0, 'uzxsj', '521'),
 ('945fd26d30e007abfed414cc1f2795f5', '', 0, 'uqd_daily', '26'),
 ('f55913444ef985484baf7580c60f15ce', '', 0, 'uzxsj', '5'),
 ('fe3319b6dd10f68aaa36ee852cd79cc1', '', 0, 'uzxsj', '546'),
@@ -1198,12 +1217,15 @@ INSERT INTO `system_addition_attr` (`sid`, `oid`, `mid`, `name`, `value`) VALUES
 ('4e792f072d10eb2f6addd8d04cf5cbe8', '', 0, 'upick_lj', '1738345257'),
 ('4e792f072d10eb2f6addd8d04cf5cbe8', '', 0, 'uqd_daily', '20'),
 ('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'u', '1'),
-('', 'item', 458, 'ixq_nl', '23'),
-('', 'item', 458, 'ixq_nl', '23'),
+('', 'item', 458, 'ixq_nl', '27'),
+('', 'item', 458, 'ixq_nl', '27'),
 ('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'urandom', '0'),
 ('4e792f072d10eb2f6addd8d04cf5cbe8', '', 0, 'umap_enter_fog', '0'),
 ('4e792f072d10eb2f6addd8d04cf5cbe8', '', 0, 'usubmit_bounty_01_item_01', '23'),
-('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'uuexp', '9999999');
+('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'uuexp', '9999999'),
+('945fd26d30e007abfed414cc1f2795f5', '', 0, 'umap_enter_fog', '0'),
+('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'uqd_cs', '5'),
+('', 'item', 512, 'iadded_wg', '11');
 
 -- --------------------------------------------------------
 
@@ -1429,6 +1451,16 @@ INSERT INTO `system_chat_data` (`name`, `msg`, `send_time`, `id`, `uid`, `imuid`
 ('系统', '信用币+520', '2025-02-23 13:03:33', 1707, 0, 46, 6, 0, 1),
 ('系统', '信用币+520', '2025-02-23 13:03:34', 1708, 0, 46, 6, 0, 1),
 ('轩辕', '地图设计进行区域分类折叠', '2024-08-31 08:51:34', 904, 1, 0, 0, 0, 0),
+('轩辕', '加入个人显示设置逻辑', '2025-02-27 17:22:13', 1758, 1, 0, 0, 0, 0),
+('系统', '信用币+3', '2025-02-27 16:42:44', 1756, 0, 1, 6, 0, 1),
+('系统', '物攻附加+10', '2025-02-27 17:21:21', 1757, 0, 1, 6, 0, 1),
+('系统', '信用币+2', '2025-02-27 15:34:31', 1751, 0, 1, 6, 0, 1),
+('系统', '信用币+2', '2025-02-27 15:34:51', 1752, 0, 1, 6, 0, 1),
+('系统', '信用币+2', '2025-02-27 15:35:18', 1753, 0, 1, 6, 0, 1),
+('系统', '物攻附加-10', '2025-02-27 14:38:21', 1749, 0, 1, 6, 0, 1),
+('系统', '万中无一的扫地魔踏上了旅途', '2025-02-27 14:25:08', 1748, 0, 0, 6, 0, 0),
+('系统', '信用币+1', '2025-02-27 13:29:57', 1747, 0, 1, 6, 0, 1),
+('轩辕', '出航加入大区域切换条件以及不满足提示语。', '2025-02-27 04:22:11', 1741, 1, 0, 0, 0, 0),
 ('系统', '信用币+3', '2025-02-19 10:51:28', 1690, 0, 1, 6, 0, 1),
 ('系统', '信用币+3', '2025-02-19 11:46:28', 1691, 0, 1, 6, 0, 1),
 ('梦浅', '页面回退再点击任意链接会触发回退警告，那么修改成重新加载最新静态页面，并对ucmd的值进行处理', '2025-02-19 18:29:33', 1692, 46, 0, 0, 0, 0),
@@ -1773,6 +1805,7 @@ INSERT INTO `system_chat_data` (`name`, `msg`, `send_time`, `id`, `uid`, `imuid`
 ('轩辕', '设属时候遇到相同的比如u在同一表（副表）中，则合并归类为一句sql语句。', '2025-01-26 17:19:12', 1525, 1, 0, 0, 0, 0),
 ('系统', '血量-15', '2025-01-26 17:26:08', 1526, 0, 1, 6, 0, 1),
 ('系统', '魔力+46', '2025-02-08 02:27:20', 1627, 0, 1, 6, 0, 1),
+('系统', '信用币+3', '2025-02-27 15:34:21', 1750, 0, 1, 6, 0, 1),
 ('系统', '万中无一的时雨踏上了旅途', '2025-01-26 18:53:19', 1529, 0, 0, 6, 0, 0),
 ('系统', '信用币+3', '2025-01-26 19:56:55', 1530, 0, 8, 6, 0, 1),
 ('系统', '血量-12', '2025-01-27 02:09:12', 1541, 0, 1, 6, 0, 1),
@@ -1824,7 +1857,8 @@ CREATE TABLE `system_designer_assist` (
 --
 
 INSERT INTO `system_designer_assist` (`sid`, `op_target`, `op_canshu`) VALUES
-('959c9277a3e15eacff9e5f117e51f5bb', '', '');
+('959c9277a3e15eacff9e5f117e51f5bb', '', ''),
+('945fd26d30e007abfed414cc1f2795f5', '', '');
 
 -- --------------------------------------------------------
 
@@ -1931,11 +1965,11 @@ CREATE TABLE `system_equip_user` (
 --
 
 INSERT INTO `system_equip_user` (`eqsid`, `eqid`, `eq_true_id`, `eq_type`, `equiped_pos_id`) VALUES
-('959c9277a3e15eacff9e5f117e51f5bb', 243, 512, 1, '1'),
+('959c9277a3e15eacff9e5f117e51f5bb', 244, 512, 1, '1'),
 ('959c9277a3e15eacff9e5f117e51f5bb', 238, 115, 2, '4'),
 ('959c9277a3e15eacff9e5f117e51f5bb', 239, 550, 2, '5'),
 ('959c9277a3e15eacff9e5f117e51f5bb', 240, 116, 2, '6'),
-('959c9277a3e15eacff9e5f117e51f5bb', 241, 535, 2, '8'),
+('959c9277a3e15eacff9e5f117e51f5bb', 241, 530, 2, '8'),
 ('959c9277a3e15eacff9e5f117e51f5bb', 242, 544, 2, '17');
 
 -- --------------------------------------------------------
@@ -2203,8 +2237,8 @@ INSERT INTO `system_event_evs_self` (`belong`, `id`, `s_attrs`, `m_attrs`, `equi
 ('70', 69, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, '615', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, ''),
 ('71', 70, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', 1, NULL, NULL, 0, '', 'ct_HP_lift_1', '', '', NULL, NULL, ''),
 ('72', 71, '', 'u.money=520', NULL, NULL, NULL, '2|-1', NULL, NULL, NULL, '', '', '你打开了钱袋，发现了不少钱。', '', 1, NULL, NULL, 0, '', '', '', '', NULL, NULL, ''),
-('1', 72, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', 1, NULL, NULL, 0, '', 'ct_test', '', '', NULL, NULL, ''),
-('75', 73, 'u.qd_daily={c.date}', 'u.money={r.3}+1', NULL, NULL, NULL, '1|{r.c.day}+1,99|{r.c.day}+1,2|1', NULL, NULL, NULL, '', '{u.qd_daily}!={c.date}', '签到成功！', '', 1, NULL, NULL, 0, '', '', '', '', NULL, NULL, '返回签到'),
+('1', 72, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', 1, NULL, NULL, 0, '', 'ct_szcs', '', '', NULL, NULL, ''),
+('75', 73, 'u.qd_daily={c.date}', 'u.money={r.3}+1,u.qd_cs=1', NULL, NULL, NULL, '1|{r.c.day}+1,99|{r.c.day}+1,2|1', NULL, NULL, NULL, '', '{u.qd_daily}!={c.date}', '签到成功！', '', 1, NULL, NULL, 0, '', '', '', '', NULL, NULL, '返回签到'),
 ('76', 74, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', 1, NULL, NULL, 0, '', 'ct_bounty_01', '', '', NULL, NULL, ''),
 ('78', 75, 'u.submit_bounty_01_item_01={c.date}', 'u.exp=1000,u.money=50', NULL, NULL, NULL, '24|-10,18|{r.3}+1,163|1', NULL, NULL, NULL, '{u.ic.i24}>=10', '', '「歌尔特」:感谢你的付出，这是你的报酬，请明天再来!', '「歌尔特」:你并没有这么多「变异利爪」，再去找找吧!', 0, NULL, NULL, 0, '', 'ct_bounty_01', '', '', NULL, NULL, ''),
 ('79', 76, NULL, 'u.money=-50', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '{u.money}>=50', '', '「小乞丐」:谢谢你的善良和慷慨，愿「希望之主」眷顾你！', '「小乞丐」:谢谢你的好意，但是你似乎也没有多少余钱了，还是照顾好自己吧！', 0, NULL, NULL, 0, '', '', '', '', NULL, NULL, ''),
@@ -2289,7 +2323,7 @@ INSERT INTO `system_event_evs_self` (`belong`, `id`, `s_attrs`, `m_attrs`, `equi
 ('162', 161, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, '743', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, ''),
 ('163', 162, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, '742', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, ''),
 ('164', 163, 'u.open_future_prison=2', NULL, NULL, NULL, NULL, '57|1', NULL, NULL, NULL, '', '', '你发现角落里有张不起眼的字条，你将其捡了起来。', '', 0, NULL, NULL, 0, '', '', '', '', NULL, NULL, ''),
-('166', 164, 'o.xq_nl={c.date}', 'u.exp={r.500}*({c.date}+1)*5*{o.count}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '你将{o.name}捧起，静静感受其中的能量波动，一股精纯的能量进入了你的身体。', '', 0, NULL, NULL, 0, '', '', '', '', NULL, NULL, ''),
+('166', 164, 'o.xq_nl={c.date}', 'u.exp={r.500}*({c.date}+1)*5*{o.count}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '你将{o.name}捧起，静静感受其中的能量波动，一股精纯的能量进入了你的身体。', '', 0, NULL, NULL, 0, '', 'items', '', '', NULL, NULL, ''),
 ('167', 165, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', 0, '{o.env.nowmid}', NULL, 0, '', '', '', '', NULL, NULL, ''),
 ('168', 166, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '你沿着一部楼梯走了上去，这楼梯像是直接挖成形状再灌上合金材料制成。', '', 1, '750', NULL, 0, '', '', '', '', NULL, NULL, ''),
 ('169', 167, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '你从楼梯走下了二层。', '', 1, '747', NULL, 0, '', '', '', '', NULL, NULL, ''),
@@ -2324,14 +2358,17 @@ INSERT INTO `system_event_evs_self` (`belong`, `id`, `s_attrs`, `m_attrs`, `equi
 ('195', 195, 'o.name={o.name}.你好', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, ''),
 ('196', 196, NULL, 'u.exp=300,u.money=50', NULL, NULL, NULL, '1|5', NULL, NULL, NULL, '', '', '「莉莉安」看了看满身污垢的你。\r\n「莉莉安」:呦，还不错嘛。\r\n「你」:那肯定的，撒撒水啦。\r\n「莉莉安」:算你合格了，这些奖励就给你了，你接下去去找歌尔特吧，他会告诉你接下来做什么。', '', 0, NULL, NULL, 0, '', '', '', '', NULL, NULL, ''),
 ('197', 197, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '「莱兹.恩」：我骑着骆驼四处流浪，心中满是忧愁，\r\n我倒了倒见底的椰子酒，骆驼却悄然而走，如今的我无处可求。\r\n你看见一个浑身邋遢的男子囔囔着什么，一个散发着浓烈酒味的布袋不时滴落着。\r\n「你」：请问?有什么可以帮你的吗?(你来不及惊叹自己为何会银月语)\r\n「莱兹.恩」抬了抬头：异端的小老鼠，哈哈哈，你也来嘲笑我吗?\r\n「你」：不不不，我没有恶意。\r\n随即你想了想：时光，收集人类的泪水，将它蓄满风的谷仓。\r\n「莱兹.恩」：时光...泪水...谷仓...哈哈哈我的王...\r\n你看着他陷入了颠狂，想着要不先走，突然他却拉住了你。\r\n「莱兹.恩」：异乡人，同是天涯沦落人，谢你刚才的言语。\r\n「你」：人生在世皆为友。\r\n「莱兹.恩」：好!我的朋友，请给我一瓶慷慨的「烈焰风暴」，我会同样慷慨地给你一些祝福与回报的。', '', 0, NULL, NULL, 0, '', '', '', '', NULL, NULL, ''),
-('75', 198, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '{u.qd_daily}=={c.date}', '今日已签到。', '', 1, NULL, NULL, 0, '', '', '', '', NULL, NULL, '返回签到'),
+('75', 198, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '{u.qd_daily}=={c.date}', '今日已签到。', '', 1, NULL, NULL, 1, '', '', '', '', NULL, NULL, '返回签到'),
 ('75', 199, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', 1, NULL, NULL, 0, '', 'ct_test', '', '', NULL, NULL, ''),
 ('199', 200, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '测试违禁词(目前已有：{g.test_name})', '', 1, NULL, 'test_wjc|违禁词|0|100', 0, '', '', '', '', NULL, NULL, ''),
-('200', 201, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 'add_ele|加什么|0|10', 0, NULL, NULL, NULL, NULL, NULL, NULL, ''),
+('200', 201, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', 1, NULL, 'add_ele|加什么|0|10', 0, '', '', '', '', NULL, NULL, '加入'),
 ('199', 202, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '{inarr(v(u.input.test_wjc),v(g.test_name))}==1', '你输入的文本里含有违禁词哦！', '', 1, NULL, NULL, 0, '', 'ct_szcs', '', '', NULL, NULL, ''),
 ('199', 203, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '{inarr(v(u.input.test_wjc),v(g.test_name))}==0', '很好，你是一个文明的小可爱！', '', 1, NULL, NULL, 0, '', 'ct_szcs', '', '', NULL, NULL, ''),
 ('201', 204, NULL, 'o.hp=-1000', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, '继续'),
-('202', 205, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, '继续');
+('202', 205, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, '继续'),
+('200', 206, 'pusharr.(g.test_name)={u.input.add_ele}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '{u.input.add_ele}!=\"\"', '', '添加成功！', '输入不能为空！', 1, NULL, NULL, 1, '', '', '', '', NULL, NULL, '继续'),
+('203', 207, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '', '', 0, NULL, 'del_pos|移除第几个？（从1开始）|1|10', 0, '', '', '', '', NULL, NULL, '确认移除'),
+('203', 208, 'delarr.(g.test_name)={u.input.del_pos}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '{u.input.del_pos}!=\"\"', '', '已经移除第{u.input.del_pos}的元素！', '输入有误！', 1, NULL, NULL, 1, '', '', '', '', NULL, NULL, '继续');
 
 -- --------------------------------------------------------
 
@@ -2369,7 +2406,7 @@ CREATE TABLE `system_event_self` (
 --
 
 INSERT INTO `system_event_self` (`belong`, `module_id`, `root_op_id`, `id`, `cond`, `cmmt`, `link_evs`, `desc`) VALUES
-('31', '1', 0, 1, '', '', '72', '签到\r\n'),
+('31', '1', 0, 1, '', '', '72', '数组\r\n'),
 ('6', '11', 0, 2, '', '', '2', '用户协议'),
 ('1', 'map_op', 0, 6, '', '', '6', '无名石碑'),
 ('2', 'npc_op', 0, 8, '', '', '9', '治疗'),
@@ -2543,9 +2580,10 @@ INSERT INTO `system_event_self` (`belong`, `module_id`, `root_op_id`, `id`, `con
 ('31', 'npc_task_accept', 0, 197, '', '', '197', '[醉醺醺的酒鬼]的接受'),
 ('14', '5', 0, 198, '', '', NULL, '设置对方\r\n'),
 ('2', 'game_self_page_szcs', 0, 199, '', '', '200,202,203', '测试违禁词\r\n'),
-('3', 'game_self_page_szcs', 0, 200, '', '', '201', '往末尾加元素（下次更新）\r\n'),
+('3', 'game_self_page_szcs', 0, 200, '', '', '201,206', '往末尾加元素\r\n'),
 ('3', 'skill_use', 0, 201, '', '', '204', '撕咬使用'),
-('1', 'skill_use', 0, 202, '', '', '205', '普通攻击使用');
+('1', 'skill_use', 0, 202, '', '', '205', '普通攻击使用'),
+('5', 'game_self_page_szcs', 0, 203, '', '', '207,208', '移除第n个元素\r\n');
 
 -- --------------------------------------------------------
 
@@ -2901,7 +2939,14 @@ INSERT INTO `system_fight_quick` (`sid`, `quick_value`, `quick_pos`) VALUES
 ('4e792f072d10eb2f6addd8d04cf5cbe8', '', 4),
 ('4e792f072d10eb2f6addd8d04cf5cbe8', '', 5),
 ('4e792f072d10eb2f6addd8d04cf5cbe8', '', 6),
-('4e792f072d10eb2f6addd8d04cf5cbe8', '', 7);
+('4e792f072d10eb2f6addd8d04cf5cbe8', '', 7),
+('0732ec1c98e6496b097d7bee1482d96d', '', 1),
+('0732ec1c98e6496b097d7bee1482d96d', '', 2),
+('0732ec1c98e6496b097d7bee1482d96d', '', 3),
+('0732ec1c98e6496b097d7bee1482d96d', '', 4),
+('0732ec1c98e6496b097d7bee1482d96d', '', 5),
+('0732ec1c98e6496b097d7bee1482d96d', '', 6),
+('0732ec1c98e6496b097d7bee1482d96d', '', 7);
 
 -- --------------------------------------------------------
 
@@ -3112,13 +3157,13 @@ INSERT INTO `system_item` (`item_true_id`, `sid`, `uid`, `iid`, `icount`, `ibind
 (163, '214658c4375c343e280ae38e880ac4ba', 0, 1, 23, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (165, '214658c4375c343e280ae38e880ac4ba', 0, 27, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (166, 'a8c7b0c51c60be7441214c0b0c671d88', 0, 1, 10, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(535, '959c9277a3e15eacff9e5f117e51f5bb', 1, 137, 1, 0, 1, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(535, '959c9277a3e15eacff9e5f117e51f5bb', 1, 137, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (176, '959c9277a3e15eacff9e5f117e51f5bb', 1, 45, 9, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (262, '959c9277a3e15eacff9e5f117e51f5bb', 1, 139, 4, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '1|64', 0),
 (265, '98c50608a11ec800fba8b2d0b7294aeb', 0, 1, 10, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(506, '959c9277a3e15eacff9e5f117e51f5bb', 1, 2, 583, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '1|48', 0),
+(506, '959c9277a3e15eacff9e5f117e51f5bb', 1, 2, 589, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '1|48', 0),
 (195, '01a0d4f5e64a677721a1089d4914bc6a', 0, 1, 13, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(507, '959c9277a3e15eacff9e5f117e51f5bb', 0, 1, 40, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(507, '959c9277a3e15eacff9e5f117e51f5bb', 0, 1, 46, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (196, '01a0d4f5e64a677721a1089d4914bc6a', 6, 4, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (197, '01a0d4f5e64a677721a1089d4914bc6a', 0, 9, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (198, '79462faa70c368423c7f9fb106fa1f47', 7, 4, 3, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
@@ -3142,7 +3187,7 @@ INSERT INTO `system_item` (`item_true_id`, `sid`, `uid`, `iid`, `icount`, `ibind
 (220, '01acd0637eb2b6a6a3055e4fc37e8457', 11, 4, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (221, '01acd0637eb2b6a6a3055e4fc37e8457', 11, 10, 2, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (222, '945fd26d30e007abfed414cc1f2795f5', 8, 5, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(223, '945fd26d30e007abfed414cc1f2795f5', 8, 7, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(223, '945fd26d30e007abfed414cc1f2795f5', 8, 7, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '2025-02-28 03:49:40', 0, '', 0),
 (224, '945fd26d30e007abfed414cc1f2795f5', 8, 21, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (225, '945fd26d30e007abfed414cc1f2795f5', 8, 22, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (226, '945fd26d30e007abfed414cc1f2795f5', 8, 71, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
@@ -3159,7 +3204,7 @@ INSERT INTO `system_item` (`item_true_id`, `sid`, `uid`, `iid`, `icount`, `ibind
 (243, 'f4cd01caaf9ec17c03413de91b97b5f2', 16, 4, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (534, '959c9277a3e15eacff9e5f117e51f5bb', 1, 137, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (266, '98c50608a11ec800fba8b2d0b7294aeb', 20, 4, 3, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(533, '959c9277a3e15eacff9e5f117e51f5bb', 1, 16, 23, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(533, '959c9277a3e15eacff9e5f117e51f5bb', 1, 16, 24, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (433, '959c9277a3e15eacff9e5f117e51f5bb', 1, 25, 9, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (250, '344773e829d514e37d748e906a4f020a', 0, 1, 13, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (251, '344773e829d514e37d748e906a4f020a', 17, 4, 2, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
@@ -3189,13 +3234,13 @@ INSERT INTO `system_item` (`item_true_id`, `sid`, `uid`, `iid`, `icount`, `ibind
 (513, '959c9277a3e15eacff9e5f117e51f5bb', 0, 88, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (431, '959c9277a3e15eacff9e5f117e51f5bb', 1, 39, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (437, '959c9277a3e15eacff9e5f117e51f5bb', 0, 148, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(438, '959c9277a3e15eacff9e5f117e51f5bb', 0, 130, 16, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(438, '959c9277a3e15eacff9e5f117e51f5bb', 0, 130, 17, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (440, '959c9277a3e15eacff9e5f117e51f5bb', 1, 154, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(504, '959c9277a3e15eacff9e5f117e51f5bb', 1, 24, 26, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(504, '959c9277a3e15eacff9e5f117e51f5bb', 1, 24, 27, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (458, '959c9277a3e15eacff9e5f117e51f5bb', 0, 158, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (459, '959c9277a3e15eacff9e5f117e51f5bb', 0, 57, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (480, '79ca852ae3c34e005ba8db7ca9f2429e', 42, 4, 2, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(530, '959c9277a3e15eacff9e5f117e51f5bb', 1, 137, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(530, '959c9277a3e15eacff9e5f117e51f5bb', 1, 137, 1, 0, 1, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (468, '11949d9ce6df5a06a3377325c71c7c4f', 40, 4, 3, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (469, '11949d9ce6df5a06a3377325c71c7c4f', 0, 1, 11, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (470, '11949d9ce6df5a06a3377325c71c7c4f', 0, 99, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
@@ -3205,12 +3250,12 @@ INSERT INTO `system_item` (`item_true_id`, `sid`, `uid`, `iid`, `icount`, `ibind
 (475, 'f3c4859c79f6f34ac79072571744bf8e', 0, 2, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (479, '79ca852ae3c34e005ba8db7ca9f2429e', 0, 1, 10, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (515, 'd12390bc49b0e1e7e94a3b8ed28af06f', 0, 1, 10, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(510, '959c9277a3e15eacff9e5f117e51f5bb', 0, 99, 8, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(493, '959c9277a3e15eacff9e5f117e51f5bb', 1, 75, 7, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(510, '959c9277a3e15eacff9e5f117e51f5bb', 0, 99, 13, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(493, '959c9277a3e15eacff9e5f117e51f5bb', 1, 75, 6, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (503, '959c9277a3e15eacff9e5f117e51f5bb', 1, 11, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (511, '68dcd3cd66a76b81cfc90c0e147617d4', 0, 18, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (516, '945fd26d30e007abfed414cc1f2795f5', 0, 99, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(517, '945fd26d30e007abfed414cc1f2795f5', 0, 2, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(517, '945fd26d30e007abfed414cc1f2795f5', 0, 2, 17, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (518, '531522b75447d1bb6150be51cf246331', 0, 1, 11, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (524, '531522b75447d1bb6150be51cf246331', 0, 2, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (523, '531522b75447d1bb6150be51cf246331', 0, 99, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
@@ -3235,9 +3280,12 @@ INSERT INTO `system_item` (`item_true_id`, `sid`, `uid`, `iid`, `icount`, `ibind
 (553, '4e792f072d10eb2f6addd8d04cf5cbe8', 0, 6, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (556, '4e792f072d10eb2f6addd8d04cf5cbe8', 0, 6, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (557, '4e792f072d10eb2f6addd8d04cf5cbe8', 0, 6, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(563, '0732ec1c98e6496b097d7bee1482d96d', 0, 1, 10, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (558, '4e792f072d10eb2f6addd8d04cf5cbe8', 46, 2, 8, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
 (559, '4e792f072d10eb2f6addd8d04cf5cbe8', 46, 158, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
-(560, '4e792f072d10eb2f6addd8d04cf5cbe8', 46, 130, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0);
+(560, '4e792f072d10eb2f6addd8d04cf5cbe8', 46, 130, 1, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(561, '945fd26d30e007abfed414cc1f2795f5', 8, 130, 2, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0),
+(562, '945fd26d30e007abfed414cc1f2795f5', 8, 158, 2, 0, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, '', 0);
 
 -- --------------------------------------------------------
 
@@ -3540,13 +3588,13 @@ CREATE TABLE `system_map` (
 --
 
 INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_now`, `mgtime`, `mpick_time`, `mrefresh_time`, `mphoto`, `mdesc`, `mup`, `mdown`, `mleft`, `mright`, `marea_name`, `marea_id`, `mop_target`, `mtask_target`, `mcreat_event_id`, `mlook_event_id`, `minto_event_id`, `mout_event_id`, `mminute_event_id`, `mshop`, `mhockshop`, `mshop_item_id`, `mkill`, `mstorage`, `mtianqi`, `mdire`, `mis_tp`, `mtp_type`, `mis_rp`, `mrp_id`, `mis_shield`, `mis_signal_block`, `mhide`) VALUES
-(225, '旧街广场', '', '', '11|1|,13|1,46|{r.3}+2', '11|1|,13|1|,46|2|', '2025-02-26 09:55:28', '0000-00-00 00:00:00', 1, '旧街|map001_center', '地面上凌乱不堪的各种垃圾堆放着，石阶上还有几个流浪汉在呼呼大睡。', 296, 294, 295, 226, '旧街', 1, '1', '', 0, 0, 0, 0, 0, 0, 0, '1|1,2|1', 0, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(226, '旧街东路', '4|{r.2}+1', '4|1', '46|{r.3}+2', '46|4|', '2025-02-26 14:35:26', '0000-00-00 00:00:00', 1, '', '这边相对比较开阔了一些，路两边也开设了一些店铺。', 299, 300, 225, 228, '旧街', 1, '2', '', 0, 0, 0, 0, 0, 0, 0, '', 0, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(228, '旧街东出口', '', '', '46|{r.3}+2', '46|2|', '2025-02-16 00:42:19', '0000-00-00 00:00:00', 1, '', '说是出口，不过是由铁丝网围起来的一个通道。', 297, 576, 226, 229, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(229, '小树林', '10|{r.3}+1,16|{r.2}', '10|3,16|1', '', '', '2025-02-16 00:42:18', '0000-00-00 00:00:00', 1, '', '这里的树木普遍低矮，几处灌木丛里还散发着不可描述的味道。', 305, 575, 228, 230, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(230, '湖堤', '', '', '18|{r.5}+2', '18|2|', '2025-02-25 15:52:16', '0000-00-00 00:00:00', 1, '', '站在黑黝黝的泥土往湖里看，这条湖不大不小，五米宽，水的颜色却是一种胶质的金属感。', 630, 672, 229, 232, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(225, '旧街广场', '', '', '11|1|,13|1,46|{r.3}+2', '11|1|,13|1|,46|2|', '2025-02-27 14:25:13', '0000-00-00 00:00:00', 1, '旧街|map001_center', '地面上凌乱不堪的各种垃圾堆放着，石阶上还有几个流浪汉在呼呼大睡。', 296, 294, 295, 226, '旧街', 1, '1', '', 0, 0, 0, 0, 0, 0, 0, '1|1,2|1', 0, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(226, '旧街东路', '4|{r.2}+1', '4|2', '46|{r.3}+2', '46|2|', '2025-02-27 17:12:37', '0000-00-00 00:00:00', 1, '', '这边相对比较开阔了一些，路两边也开设了一些店铺。', 299, 300, 225, 228, '旧街', 1, '2', '', 0, 0, 0, 0, 0, 0, 0, '', 0, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(228, '旧街东出口', '', '', '46|{r.3}+2', '46|2|', '2025-02-27 13:02:11', '0000-00-00 00:00:00', 1, '', '说是出口，不过是由铁丝网围起来的一个通道。', 297, 576, 226, 229, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(229, '小树林', '10|{r.3}+1,16|{r.2}', '10|3,16|1', '', '', '2025-02-27 13:02:42', '0000-00-00 00:00:00', 1, '', '这里的树木普遍低矮，几处灌木丛里还散发着不可描述的味道。', 305, 575, 228, 230, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(230, '湖堤', '', '', '18|{r.5}+2', '18|6|', '2025-02-27 13:02:43', '0000-00-00 00:00:00', 1, '', '站在黑黝黝的泥土往湖里看，这条湖不大不小，五米宽，水的颜色却是一种胶质的金属感。', 630, 672, 229, 232, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (231, '乱石堆', '15|{r.4}+1', '15|1', '46|{r.3}+2', '46|3|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这里不知道为什么会有一堆乱石，大的小的，形状各异。', 0, 0, 230, 232, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(232, '湖泊边缘', '', '', '18|{r.3}+2', '18|3|', '2025-02-25 15:52:15', '0000-00-00 00:00:00', 1, '', '勉强能站人的一处平地，眼前的湖泊里，像石油一样颜色的水浆在其中咕噜翻滚，{eval(v(u.fix_bridge)==1?\"你看到一座简陋的木质桥浮在眼前。\":\"你看着面前的断桥望而兴叹。\")}', 0, 0, 230, 0, '旧街', 1, '12,22,23', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(232, '湖泊边缘', '', '', '18|{r.3}+2', '18|2|', '2025-02-27 13:02:45', '0000-00-00 00:00:00', 1, '', '勉强能站人的一处平地，眼前的湖泊里，像石油一样颜色的水浆在其中咕噜翻滚，{eval(v(u.fix_bridge)==1?\"你看到一座简陋的木质桥浮在眼前。\":\"你看着面前的断桥望而兴叹。\")}', 0, 0, 230, 0, '旧街', 1, '12,22,23', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (233, '荒野', '', '', '', '', '2025-02-16 13:57:54', '0000-00-00 00:00:00', 1, '', '荒寂的平原，些许病恹恹的不知名杂草，一块路牌随着风吹仿佛随时要倒下，上面标着一个往右的箭头，写着\"希望镇\"三个歪歪斜斜的字。', 559, 561, 560, 235, '希望镇', 2, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (235, '希望镇入口', '', '', '23|{r.3}+1,45|{r.4}+2', '23|3|,45|4|', '2025-02-16 13:57:55', '0000-00-00 00:00:00', 1, '希望镇|map002_entrance', '为了抵御异变生物的侵蚀，人类建立了大大小小的聚集点，大部分中小规模的城镇只会拥有一个出入口。', 664, 318, 233, 0, '希望镇', 2, '14', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (236, '小镇西路', '', '', '23|{r.2}+1,45|{r.4}+2', '23|1|,45|2|', '2025-02-16 00:43:19', '0000-00-00 00:00:00', 1, '', '路两边被高高的铁网与外界隔绝开来，说是路其实就是由各种各样不规则的石块堆一起然后用黄沙铺平，毫无美感可言。', 0, 0, 235, 237, '希望镇', 2, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
@@ -3587,20 +3635,20 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (271, '黑雾城东', '', '', '', '', '2025-01-09 03:32:36', '0000-00-00 00:00:00', 1, '', '十足的合金路，也是黑雾城最繁华的地带。', 0, 0, 270, 272, '黑雾城', 6, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '阴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (272, '疑问之门', '', '', '24|1,25|{r.4}+2|', '24|1|,25|2|', '2025-01-09 03:32:38', '0000-00-00 00:00:00', 1, '', '从城门往外看去能看到浓浓的黑雾覆盖着，看不清更远处的景色。', 0, 0, 271, 0, '黑雾城', 6, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '阴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (273, '明日小区小路', '', '', '26|1,45|{r.4}+2', '26|1|,45|2|', '2024-11-22 12:24:41', '0000-00-00 00:00:00', 1, '', '这条路通向城镇里生活比较富裕的居民住处：明日小区，用的也是比较规整的大理石铺成。', 239, 319, 320, 316, '希望镇', 2, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(274, 'GM工作室', '75|1,76|1,99|1', '75|1,76|1,99|1', '48|4|', '48|4|', '2025-02-26 08:46:57', '0000-00-00 00:00:00', 1, '', '你看到天空中卷起了数道长长的白云，风从四面八方涌来。~~~~~~', 490, 276, 278, 275, '未分区', 0, '17', '', 0, 116, 56, 150, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(275, 'GM工作室2', '144|1,145|1,146|1', '144|1,145|1,146|1', '', '', '2025-02-26 08:47:11', '0000-00-00 00:00:00', 1, '', '1.远处的草原如同波浪般起伏，风掠过，带来阵阵青草的气息。\r\n2.天边的云被风推得飞快，似乎要追赶着落日。', 0, 0, 274, 0, '未分区', 0, '42', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(276, 'GM工作室3', '', '', '', '', '2025-02-26 08:47:04', '0000-00-00 00:00:00', 1, '', '{eval(v(e.boss_ltlz_flush))}', 274, 0, 0, 0, '未分区', 0, '39', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(274, 'GM工作室', '75|1,76|1,99|1', '75|1,76|1,99|1', '48|4|', '48|4|', '2025-02-27 17:21:04', '0000-00-00 00:00:00', 1, '', '你看到天空中卷起了数道长长的白云，风从四面八方涌来。~~~~~~', 490, 276, 278, 275, '未分区', 0, '17', '', 0, 116, 56, 150, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(275, 'GM工作室2', '144|1,145|1,146|1', '144|1,145|1,146|1', '', '', '2025-02-27 17:20:29', '0000-00-00 00:00:00', 1, '', '1.远处的草原如同波浪般起伏，风掠过，带来阵阵青草的气息。\r\n2.天边的云被风推得飞快，似乎要追赶着落日。', 0, 0, 274, 0, '未分区', 0, '42', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(276, 'GM工作室3', '', '', '', '', '2025-02-27 17:22:15', '0000-00-00 00:00:00', 1, '', '{eval(v(e.boss_ltlz_flush))}', 274, 0, 0, 0, '未分区', 0, '39', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (278, 'GM工作室4', '', '', '', '', '2025-02-22 16:50:18', '0000-00-00 00:00:00', 1, '', '', 0, 0, 0, 274, '未分区', 0, '37', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (287, '帐篷内', '', '', '', '', '2025-02-05 22:59:47', '0000-00-00 00:00:00', 1, '', '这是你的帐篷内部。', 0, 0, 0, 0, '旧街', 1, '16', '', 0, 0, 0, 0, 0, 0, 0, '', 0, 1, '晴天', '0,0,0', 0, 0, 0, 1, 1, 0, 0),
 (294, '旧街南路', '', '', '46|{r.3}+2,50|1,52|1', '46|3|,50|1|,52|1|', '2025-02-26 09:22:16', '0000-00-00 00:00:00', 1, '旧街|map001_south', '旧街广场的南边通道，这里的房子看起来正常多了，有些许漂亮的砖瓦房矗立。', 225, 307, 306, 314, '旧街', 1, '6', '', 0, 0, 0, 0, 0, 0, 0, '', 0, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(295, '旧街西路', '', '', '49|1,46|{r.3}+2', '49|1|,46|3|', '2025-02-26 09:55:14', '0000-00-00 00:00:00', 1, '旧街|map001_west', '各种各样的棚户楼，简陋的帐篷。\r\n北面不远处有个临时市场，西面是一堵厚厚的墙壁，各种淤泥和腥臭味弥漫在此。', 298, 306, 0, 225, '旧街', 1, '10', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(295, '旧街西路', '', '', '49|1,46|{r.3}+2', '49|1|,46|3|', '2025-02-27 03:51:36', '0000-00-00 00:00:00', 1, '旧街|map001_west', '各种各样的棚户楼，简陋的帐篷。\r\n北面不远处有个临时市场，西面是一堵厚厚的墙壁，各种淤泥和腥臭味弥漫在此。', 298, 306, 0, 225, '旧街', 1, '10', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (296, '旧街北路', '8|{r.6}+2,4|{r.10}+1', '8|2,4|3', '46|{r.3}+2', '46|4|', '2025-02-26 09:03:38', '0000-00-00 00:00:00', 1, '', '这里已经不能算是路了，一片又一片的废墟。', 302, 225, 0, 299, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(297, '废弃铁皮房', '', '', '', '', '2025-02-08 02:29:17', '0000-00-00 00:00:00', 1, '', '一间四四方方的铁皮房子，用各种废铁搭成，风一吹，摇摇欲坠。', 0, 228, 0, 0, '旧街', 1, '5,13', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(298, '临时市场', '', '', '36|1,46|{r.3}+2,53|{r.3}+1', '36|1|,46|4|,53|3|', '2025-02-26 09:55:06', '0000-00-00 00:00:00', 1, '旧街|map001_west_shop', '这个临时市场看起来已经存在了很久，流浪者和旧街居民以及异地商队来来往往。', 303, 295, 0, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 1, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(299, '瓦尔金铁匠铺', '', '', '35|1,46|{r.3}+2', '35|1|,46|4|', '2025-02-26 09:03:07', '0000-00-00 00:00:00', 1, '', '这家铁匠铺的主人叫瓦尔金，年轻的时候在新世界闯荡过，好像得罪了什么人，隐居于此。', 0, 226, 296, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(300, '浮沉诊所', '', '', '17|1,59|1,46|{r.2}+1', '17|1|,59|1|,46|2|', '2025-02-26 08:56:45', '0000-00-00 00:00:00', 1, '', '不知道为什么这家诊所的主人要取一个这个名字。', 226, 0, 0, 576, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(297, '废弃铁皮房', '', '', '', '', '2025-02-27 13:02:19', '0000-00-00 00:00:00', 1, '', '一间四四方方的铁皮房子，用各种废铁搭成，风一吹，摇摇欲坠。', 0, 228, 0, 0, '旧街', 1, '5,13', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(298, '临时市场', '', '', '36|1,46|{r.3}+2,53|{r.3}+1', '36|1|,46|2|,53|2|', '2025-02-27 03:51:24', '0000-00-00 00:00:00', 1, '旧街|map001_west_shop', '这个临时市场看起来已经存在了很久，流浪者和旧街居民以及异地商队来来往往。', 303, 295, 0, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 1, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(299, '瓦尔金铁匠铺', '', '', '35|1,46|{r.3}+2', '35|1|,46|3|', '2025-02-27 03:51:49', '0000-00-00 00:00:00', 1, '', '这家铁匠铺的主人叫瓦尔金，年轻的时候在新世界闯荡过，好像得罪了什么人，隐居于此。', 0, 226, 296, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(300, '浮沉诊所', '', '', '17|1,59|1,46|{r.2}+1', '17|1|,59|1|,46|1|', '2025-02-27 03:51:44', '0000-00-00 00:00:00', 1, '', '不知道为什么这家诊所的主人要取一个这个名字。', 226, 0, 0, 576, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (302, '废墟', '4|{r.5}+2,8|{r.3}+1,9|{r.2}', '4|2,8|2,9|1', '46|{r.3}+2', '46|4|', '2025-02-25 15:52:30', '0000-00-00 00:00:00', 10, '', '一片狼藉的废墟，一个醒目的哨站就矗立在北方不远处。', 0, 296, 0, 304, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(303, '旧街北出口', '', '', '46|{r.3}+2,53|{r.3}+2', '46|4|,53|3|', '2025-02-26 09:55:05', '0000-00-00 00:00:00', 1, '', '北出口很大，也是旧街与外界交流沟通的其中一条重要道路，居民们有时候会去不远处的灰青草地上狩猎异兽与过往商人交易换取信用币。', 308, 298, 530, 529, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(303, '旧街北出口', '', '', '46|{r.3}+2,53|{r.3}+2', '46|4|,53|2|', '2025-02-27 03:51:21', '0000-00-00 00:00:00', 1, '', '北出口很大，也是旧街与外界交流沟通的其中一条重要道路，居民们有时候会去不远处的灰青草地上狩猎异兽与过往商人交易换取信用币。', 308, 298, 530, 529, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (304, '废墟', '11|{r.5}+1', '11|5', '46|{r.3}+2', '46|2|', '2025-02-25 15:52:32', '0000-00-00 00:00:00', 30, '', '脏乱差，前方已经没有路了，偶尔还能见到几片闪着电光的废旧板子。', 0, 0, 302, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (305, '小树林', '10|{r.4}+2', '10|2', '', '', '2025-02-24 19:14:41', '0000-00-00 00:00:00', 1, '', '这片小树林丝毫没有应有的生气，反而看起来死气沉沉，左手边被一圈铁丝网围住，隐约能看到里面的建筑。', 574, 229, 0, 630, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (306, '办事处', '', '', '', '', '2025-02-25 15:52:25', '0000-00-00 00:00:00', 1, '', '空无一人，不知道人都去哪了，很难想象这个破烂地方是个办公室。', 295, 0, 0, 294, '旧街', 1, '7,9', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
@@ -3624,54 +3672,54 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (328, '日落沼泽', '', '', '', '', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 1, '', '日落的美景一览无遗，闻着沼泽上生长的芦苇的香气，能让人暂时忘记这末世的残酷。', 0, 0, 0, 0, '失落之地', 4, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (329, '深渊悬空池', '', '', '', '', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 1, '', '真令人惊叹的自然现象！', 0, 0, 0, 0, '失落之地', 4, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (330, '月光丛林', '', '', '', '', '2023-10-17 00:00:33', '0000-00-00 00:00:00', 1, '', '月光洒下，树木会泛出银白色的光芒，美极了。', 0, 0, 0, 0, '失落之地', 4, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(331, '白云崖', '', '', '', '', '2025-02-02 18:04:37', '0000-00-00 00:00:00', 1, '', '能依稀看到一个被厚厚的白云层掩盖住的深渊。', 546, 548, 547, 478, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(332, '栖霞山麓', '', '', '', '', '2025-02-02 18:05:31', '0000-00-00 00:00:00', 1, '', '栖霞山上有成片的枫树，深秋的栖霞，满山枫树长了红色的叶片。', 478, 473, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(331, '白云崖', '', '', '', '', '2025-02-27 04:23:28', '0000-00-00 00:00:00', 1, '', '能依稀看到一个被厚厚的白云层掩盖住的深渊。', 546, 548, 547, 478, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(332, '栖霞山麓', '', '', '', '', '2025-02-27 04:23:39', '0000-00-00 00:00:00', 1, '', '栖霞山上有成片的枫树，深秋的栖霞，满山枫树长了红色的叶片。', 478, 473, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (333, '古藤林', '', '', '', '', '2024-09-24 00:43:28', '0000-00-00 00:00:00', 1, '', '碧绿的古藤，错综复杂。', 0, 0, 0, 0, '金陵古城', 9, '34', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (334, '百花谷', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '谷中百花盛开，宛若人间仙境', 0, 0, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (335, '飞瀑崖', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '飞流直下三千尺，疑似银河落九天。', 0, 0, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (336, '星夜湖', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '听说以前的湖边会有一闪一闪的萤火虫，不知道那是什么样的一种景象呢？', 0, 0, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (337, '冰晶湖', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '这片湖面及湖四周都悬浮着冰晶，显然这里发生了奇异的变化。', 0, 0, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(338, '灰青草地', '', '', '37|{r.3}+1', '37|1|', '2025-02-27 02:13:00', '0000-00-00 00:00:00', 1, '', '地面是绿到发青的那种颜色，泥土，稀疏的杂草堆，隐约往东北方向仿佛能看到水的反光。', 346, 308, 539, 0, '旧街', 1, '38', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(338, '灰青草地', '', '', '37|{r.3}+1', '37|1|', '2025-02-27 04:13:12', '0000-00-00 00:00:00', 1, '', '地面是绿到发青的那种颜色，泥土，稀疏的杂草堆，隐约往东北方向仿佛能看到水的反光。', 346, 308, 539, 0, '旧街', 1, '38', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (339, '暗道', '', '', '', '', '2025-02-01 02:00:56', '0000-00-00 00:00:00', 1, '', '办事处下方的暗道，眼前似乎有一丝若隐若现的亮光。', 0, 482, 311, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(340, '秦淮渡口', '', '', '53|{r.3}+1', '53|2|', '2025-02-08 02:39:05', '0000-00-00 00:00:00', 1, '', '花船，商船数不胜数，秦淮河从此处流入了无边无际的东海。', 466, 448, 450, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '118,32,0', 1, 2, 0, 0, 0, 0, 0),
+(340, '秦淮渡口', '', '', '53|{r.3}+1', '53|2|', '2025-02-27 04:26:55', '0000-00-00 00:00:00', 1, '', '花船，商船数不胜数，秦淮河从此处流入了无边无际的东海。', 466, 448, 450, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '118,32,0', 1, 2, 0, 0, 0, 0, 0),
 (341, '不冻港', '', '', '', '', '2023-10-19 21:11:43', '0000-00-00 00:00:00', 1, '', '这座港口终年不结冰，堪称是附近的一个奇迹。', 0, 0, 0, 0, '不夜之城', 12, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '37,55,0', 1, 2, 0, 0, 0, 0, 0),
-(342, '奇迹港口', '', '', '110|1|', '110|1|', '2025-02-21 01:32:32', '0000-00-00 00:00:00', 1, '', '这是个充满了奇迹的港口，飞天的扫帚丶跳舞的船帆以及那唱歌的朗姆酒......', 0, 786, 0, 785, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '10,46,0', 1, 2, 0, 0, 0, 0, 0),
-(343, '神圣港口', '', '', '', '', '2025-01-22 00:45:25', '0000-00-00 00:00:00', 1, '', '这个港口是银月人向外交流的初始之地，在银月人心中代表了至高无上的地位。', 0, 0, 0, 851, '银月戈壁', 10, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '50,27,0', 1, 2, 0, 1, 0, 0, 0),
+(342, '奇迹港口', '', '', '110|1|', '110|1|', '2025-02-27 04:17:30', '0000-00-00 00:00:00', 1, '', '这是个充满了奇迹的港口，飞天的扫帚丶跳舞的船帆以及那唱歌的朗姆酒......', 0, 786, 0, 785, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '10,46,0', 1, 2, 0, 0, 0, 0, 0),
+(343, '神圣港口', '', '', '', '', '2025-02-27 04:22:22', '0000-00-00 00:00:00', 1, '', '最古老又智慧的银月人从这里启航，迈向了向外交流的第一步，它在银月人心中有至高无上的地位。', 0, 0, 0, 851, '银月戈壁', 10, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '50,27,0', 1, 2, 0, 1, 0, 0, 0),
 (344, '勘测港口', '', '', '', '', '2025-01-14 17:07:25', '0000-00-00 00:00:00', 1, '', '瓦兰人擅长勘测和算术，这个港口的每一个角度和长度都经过了精密的计算，因此得名。', 0, 0, 0, 0, '纳米之都', 8, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '32,1,0', 1, 2, 0, 0, 0, 0, 0),
-(346, '灰青草地', '', '', '37|4|', '37|4|', '2025-02-23 13:03:20', '0000-00-00 00:00:00', 5, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 347, 338, 552, 359, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(347, '灰青草地', '', '', '37|{r.3}+1', '37|3|', '2025-02-08 17:46:12', '0000-00-00 00:00:00', 1, '', '左边被高大的山石挡住了，不知道里面有什么秘密。', 348, 346, 0, 360, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(348, '灰青草地', '', '', '37|{r.3}+1', '37|3|', '2025-02-08 02:31:16', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 349, 347, 0, 361, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(349, '灰青草地', '', '', '37|{r.3}+1', '37|2|', '2025-02-08 02:31:19', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 350, 348, 0, 362, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(350, '灰青草地', '', '', '55|{r.3}+1', '55|3|', '2025-02-08 02:31:20', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 351, 349, 0, 363, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(351, '灰青草地', '', '', '37|{r.3}+1', '37|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 352, 350, 0, 364, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(352, '灰青草地', '', '', '55|{r.3}+1', '55|3|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 353, 351, 0, 365, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(353, '灰青草地', '', '', '37|{r.3}+1', '37|3|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 354, 352, 0, 366, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(354, '灰青草地', '', '', '55|{r.3}+1', '55|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 355, 353, 0, 367, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(355, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2025-01-09 03:09:45', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 356, 354, 0, 368, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(356, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 357, 355, 0, 369, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(357, '灰青草地', '', '', '51|{r.4}+1', '51|4|', '2025-01-26 18:50:21', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 358, 356, 0, 370, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(358, '灰青草地', '', '', '51|{r.4}+1', '51|3|', '2025-01-26 18:50:13', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 0, 357, 0, 371, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(346, '灰青草地', '', '', '37|4|', '37|4|', '2025-02-27 04:13:25', '0000-00-00 00:00:00', 5, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 347, 338, 552, 359, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(347, '灰青草地', '', '', '37|{r.3}+1', '37|1|', '2025-02-27 03:51:09', '0000-00-00 00:00:00', 1, '', '左边被高大的山石挡住了，不知道里面有什么秘密。', 348, 346, 0, 360, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(348, '灰青草地', '', '', '37|{r.3}+1', '37|1|', '2025-02-27 03:51:08', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 349, 347, 0, 361, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(349, '灰青草地', '', '', '37|{r.3}+1', '37|3|', '2025-02-27 03:51:08', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 350, 348, 0, 362, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(350, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2025-02-27 03:51:07', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 351, 349, 0, 363, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(351, '灰青草地', '', '', '37|{r.3}+1', '37|3|', '2025-02-27 03:51:06', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 352, 350, 0, 364, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(352, '灰青草地', '', '', '55|{r.3}+1', '55|3|', '2025-02-27 03:50:04', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 353, 351, 0, 365, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(353, '灰青草地', '', '', '37|{r.3}+1', '37|3|', '2025-02-27 03:50:11', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 354, 352, 0, 366, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(354, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2025-02-27 03:50:12', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 355, 353, 0, 367, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(355, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2025-02-27 03:50:12', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 356, 354, 0, 368, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(356, '灰青草地', '', '', '55|{r.3}+1', '55|2|', '2025-02-27 03:50:13', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 357, 355, 0, 369, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(357, '灰青草地', '', '', '51|{r.4}+1', '51|4|', '2025-02-27 03:50:14', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 358, 356, 0, 370, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(358, '灰青草地', '', '', '51|{r.4}+1', '51|3|', '2025-02-27 03:45:55', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 0, 357, 0, 371, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (359, '小水池', '', '', '51|{r.4}+1', '51|1|', '2025-02-23 13:05:42', '0000-00-00 00:00:00', 1, '', '这片灰青草地中间的一个小水池，是许多野兽喝水的地方。', 360, 0, 346, 372, '旧街', 1, '19', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (360, '灰青草地', '', '', '51|{r.3}', '51|1|', '2025-02-08 17:46:13', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 361, 359, 347, 373, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (361, '灰青草地', '', '', '51|{r.4}+1', '51|1|', '2025-02-08 17:46:22', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 362, 360, 348, 374, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (362, '灰青草地', '', '', '57|{r.4}+1', '57|4|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 363, 361, 349, 375, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(363, '灰青草地', '', '', '51|{r.4}+1', '51|3|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 364, 362, 350, 376, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(364, '灰青草地', '', '', '57|{r.4}+1', '57|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 365, 363, 351, 377, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(365, '灰青草地', '', '', '57|{r.4}+1', '57|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 366, 364, 352, 378, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(366, '灰青草地', '', '', '57|{r.4}+1', '57|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 367, 365, 353, 379, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(367, '灰青草地', '', '', '57|{r.4}+1', '57|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 368, 366, 354, 380, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(363, '灰青草地', '', '', '51|{r.4}+1', '51|3|', '2025-02-27 03:50:07', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 364, 362, 350, 376, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(364, '灰青草地', '', '', '57|{r.4}+1', '57|1|', '2025-02-27 03:50:08', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 365, 363, 351, 377, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(365, '灰青草地', '', '', '57|{r.4}+1', '57|2|', '2025-02-27 03:49:20', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 366, 364, 352, 378, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(366, '灰青草地', '', '', '57|{r.4}+1', '57|1|', '2025-02-27 03:50:23', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 367, 365, 353, 379, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(367, '灰青草地', '', '', '57|{r.4}+1', '57|2|', '2025-02-27 03:50:22', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 368, 366, 354, 380, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (368, '灰青草地', '', '', '57|{r.4}+1', '57|4|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 369, 367, 355, 381, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (369, '灰青草地', '', '', '57|{r.4}+1', '57|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 370, 368, 356, 382, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (370, '灰青草地', '', '', '57|{r.4}+1', '57|4|', '2025-01-26 18:50:21', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 371, 369, 357, 383, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(371, '灰青草地', '', '', '57|{r.4}+1', '57|1|', '2025-01-26 19:56:39', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 0, 370, 358, 384, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(371, '灰青草地', '', '', '57|{r.4}+1', '57|2|', '2025-02-27 03:45:53', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 0, 370, 358, 384, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (372, '灰青草地', '', '', '51|{r.3}', '51|0|', '2025-02-23 13:05:41', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 373, 0, 359, 385, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (373, '灰青草地', '', '', '51|{r.3}', '51|1|', '2025-02-23 13:04:22', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 374, 372, 360, 386, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (374, '灰青草地', '', '', '51|{r.3}', '51|0|', '2025-02-08 17:46:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 375, 373, 361, 387, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (375, '灰青草地', '', '', '51|{r.3}', '51|2|', '2025-02-08 17:46:30', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 376, 374, 362, 388, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (376, '灰青草地', '', '', '51|{r.3}', '51|0|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 377, 375, 363, 389, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(377, '灰青草地', '', '', '51|{r.3}', '51|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 378, 376, 364, 390, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(377, '灰青草地', '', '', '51|{r.3}', '51|2|', '2025-02-27 03:51:04', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 378, 376, 364, 390, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (378, '灰青草地', '', '', '51|{r.3}', '51|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 379, 377, 365, 391, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(379, '灰青草地', '', '', '51|{r.3}', '51|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 380, 378, 366, 392, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(379, '灰青草地', '', '', '51|{r.3}', '51|1|', '2025-02-27 03:50:24', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 380, 378, 366, 392, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (380, '灰青草地', '', '', '51|{r.3}', '51|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 381, 379, 367, 393, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (381, '灰青草地', '', '', '51|{r.3}', '51|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 382, 380, 368, 394, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (382, '灰青草地', '', '', '51|{r.3}', '51|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 383, 381, 369, 395, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
@@ -3682,9 +3730,9 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (387, '灰青草地', '', '', '51|{r.3}', '51|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 388, 386, 374, 400, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (388, '灰青草地', '', '', '51|{r.3}', '51|0|', '2025-02-08 17:46:38', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 389, 387, 375, 401, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (389, '灰青草地', '', '', '51|{r.3}', '51|1|', '2025-02-08 17:46:39', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 390, 388, 376, 402, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(390, '灰青草地', '', '', '51|{r.3}', '51|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 391, 389, 377, 403, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(390, '灰青草地', '', '', '51|{r.3}', '51|0|', '2025-02-27 03:51:03', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 391, 389, 377, 403, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (391, '灰青草地', '', '', '51|{r.3}', '51|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 392, 390, 378, 404, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(392, '灰青草地', '', '', '51|{r.3}', '51|0|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 393, 391, 379, 405, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(392, '灰青草地', '', '', '51|{r.3}', '51|2|', '2025-02-27 03:50:30', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 393, 391, 379, 405, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (393, '灰青草地', '', '', '57|{r.4}+1', '57|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 394, 392, 380, 406, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (394, '灰青草地', '', '', '57|{r.4}+1', '57|4|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 395, 393, 381, 407, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (395, '灰青草地', '', '', '57|{r.4}+1', '57|3|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 396, 394, 382, 408, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
@@ -3695,9 +3743,9 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (400, '灰青草地', '', '', '57|{r.4}+1', '57|1|', '2025-02-23 13:05:22', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 401, 399, 387, 413, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (401, '灰青草地', '', '', '55|{r.3}+1', '55|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 402, 400, 388, 414, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (402, '灰青草地', '', '', '55|{r.3}+1', '55|2|', '2025-02-08 17:47:14', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 403, 401, 389, 415, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(403, '灰青草地', '', '', '55|{r.3}+1', '55|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 404, 402, 390, 416, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(403, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2025-02-27 03:51:02', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 404, 402, 390, 416, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (404, '灰青草地', '', '', '55|{r.3}+1', '55|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 405, 403, 391, 417, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(405, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 406, 404, 392, 418, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(405, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2025-02-27 03:50:31', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 406, 404, 392, 418, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (406, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 407, 405, 393, 419, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (407, '灰青草地', '', '', '55|{r.3}+1', '55|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 408, 406, 394, 420, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (408, '灰青草地', '', '', '55|{r.3}+1', '55|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 409, 407, 395, 421, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
@@ -3708,9 +3756,9 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (413, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2025-02-17 08:53:14', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 414, 412, 400, 426, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (414, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2025-02-17 08:53:12', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 415, 413, 401, 427, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (415, '灰青草地', '', '', '55|{r.3}+1', '55|3|', '2025-02-08 17:47:22', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 416, 414, 402, 428, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(416, '灰青草地', '', '', '55|{r.3}+1', '55|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 417, 415, 403, 429, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(417, '灰青草地', '', '', '55|{r.3}+1', '55|3|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 418, 416, 404, 430, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(418, '灰青草地', '', '', '55|{r.3}+1', '55|2|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 419, 417, 405, 431, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(416, '灰青草地', '', '', '55|{r.3}+1', '55|3|', '2025-02-27 03:50:33', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 417, 415, 403, 429, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(417, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2025-02-27 03:50:32', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 418, 416, 404, 430, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(418, '灰青草地', '', '', '55|{r.3}+1', '55|1|', '2025-02-27 03:50:31', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 419, 417, 405, 431, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (419, '灰青草地', '', '', '58|{r.3}+1', '58|3|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 420, 418, 406, 432, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (420, '灰青草地', '', '', '58|{r.3}+1', '58|3|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 421, 419, 407, 433, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (421, '灰青草地', '', '', '58|{r.3}+1', '58|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这些半死不活的杂草是否也是这个时代普通人的归宿呢?', 422, 420, 408, 434, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
@@ -3740,15 +3788,15 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (445, '露天大型市场', '', '', '34|{r.3}+2,53|{r.5}+2,54|1', '34|4,53|4,54|1', '2023-10-29 15:45:22', '0000-00-00 00:00:00', 1, '', '来来往往的商人，旅客，当地的渔民......声声不绝的吆喝声，电子广播声，各种嘈杂的声音在这里汇集。', 0, 0, 317, 0, '安宁之地', 7, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (446, '滨海花园', '', '', '', '', '2023-11-14 00:09:30', '0000-00-00 00:00:00', 1, '', '安宁城的人们闲暇之余会来这个美丽祥和的花园散心。', 0, 0, 0, 317, '安宁之地', 7, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (447, '入城干道', '', '', '', '', '2023-11-14 10:35:06', '0000-00-00 00:00:00', 1, '', '从安宁渡口往安宁城方向的一条主干道，用平整的混凝土铺成的八车通道，上方还有色彩各异的顶棚遮挡阳光。', 0, 317, 0, 0, '安宁之地', 7, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(448, '长乐露天市场', '', '', '', '', '2025-02-08 02:38:56', '0000-00-00 00:00:00', 1, '', '金陵城最大的市场，位于秦淮渡口附近，一边倚靠秦淮河，商贾林立，小贩叫卖声连绵不绝。', 340, 0, 449, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(449, '金陵市舶司', '', '', '', '', '2025-02-08 02:38:58', '0000-00-00 00:00:00', 1, '', '金陵城设立的市舶司分部，用于管理金陵对外贸易的大小事宜。', 450, 0, 0, 448, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(450, '夫子庙东入口', '', '', '', '', '2025-02-08 02:39:00', '0000-00-00 00:00:00', 1, '', '这里是夫子庙的东边入口，用青石铸成的一座牌坊之门，上书“古秦淮”，进去后是一个古玩街道。', 465, 449, 451, 340, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(448, '长乐露天市场', '', '', '', '', '2025-02-27 04:27:20', '0000-00-00 00:00:00', 1, '', '金陵城最大的市场，位于秦淮渡口附近，一边倚靠秦淮河，商贾林立，小贩叫卖声连绵不绝。', 340, 0, 449, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(449, '金陵市舶司', '', '', '', '', '2025-02-27 04:27:21', '0000-00-00 00:00:00', 1, '', '金陵城设立的市舶司分部，用于管理金陵对外贸易的大小事宜。', 450, 0, 0, 448, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(450, '夫子庙东入口', '', '', '', '', '2025-02-27 04:26:54', '0000-00-00 00:00:00', 1, '', '这里是夫子庙的东边入口，用青石铸成的一座牌坊之门，上书“古秦淮”，进去后是一个古玩街道。', 465, 449, 451, 340, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (451, '古玩街道', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '这是一条繁华的街道，两边的小摊上摆满了各式各样的古玩，人群络绎不绝。', 456, 0, 457, 450, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (452, '高架十字桥底', '', '', '', '', '2025-02-08 02:33:02', '0000-00-00 00:00:00', 1, '', '各种眩目的广告扑面而来，光污染在这里体现得淋漓尽致，再过去就是皇后街了。', 0, 0, 439, 453, '未来城', 3, '20', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (453, '皇后街西', '', '', '', '', '2025-02-08 02:33:03', '0000-00-00 00:00:00', 1, '', '皇后街的西边，分布着各种小吃和餐馆，是美食爱好者的天堂。', 771, 773, 452, 454, '未来城', 3, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (454, '十字广场', '', '', '106|1|%7Bc.hour%7D%3C22%26%26%7Bc.hour%7D%3E8', '106|1|%7Bc.hour%7D%3C22%26%26%7Bc.hour%7D%3E8', '2025-02-08 02:33:56', '0000-00-00 00:00:00', 1, '', '这里是皇后街的十字广场，车水马龙，人来人往，好不热闹。', 666, 726, 453, 625, '未来城', 3, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(455, '金陵南路', '', '', '', '', '2025-02-02 18:05:55', '0000-00-00 00:00:00', 1, '', '金陵城南边的大道，人声鼎沸，两旁是眼花缭乱的小摊和商铺。', 467, 465, 476, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(456, '乌衣巷', '', '', '', '', '2025-02-02 18:06:00', '0000-00-00 00:00:00', 1, '', '旧时王谢堂前燕，飞入寻常百姓家。', 0, 451, 463, 465, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(455, '金陵南路', '', '', '', '', '2025-02-27 04:26:39', '0000-00-00 00:00:00', 1, '', '金陵城南边的大道，人声鼎沸，两旁是眼花缭乱的小摊和商铺。', 467, 465, 476, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(456, '乌衣巷', '', '', '', '', '2025-02-27 04:27:28', '0000-00-00 00:00:00', 1, '', '旧时王谢堂前燕，飞入寻常百姓家。', 0, 451, 463, 465, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (457, '雨花街道', '', '', '', '', '2025-02-02 18:06:03', '0000-00-00 00:00:00', 1, '', '驰道如砥。树以青槐，亘以绿水玄荫耽耽，清流潺潺。', 463, 458, 459, 451, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (458, '大报恩寺塔', '', '', '', '', '2025-02-02 18:06:04', '0000-00-00 00:00:00', 1, '', '这座寺庙香火不断，历史悠久，一座巨塔高耸入云。', 457, 0, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (459, '贡院前广场', '', '', '', '', '2025-02-05 01:11:15', '0000-00-00 00:00:00', 1, '', '这里视野开阔，身后可以看到文庙丶贡院，身前有一条秦淮河支流缓缓淌过。', 460, 462, 461, 457, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
@@ -3756,34 +3804,34 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (461, '文庙', '', '', '', '', '2025-02-02 18:06:08', '0000-00-00 00:00:00', 1, '', '祭拜先哲的场所，古朴恢弘端庄，香客络绎不绝。', 0, 0, 0, 459, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (462, '河岸小道', '', '', '', '', '2025-02-05 00:59:29', '0000-00-00 00:00:00', 1, '', '这里是秦淮河支流岸边的一条小路，可以看到有几艘花船停靠在岸边，而更多的花船则是在水上行进。', 459, 0, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_now`, `mgtime`, `mpick_time`, `mrefresh_time`, `mphoto`, `mdesc`, `mup`, `mdown`, `mleft`, `mright`, `marea_name`, `marea_id`, `mop_target`, `mtask_target`, `mcreat_event_id`, `mlook_event_id`, `minto_event_id`, `mout_event_id`, `mminute_event_id`, `mshop`, `mhockshop`, `mshop_item_id`, `mkill`, `mstorage`, `mtianqi`, `mdire`, `mis_tp`, `mtp_type`, `mis_rp`, `mrp_id`, `mis_shield`, `mis_signal_block`, `mhide`) VALUES
-(463, '殿前路', '', '', '', '', '2025-02-02 18:06:01', '0000-00-00 00:00:00', 1, '', '一条青石铺成的路，一直通往大成殿，往来的香客不少。', 464, 457, 0, 456, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(464, '大成殿', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '大成殿内陈设仿制旧世界的编钟、编磬等十五种古代祭孔乐器，定期有艺术团体在此进行古曲、雅乐演奏。', 0, 463, 0, 476, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(465, '秦淮路', '', '', '', '', '2025-02-08 02:39:02', '0000-00-00 00:00:00', 1, '', '一条宽敞的道路，旁边就是秦淮河，故此得名。', 455, 450, 456, 466, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(466, '秦淮河岸', '', '', '', '', '2025-02-08 02:39:03', '0000-00-00 00:00:00', 1, '', '秦淮河沿岸的一条道路，能一览秦淮河的风采。', 0, 340, 465, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(467, '金陵城中心', '', '', '', '', '2025-02-02 18:05:47', '0000-00-00 00:00:00', 1, '', '这是一片广阔的中心广场，各种各样的声音此起彼伏，连绵不绝......', 469, 455, 468, 470, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(468, '玄武大街', '', '', '', '', '2025-02-02 18:05:50', '0000-00-00 00:00:00', 1, '', '宽阔的玄武大街，这一条路的尽头可以看到著名的玄武湖，', 474, 476, 475, 467, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(469, '栖霞北路', '', '', '', '', '2025-02-02 18:05:46', '0000-00-00 00:00:00', 1, '', '这一条路通向美丽的栖霞山，来来往往的行人丶游客络绎不绝。', 471, 467, 0, 479, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(470, '江宁大街', '', '', '', '', '2025-02-02 18:05:52', '0000-00-00 00:00:00', 1, '', '这是一条宽阔的大街。', 0, 0, 467, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(471, '迈皋路', '', '', '', '', '2025-02-02 18:05:34', '0000-00-00 00:00:00', 1, '', '这里有一座著名的迈皋桥，再过去不远处就是栖霞山了。', 473, 469, 477, 472, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(472, '仙林路', '', '', '', '', '2025-02-02 18:05:36', '0000-00-00 00:00:00', 1, '', '这里是金陵的高等教育区域，分布着诸多高等学府。', 0, 479, 471, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(473, '栖霞山脚', '', '', '', '', '2025-02-02 18:05:33', '0000-00-00 00:00:00', 1, '', '栖霞山的山脚，能看到两旁种满的枫树正在随风舞动。', 332, 471, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(474, '长江大桥', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '从这里俯瞰这翻涌的长江，忽知世间须臾为何物。', 480, 468, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(475, '玄武湖', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '霜起千年，堤绝金陵。', 0, 0, 0, 468, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(476, '金陵驿站', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '这里是金陵最古老的驿站，数不胜数的人群来来往往，好不热闹。', 468, 0, 464, 455, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '118,32,0', 1, 2, 0, 0, 0, 0, 0),
+(463, '殿前路', '', '', '', '', '2025-02-27 04:27:30', '0000-00-00 00:00:00', 1, '', '一条青石铺成的路，一直通往大成殿，往来的香客不少。', 464, 457, 0, 456, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(464, '大成殿', '', '', '', '', '2025-02-27 04:27:33', '0000-00-00 00:00:00', 1, '', '大成殿内陈设仿制旧世界的编钟、编磬等十五种古代祭孔乐器，定期有艺术团体在此进行古曲、雅乐演奏。', 0, 463, 0, 476, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(465, '秦淮路', '', '', '', '', '2025-02-27 04:26:53', '0000-00-00 00:00:00', 1, '', '一条宽敞的道路，旁边就是秦淮河，故此得名。', 455, 450, 456, 466, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(466, '秦淮河岸', '', '', '', '', '2025-02-27 04:27:17', '0000-00-00 00:00:00', 1, '', '秦淮河沿岸的一条道路，能一览秦淮河的风采。', 0, 340, 465, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(467, '金陵城中心', '', '', '', '', '2025-02-27 04:23:56', '0000-00-00 00:00:00', 1, '', '这是一片广阔的中心广场，各种各样的声音此起彼伏，连绵不绝......', 469, 455, 468, 470, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(468, '玄武大街', '', '', '', '', '2025-02-27 04:27:35', '0000-00-00 00:00:00', 1, '', '宽阔的玄武大街，这一条路的尽头可以看到著名的玄武湖，', 474, 476, 475, 467, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(469, '栖霞北路', '', '', '', '', '2025-02-27 04:23:45', '0000-00-00 00:00:00', 1, '', '这一条路通向美丽的栖霞山，来来往往的行人丶游客络绎不绝。', 471, 467, 0, 479, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(470, '江宁大街', '', '', '', '', '2025-02-27 04:24:01', '0000-00-00 00:00:00', 1, '', '这是一条宽阔的大街。', 0, 0, 467, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(471, '迈皋路', '', '', '', '', '2025-02-27 04:23:41', '0000-00-00 00:00:00', 1, '', '这里有一座著名的迈皋桥，再过去不远处就是栖霞山了。', 473, 469, 477, 472, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(472, '仙林路', '', '', '', '', '2025-02-27 04:23:42', '0000-00-00 00:00:00', 1, '', '这里是金陵的高等教育区域，分布着诸多高等学府。', 0, 479, 471, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(473, '栖霞山脚', '', '', '', '', '2025-02-27 04:23:40', '0000-00-00 00:00:00', 1, '', '栖霞山的山脚，能看到两旁种满的枫树正在随风舞动。', 332, 471, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(474, '长江大桥', '', '', '', '', '2025-02-27 04:28:09', '0000-00-00 00:00:00', 1, '', '从这里俯瞰这翻涌的长江，忽知世间须臾为何物。', 480, 468, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(475, '玄武湖畔', '', '', '', '', '2025-02-27 04:27:36', '0000-00-00 00:00:00', 1, '', '霜起千年，堤绝金陵。', 0, 0, 0, 468, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(476, '金陵驿站', '', '', '', '', '2025-02-27 04:27:34', '0000-00-00 00:00:00', 1, '', '这里是金陵最古老的驿站，早已不再使用，成为了一处观光的景点，瞻仰老金陵人过去的故事。', 468, 0, 464, 455, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '118,32,0', 0, 0, 0, 1, 0, 0, 0),
 (477, '明德路', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '周边分布着大大小小的商铺和饭馆等，附近的学子闲暇之余会来此放松休息。', 0, 0, 0, 471, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(478, '栖霞山顶', '', '', '', '', '2025-02-02 18:05:27', '0000-00-00 00:00:00', 1, '', '漫天红叶与千年古刹在此相会，动人心魄。', 0, 332, 331, 484, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(479, '三元巷', '', '', '', '', '2025-02-02 18:05:38', '0000-00-00 00:00:00', 1, '', '星罗棋布的小巷子，承载着多少人几十年的回忆呢。', 472, 0, 469, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(480, '浦口栈道', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '长江与支流汇合的交界处，建于江上的一条玻璃栈道。', 0, 474, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(478, '栖霞山顶', '', '', '', '', '2025-02-27 04:23:34', '0000-00-00 00:00:00', 1, '', '漫天红叶与千年古刹在此相会，动人心魄。', 0, 332, 331, 484, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(479, '三元巷', '', '', '', '', '2025-02-27 04:23:44', '0000-00-00 00:00:00', 1, '', '星罗棋布的小巷子，承载着多少人几十年的回忆呢。', 472, 0, 469, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(480, '浦口栈道', '', '', '', '', '2025-02-27 04:28:10', '0000-00-00 00:00:00', 1, '', '长江与支流汇合的交界处，建于江上的一条玻璃栈道。', 0, 474, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (481, '三七八巷', '', '', '', '', '2024-08-26 20:29:56', '0000-00-00 00:00:00', 1, '', '人间烟火味，最抚凡人心。', 0, 0, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (482, '鹅卵石小径', '', '', '', '', '2025-02-01 02:00:57', '0000-00-00 00:00:00', 1, '', '封死的南铁门恍然就在身后，看来这就是南铁门外的地方，一个不起眼的洞穴正新鲜着。', 0, 483, 0, 0, '旧街', 1, '21', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (483, '荒野', '', '', '', '', '2025-02-01 02:00:58', '0000-00-00 00:00:00', 1, '', '旧街外的郊野，异常凄凉。', 482, 486, 487, 485, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(484, '栖霞禅寺', '', '', '', '', '2025-02-02 18:05:29', '0000-00-00 00:00:00', 1, '', '一个神秘而庄严的地方,每一处都散发着崇高的气息。', 0, 0, 478, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(484, '栖霞禅寺', '', '', '', '', '2025-02-27 04:23:37', '0000-00-00 00:00:00', 1, '', '一个神秘而庄严的地方,每一处都散发着崇高的气息。', 0, 0, 478, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (485, '荒野', '', '', '', '', '2025-02-01 02:00:59', '0000-00-00 00:00:00', 1, '', '你总感觉那风吹过杂草的声音异常得诡异。', 0, 505, 483, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (486, '荒野', '', '', '', '', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '荒无人烟的荒野，你感到一阵的凄凉。', 483, 488, 506, 505, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (487, '山洞', '', '', '79|1', '79|1|', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这是一个不大的山洞，不过有点黑，要是有把火把就好了。', 0, 0, 0, 483, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (488, '枯树林', '10|{r.2}+1', '10|2', '', '', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '干枯的树林，树叶都掉光了。', 486, 502, 504, 503, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (489, '湖边荒原', '', '', '', '', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '不远处有座你费尽九牛二虎之力搭建起来的简易桥，眼前的凄凉从里透到外。', 0, 0, 232, 491, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(490, 'GM工作室5', '39|5,40|5,25|10,18|10', '39|5,40|5,25|10,18|10', '', '', '2025-02-26 08:46:55', '0000-00-00 00:00:00', 1, '', '1.你感受到一阵凉风拂过面颊，带着些许湿润。\r\n2.树叶随风轻轻摇曳，发出沙沙的声音。\r\n3.寒风呼啸而过，衣角被吹得猎猎作响。', 0, 274, 0, 0, '未分区', 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(490, 'GM工作室5', '39|5,40|5,25|10,18|10', '39|5,40|5,25|10,18|10', '', '', '2025-02-27 17:21:07', '0000-00-00 00:00:00', 1, '', '1.你感受到一阵凉风拂过面颊，带着些许湿润。\r\n2.树叶随风轻轻摇曳，发出沙沙的声音。\r\n3.寒风呼啸而过，衣角被吹得猎猎作响。', 0, 274, 0, 0, '未分区', 0, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (491, '远古石道', '', '', '', '', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '一股沧桑的感觉扑面而来，走在上面仿佛有一种历史的践踏感。', 0, 0, 489, 557, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (492, '明日小道', '', '', '71|{r.5}+2', '71|6|', '2024-09-16 02:57:01', '0000-00-00 00:00:00', 1, '', '明日小区的通道，由鹅卵石铺成。', 319, 495, 494, 493, '希望镇', 2, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (493, '一号居民楼大厅', '', '', '45|{r.2}+1', '45|1|', '2024-09-16 02:57:00', '0000-00-00 00:00:00', 1, '', '这栋居民楼的外观有些陈旧了，整体看起来大约20层高。', 0, 0, 492, 0, '希望镇', 2, '28', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
@@ -3800,30 +3848,30 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (504, '枯树林', '', '', '', '', '2024-12-16 13:18:29', '2024-09-12 07:47:59', 1, '', '干枯的树林，树叶都掉光了，偶尔有几棵松树矗立。', 506, 567, 0, 488, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 1, 5, 0, 0, 0),
 (505, '荒野', '', '', '', '', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '荒无人烟的荒野，你感到一阵的凄凉。', 485, 503, 486, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (506, '荒野', '', '', '', '', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '荒无人烟的荒野，你感到一阵的凄凉。', 0, 504, 0, 486, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(507, '钱塘渡口', '', '', '', '', '2025-01-14 18:58:46', '0000-00-00 00:00:00', 1, '', '海阔天空浪若雷，钱塘潮涌自天来，九曲之江在此汇入东海，各个国度来来往往的船只目不暇接。', 0, 512, 508, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '121,30,0', 1, 2, 0, 0, 0, 0, 0),
-(508, '钱塘古道', '', '', '', '', '2023-12-05 16:49:24', '0000-00-00 00:00:00', 1, '', '这是一条颇具古色古香的石板路，旁边就是著名的钱塘江，她正在默默地积蓄力量，等待下一次的绽放。', 0, 509, 510, 507, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(509, '两浙路市舶司', '', '', '', '', '2024-09-16 01:46:53', '0000-00-00 00:00:00', 1, '', '这里是钱塘古城管理海外事务的机构。', 508, 0, 513, 512, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(507, '钱塘渡口', '', '', '', '', '2025-02-27 04:29:25', '0000-00-00 00:00:00', 1, '', '海阔天空浪若雷，钱塘潮涌自天来，九曲之江在此汇入东海，各个国度来来往往的船只目不暇接。', 0, 512, 508, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '121,30,0', 1, 2, 0, 0, 0, 0, 0),
+(508, '钱塘古道', '', '', '', '', '2025-02-27 04:29:29', '0000-00-00 00:00:00', 1, '', '这是一条颇具古色古香的石板路，旁边就是著名的钱塘江，她正在默默地积蓄力量，等待下一次的绽放。', 0, 509, 510, 507, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(509, '两浙路市舶司', '', '', '', '', '2025-02-27 04:29:30', '0000-00-00 00:00:00', 1, '', '这里是钱塘古城管理海外事务的机构。', 508, 0, 513, 512, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (510, '余杭古道', '', '', '', '', '2023-11-03 10:05:36', '0000-00-00 00:00:00', 1, '', '这里通往钱塘古城的余杭区，那是一片富饶的地区。', 0, 513, 511, 508, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (511, '余杭广场', '', '', '', '', '2023-11-03 10:12:13', '0000-00-00 00:00:00', 1, '', '商贩丶行人络绎不绝，摊点丶店铺星罗棋布，人声鼎沸，嘈杂得很。', 0, 0, 0, 510, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(512, '钱塘贸易市场', '', '', '', '', '2024-09-16 01:46:23', '0000-00-00 00:00:00', 1, '', '这里是一个巨大的露天市场，能看到许多的脚夫在搬运货物，来来往往。', 507, 0, 509, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(513, '西湖古道', '', '', '', '', '2024-09-16 01:46:54', '0000-00-00 00:00:00', 1, '', '这里通向著名的西湖，也是经济繁荣的地带。', 510, 514, 0, 509, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(514, '西湖堤岸', '', '', '', '', '2024-09-16 01:46:57', '0000-00-00 00:00:00', 1, '', '春夏秋冬，各有不同的美景，真可谓是人间天堂。', 513, 515, 517, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(515, '西湖堤岸', '', '', '', '', '2023-12-05 16:49:32', '0000-00-00 00:00:00', 1, '', '春夏秋冬，各有不同的美景，真可谓是人间天堂。', 514, 0, 518, 516, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(516, '雷峰塔', '', '', '', '', '2023-12-05 16:49:33', '0000-00-00 00:00:00', 1, '', '夕照山上雷峰塔，夕照山下西湖水。', 0, 0, 515, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(517, '灵隐大道', '', '', '', '', '2024-09-16 01:46:58', '0000-00-00 00:00:00', 1, '', '你从这条人山人海的街道上偶尔窥见不远处那座古色古香的千年寺庙。', 0, 0, 524, 514, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(518, '林荫小道', '', '', '', '', '2023-12-05 16:49:35', '0000-00-00 00:00:00', 1, '', '静谧的林荫小道，很适合午后散步。', 0, 520, 519, 515, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(519, '林荫小道', '', '', '', '', '2024-09-16 01:47:07', '0000-00-00 00:00:00', 1, '', '静谧的林荫小道，很适合午后散步。', 524, 521, 0, 518, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(520, '林荫小道', '', '', '', '', '2023-11-02 23:50:05', '0000-00-00 00:00:00', 1, '', '静谧的林荫小道，很适合午后散步。', 518, 0, 521, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(521, '林荫小道', '', '', '', '', '2024-09-16 01:47:09', '0000-00-00 00:00:00', 1, '', '静谧的林荫小道，很适合午后散步。', 519, 0, 522, 520, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(522, '林荫小道', '', '', '', '', '2024-09-16 01:47:10', '0000-00-00 00:00:00', 1, '', '静谧的林荫小道，很适合午后散步。', 523, 0, 0, 521, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(523, '龙井古村', '', '', '', '', '2024-09-16 01:47:11', '0000-00-00 00:00:00', 1, '', '这是一座拥有悠久历史的古村落，享誉天下的龙井茶就在此诞生。', 0, 522, 0, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(524, '灵隐寺', '', '', '', '', '2024-09-16 01:46:59', '0000-00-00 00:00:00', 1, '', '背靠北高峰，面朝飞来峰，这里诉说着许多悠久的故事和传说。', 525, 519, 526, 517, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(525, '梅园', '', '', '', '', '2024-09-16 01:47:03', '0000-00-00 00:00:00', 1, '', '梅花盛开的日子，有许多观光客会来此以酒会诗，以龙井会友。', 0, 524, 0, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(526, '私塾', '', '', '', '', '2024-09-16 01:47:01', '0000-00-00 00:00:00', 1, '', '这座古旧的私塾不知道居住着什么人物。', 0, 0, 0, 524, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(512, '钱塘贸易市场', '', '', '', '', '2025-02-27 04:29:40', '0000-00-00 00:00:00', 1, '', '这里是一个巨大的露天市场，能看到许多的脚夫在搬运货物，来来往往。', 507, 0, 509, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(513, '西湖古道', '', '', '', '', '2025-02-27 04:29:46', '0000-00-00 00:00:00', 1, '', '这里通向著名的西湖，也是经济繁荣的地带。', 510, 514, 0, 509, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(514, '西湖堤岸', '', '', '', '', '2025-02-27 14:19:02', '0000-00-00 00:00:00', 1, '', '春夏秋冬，各有不同的美景，真可谓是人间天堂。', 513, 515, 517, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(515, '西湖堤岸', '', '', '', '', '2025-02-27 14:19:03', '0000-00-00 00:00:00', 1, '', '春夏秋冬，各有不同的美景，真可谓是人间天堂。', 514, 0, 518, 516, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(516, '雷峰塔', '', '', '', '', '2025-02-27 14:19:04', '0000-00-00 00:00:00', 1, '', '夕照山上雷峰塔，夕照山下西湖水。', 0, 0, 515, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(517, '灵隐大道', '', '', '', '', '2025-02-27 14:19:01', '0000-00-00 00:00:00', 1, '', '你从这条人山人海的街道上偶尔窥见不远处那座古色古香的千年寺庙。', 0, 0, 524, 514, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(518, '林荫小道', '', '', '', '', '2025-02-27 14:19:07', '0000-00-00 00:00:00', 1, '', '静谧的林荫小道，很适合午后散步。', 0, 520, 519, 515, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(519, '林荫小道', '', '', '', '', '2025-02-27 14:18:39', '0000-00-00 00:00:00', 1, '', '静谧的林荫小道，很适合午后散步。', 524, 521, 0, 518, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(520, '林荫小道', '', '', '', '', '2025-02-27 14:19:09', '0000-00-00 00:00:00', 1, '', '静谧的林荫小道，很适合午后散步。', 518, 0, 521, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(521, '林荫小道', '', '', '', '', '2025-02-27 14:19:10', '0000-00-00 00:00:00', 1, '', '静谧的林荫小道，很适合午后散步。', 519, 0, 522, 520, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(522, '林荫小道', '', '', '', '', '2025-02-27 14:19:11', '0000-00-00 00:00:00', 1, '', '静谧的林荫小道，很适合午后散步。', 523, 0, 0, 521, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(523, '龙井古村', '', '', '', '', '2025-02-27 14:19:12', '0000-00-00 00:00:00', 1, '', '这是一座拥有悠久历史的古村落，享誉天下的龙井茶就在此诞生。', 0, 522, 0, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(524, '灵隐寺', '', '', '', '', '2025-02-27 14:18:57', '0000-00-00 00:00:00', 1, '', '背靠北高峰，面朝飞来峰，这里诉说着许多悠久的故事和传说。', 525, 519, 526, 517, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(525, '梅园', '', '', '', '', '2025-02-27 14:18:58', '0000-00-00 00:00:00', 1, '', '梅花盛开的日子，有许多观光客会来此以酒会诗，以龙井会友。', 0, 524, 0, 0, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(526, '私塾', '', '', '', '', '2025-02-27 13:53:40', '0000-00-00 00:00:00', 1, '', '这座古旧的私塾不知道居住着什么人物。', 0, 0, 0, 524, '钱塘古城', 15, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (527, '广陵渡口', '', '', '', '', '2023-11-03 15:57:46', '0000-00-00 00:00:00', 1, '', '这里是广陵古城的渡口，也是金塘大运河与东海的交汇口。', 0, 0, 0, 0, '广陵古城', 16, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '119,32,0', 1, 2, 0, 0, 0, 0, 0),
 (528, '刺桐渡口', '', '', '', '', '2024-08-31 08:51:36', '0000-00-00 00:00:00', 1, '', '这里是刺桐的渡口，繁华的样子用千帆万船来形容都不夸张。', 535, 0, 533, 534, '刺桐古城', 17, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '118,24,0', 1, 2, 0, 0, 0, 0, 0),
 (529, '北部哨站', '', '', '60|1,53|{r.3}+2', '60|1|,53|2|', '2025-02-26 09:55:01', '0000-00-00 00:00:00', 1, '', '旧街设立在此的一个哨站，不仅是提防草地上可能出现的兽潮威胁，还是过往商队于此交换通商许可的地方。', 551, 0, 303, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(530, '灰土路', '', '', '', '', '2025-02-23 11:35:15', '0000-00-00 00:00:00', 1, '', '这里可以绕过灰青草地的危险，去到远方，依稀能看到土路上历经岁月洗礼的轮胎印。\r\n北方的北方是{f(o.exit_n.id).exit_n.name}', 538, 543, 550, 303, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(530, '灰土路', '', '', '', '', '2025-02-27 03:51:20', '0000-00-00 00:00:00', 1, '', '这里可以绕过灰青草地的危险，去到远方，依稀能看到土路上历经岁月洗礼的轮胎印。\r\n北方的北方是{f(o.exit_n.id).exit_n.name}', 538, 543, 550, 303, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (531, '天字渡口', '', '', '', '', '2025-01-14 18:59:28', '0000-00-00 00:00:00', 1, '', '楚庭海上贸易的起点，商贾之船来来往往，好不热闹。', 0, 0, 0, 0, '楚庭古城', 18, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '113,23,0', 1, 2, 0, 0, 0, 0, 0),
 (532, '曼尼拉港口', '', '', '', '', '2023-11-29 00:29:46', '0000-00-00 00:00:00', 1, '', '曼尼拉城最大的港口，也是日出之东与日出之南往来的必经之路。', 0, 0, 0, 0, '曼尼拉城', 19, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '121,14,0', 1, 2, 0, 0, 0, 0, 0),
 (533, '刺桐沿海市场', '', '', '', '', '2023-11-05 15:43:06', '0000-00-00 00:00:00', 1, '', '脚夫丶远道而来的商人，过往的行人，游客，贩卖海砺煎的小贩，纵是红尘如是也。', 0, 0, 0, 528, '刺桐古城', 17, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
@@ -3831,8 +3879,8 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (535, '丰泽大道', '', '', '', '', '2023-11-05 15:47:05', '0000-00-00 00:00:00', 1, '', '这条大道连接着刺桐港口与刺桐城的丰泽区域，两边是高低不一的红砖厝。', 0, 528, 0, 536, '刺桐古城', 17, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (536, '六胜石塔', '', '', '', '', '2023-11-05 15:45:24', '0000-00-00 00:00:00', 1, '', '据说是刺桐的第一个灯塔，指引着来来往往的船只进出刺桐港。', 0, 534, 535, 0, '刺桐古城', 17, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (537, '界港', '', '', '', '', '2023-11-13 23:50:07', '0000-00-00 00:00:00', 1, '', '浪速城海上贸易的重要港口。', 0, 0, 0, 0, '浪速古城', 20, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '135,34,0', 1, 2, 0, 0, 0, 0, 0),
-(538, '灰土路', '', '', '', '', '2025-02-24 19:07:15', '0000-00-00 00:00:00', 1, '', '这里更窄了，左手边就是深不可测的悬崖，你可以看到右手边那片辽阔的草原，神秘又充满危险。', 539, 530, 0, 308, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(539, '灰土路', '', '', '', '', '2025-02-24 19:06:40', '0000-00-00 00:00:00', 1, '', '你可以看到右手边那片辽阔的草原，神秘又充满危险，你发现左手方向有一片迷雾。', 552, 538, 540, 338, '旧街', 1, '', '', 0, 0, 59, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(538, '灰土路', '', '', '', '', '2025-02-27 03:51:19', '0000-00-00 00:00:00', 1, '', '这里更窄了，左手边就是深不可测的悬崖，你可以看到右手边那片辽阔的草原，神秘又充满危险。', 539, 530, 0, 308, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(539, '灰土路', '', '', '', '', '2025-02-27 03:51:16', '0000-00-00 00:00:00', 1, '', '你可以看到右手边那片辽阔的草原，神秘又充满危险，你发现左手方向有一片迷雾。', 552, 538, 540, 338, '旧街', 1, '', '', 0, 0, 59, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (540, '迷雾小径', '', '', '', '', '2025-02-24 19:06:42', '0000-00-00 00:00:00', 1, '', '这条用石灰铺成的小路上空遍布着迷雾，你感觉周围的灌木丛仿佛不太正常了，往南一看就是万丈深渊。', 542, 0, 541, 539, '旧街', 1, '', '', 0, 0, 60, 0, 0, 0, 0, '', 1, 0, '雾天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (541, '迷雾小径', '', '', '', '', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这条用石灰铺成的小路上空遍布着迷雾，你感觉周围的灌木丛仿佛不太正常了。', 553, 0, 0, 540, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '雾天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (542, '迷雾小径', '', '', '', '', '2025-02-24 19:06:44', '0000-00-00 00:00:00', 1, '', '这条用石灰铺成的小路上空遍布着迷雾，你感觉周围的灌木丛仿佛不太正常了。', 0, 540, 553, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '雾天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
@@ -3841,11 +3889,11 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (545, '悬崖边', '', '', '', '', '2025-02-12 13:26:17', '2024-07-22 12:09:22', 1, '', '这里往下看深不见底，仿佛能听到几声奇怪的叫声从底下传来，你看到一个露天的铜矿立在那边。', 550, 549, 0, 543, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 1, 1, 0, 0, 0),
 (546, '白云崖', '', '', '', '', '2024-09-24 00:43:23', '0000-00-00 00:00:00', 1, '', '能依稀看到一个被厚厚的白云层掩盖住的深渊，以及几根巨大的古藤枝条的影子。', 0, 331, 0, 0, '金陵古城', 9, '33', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (547, '白云崖', '', '', '', '', '2025-02-02 18:05:25', '0000-00-00 00:00:00', 1, '', '这里是一个60度倾斜角的悬崖，往下俯瞰是一个被淡淡的白云层掩盖住的深渊。', 0, 0, 0, 331, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(548, '白云崖', '', '', '', '', '2025-02-02 18:05:16', '2025-02-02 18:05:19', 1, '', '能比较清晰看到一个被薄薄的白云层掩盖住的深渊，往东张望依稀能看到栖霞山麓的风景。', 331, 0, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 1, 4, 0, 0, 0),
+(548, '白云崖', '', '', '', '', '2025-02-27 04:23:31', '2025-02-02 18:05:19', 1, '', '能比较清晰看到一个被薄薄的白云层掩盖住的深渊，往东张望依稀能看到栖霞山麓的风景。', 331, 0, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 1, 4, 0, 0, 0),
 (549, '悬崖边', '', '', '', '', '2025-02-12 13:26:16', '0000-00-00 00:00:00', 1, '', '这里往下看深不见底，仿佛能听到几声奇怪的叫声从底下传来。', 545, 0, 0, 544, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (550, '悬崖边', '', '', '', '', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这里往下看深不见底，仿佛能听到几声奇怪的叫声从底下传来。', 0, 545, 0, 530, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (551, '旧街北部前线', '', '', '', '', '2025-02-26 09:54:59', '0000-00-00 00:00:00', 1, '', '这里是旧街抵御灰青草地异兽潮的前线，依稀能闻到土地中的血腥味，可以看到一条长长的围栏隔开了旧街与灰青草地。', 0, 529, 308, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(552, '峡谷口', '', '', '', '', '2025-02-23 11:34:43', '0000-00-00 00:00:00', 1, '', '你左手边布满了迷雾，一片荆棘拦住了你的去路，前方是一个峡谷的入口，右手边是那片辽阔的草原，神秘又充满危险。', 555, 539, 0, 346, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(552, '峡谷口', '', '', '', '', '2025-02-27 03:51:11', '0000-00-00 00:00:00', 1, '', '你左手边布满了迷雾，一片荆棘拦住了你的去路，前方是一个峡谷的入口，右手边是那片辽阔的草原，神秘又充满危险。', 555, 539, 0, 346, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (553, '迷雾小径', '', '', '', '', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '这条用石灰铺成的小路上空遍布着迷雾，你感觉周围的灌木丛仿佛不太正常了。', 0, 541, 0, 542, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (554, '迷雾小屋', '', '', '61|1', '61|1|', '2025-02-24 19:06:51', '0000-00-00 00:00:00', 1, '旧街|map_001_cloudroom', '一扇棕红色的木门，上面涂抹着奇特的不断旋转的阵法，一个烧红的壁炉，能看到火星正在跳动，铺满一地的红砖，摆放着不知名的瓶瓶罐罐，等等，这里为什么会有一个屋子！', 0, 0, 0, 0, '旧街', 1, '24,35', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '雾天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (555, '幽谷小径', '', '', '', '', '2025-02-08 02:31:28', '0000-00-00 00:00:00', 1, '', '四周被巨大的山峰挡住了去路，日光透过峡谷的开口照在这条小径上。', 0, 552, 568, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
@@ -3867,8 +3915,8 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (571, '幽谷小径', '', '', '37|{r.4}+2', '37|5|', '2025-02-08 02:31:43', '0000-00-00 00:00:00', 1, '', '四周被巨大的山峰挡住了去路，日光透过峡谷的开口照在这条小径上，你隐约能看到一个亮光在前方。', 578, 570, 0, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (572, '幽谷小径', '', '', '', '', '2025-02-08 02:31:36', '0000-00-00 00:00:00', 1, '', '四周被巨大的山峰挡住了去路，日光透过峡谷的开口照在这条小径上，前面已经没有路了。', 670, 0, 0, 570, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (574, '小树林边缘', '', '', '', '', '2025-02-24 19:14:43', '0000-00-00 00:00:00', 1, '', '这片小树林丝毫没有应有的生气，反而看起来死气沉沉，左手边的铁丝网挡住了去路，一条小河从眼前穿过汇入了湖泊。', 0, 305, 0, 671, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(575, '小树林边缘', '', '', '', '', '2025-01-26 21:58:23', '0000-00-00 00:00:00', 1, '', '这里的树木普遍低矮，面前就是一条河，透过左边的混合金属栅栏还能隐约看到里面的行人。', 229, 0, 0, 672, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(576, '旧吧', '', '', '63|1,62|1,46|{r.5}+1', '63|1|,62|1|,46|3|', '2025-02-08 02:27:56', '0000-00-00 00:00:00', 1, '', '一家小酒吧，这里鱼龙混杂，透过东边的木制窗户外的被隔绝的金属栅栏往外看能看到一片小树林。', 228, 0, 300, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(575, '小树林边缘', '', '', '', '', '2025-02-27 19:57:23', '0000-00-00 00:00:00', 1, '', '这里的树木普遍低矮，面前就是一条河，透过左边的混合金属栅栏还能隐约看到里面的行人。', 229, 0, 0, 672, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(576, '旧吧', '', '', '63|1,62|1,46|{r.5}+1', '63|1|,62|1|,46|2|', '2025-02-27 12:54:43', '0000-00-00 00:00:00', 1, '', '一家小酒吧，这里鱼龙混杂，透过东边的木制窗户外的被隔绝的金属栅栏往外看能看到一片小树林。', 228, 0, 300, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (578, '峡谷口', '', '', '77|1|%7Bu.tasks.t15%7D%3D%3D2%26%26%7Bu.tasks.t16%7D%21%3D2,61|1|%7Bu.tasks.t15%7D%3D%3D2%26%26%7Bu.tasks.t16%7D%21%3D2,79|1|%7Bu.tasks.t15%7D%3D%3D2%26%26%7Bu.tasks.t16%7D%21%3D2', '77|1|%7Bu.tasks.t15%7D%3D%3D2%26%26%7Bu.tasks.t16%7D%21%3D2,61|1|%7Bu.tasks.t15%7D%3D%3D2%26%26%7Bu.tasks.t16%7D%21%3D2,79|1|%7Bu.tasks.t15%7D%3D%3D2%26%26%7Bu.tasks.t16%7D%21%3D2', '2025-02-08 02:31:44', '0000-00-00 00:00:00', 1, '', '这个峡谷的一个出入口，外面是一片高大的森林，里面是神秘的山谷。', 579, 571, 0, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (579, '迷雾森林', '', '', '66|{r.3}+3', '66|3|', '2025-02-08 02:31:45', '0000-00-00 00:00:00', 1, '', '这是一片充满了迷雾的森林，能见度低，又时常有刺耳的嚎叫传来，左边一条十米宽的小河拦住了你的去路...', 580, 578, 0, 584, '迷雾森林', 23, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '雾天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (580, '迷雾森林', '', '', '', '', '2025-02-08 02:31:49', '0000-00-00 00:00:00', 1, '', '这是一片充满了迷雾的森林，能见度低，又时常有刺耳的嚎叫传来，左边一条十米宽的小河拦住了你的去路...', 581, 579, 0, 585, '迷雾森林', 23, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
@@ -3959,7 +4007,7 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (669, '湖中小岛', '', '', '', '', '2024-08-26 23:43:51', '0000-00-00 00:00:00', 1, '', '玄武湖中心的一处小岛，视野开阔，妙趣横生，是许多文人雅士流连忘返的地方。', 0, 0, 0, 0, '金陵古城', 9, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (670, '木屋', '', '', '77|1|%7Bu.tasks.t15%7D%21%3D2', '77|1|%7Bu.tasks.t15%7D%21%3D2', '2025-02-08 02:31:37', '0000-00-00 00:00:00', 1, '', '这座神秘的山谷里为什么会立着这样一座木屋？', 0, 572, 0, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (671, '湖堤', '', '', '18|{r.3}+4', '18|4|', '2025-02-24 19:14:44', '0000-00-00 00:00:00', 1, '', '站在黑黝黝的泥土往湖里看，这条湖不大不小，五米宽，水的颜色却是一种胶质的金属感。', 0, 630, 574, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(672, '湖堤', '', '', '', '', '2024-12-16 13:18:29', '0000-00-00 00:00:00', 1, '', '站在黑黝黝的泥土往湖里看，这条湖不大不小，五米宽，水的颜色却是一种胶质的金属感，湖泊中的水蜿蜒从面前的小河流出。', 230, 0, 575, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(672, '湖堤', '', '', '', '', '2025-02-27 13:02:49', '0000-00-00 00:00:00', 1, '', '站在黑黝黝的泥土往湖里看，这条湖不大不小，五米宽，水的颜色却是一种胶质的金属感，湖泊中的水蜿蜒从面前的小河流出。', 230, 0, 575, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (673, '嗜血巷', '', '', '103|{r.5}+2|', '103|3|', '2025-01-09 13:42:17', '0000-00-00 00:00:00', 1, '', '生存法则，无止境的斗争以及不断刷新的底线，FCPD的职员们最不想来的区域之一。', 674, 244, 675, 0, '未来城', 3, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (674, '北工业路南集市', '', '', '', '', '2025-01-09 13:42:16', '0000-00-00 00:00:00', 1, '', '这里是北工业区广场南部的一个集市，熙熙攘攘，许多灰头盖脸的工人与精明的商贩正在交谈。', 759, 673, 676, 0, '未来城', 3, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (675, '威利斯大厦大厅', '', '', '', '', '2025-01-09 03:30:28', '0000-00-00 00:00:00', 1, '', '威利斯大厦的大厅，躺着几个流浪汉，这是一座比较有年头的建筑了，因为租金便宜住着不少低收入者以及赛博成瘾者。', 0, 0, 0, 673, '未来城', 3, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
@@ -3969,9 +4017,9 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (679, '赛西的梦中幻境', '', '', '81|{r.4}+1', '81|1|', '2025-01-24 11:09:17', '0000-00-00 00:00:00', 1, '', '粉色是这里唯一的旋律，奇幻的造物此起彼伏，美不胜收。', 0, 677, 683, 682, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '未知', '0,0,0', 0, 0, 0, 1, 1, 1, 0),
 (682, '赛西的梦中幻境', '', '', '81|{r.3}+2', '81|3|', '2025-01-24 11:09:27', '0000-00-00 00:00:00', 1, '', '粉色是这里唯一的旋律，奇幻的造物此起彼伏，美不胜收。', 0, 0, 679, 0, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (683, '赛西的梦中幻境', '', '', '81|{r.3}+2', '81|3|', '2025-01-24 11:09:15', '0000-00-00 00:00:00', 1, '', '粉色是这里唯一的旋律，奇幻的造物此起彼伏，美不胜收。', 0, 0, 0, 679, '旧街', 1, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(685, '海滨小道', '', '', '', '', '2024-06-28 08:30:18', '0000-00-00 00:00:00', 1, '', '踏入这条小路时，仿佛走进了一个充满热带风情的画卷。小路两旁，郁郁葱葱的热带植物簇拥着，为您带来阵阵清新的海风。阳光透过树叶的缝隙洒在地面上，形成斑驳的光影，给人一种宁静而惬意的感觉。', 0, 0, 678, 0, '塞恩古城', 29, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(686, '海滨小道', '', '', '', '', '2024-06-28 08:30:21', '0000-00-00 00:00:00', 1, '', '踏入这条小路时，仿佛走进了一个充满热带风情的画卷。小路两旁，郁郁葱葱的热带植物簇拥着，为您带来阵阵清新的海风。阳光透过树叶的缝隙洒在地面上，形成斑驳的光影，给人一种宁静而惬意的感觉。', 678, 0, 0, 0, '塞恩古城', 29, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0);
+(685, '海滨小道', '', '', '', '', '2024-06-28 08:30:18', '0000-00-00 00:00:00', 1, '', '踏入这条小路时，仿佛走进了一个充满热带风情的画卷。小路两旁，郁郁葱葱的热带植物簇拥着，为您带来阵阵清新的海风。阳光透过树叶的缝隙洒在地面上，形成斑驳的光影，给人一种宁静而惬意的感觉。', 0, 0, 678, 0, '塞恩古城', 29, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0);
 INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_now`, `mgtime`, `mpick_time`, `mrefresh_time`, `mphoto`, `mdesc`, `mup`, `mdown`, `mleft`, `mright`, `marea_name`, `marea_id`, `mop_target`, `mtask_target`, `mcreat_event_id`, `mlook_event_id`, `minto_event_id`, `mout_event_id`, `mminute_event_id`, `mshop`, `mhockshop`, `mshop_item_id`, `mkill`, `mstorage`, `mtianqi`, `mdire`, `mis_tp`, `mtp_type`, `mis_rp`, `mrp_id`, `mis_shield`, `mis_signal_block`, `mhide`) VALUES
+(686, '海滨小道', '', '', '', '', '2024-06-28 08:30:21', '0000-00-00 00:00:00', 1, '', '踏入这条小路时，仿佛走进了一个充满热带风情的画卷。小路两旁，郁郁葱葱的热带植物簇拥着，为您带来阵阵清新的海风。阳光透过树叶的缝隙洒在地面上，形成斑驳的光影，给人一种宁静而惬意的感觉。', 678, 0, 0, 0, '塞恩古城', 29, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (687, '测试导入图', '', '', '', '', '2024-09-15 00:48:52', '0000-00-00 00:00:00', 1, '', '测试描述', 0, 0, 0, 0, '希望镇', 2, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (688, '御剑阁', '', '', '', '', '2024-11-22 12:23:15', '0000-00-00 00:00:00', 1, '', '晨曦照耀古剑阁，剑影隐现于山岚中，古剑阁上，云卷云舒，犹如仙境一般，青石古径，踏步而过，凛冽剑气弥漫。', 0, 0, 0, 0, '蓬莱仙岛', 30, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (689, '百花谷', '', '', '', '', '2024-08-31 09:02:06', '0000-00-00 00:00:00', 1, '', '谷中有百花，暗香蝶自来。熏得来人醉，何时也忘却。', 0, 0, 0, 0, '蓬莱仙岛', 30, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
@@ -4067,11 +4115,11 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (782, '洞察之坪', '', '', '', '', '2025-01-15 02:52:45', '0000-00-00 00:00:00', 1, '', '这个精妙绝伦的空中机坪展露了瓦兰人对天空的野心。', 0, 0, 0, 0, '纳米之都', 8, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '32,1,0', 1, 3, 0, 1, 0, 0, 0),
 (783, '卡普斯坪', '', '', '', '', '2025-01-14 18:57:45', '0000-00-00 00:00:00', 1, '', '卡普斯镇的停机坪，看起来有点小，但功能应该是正常使用的。', 0, 0, 0, 0, '卡普斯镇', 24, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '18,-34,0', 1, 3, 0, 1, 0, 0, 0),
 (784, '浮沉之港', '', '', '', '', '2025-01-28 00:11:36', '0000-00-00 00:00:00', 1, '', '天空之城的机港，各路飞行工具来来往往。', 0, 0, 0, 0, '天空之城', 14, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 1, 3, 0, 1, 0, 0, 0),
-(785, '大理石路', '', '', '', '', '2025-02-21 16:01:07', '0000-00-00 00:00:00', 1, '', '一条用大理石铺成的洁白过道，连接着奇迹港口的方方面面，晌午时分，路面还会映射北面高大树木的影子。', 0, 790, 342, 788, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(785, '大理石路', '', '', '', '', '2025-02-27 04:13:47', '0000-00-00 00:00:00', 1, '', '一条用大理石铺成的洁白过道，连接着奇迹港口的方方面面，晌午时分，路面还会映射北面高大树木的影子。', 0, 790, 342, 788, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (786, '灯塔前径', '', '', '', '', '2025-01-25 21:06:50', '0000-00-00 00:00:00', 1, '', '这条用鹅卵石铺成的小路通向奇迹港口的最大灯塔，也就是银月人口中神圣无比的阿蕾莎。', 342, 787, 0, 790, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (787, '阿蕾莎灯塔口', '', '', '', '', '2025-01-22 00:46:25', '0000-00-00 00:00:00', 1, '', '这里是银月人心目中的神圣场所，守护着一代又一代银月人免受海妖以及风暴的侵袭。', 786, 0, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(788, '港口渔市北口', '', '', '', '', '2025-02-21 16:08:18', '0000-00-00 00:00:00', 1, '', '港口渔市的北面入口，这里更多的是运输魔车的呼啸声，将新鲜的产品以最快时间运往中心城市。', 0, 791, 785, 789, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(789, '黑金石路口', '', '', '', '', '2025-02-21 16:08:17', '0000-00-00 00:00:00', 1, '', '银月人相信黑金石能提高魔力传导的效率，这些花费巨资修建的道路便是为加快运输而生。', 0, 0, 788, 0, '智慧山脊', 11, '67', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(788, '港口渔市北口', '', '', '', '', '2025-02-27 04:13:48', '0000-00-00 00:00:00', 1, '', '港口渔市的北面入口，这里更多的是运输魔车的呼啸声，将新鲜的产品以最快时间运往中心城市。', 0, 791, 785, 789, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(789, '黑金石路口', '', '', '', '', '2025-02-27 04:13:49', '0000-00-00 00:00:00', 1, '', '银月人相信黑金石能提高魔力传导的效率，这些花费巨资修建的道路便是为加快运输而生。', 0, 0, 788, 0, '智慧山脊', 11, '67', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (790, '港口渔市西口', '', '', '', '', '2025-02-21 16:01:06', '0000-00-00 00:00:00', 1, '', '奇迹港口渔市的西口，可以从这里进入喧闹的渔市。', 785, 800, 786, 791, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (791, '丰收市径', '', '', '', '', '2025-02-21 01:32:44', '0000-00-00 00:00:00', 1, '', '渔市的过道，许许多多的银月人在此兜售各种各样的海产品。', 788, 792, 790, 793, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (792, '丰收市径', '', '', '', '', '2025-01-18 12:30:06', '0000-00-00 00:00:00', 1, '', '渔市的过道，许许多多的银月人在此兜售各种各样的海产品，由于墙体的隔开，两边明显狭窄了不少。', 791, 794, 800, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
@@ -4083,76 +4131,76 @@ INSERT INTO `system_map` (`mid`, `mname`, `mitem`, `mitem_now`, `mnpc`, `mnpc_no
 (798, '河畔平地', '', '', '', '', '2025-01-18 02:23:27', '0000-00-00 00:00:00', 1, '', '远处的迷雾海，挡在身前的灯塔，潺潺而过的河流，闲暇时候，银月人便会汇聚于此来一次惬意的休息时光。', 799, 797, 0, 795, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (799, '河畔平地', '', '', '', '', '2025-01-18 12:30:00', '0000-00-00 00:00:00', 1, '', '这里有一座无名墓碑，是为了纪念一位曾经漂泊而来的异乡人。', 0, 798, 0, 794, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (800, '丰收市径', '', '', '', '', '2025-02-21 16:01:04', '0000-00-00 00:00:00', 1, '', '渔市的过道，许许多多的银月人在此兜售各种各样的海产品，由于墙体的隔开，两边明显狭窄了不少。', 790, 0, 0, 792, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(801, '银月西城枢纽', '', '', '', '', '2025-02-21 01:32:49', '0000-00-00 00:00:00', 1, '', '银月城西的一处交通枢纽，是与码头互通物资的重要通道，此刻正熙熙攘攘。', 0, 0, 0, 802, '智慧山脊', 11, '68', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(802, '银月西城城门', '', '', '', '', '2025-02-21 01:32:51', '0000-00-00 00:00:00', 1, '', '银月城西的拱形城门，通体采用大理石镶嵌月银石铸造而成，即使到了晚上仍然很光亮。', 0, 0, 801, 803, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(803, '白银西街', '', '', '', '', '2025-02-21 01:32:54', '0000-00-00 00:00:00', 1, '', '数百年前，银月的一位科学家将炼金术修炼到极致，使得白银的量产成为了可能，而现在，全白银打造而成的西街无一不是在宣告银月人的富饶与智慧。', 841, 819, 802, 804, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(801, '银月西城枢纽', '', '', '', '', '2025-02-27 04:13:51', '0000-00-00 00:00:00', 1, '', '银月城西的一处交通枢纽，是与码头互通物资的重要通道，此刻正熙熙攘攘。', 0, 0, 0, 802, '智慧山脊', 11, '68', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(802, '银月西城城门', '', '', '', '', '2025-02-27 04:13:53', '0000-00-00 00:00:00', 1, '', '银月城西的拱形城门，通体采用大理石镶嵌月银石铸造而成，即使到了晚上仍然很光亮。', 0, 0, 801, 803, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(803, '白银西街', '', '', '', '', '2025-02-27 04:13:54', '0000-00-00 00:00:00', 1, '', '数百年前，银月的一位科学家将炼金术修炼到极致，使得白银的量产成为了可能，而现在，全白银打造而成的西街无一不是在宣告银月人的富饶与智慧。', 841, 819, 802, 804, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (804, '白银西街', '', '', '', '', '2025-02-21 01:34:12', '0000-00-00 00:00:00', 1, '', '数百年前，银月的一位科学家将炼金术修炼到极致，使得白银的量产成为了可能，而现在，全白银打造而成的西街无一不是在宣告银月人的富饶与智慧。', 854, 855, 803, 805, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (805, '白银西街', '', '', '', '', '2025-02-11 01:36:29', '0000-00-00 00:00:00', 1, '', '数百年前，银月的一位科学家将炼金术修炼到极致，使得白银的量产成为了可能，而现在，全白银打造而成的西街无一不是在宣告银月人的富饶与智慧。', 856, 857, 804, 806, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(806, '紫钻广场', '', '', '', '', '2025-02-12 00:58:51', '0000-00-00 00:00:00', 1, '', '银月人通过合金冶炼技术的精进，成功研究出一种耐磨耐高温的高导材料:紫钻，而以紫钻打造的这片巨大广场彰显着银月人的辉煌。', 810, 813, 805, 807, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(807, '弦歌东街', '', '', '', '', '2025-02-05 01:16:53', '0000-00-00 00:00:00', 1, '', '银月人对弦乐的追求也是精益求精，这一条街道便是艺术家的天堂。', 843, 850, 806, 808, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(808, '弦歌东街', '', '', '', '', '2025-02-05 01:16:52', '0000-00-00 00:00:00', 1, '', '银月人对弦乐的追求也是精益求精，这一条街道便是艺术家的天堂。', 849, 864, 807, 809, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(809, '弦歌东街', '', '', '', '', '2025-02-05 01:16:49', '0000-00-00 00:00:00', 1, '', '银月人对弦乐的追求也是精益求精，这一条街道便是艺术家的天堂。', 845, 0, 808, 846, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(810, '翡翠北街', '', '', '', '', '2025-02-05 01:16:57', '0000-00-00 00:00:00', 1, '', '幽绿的翡翠点缀着平整的路面，这里是银月人中的精英心目中实现才华抱负的理想之地，自由，开放，繁华，文明，井然有序又人情满满的地方。', 811, 806, 856, 843, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(811, '翡翠北街', '', '', '', '', '2025-02-01 01:38:41', '0000-00-00 00:00:00', 1, '', '幽绿的翡翠点缀着平整的路面，这里是银月人中的精英心目中实现才华抱负的理想之地，自由，开放，繁华，文明，井然有序又人情满满的地方。', 812, 810, 861, 839, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(812, '翡翠北街', '', '', '', '', '2025-01-25 02:02:47', '0000-00-00 00:00:00', 1, '', '幽绿的翡翠点缀着平整的路面，这里是银月人中的精英心目中实现才华抱负的理想之地，自由，开放，繁华，文明，井然有序又人情满满的地方。', 844, 811, 840, 848, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(813, '水晶街道', '', '', '', '', '2025-02-21 16:00:41', '0000-00-00 00:00:00', 1, '', '这里的街面上镶嵌着闪闪发光的水晶，水晶是造物主的奇迹，也是这片奇迹之地的根本，银月人利用水晶的性质开发了许多不可思议的技艺。', 806, 814, 857, 850, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(814, '水晶街道', '', '', '', '', '2025-02-21 15:48:45', '0000-00-00 00:00:00', 1, '', '这里的街面上镶嵌着闪闪发光的水晶，水晶是造物主的奇迹，也是这片奇迹之地的根本，银月人利用水晶的性质开发了许多不可思议的技艺。', 813, 815, 858, 853, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(815, '水晶街道', '', '', '', '', '2025-02-21 15:48:32', '0000-00-00 00:00:00', 1, '', '这里的街面上镶嵌着闪闪发光的水晶，水晶是造物主的奇迹，也是这片奇迹之地的根本，银月人利用水晶的性质开发了许多不可思议的技艺。', 814, 817, 852, 818, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(816, '银月南城枢纽', '', '', '', '', '2025-02-21 15:48:29', '0000-00-00 00:00:00', 1, '', '银月城南的一处交通枢纽，是与外界交流的主要通道，来往的旅客络绎不绝。', 817, 0, 0, 0, '智慧山脊', 11, '69', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(817, '银月南城城门', '', '', '', '', '2025-02-21 15:48:31', '0000-00-00 00:00:00', 1, '', '银月城西的长拱形城门，通体采用花岗岩镶嵌水晶铸造而成，这边也是接待访客的主要区域。', 815, 816, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(806, '紫钻广场', '', '', '', '', '2025-02-27 04:19:15', '0000-00-00 00:00:00', 1, '', '银月人通过合金冶炼技术的精进，成功研究出一种耐磨耐高温的高导材料:紫钻，而以紫钻打造的这片巨大广场彰显着银月人的辉煌。', 810, 813, 805, 807, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(807, '弦歌东街', '', '', '', '', '2025-02-27 04:19:14', '0000-00-00 00:00:00', 1, '', '银月人对弦乐的追求也是精益求精，这一条街道便是艺术家的天堂。', 843, 850, 806, 808, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(808, '弦歌东街', '', '', '', '', '2025-02-27 04:19:08', '0000-00-00 00:00:00', 1, '', '银月人对弦乐的追求也是精益求精，这一条街道便是艺术家的天堂。', 849, 864, 807, 809, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(809, '弦歌东街', '', '', '', '', '2025-02-27 04:19:07', '0000-00-00 00:00:00', 1, '', '银月人对弦乐的追求也是精益求精，这一条街道便是艺术家的天堂。', 845, 0, 808, 846, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(810, '翡翠北街', '', '', '', '', '2025-02-27 04:15:38', '0000-00-00 00:00:00', 1, '', '幽绿的翡翠点缀着平整的路面，这里是银月人中的精英心目中实现才华抱负的理想之地，自由，开放，繁华，文明，井然有序又人情满满的地方。', 811, 806, 856, 843, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(811, '翡翠北街', '', '', '', '', '2025-02-27 04:15:37', '0000-00-00 00:00:00', 1, '', '幽绿的翡翠点缀着平整的路面，这里是银月人中的精英心目中实现才华抱负的理想之地，自由，开放，繁华，文明，井然有序又人情满满的地方。', 812, 810, 861, 839, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(812, '翡翠北街', '', '', '', '', '2025-02-27 04:15:31', '0000-00-00 00:00:00', 1, '', '幽绿的翡翠点缀着平整的路面，这里是银月人中的精英心目中实现才华抱负的理想之地，自由，开放，繁华，文明，井然有序又人情满满的地方。', 844, 811, 840, 848, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(813, '水晶街道', '', '', '', '', '2025-02-27 04:19:16', '0000-00-00 00:00:00', 1, '', '这里的街面上镶嵌着闪闪发光的水晶，水晶是造物主的奇迹，也是这片奇迹之地的根本，银月人利用水晶的性质开发了许多不可思议的技艺。', 806, 814, 857, 850, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(814, '水晶街道', '', '', '', '', '2025-02-27 04:19:18', '0000-00-00 00:00:00', 1, '', '这里的街面上镶嵌着闪闪发光的水晶，水晶是造物主的奇迹，也是这片奇迹之地的根本，银月人利用水晶的性质开发了许多不可思议的技艺。', 813, 815, 858, 853, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(815, '水晶街道', '', '', '', '', '2025-02-27 04:19:19', '0000-00-00 00:00:00', 1, '', '这里的街面上镶嵌着闪闪发光的水晶，水晶是造物主的奇迹，也是这片奇迹之地的根本，银月人利用水晶的性质开发了许多不可思议的技艺。', 814, 817, 852, 818, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(816, '银月南城枢纽', '', '', '', '', '2025-02-27 04:19:21', '0000-00-00 00:00:00', 1, '', '银月城南的一处交通枢纽，是与外界交流的主要通道，来往的旅客络绎不绝。', 817, 0, 0, 0, '智慧山脊', 11, '69', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(817, '银月南城城门', '', '', '', '', '2025-02-27 04:19:20', '0000-00-00 00:00:00', 1, '', '银月城西的长拱形城门，通体采用花岗岩镶嵌水晶铸造而成，这边也是接待访客的主要区域。', 815, 816, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (818, '壁炉旅馆', '', '', '', '', '2025-01-25 02:03:41', '0000-00-00 00:00:00', 1, '', '银月城最开始建造的时候，这里便以一口终年不灭的壁炉出名，而今更是成为银月南城最大的旅店。', 853, 0, 815, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (819, '亚力酒吧', '', '', '', '', '2025-02-05 01:17:06', '0000-00-00 00:00:00', 1, '', '远道而来的客人，相信茴香的气息能让你着迷，你看那壁炉中跳动的火焰，是否也触动了你炽热的灵魂呢?', 803, 842, 0, 855, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(820, '珍珠海观光站', '', '', '', '', '2025-02-21 15:48:29', '0000-00-00 00:00:00', 1, '', '黑金石的色彩渲染了智慧的美感，不远处是银月半岛南边的珍珠海滩，飞速免费的魔法观光车正在银月城与此地流动。', 0, 821, 0, 0, '智慧山脊', 11, '70', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(821, '珍珠沙滩', '', '', '', '', '2025-02-21 15:48:28', '0000-00-00 00:00:00', 1, '', '洁白又细腻的细沙在阳光下一闪一闪的，好看极了。', 820, 824, 822, 823, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(822, '珍珠沙滩', '', '', '', '', '2025-01-20 20:01:22', '0000-00-00 00:00:00', 1, '', '洁白又细腻的细沙在阳光下一闪一闪的，好看极了，西边被一些荆棘挡住了去路。', 0, 826, 0, 821, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(823, '珍珠沙滩', '', '', '', '', '2025-02-21 15:48:16', '0000-00-00 00:00:00', 1, '', '洁白又细腻的细沙在阳光下一闪一闪的，好看极了。', 0, 825, 821, 830, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(820, '珍珠海观光站', '', '', '', '', '2025-02-27 04:19:24', '0000-00-00 00:00:00', 1, '', '黑金石的色彩渲染了智慧的美感，不远处是银月半岛南边的珍珠海滩，飞速免费的魔法观光车正在银月城与此地流动。', 0, 821, 0, 0, '智慧山脊', 11, '70', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(821, '珍珠沙滩', '', '', '', '', '2025-02-27 04:19:27', '0000-00-00 00:00:00', 1, '', '洁白又细腻的细沙在阳光下一闪一闪的，好看极了。', 820, 824, 822, 823, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(822, '珍珠沙滩', '', '', '', '', '2025-02-27 04:19:54', '0000-00-00 00:00:00', 1, '', '洁白又细腻的细沙在阳光下一闪一闪的，好看极了，西边被一些荆棘挡住了去路。', 0, 826, 0, 821, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(823, '珍珠沙滩', '', '', '', '', '2025-02-27 04:19:31', '0000-00-00 00:00:00', 1, '', '洁白又细腻的细沙在阳光下一闪一闪的，好看极了。', 0, 825, 821, 830, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (824, '珍珠海滩', '', '', '', '', '2025-01-20 20:01:13', '0000-00-00 00:00:00', 1, '', '涨潮与退潮在这片银白色的海滩上日日夜夜，循环往复。', 821, 827, 826, 825, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(825, '珍珠海滩', '', '', '', '', '2025-02-21 01:34:37', '0000-00-00 00:00:00', 1, '', '涨潮与退潮在这片银白色的海滩上日日夜夜，循环往复。', 823, 828, 824, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(826, '珍珠海滩', '', '', '', '', '2025-01-20 20:01:13', '0000-00-00 00:00:00', 1, '', '涨潮与退潮在这片银白色的海滩上日日夜夜，循环往复。', 822, 829, 0, 824, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(827, '银色浅海', '', '', '', '', '2025-01-20 20:01:15', '0000-00-00 00:00:00', 1, '', '冰凉的海水涌了上来，远远看过去像是一片银色的镜子一般', 824, 0, 829, 828, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(828, '银色浅海', '', '', '', '', '2025-01-20 20:01:17', '0000-00-00 00:00:00', 1, '', '冰凉的海水涌了上来，远远看过去像是一片银色的镜子一般', 825, 0, 827, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(829, '银色浅海', '', '', '', '', '2025-01-20 20:01:14', '0000-00-00 00:00:00', 1, '', '冰凉的海水涌了上来，远远看过去像是一片银色的镜子一般', 826, 0, 0, 827, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(830, '碎石路', '', '', '', '', '2025-02-21 01:34:40', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 0, 0, 823, 831, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(831, '碎石路', '', '', '', '', '2025-02-21 01:34:41', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 834, 0, 830, 832, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(832, '碎石路', '', '', '', '', '2025-02-21 01:34:55', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 0, 0, 831, 833, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(833, '碎石路', '', '', '', '', '2025-02-21 01:34:56', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走，到这似乎已经到了尽头。', 838, 0, 832, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(834, '碎石路', '', '', '', '', '2025-02-21 01:34:42', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 835, 831, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(835, '碎石路', '', '', '', '', '2025-02-21 01:34:43', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 836, 834, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(836, '碎石路', '', '', '', '', '2025-02-21 01:34:48', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 837, 835, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
-(837, '碎石路', '', '', '', '', '2025-02-21 01:34:48', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走，远处是茂密的原始森林，这里放着一个游客止步的牌子。', 0, 836, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(838, '水晶小屋', '', '', '', '', '2025-02-21 01:34:57', '0000-00-00 00:00:00', 1, '', '通体由水晶打造而成的一间小屋，里面会有什么样的惊喜呢?', 0, 833, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(839, '先知学院大门', '', '', '', '', '2025-02-01 01:38:39', '0000-00-00 00:00:00', 1, '', '恢宏的先知学院大门伫立于此，映入眼帘的却不是庄严严谨的景色，而是一个高约5米的紫色漩涡。', 848, 843, 811, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(825, '珍珠海滩', '', '', '', '', '2025-02-27 04:20:00', '0000-00-00 00:00:00', 1, '', '涨潮与退潮在这片银白色的海滩上日日夜夜，循环往复。', 823, 828, 824, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(826, '珍珠海滩', '', '', '', '', '2025-02-27 04:19:55', '0000-00-00 00:00:00', 1, '', '涨潮与退潮在这片银白色的海滩上日日夜夜，循环往复。', 822, 829, 0, 824, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(827, '银色浅海', '', '', '', '', '2025-02-27 04:19:58', '0000-00-00 00:00:00', 1, '', '冰凉的海水涌了上来，远远看过去像是一片银色的镜子一般', 824, 0, 829, 828, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(828, '银色浅海', '', '', '', '', '2025-02-27 04:19:59', '0000-00-00 00:00:00', 1, '', '冰凉的海水涌了上来，远远看过去像是一片银色的镜子一般', 825, 0, 827, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(829, '银色浅海', '', '', '', '', '2025-02-27 04:19:57', '0000-00-00 00:00:00', 1, '', '冰凉的海水涌了上来，远远看过去像是一片银色的镜子一般', 826, 0, 0, 827, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(830, '碎石路', '', '', '', '', '2025-02-27 04:19:32', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 0, 0, 823, 831, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(831, '碎石路', '', '', '', '', '2025-02-27 04:19:33', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 834, 0, 830, 832, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(832, '碎石路', '', '', '', '', '2025-02-27 04:19:44', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 0, 0, 831, 833, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(833, '碎石路', '', '', '', '', '2025-02-27 04:19:45', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走，到这似乎已经到了尽头。', 838, 0, 832, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(834, '碎石路', '', '', '', '', '2025-02-27 04:19:34', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 835, 831, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(835, '碎石路', '', '', '', '', '2025-02-27 04:19:35', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 836, 834, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(836, '碎石路', '', '', '', '', '2025-02-27 04:19:36', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走。', 837, 835, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(837, '碎石路', '', '', '', '', '2025-02-27 04:19:36', '0000-00-00 00:00:00', 1, '', '零零散散的碎石铺成的平整小路，没什么行人，偶尔有几处海鸟被惊醒飞走，远处是茂密的原始森林，这里放着一个游客止步的牌子。', 0, 836, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(838, '水晶小屋', '', '', '', '', '2025-02-27 04:19:46', '0000-00-00 00:00:00', 1, '', '通体由水晶打造而成的一间小屋，里面会有什么样的惊喜呢?', 0, 833, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(839, '先知学院大门', '', '', '', '', '2025-02-27 04:15:24', '0000-00-00 00:00:00', 1, '', '恢宏的先知学院大门伫立于此，映入眼帘的却不是庄严严谨的景色，而是一个高约5米的紫色漩涡。', 848, 843, 811, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (840, '长者居所', '', '', '', '', '2025-01-22 00:34:50', '0000-00-00 00:00:00', 1, '', '银月城的五位「启迪者」之一「安东尼奥.阿布勒」的居所，空气中弥漫着各类刺激的气味。', 0, 0, 0, 812, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(841, '菲尔武器店', '', '', '', '', '2025-02-05 01:17:14', '0000-00-00 00:00:00', 1, '', '菲尔是卡萨克的妻子，几年前他从银月戈壁出发几经辗转，到此后便一边以祖传手艺谋生一边寻找自己妻子的下落。', 0, 803, 0, 854, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(841, '菲尔武器店', '', '', '', '', '2025-02-27 04:13:55', '0000-00-00 00:00:00', 1, '', '菲尔是卡萨克的妻子，几年前他从银月戈壁出发几经辗转，到此后便一边以祖传手艺谋生一边寻找自己妻子的下落。', 0, 803, 0, 854, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (842, '阿格达尔花园', '', '', '', '', '2025-02-05 01:17:08', '0000-00-00 00:00:00', 1, '', '这是一座富满想象力与创造力的花园，见证了银月人的历史，聪明的银月人便将其从动荡的戈壁区域搬移至此。', 819, 862, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(843, '玛娜特艺术圣地', '', '', '', '', '2025-02-05 01:16:55', '0000-00-00 00:00:00', 1, '', '玛娜特是银月人信仰的真主之女，也是银月人信仰的艺术与水晶女神，这里自然成了银月人心中的艺术圣地。', 839, 807, 810, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(844, '教议阁', '', '', '', '', '2025-01-25 02:01:20', '0000-00-00 00:00:00', 1, '', '银月人最高权力机构，同时也是最高宗教管理机构，这里汇聚着精英中的精英，导航着银月族人大船的航向。', 0, 812, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(843, '玛娜特艺术圣地', '', '', '', '', '2025-02-27 04:14:06', '0000-00-00 00:00:00', 1, '', '玛娜特是银月人信仰的真主之女，也是银月人信仰的艺术与水晶女神，这里自然成了银月人心中的艺术圣地。', 839, 807, 810, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(844, '教议阁', '', '', '', '', '2025-02-27 04:15:34', '0000-00-00 00:00:00', 1, '', '银月人最高权力机构，同时也是最高宗教管理机构，这里汇聚着精英中的精英，导航着银月族人大船的航向。', 0, 812, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (845, '无名半墙', '', '', '', '', '2025-02-05 01:16:50', '0000-00-00 00:00:00', 1, '', '一堵饱经岁月风霜的残破白墙，坑坑洼洼的样子诉说着它过去的经历。', 0, 809, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(846, '银月东城城门', '', '', '', '', '2025-02-05 01:16:45', '0000-00-00 00:00:00', 1, '', '银月城东的星形城门，通体采用石灰石镶嵌荧光石铸造而成，充满着银月人对于艺术独到的见解与美感。', 870, 0, 809, 847, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(847, '银月东港', '', '', '', '', '2025-02-05 01:16:47', '0000-00-00 00:00:00', 1, '', '银月半岛的东部重要大港口，承载着物资与人员运送的方方面面，人流量巨大。', 0, 0, 846, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(848, '海心公园', '', '', '', '', '2025-01-25 02:03:22', '0000-00-00 00:00:00', 1, '', '传说有位银月的勇士曾在迷雾海深处见过海洋之心，它可以暂时驱散迷雾，后来银月人建立了公园纪念这一位勇士。', 0, 839, 812, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(846, '银月东城城门', '', '', '', '', '2025-02-27 04:18:59', '0000-00-00 00:00:00', 1, '', '银月城东的星形城门，通体采用石灰石镶嵌荧光石铸造而成，充满着银月人对于艺术独到的见解与美感。', 870, 0, 809, 847, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(847, '银月东港', '', '', '', '', '2025-02-27 04:18:38', '0000-00-00 00:00:00', 1, '', '银月半岛的东部重要大港口，承载着智慧山脊的物资运送，大大小小的集装箱堆积在这里。', 0, 0, 846, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(848, '海心公园', '', '', '', '', '2025-02-27 04:15:27', '0000-00-00 00:00:00', 1, '', '传说有位银月的勇士曾在迷雾海深处见过海洋之心，它可以暂时驱散迷雾，后来银月人建立了公园纪念这一位勇士。', 0, 839, 812, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (849, '长者居所', '', '', '', '', '2025-02-01 01:24:36', '0000-00-00 00:00:00', 1, '', '银月城的五位「启迪者」之一「瓦伦那.克里斯」的居所，房间充满了艺术的气息。', 0, 808, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(850, '贝都剧场', '', '', '', '', '2025-02-01 01:34:54', '0000-00-00 00:00:00', 1, '', '一个椭圆形的剧场，可以同时容纳几千人观看节日庆典，比赛决斗等娱乐项目。', 807, 0, 813, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(851, '临海大道', '', '', '', '', '2025-01-22 00:45:26', '0000-00-00 00:00:00', 1, '', '连接着港口与戈壁深处的一条沙石路。', 0, 0, 343, 0, '银月戈壁', 10, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(850, '贝都剧场', '', '', '', '', '2025-02-27 04:15:45', '0000-00-00 00:00:00', 1, '', '一个椭圆形的剧场，可以同时容纳几千人观看节日庆典，比赛决斗等娱乐项目。', 807, 0, 813, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(851, '临海大道', '', '', '', '', '2025-02-27 04:22:21', '0000-00-00 00:00:00', 1, '', '连接着港口与戈壁深处的一条沙石路。', 0, 0, 343, 0, '银月戈壁', 10, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (852, '海纳博物馆', '', '', '', '', '2025-01-25 02:08:36', '0000-00-00 00:00:00', 1, '', '该博物馆通体采用白色大理石建成，远远看去像是好多根柱子托着一个椭圆的白色碟盘，名字则取海纳百川之意，这里存放着银月人的起源，历史以及重要事件的足迹。', 0, 0, 0, 815, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (853, '美味一条街', '', '', '', '', '2025-02-01 01:29:40', '0000-00-00 00:00:00', 1, '', '著名的美味一条街，既有来自祖地戈壁的特产，又有经过学者根据智慧山脊培育出的特产，空气中的香气没有淡过，人潮涌动，来往游客络绎不绝。', 0, 818, 814, 863, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(854, '居民区一期', '', '', '', '', '2025-02-05 01:17:20', '0000-00-00 00:00:00', 1, '', '这里曾经是最早的开拓者安身的场所，设计还有些狂野。虽然历史悠久，但随着城市扩建，这里的地理位置显然不是最优，曾经的繁华也随之而去。', 860, 804, 841, 856, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(854, '居民区一期', '', '', '', '', '2025-02-27 04:13:59', '0000-00-00 00:00:00', 1, '', '这里曾经是最早的开拓者安身的场所，设计还有些狂野。虽然历史悠久，但随着城市扩建，这里的地理位置显然不是最优，曾经的繁华也随之而去。', 860, 804, 841, 856, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (855, '别墅区一期', '', '', '', '', '2025-02-21 01:34:18', '0000-00-00 00:00:00', 1, '', '别墅区充满了设计的美感，也是地位的象征，这里居住着对银月作出杰出贡献的优秀人物。', 804, 859, 819, 857, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(856, '居民区二期', '', '', '', '', '2025-02-01 01:38:45', '0000-00-00 00:00:00', 1, '', '这里曾经是最早的开拓者安身的场所，设计还有些狂野。虽然历史悠久，但随着城市扩建，这里的地理位置显然不是最优，曾经的繁华也随之而去。', 861, 805, 854, 810, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(856, '居民区二期', '', '', '', '', '2025-02-27 04:14:03', '0000-00-00 00:00:00', 1, '', '这里曾经是最早的开拓者安身的场所，设计还有些狂野。虽然历史悠久，但随着城市扩建，这里的地理位置显然不是最优，曾经的繁华也随之而去。', 861, 805, 854, 810, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (857, '别墅区三期', '', '', '', '', '2025-02-01 01:27:28', '0000-00-00 00:00:00', 1, '', '别墅区充满了设计的美感，也是地位的象征，这里居住着对银月作出杰出贡献的优秀人物。', 805, 858, 855, 813, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (858, '别墅区四期', '', '', '', '', '2025-02-21 01:34:20', '0000-00-00 00:00:00', 1, '', '别墅区充满了设计的美感，也是地位的象征，这里居住着对银月作出杰出贡献的优秀人物。', 857, 0, 859, 814, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (859, '别墅区二期', '', '', '', '', '2025-02-21 01:34:19', '0000-00-00 00:00:00', 1, '', '别墅区充满了设计的美感，也是地位的象征，这里居住着对银月作出杰出贡献的优秀人物。', 855, 0, 0, 858, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(860, '居民区三期', '', '', '', '', '2025-02-01 01:23:04', '0000-00-00 00:00:00', 1, '', '这里曾经是最早的开拓者安身的场所，设计还有些狂野。虽然历史悠久，但随着城市扩建，这里的地理位置显然不是最优，曾经的繁华也随之而去。', 0, 854, 0, 861, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(861, '居民区四期', '', '', '', '', '2025-02-01 01:23:43', '0000-00-00 00:00:00', 1, '', '这里曾经是最早的开拓者安身的场所，设计还有些狂野。虽然历史悠久，但随着城市扩建，这里的地理位置显然不是最优，曾经的繁华也随之而去。', 0, 856, 860, 811, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(860, '居民区三期', '', '', '', '', '2025-02-27 04:14:00', '0000-00-00 00:00:00', 1, '', '这里曾经是最早的开拓者安身的场所，设计还有些狂野。虽然历史悠久，但随着城市扩建，这里的地理位置显然不是最优，曾经的繁华也随之而去。', 0, 854, 0, 861, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(861, '居民区四期', '', '', '', '', '2025-02-27 04:14:02', '0000-00-00 00:00:00', 1, '', '这里曾经是最早的开拓者安身的场所，设计还有些狂野。虽然历史悠久，但随着城市扩建，这里的地理位置显然不是最优，曾经的繁华也随之而去。', 0, 856, 860, 811, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (862, '长者居所', '', '', '', '', '2025-02-05 01:17:09', '0000-00-00 00:00:00', 1, '', '银月城的五位「启迪者」之一「莱恩.熙妮莎」的居所，浪漫的气息从花园随风而来。', 842, 0, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
 (863, '长者居所', '', '', '', '', '2025-02-01 01:24:36', '0000-00-00 00:00:00', 1, '', '银月城的五位「启迪者」之一「库萨.索杰恩」的居所，这里附近充斥着烟火气息。', 0, 0, 853, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(864, '艺术长廊', '', '', '', '', '2025-02-01 01:38:21', '0000-00-00 00:00:00', 1, '', '琳琅满目的艺术品，灵光一现，也许你也能在此留下你的作品。', 808, 0, 0, 865, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(865, '艺术长廊', '', '', '', '', '2025-02-01 01:33:42', '0000-00-00 00:00:00', 1, '', '琳琅满目的艺术品，灵光一现，也许你也能在此留下你的作品。', 0, 866, 864, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
+(864, '艺术长廊', '', '', '', '', '2025-02-27 04:19:09', '0000-00-00 00:00:00', 1, '', '琳琅满目的艺术品，灵光一现，也许你也能在此留下你的作品。', 808, 0, 0, 865, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(865, '艺术长廊', '', '', '', '', '2025-02-27 04:19:11', '0000-00-00 00:00:00', 1, '', '琳琅满目的艺术品，灵光一现，也许你也能在此留下你的作品。', 0, 866, 864, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (866, '艺术长廊', '', '', '', '', '2025-02-01 01:33:42', '0000-00-00 00:00:00', 1, '', '琳琅满目的艺术品，灵光一现，也许你也能在此留下你的作品。', 865, 0, 867, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (867, '艺术长廊', '', '', '', '', '2025-02-01 01:33:30', '0000-00-00 00:00:00', 1, '', '琳琅满目的艺术品，灵光一现，也许你也能在此留下你的作品。', 0, 868, 0, 866, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 0, 0, 0, 0),
 (868, '艺术殿堂', '', '', '', '', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 1, '', '收藏着全世界的名著，各个民族智慧的结晶在此碰撞。', 867, 0, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(869, '长者居所', '', '', '', '', '2025-02-05 01:16:04', '0000-00-00 00:00:00', 1, '', '银月城的五位「启迪者」之一「杰克.阿多」的居所，由于喜欢大海，他的住所建在了城外，面朝着无尽的迷雾海。', 0, 870, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
-(870, '苔痕小径', '', '', '', '', '2025-02-05 01:16:02', '0000-00-00 00:00:00', 1, '', '一条长满了苔痕的小石子路，会通向什么地方呢?', 869, 846, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0);
+(869, '长者居所', '', '', '', '', '2025-02-27 04:17:14', '0000-00-00 00:00:00', 1, '', '银月城的五位「启迪者」之一「杰克.阿多」的居所，由于喜欢大海，他的住所建在了城外，面朝着无尽的迷雾海。', 0, 870, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0),
+(870, '苔痕小径', '', '', '', '', '2025-02-27 04:19:01', '0000-00-00 00:00:00', 1, '', '一条长满了苔痕的小石子路，会通向什么地方呢?', 869, 846, 0, 0, '智慧山脊', 11, '', '', 0, 0, 0, 0, 0, 0, 0, '', 1, 0, '晴天', '0,0,0', 0, 0, 0, 1, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -4960,6 +5008,7 @@ INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkil
 (1, '旧街', 46, 0, 0, 0, 0, 0, 0, 0, 0, '流民', 0, 1, '', '杂乱的服饰，头部被一些破布紧紧包住，分不清是男是女，看着你出现，对方吓了一跳。', '', '', '', '', 0, '', '', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '3', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 314, '0000-00-00 00:00:00', 1519, 1),
 (1, '旧街', 41, 0, 0, 0, 0, 0, 1, 1, 0, '安妮', 0, 1, '女', '她生得金发碧眼，很是抚媚，看起来二十几岁。', '', '', '', '', 0, '', '7|1,21|1,22|1,71|1', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 314, '0000-00-00 00:00:00', 1517, 1),
 (1, '旧街', 46, 0, 0, 0, 0, 0, 0, 0, 0, '流民', 0, 1, '', '杂乱的服饰，头部被一些破布紧紧包住，分不清是男是女，看着你出现，对方吓了一跳。', '', '', '', '', 0, '', '', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '3', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 314, '0000-00-00 00:00:00', 1518, 1),
+(1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 371, '0000-00-00 00:00:00', 1969, 1),
 (1, '旧街', 46, 0, 0, 0, 0, 0, 0, 0, 0, '流民', 0, 1, '', '杂乱的服饰，头部被一些破布紧紧包住，分不清是男是女，看着你出现，对方吓了一跳。', '', '', '', '', 0, '', '', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '3', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 576, '0000-00-00 00:00:00', 1894, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 354, '0000-00-00 00:00:00', 1546, 1),
 (1, '旧街', 35, 0, 0, 0, 0, 0, 1, 1, 1, '瓦尔金', 0, 1, '男', '他看起来有五十多岁了，脸上皱纹和伤疤已经分不清了，头上的白发和金发也难以辨别。', '', '', '', '', 0, '', '5|1,74|1,105|1,112|1', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '11', '22', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 299, '0000-00-00 00:00:00', 1497, 1),
@@ -5054,9 +5103,9 @@ INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkil
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 365, '0000-00-00 00:00:00', 1568, 1),
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 368, '0000-00-00 00:00:00', 1575, 1),
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 368, '0000-00-00 00:00:00', 1574, 1),
-(1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 366, '0000-00-00 00:00:00', 1570, 1),
-(1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 366, '0000-00-00 00:00:00', 1569, 1);
+(1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 366, '0000-00-00 00:00:00', 1570, 1);
 INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkill`, `nnot_dead`, `nchuck`, `nrefresh_time`, `nshop`, `nhock_shop`, `naccept_give`, `nname`, `nexp`, `nlvl`, `nsex`, `ndesc`, `nequips`, `ndrop_exp`, `ndrop_money`, `ndrop_item`, `ndrop_item_type`, `nskills`, `nshop_item_id`, `nmuban`, `nshop_cond`, `ntaskid`, `nnick_name`, `nhp`, `nmaxhp`, `nmp`, `nmaxmp`, `ngj`, `nfy`, `nimage`, `nop_target`, `ntask_target`, `ncreat_event_id`, `nlook_event_id`, `nattack_event_id`, `nwin_event_id`, `ndefeat_event_id`, `npet_event_id`, `nshop_event_id`, `nup_event_id`, `nheart_event_id`, `nminute_event_id`, `nmid`, `ncreat_time`, `ncid`, `nspeed`) VALUES
+(1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 366, '0000-00-00 00:00:00', 1569, 1),
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 367, '0000-00-00 00:00:00', 1571, 1),
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 368, '0000-00-00 00:00:00', 1573, 1),
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 368, '0000-00-00 00:00:00', 1572, 1),
@@ -5067,6 +5116,8 @@ INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkil
 (1, '旧街', 18, 0, 1, 0, 0, 0, 0, 0, 0, '泥泞元素怪', 0, 1, '', '一种因宇宙射线引起淤泥变异的元素生物，浑身散发着恶臭的泥土味。', '', '{r.8}+1', '', '25|{r.2}', 0, '2|1', '', '', '', '24,29', '', 50, 50, 10, 10, 10, 10, '', '', '', 0, 0, 0, 123, 0, 0, 0, 0, 0, 0, 230, '0000-00-00 00:00:00', 1895, 1),
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 371, '0000-00-00 00:00:00', 1579, 1),
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 370, '0000-00-00 00:00:00', 1577, 1),
+(1, '旧街', 51, 0, 1, 0, 0, 0, 0, 0, 0, '蓝蚊子', 0, 3, '母', '一到晚上，浑身身上就会发出幽蓝的亮光，很是梦幻，嗯，要是它们不冲过来吸干你的血的情况下。', '', '{r.50}', '', '29|{r.2}', 0, '3|2', '', '', '', '', '', 260, 260, 50, 50, 30, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 392, '0000-00-00 00:00:00', 1976, 1),
+(1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 367, '0000-00-00 00:00:00', 1975, 1),
 (1, '旧街', 51, 0, 1, 0, 0, 0, 0, 0, 0, '蓝蚊子', 0, 3, '母', '一到晚上，浑身身上就会发出幽蓝的亮光，很是梦幻，嗯，要是它们不冲过来吸干你的血的情况下。', '', '{r.50}', '', '29|{r.2}', 0, '3|2', '', '', '', '', '', 260, 260, 50, 50, 30, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 382, '0000-00-00 00:00:00', 1595, 1),
 (1, '旧街', 51, 0, 1, 0, 0, 0, 0, 0, 0, '蓝蚊子', 0, 3, '母', '一到晚上，浑身身上就会发出幽蓝的亮光，很是梦幻，嗯，要是它们不冲过来吸干你的血的情况下。', '', '{r.50}', '', '29|{r.2}', 0, '3|2', '', '', '', '', '', 260, 260, 50, 50, 30, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 382, '0000-00-00 00:00:00', 1594, 1),
 (1, '旧街', 51, 0, 1, 0, 0, 0, 0, 0, 0, '蓝蚊子', 0, 3, '母', '一到晚上，浑身身上就会发出幽蓝的亮光，很是梦幻，嗯，要是它们不冲过来吸干你的血的情况下。', '', '{r.50}', '', '29|{r.2}', 0, '3|2', '', '', '', '', '', 260, 260, 50, 50, 30, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 381, '0000-00-00 00:00:00', 1593, 1),
@@ -5100,11 +5151,17 @@ INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkil
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 397, '0000-00-00 00:00:00', 1618, 1),
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 398, '0000-00-00 00:00:00', 1623, 1),
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 398, '0000-00-00 00:00:00', 1622, 1),
+(1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 356, '0000-00-00 00:00:00', 1974, 1),
+(1, '旧街', 37, 0, 1, 1, 1, 0, 0, 0, 0, '变异黑耗子', 0, 2, '公', '这种耗子经过变异体型扩大了几倍，眼睛红到快要出血的样子。', '', '1', '', '24|{r.2}+1,16|1', 1, '3|5', '', '', '', '', '', 110, 110, 50, 50, 13, 10, '', '', '', 0, 0, 0, 0, 0, 125, 0, 0, 0, 0, 351, '0000-00-00 00:00:00', 1973, 3),
+(1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 365, '0000-00-00 00:00:00', 1972, 1),
+(1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 371, '0000-00-00 00:00:00', 1971, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 404, '0000-00-00 00:00:00', 1636, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 403, '0000-00-00 00:00:00', 1634, 1),
+(1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 371, '0000-00-00 00:00:00', 1970, 1),
 (1, '旧街', 51, 0, 1, 0, 0, 0, 0, 0, 0, '蓝蚊子', 0, 3, '母', '一到晚上，浑身身上就会发出幽蓝的亮光，很是梦幻，嗯，要是它们不冲过来吸干你的血的情况下。', '', '{r.50}', '', '29|{r.2}', 0, '3|2', '', '', '', '', '', 260, 260, 50, 50, 30, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 359, '0000-00-00 00:00:00', 1953, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 401, '0000-00-00 00:00:00', 1631, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 401, '0000-00-00 00:00:00', 1630, 1),
+(1, '旧街', 18, 0, 1, 0, 0, 0, 0, 0, 0, '泥泞元素怪', 0, 1, '', '一种因宇宙射线引起淤泥变异的元素生物，浑身散发着恶臭的泥土味。', '', '{r.8}+1', '', '25|{r.2}', 0, '2|1', '', '', '', '24,29', '', 50, 50, 10, 10, 10, 10, '', '', '', 0, 0, 0, 123, 0, 0, 0, 0, 0, 0, 230, '0000-00-00 00:00:00', 1980, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 403, '0000-00-00 00:00:00', 1633, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 404, '0000-00-00 00:00:00', 1635, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 417, '0000-00-00 00:00:00', 1658, 1),
@@ -5116,9 +5173,11 @@ INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkil
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 407, '0000-00-00 00:00:00', 1639, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 408, '0000-00-00 00:00:00', 1642, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 408, '0000-00-00 00:00:00', 1641, 1),
+(1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 416, '0000-00-00 00:00:00', 1978, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 409, '0000-00-00 00:00:00', 1644, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 409, '0000-00-00 00:00:00', 1643, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 410, '0000-00-00 00:00:00', 1645, 1),
+(1, '旧街', 18, 0, 1, 0, 0, 0, 0, 0, 0, '泥泞元素怪', 0, 1, '', '一种因宇宙射线引起淤泥变异的元素生物，浑身散发着恶臭的泥土味。', '', '{r.8}+1', '', '25|{r.2}', 0, '2|1', '', '', '', '24,29', '', 50, 50, 10, 10, 10, 10, '', '', '', 0, 0, 0, 123, 0, 0, 0, 0, 0, 0, 230, '0000-00-00 00:00:00', 1979, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 411, '0000-00-00 00:00:00', 1646, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 412, '0000-00-00 00:00:00', 1647, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 413, '0000-00-00 00:00:00', 1648, 1),
@@ -5197,6 +5256,7 @@ INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkil
 (1, '旧街', 46, 0, 0, 0, 0, 0, 0, 0, 0, '流民', 0, 1, '', '杂乱的服饰，头部被一些破布紧紧包住，分不清是男是女，看着你出现，对方吓了一跳。', '', '', '', '', 0, '', '', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '3', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 304, '0000-00-00 00:00:00', 1513, 1),
 (1, '旧街', 37, 0, 1, 1, 1, 0, 0, 0, 0, '变异黑耗子', 0, 2, '公', '这种耗子经过变异体型扩大了几倍，眼睛红到快要出血的样子。', '', '1', '', '24|{r.2}+1,16|1', 0, '3|5', '', '', '', '', '', 110, 110, 50, 50, 13, 10, '', '', '', 0, 0, 0, 0, 0, 125, 0, 0, 0, 0, 347, '0000-00-00 00:00:00', 1528, 1),
 (1, '旧街', 57, 0, 1, 0, 0, 0, 0, 0, 0, '红色乌鸦', 0, 4, '', '这只乌鸦全身的毛毛是瘆人的血色，但奇怪的是翅膀上有几根紫色的羽毛，它丶叫声异常的凄厉。', '', '', '', '30|{r.2}+1', 0, '3|2', '', '', '', '', '', 300, 300, 160, 160, 40, 8, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 398, '0000-00-00 00:00:00', 1621, 1),
+(1, '旧街', 51, 0, 1, 0, 0, 0, 0, 0, 0, '蓝蚊子', 0, 3, '母', '一到晚上，浑身身上就会发出幽蓝的亮光，很是梦幻，嗯，要是它们不冲过来吸干你的血的情况下。', '', '{r.50}', '', '29|{r.2}', 0, '3|2', '', '', '', '', '', 260, 260, 50, 50, 30, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 392, '0000-00-00 00:00:00', 1977, 1),
 (3, '未来城', 103, 0, 0, 0, 0, 0, 0, 0, 0, 'FCPD警员', 0, 20, '男', 'FCPD的初级警员，全副武装，戒备森严。', '兵器_3_20,防具_5_69,防具_7_71', '', '', '', 0, '', '', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 726, '0000-00-00 00:00:00', 1411, 1),
 (3, '未来城', 103, 0, 0, 0, 0, 0, 0, 0, 0, 'FCPD警员', 0, 20, '男', 'FCPD的初级警员，全副武装，戒备森严。', '兵器_3_20,防具_5_69,防具_7_71', '', '', '', 0, '', '', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 726, '0000-00-00 00:00:00', 1412, 1),
 (3, '未来城', 103, 0, 0, 0, 0, 0, 0, 0, 0, 'FCPD警员', 0, 20, '男', 'FCPD的初级警员，全副武装，戒备森严。', '兵器_3_20,防具_5_69,防具_7_71', '', '', '', 0, '', '', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 726, '0000-00-00 00:00:00', 1413, 1),
@@ -5238,7 +5298,8 @@ INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkil
 (1, '旧街', 46, 0, 0, 0, 0, 0, 0, 0, 0, '流民', 0, 1, '', '杂乱的服饰，头部被一些破布紧紧包住，分不清是男是女，看着你出现，对方吓了一跳。', '', '', '', '', 0, '', '', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '3', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 304, '0000-00-00 00:00:00', 1832, 1),
 (0, '未分区', 81, 0, 1, 0, 0, 0, 0, 0, 0, '梦魇成长体', 0, 7, '无', '无尽的黑暗正在眼前上演，中间有一团邪恶的气息。', '', '', '', '', 0, '5|1', '', '', '', '', '', 777, 777, 0, 0, 70, 17, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 677, '0000-00-00 00:00:00', 1834, 1),
 (1, '旧街', 46, 0, 0, 0, 0, 0, 0, 0, 0, '流民', 0, 1, '', '杂乱的服饰，头部被一些破布紧紧包住，分不清是男是女，看着你出现，对方吓了一跳。', '', '', '', '', 0, '', '', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '3', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 314, '0000-00-00 00:00:00', 1835, 1),
-(0, '未分区', 48, 0, 1, 1, 0, 1, 0, 0, 0, '测试木桩你好', 0, 10, '', '你好。', '防具_4_7,防具_5_22,兵器_1_125', '', '', '2|1', 0, '', '', '', '', '', '', 19980925, 19980925, 19980925, 19980925, 1, 10, '', '', '', 195, 0, 0, 0, 0, 0, 0, 0, 0, 0, 274, '0000-00-00 00:00:00', 1950, 4),
+(0, '未分区', 48, 0, 1, 1, 0, 1, 0, 0, 0, '测试木桩你好', 0, 10, '', '你好。', '防具_4_7,防具_5_22,兵器_1_125', '', '', '2|1', 0, '', '', '', '', '', '', 19980925, 19980925, 19980925, 19980925, 1, 10, '', '', '', 195, 0, 0, 0, 0, 0, 0, 0, 0, 0, 274, '0000-00-00 00:00:00', 1950, 4);
+INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkill`, `nnot_dead`, `nchuck`, `nrefresh_time`, `nshop`, `nhock_shop`, `naccept_give`, `nname`, `nexp`, `nlvl`, `nsex`, `ndesc`, `nequips`, `ndrop_exp`, `ndrop_money`, `ndrop_item`, `ndrop_item_type`, `nskills`, `nshop_item_id`, `nmuban`, `nshop_cond`, `ntaskid`, `nnick_name`, `nhp`, `nmaxhp`, `nmp`, `nmaxmp`, `ngj`, `nfy`, `nimage`, `nop_target`, `ntask_target`, `ncreat_event_id`, `nlook_event_id`, `nattack_event_id`, `nwin_event_id`, `ndefeat_event_id`, `npet_event_id`, `nshop_event_id`, `nup_event_id`, `nheart_event_id`, `nminute_event_id`, `nmid`, `ncreat_time`, `ncid`, `nspeed`) VALUES
 (1, '旧街', 18, 0, 1, 0, 0, 0, 0, 0, 0, '泥泞元素怪', 0, 1, '', '一种因宇宙射线引起淤泥变异的元素生物，浑身散发着恶臭的泥土味。', '', '{r.8}+1', '', '25|{r.2}', 0, '2|1', '', '', '', '24,29', '', 50, 50, 10, 10, 10, 10, '', '', '', 0, 0, 0, 123, 0, 0, 0, 0, 0, 0, 630, '0000-00-00 00:00:00', 1880, 1),
 (1, '旧街', 46, 0, 0, 0, 0, 0, 0, 0, 0, '流民', 0, 1, '', '杂乱的服饰，头部被一些破布紧紧包住，分不清是男是女，看着你出现，对方吓了一跳。', '', '', '', '', 0, '', '', '', '', '', '', 100, 100, 0, 0, 1, 1, '', '3', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 228, '0000-00-00 00:00:00', 1881, 1),
 (1, '旧街', 51, 0, 1, 0, 0, 0, 0, 0, 0, '蓝蚊子', 0, 3, '母', '一到晚上，浑身身上就会发出幽蓝的亮光，很是梦幻，嗯，要是它们不冲过来吸干你的血的情况下。', '', '{r.50}', '', '29|{r.2}', 0, '3|2', '', '', '', '', '', 260, 260, 50, 50, 30, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 357, '0000-00-00 00:00:00', 1882, 1),
@@ -5250,8 +5311,7 @@ INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkil
 (1, '旧街', 18, 0, 1, 0, 0, 0, 0, 0, 0, '泥泞元素怪', 0, 1, '', '一种因宇宙射线引起淤泥变异的元素生物，浑身散发着恶臭的泥土味。', '', '{r.8}+1', '', '25|{r.2}', 0, '2|1', '', '', '', '24,29', '', 50, 50, 10, 10, 10, 10, '', '', '', 0, 0, 0, 123, 0, 0, 0, 0, 0, 0, 230, '0000-00-00 00:00:00', 1899, 1),
 (1, '旧街', 55, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼', 0, 4, '公', '一头灰狼，经历某种不知名突变，尾巴颜色带上了一点淡淡的蓝光。', '', '{r.100}', '', '', 0, '3|2,2|1', '', '', '', '', '', 380, 380, 120, 120, 35, 10, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 350, '0000-00-00 00:00:00', 1900, 1),
 (1, '旧街', 37, 0, 1, 1, 1, 0, 0, 0, 0, '变异黑耗子', 0, 2, '公', '这种耗子经过变异体型扩大了几倍，眼睛红到快要出血的样子。', '', '1', '', '24|{r.2}+1,16|1', 1, '3|5', '', '', '', '', '', 110, 110, 50, 50, 13, 10, '', '', '', 0, 0, 0, 0, 0, 125, 0, 0, 0, 0, 571, '0000-00-00 00:00:00', 1901, 1),
-(23, '迷雾森林', 65, 0, 1, 0, 0, 0, 0, 0, 0, '狂暴野猪', 0, 7, '公', '这头野猪的獠牙很长，是暗红色的，毛发是棕色的，眼睛猩红，浑身透露着一股杀意。', '', '{r.100}', '', '140|{r.2}', 0, '2|3,3|3', '', '', '', '', '', 720, 720, 310, 310, 65, 25, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 591, '0000-00-00 00:00:00', 1902, 1);
-INSERT INTO `system_npc_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkill`, `nnot_dead`, `nchuck`, `nrefresh_time`, `nshop`, `nhock_shop`, `naccept_give`, `nname`, `nexp`, `nlvl`, `nsex`, `ndesc`, `nequips`, `ndrop_exp`, `ndrop_money`, `ndrop_item`, `ndrop_item_type`, `nskills`, `nshop_item_id`, `nmuban`, `nshop_cond`, `ntaskid`, `nnick_name`, `nhp`, `nmaxhp`, `nmp`, `nmaxmp`, `ngj`, `nfy`, `nimage`, `nop_target`, `ntask_target`, `ncreat_event_id`, `nlook_event_id`, `nattack_event_id`, `nwin_event_id`, `ndefeat_event_id`, `npet_event_id`, `nshop_event_id`, `nup_event_id`, `nheart_event_id`, `nminute_event_id`, `nmid`, `ncreat_time`, `ncid`, `nspeed`) VALUES
+(23, '迷雾森林', 65, 0, 1, 0, 0, 0, 0, 0, 0, '狂暴野猪', 0, 7, '公', '这头野猪的獠牙很长，是暗红色的，毛发是棕色的，眼睛猩红，浑身透露着一股杀意。', '', '{r.100}', '', '140|{r.2}', 0, '2|3,3|3', '', '', '', '', '', 720, 720, 310, 310, 65, 25, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 591, '0000-00-00 00:00:00', 1902, 1),
 (23, '迷雾森林', 65, 0, 1, 0, 0, 0, 0, 0, 0, '狂暴野猪', 0, 7, '公', '这头野猪的獠牙很长，是暗红色的，毛发是棕色的，眼睛猩红，浑身透露着一股杀意。', '', '{r.100}', '', '140|{r.2}', 0, '2|3,3|3', '', '', '', '', '', 720, 720, 310, 310, 65, 25, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 591, '0000-00-00 00:00:00', 1903, 1),
 (23, '迷雾森林', 65, 0, 1, 0, 0, 0, 0, 0, 0, '狂暴野猪', 0, 7, '公', '这头野猪的獠牙很长，是暗红色的，毛发是棕色的，眼睛猩红，浑身透露着一股杀意。', '', '{r.100}', '', '140|{r.2}', 0, '2|3,3|3', '', '', '', '', '', 720, 720, 310, 310, 65, 25, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 591, '0000-00-00 00:00:00', 1904, 1),
 (23, '迷雾森林', 64, 0, 1, 0, 0, 0, 0, 0, 0, '变异棕熊', 0, 6, '公', '这是一头经过变异的棕熊，身上的毛发像针一样竖了起来，双眼是恶狠狠的红色。', '', '{r.100}', '', '139|{r.2}', 0, '3|2,2|1', '', '', '', '', '', 660, 660, 220, 220, 55, 35, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 593, '0000-00-00 00:00:00', 1905, 1),
@@ -5400,7 +5460,7 @@ CREATE TABLE `system_pet_scene` (
 --
 
 INSERT INTO `system_pet_scene` (`narea_id`, `narea_name`, `nid`, `nstate`, `nkill`, `nnot_dead`, `nchuck`, `nrefresh_time`, `nshop`, `nhock_shop`, `naccept_give`, `nname`, `nexp`, `nlvl`, `nsex`, `ndesc`, `nequips`, `ndrop_exp`, `ndrop_money`, `ndrop_item`, `ndrop_item_type`, `nskills`, `nshop_item_id`, `nmuban`, `nshop_cond`, `ntaskid`, `nnick_name`, `nhp`, `nmaxhp`, `nmp`, `nmaxmp`, `ngj`, `nfy`, `nimage`, `nop_target`, `ntask_target`, `ncreat_event_id`, `nlook_event_id`, `nattack_event_id`, `nwin_event_id`, `ndefeat_event_id`, `npet_event_id`, `nshop_event_id`, `nup_event_id`, `nheart_event_id`, `nminute_event_id`, `nmid`, `ncreat_time`, `nsid`, `npid`, `nspeed`) VALUES
-(1, '旧街', 56, 0, 1, 0, 1, 0, 0, 0, 0, '变异灰狼王', 0, 10, '母', '一头母灰狼，体型比一般灰狼更大，经历某种不知名突变，尾巴颜色带上了一点淡淡的红光。', '', '', '', '', 0, '3|2', '', '', '', '', '', 1000, 1000, 189, 350, 60, 30, '', '', '', 0, 0, 0, 0, 0, 146, 0, 0, 0, 0, 274, '0000-00-00 00:00:00', '959c9277a3e15eacff9e5f117e51f5bb', 60, 3),
+(1, '旧街', 56, 0, 1, 0, 1, 0, 0, 0, 0, '变异灰狼王', 0, 10, '母', '一头母灰狼，体型比一般灰狼更大，经历某种不知名突变，尾巴颜色带上了一点淡淡的红光。', '', '', '', '', 0, '3|2', '', '', '', '', '', 1000, 1000, 189, 350, 60, 30, '', '', '', 0, 0, 0, 0, 0, 146, 0, 0, 0, 0, 523, '0000-00-00 00:00:00', '959c9277a3e15eacff9e5f117e51f5bb', 60, 3),
 (1, '旧街', 56, 0, 1, 0, 0, 0, 0, 0, 0, '变异灰狼王', 0, 10, '母', '一头母灰狼，体型比一般灰狼更大，经历某种不知名突变，尾巴颜色带上了一点淡淡的红光。', '', '', '', '', 0, '3|2', '', '', '', '', '', 1000, 1000, 186, 350, 60, 30, '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 274, '0000-00-00 00:00:00', '959c9277a3e15eacff9e5f117e51f5bb', 55, 5);
 
 -- --------------------------------------------------------
@@ -5446,7 +5506,8 @@ INSERT INTO `system_photo` (`id`, `name`, `type`, `photo_url`, `photo_style`, `f
 ('item001_mobileterminal', 'KM的便捷终端机', '希望镇重要物品', 'images/希望镇重要物品/希望镇重要物品-item001_mobileterminal-KM的便捷终端机.jpeg', 'height: 4em', 'jpeg'),
 ('npc001_bicuisi', '碧翠丝', '希望镇NPC', 'images/希望镇NPC/希望镇NPC-npc001_bicuisi-碧翠丝.webp', 'height: 4em', 'webp'),
 ('player_1', '玩家1', '玩家形象照', 'images/玩家形象照/玩家形象照-player_1-玩家1.png', 'height: 128px;width: 128px', 'png'),
-('player_46', '玩家46', '玩家形象照', 'images/玩家形象照/玩家形象照-player_46-玩家46.jpeg', 'height: 128px;width: 128px', 'jpeg');
+('player_46', '玩家46', '玩家形象照', 'images/玩家形象照/玩家形象照-player_46-玩家46.jpeg', 'height: 128px;width: 128px', 'jpeg'),
+('player_8', '玩家8', '玩家形象照', 'images/玩家形象照/玩家形象照-player_8-玩家8.jpg', 'height: 128px;width: 128px', 'jpg');
 
 -- --------------------------------------------------------
 
@@ -5473,7 +5534,7 @@ INSERT INTO `system_photo_type` (`name`, `contains`) VALUES
 ('希望镇NPC', '5'),
 ('宁静森林NPC', '1'),
 ('希望镇重要物品', '3'),
-('玩家形象照', '2');
+('玩家形象照', '3');
 
 -- --------------------------------------------------------
 
@@ -5586,7 +5647,7 @@ CREATE TABLE `system_player_boat` (
 --
 
 INSERT INTO `system_player_boat` (`sid`, `boat_name`, `boat_cons`, `boat_distance`, `boat_speed`, `boat_begin_id`, `boat_over_id`, `boat_durable`, `boat_max_durable`) VALUES
-('959c9277a3e15eacff9e5f117e51f5bb', '飞翔的荷兰人号', 200, 0, 255, 444, 342, 200, 200);
+('959c9277a3e15eacff9e5f117e51f5bb', '飞翔的荷兰人号', 200, 0, 255, 340, 476, 200, 200);
 
 -- --------------------------------------------------------
 
@@ -5795,7 +5856,7 @@ CREATE TABLE `system_self_define_module` (
 --
 
 INSERT INTO `system_self_define_module` (`pos`, `id`, `name`, `call_sum`, `not_return`) VALUES
-(1, 'test', '签到', 5, 0),
+(1, 'test', '签到', 1, 0),
 (2, 'tent', '旧街帐篷', 48, 0),
 (3, 'HW003', '希望镇露天浴场终端', 94, 0),
 (4, 'bounty_01', '歌尔特日常悬赏', 2, 0),
@@ -5803,7 +5864,7 @@ INSERT INTO `system_self_define_module` (`pos`, `id`, `name`, `call_sum`, `not_r
 (6, 'vip', 'vip界面', 0, 0),
 (7, 'future_prison', '未来城囚牢终端', 30, 0),
 (8, 'vehicle', '海陆空载具', 46, 0),
-(9, 'szcs', '数组测试', 0, 0);
+(9, 'szcs', '数组测试', 16, 0);
 
 -- --------------------------------------------------------
 
@@ -5932,7 +5993,8 @@ INSERT INTO `system_skill_user` (`jsid`, `jid`, `jlvl`, `jpoint`, `jdefault`, `j
 ('11949d9ce6df5a06a3377325c71c7c4f', 1, 1, 0, 0, 0),
 ('f3c4859c79f6f34ac79072571744bf8e', 1, 1, 0, 0, 0),
 ('79ca852ae3c34e005ba8db7ca9f2429e', 1, 1, 0, 0, 0),
-('959c9277a3e15eacff9e5f117e51f5bb', 7, 1, 0, 1, 0);
+('959c9277a3e15eacff9e5f117e51f5bb', 7, 1, 0, 1, 0),
+('0732ec1c98e6496b097d7bee1482d96d', 1, 1, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -6130,6 +6192,7 @@ INSERT INTO `system_task_user` (`tid`, `sid`, `tnowcount`, `tstate`) VALUES
 (1, '98c50608a11ec800fba8b2d0b7294aeb', '25|0', 1),
 (18, '959c9277a3e15eacff9e5f117e51f5bb', '144|1,145|1,146|1', 2),
 (1, '269d6f1d2272bf0f3af7633340052a03', '25|0', 1),
+(1, '0732ec1c98e6496b097d7bee1482d96d', '25|0', 1),
 (7, '4e792f072d10eb2f6addd8d04cf5cbe8', '30|5', 2),
 (6, '4e792f072d10eb2f6addd8d04cf5cbe8', '', 2),
 (5, '4e792f072d10eb2f6addd8d04cf5cbe8', '29|0', 1),
@@ -6247,7 +6310,8 @@ INSERT INTO `userinfo` (`username`, `userpass`, `token`, `sid`, `designer`) VALU
 ('xiaolei', 'xiaolei123', 'bc3006729315b7585b27d81bf0274990', NULL, 0),
 ('396823203', '396823203', '9a5cf8228a277c9c78d3d1d96ba9634a', NULL, 0),
 ('qq12345', 'qq12345', '3b6fff6a88c3fab2b21212dc1b5676c3', NULL, 0),
-('quwanme', 'quwanme', '2a7ecdd538729a8426a01968c38fa3fd', NULL, 0);
+('quwanme', 'quwanme', '2a7ecdd538729a8426a01968c38fa3fd', NULL, 0),
+('tiger123', 'tiger123456', '0515e74c53238527a0984ec7d0c2b40e', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -6726,7 +6790,7 @@ ALTER TABLE `forum_text`
 -- 使用表AUTO_INCREMENT `game1`
 --
 ALTER TABLE `game1`
-  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- 使用表AUTO_INCREMENT `game_equip_detail_page`
@@ -6792,7 +6856,7 @@ ALTER TABLE `game_pve_page`
 -- 使用表AUTO_INCREMENT `game_scene_page`
 --
 ALTER TABLE `game_scene_page`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- 使用表AUTO_INCREMENT `game_self_page_bounty_01`
@@ -6822,7 +6886,7 @@ ALTER TABLE `game_self_page_HW003`
 -- 使用表AUTO_INCREMENT `game_self_page_szcs`
 --
 ALTER TABLE `game_self_page_szcs`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- 使用表AUTO_INCREMENT `game_self_page_tent`
@@ -6876,7 +6940,7 @@ ALTER TABLE `system_auc_data`
 -- 使用表AUTO_INCREMENT `system_chat_data`
 --
 ALTER TABLE `system_chat_data`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1740;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1759;
 
 --
 -- 使用表AUTO_INCREMENT `system_clan_list`
@@ -6900,7 +6964,7 @@ ALTER TABLE `system_equip_def`
 -- 使用表AUTO_INCREMENT `system_equip_user`
 --
 ALTER TABLE `system_equip_user`
-  MODIFY `eqid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '源id', AUTO_INCREMENT=244;
+  MODIFY `eqid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '源id', AUTO_INCREMENT=245;
 
 --
 -- 使用表AUTO_INCREMENT `system_event`
@@ -6924,7 +6988,7 @@ ALTER TABLE `system_fb`
 -- 使用表AUTO_INCREMENT `system_item`
 --
 ALTER TABLE `system_item`
-  MODIFY `item_true_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=561;
+  MODIFY `item_true_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=564;
 
 --
 -- 使用表AUTO_INCREMENT `system_item_module`
@@ -6972,13 +7036,13 @@ ALTER TABLE `system_npc_drop_list`
 -- 使用表AUTO_INCREMENT `system_npc_midguaiwu`
 --
 ALTER TABLE `system_npc_midguaiwu`
-  MODIFY `ngid` int(11) NOT NULL AUTO_INCREMENT COMMENT '怪物id主键', AUTO_INCREMENT=4062;
+  MODIFY `ngid` int(11) NOT NULL AUTO_INCREMENT COMMENT '怪物id主键', AUTO_INCREMENT=4066;
 
 --
 -- 使用表AUTO_INCREMENT `system_npc_scene`
 --
 ALTER TABLE `system_npc_scene`
-  MODIFY `ncid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1969;
+  MODIFY `ncid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1981;
 
 --
 -- 使用表AUTO_INCREMENT `system_oplayer`

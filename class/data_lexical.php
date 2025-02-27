@@ -73,6 +73,62 @@ foreach ($keyValuePairs as $pair) {
         $check_cache = \gm\check_redis($db,$ele_1,$sid,$oid,$mid,$jid,$type,$para);
         }
         //$parts = explode(".", $ele_1);
+
+        if(!is_numeric($ele_2)){
+        if($can_redis == 1){
+        $redis->del($check_cache);
+        }
+        $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
+        @$ele_2 = eval("return $ele_2;");
+        $ele_2 = str_replace(array("'", "\""), '', $ele_2);
+        }else{
+            if($can_redis == 1){
+            $redis->set($check_cache,$ele_2);
+            }
+            
+        }
+
+        
+        if(preg_match('/pusharr.\(([\w.]+)\)/', $ele_1, $matches)){
+            $new_recur_1 = $matches[1];
+            $try_recur = '{'.$new_recur_1.'}'; // 匹配到的前缀部分（数字加点号)
+            $try_recur_value = lexical_analysis\process_string($try_recur,$sid,$oid,$mid);
+            $try_recur_value = str_replace("'",'', $try_recur_value);
+            if($try_recur_value){
+            $new_recur = $new_recur_1.'="'.$try_recur_value.'|'.$ele_2.'"';
+            }else{
+            $new_recur = $new_recur_1.'='.$ele_2;
+            }
+            attrsetting($new_recur,$sid,$oid,$mid,$para);
+            return;
+            }
+
+        if(preg_match('/delarr.\(([\w.]+)\)/', $ele_1, $matches)){
+            $new_recur_1 = $matches[1];
+            $try_recur = '{'.$new_recur_1.'}'; // 匹配到的前缀部分（数字加点号)
+            $try_recur_value = lexical_analysis\process_string($try_recur,$sid,$oid,$mid);
+            $try_recur_value = str_replace("'",'', $try_recur_value);
+            $temp_arr = explode('|',$try_recur_value);
+            $arr_count = count($temp_arr);
+            $to_count = $ele_2-1;
+            if($to_count <$arr_count&&$to_count >=0){
+            unset($temp_arr[$to_count]);
+            $temp_arr = implode('|',$temp_arr);
+            }else{
+                echo "数组元素不存在！<br/>";
+                return;
+            }
+            
+            if($temp_arr){
+            $new_recur = $new_recur_1.'="'.$temp_arr.'"';
+            }else{
+            $new_recur = $new_recur_1.'=""';
+            }
+            attrsetting($new_recur,$sid,$oid,$mid,$para);
+            return;
+            }
+
+
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
             $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
@@ -110,21 +166,6 @@ foreach ($keyValuePairs as $pair) {
         //     } else {
         //     echo "无法匹配到小数点 '.'<br/>";
         //     }
-        if(!is_numeric($ele_2)){
-        if($can_redis == 1){
-        $redis->del($check_cache);
-        }
-        $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
-        @$ele_2 = eval("return $ele_2;");
-        $ele_2 = str_replace(array("'", "\""), '', $ele_2);
-        }else{
-            if($can_redis == 1){
-            $redis->set($check_cache,$ele_2);
-            }
-            
-        }
-
-        
         switch ($ele_1_1) {
             case 'u':
                 if(strpos($ele_1_2, "c_msg") === 0){

@@ -356,3 +356,5 @@ gphn属性说明：{gphn.武力榜.0.id}:表示武力榜的第1个玩家id，{gp
 数组值获取：{getarr(第几个,v(g.test_name))}，比如g.test_name = "轩辕|秋梦|梦浅"，g.qd_daily = "1|2|3|4"，{getarr(1,v(g.test_name))}，这将返回轩辕
 数组内元素个数获取：{count(g.qd_fanwei)}，或者{eval(count(g.qd_fanwei))}
 获取数组末尾元素：{end(g.qd_fanwei)}，或者{eval(end(g.qd_fanwei))}
+往数组末尾添加元素：任意事件设置属性：pusharr.(x.xxx) = 你要插入的值
+移除数组中第n个的元素（注：从1开始）：delarr.(x.xxx) = 元素在数组中的位置
