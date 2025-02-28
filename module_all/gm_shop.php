@@ -8,6 +8,7 @@ if($_POST['iid']){
     if($player->umoney >=($_POST['count'])*($_POST['item_value'])&&$player_last_burthen >=$item_total_weight){
         $total = ($_POST['count'])*($_POST['item_value']);
         $item_name = \player\getitem($_POST['iid'],$dblj)->iname;
+        $item_name = \lexical_analysis\color_string($item_name);
         \player\additem($sid,$_POST['iid'],$_POST['count'],$dblj);
         $sql = "update game1 set umoney = umoney -  '$total' where sid = '$sid' ";
         $dblj->exec($sql);
@@ -31,6 +32,7 @@ if($canshu == 'buy'){
     if($player->umoney >=($count)*($item_value)&&$player_last_burthen >=$item_total_weight){
         $total = ($count)*($item_value);
         $item_name = \player\getitem($iid,$dblj)->iname;
+        $item_name = \lexical_analysis\color_string($item_name);
         \player\additem($sid,$iid,$count,$dblj);
         $sql = "update game1 set umoney = umoney -  '$total' where sid = '$sid' ";
         $dblj->exec($sql);

@@ -785,7 +785,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_10_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_10_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_10_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_10_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_10_4">添加链接元素</a><br/>
+<a href="fight_test">模拟战斗动画</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 11) {
 $encode = new \encode\encode();

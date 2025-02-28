@@ -115,6 +115,7 @@ HTML;
 }
 $npc_add = $encode->encode("cmd=gm_npc_second&npc_add_canshu=1&qy_id=$qy_id&qy_name=$qy_name&sid=$sid");
 $npc_data_out = $encode->encode("cmd=gm_npc_second&out_canshu=1&qy_id=$qy_id&qy_name=$qy_name&sid=$sid");
+$npc_data_in = $encode->encode("cmd=gm_npc_second&in_canshu=1&qy_id=$qy_id&qy_name=$qy_name&sid=$sid");
 if ($currentPage > 2) {
     $main_page = $encode->encode("cmd=gm_npc_first&qy_id=$qy_id&post_canshu=1&list_page=1&sid=$sid");
     $page_html .=<<<HTML
@@ -150,6 +151,7 @@ if($totalPages >1){
 
 $allmap = <<<HTML
 <a href="?cmd=$npc_data_out" >导出{$qy_name}的npc->excel</a><br/>
+<a href="?cmd=$npc_data_in" >导入{$qy_name}的npc<-excel</a><br/>
 [电脑人物设计]<br/>
 {$qy_name}(a$qy_id)区域下的npc：<br/>
 {$npc_html}

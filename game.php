@@ -1658,6 +1658,8 @@ echo $refresh_html;
                 $ym = 'gm/gamenpc_design.php';
             }elseif($out_canshu ==1){
             $ym = 'gm/gm_npc_design/npc_data_out.php';
+            }elseif($in_canshu ==1){
+            $ym = 'gm/gm_npc_design/npc_data_in.php';
             }else{
             $ym = 'gm/gm_npc_design/gm_npc_first.php';
             }
@@ -1739,8 +1741,10 @@ echo $refresh_html;
             $ym = 'gm/gamepagemodule_define.php';
             break;
         case 'gm_game_itemdefine'://物品设计
-            if($gm_post_canshu=="导出"){
+            if($gm_post_canshu=='导出'){
             $ym = 'gm/gm_item_design/gm_item_outside.php';
+            }elseif($gm_post_canshu =='导入'){
+            $ym = 'gm/gm_item_design/gm_item_in.php';
             }else{
             $ym = 'gm/gameitem_design.php';
             }
