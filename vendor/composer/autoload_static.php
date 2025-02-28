@@ -8,22 +8,12 @@ class ComposerStaticInitfe69f7a09abff127e59ac3ee20567245
 {
     public static $files = array (
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         'c4e03ecd470d2a87804979c0a8152284' => __DIR__ . '/..' . '/react/async/src/functions_include.php',
         'cea474b4340aa9fa53661e887a21a316' => __DIR__ . '/..' . '/react/promise-stream/src/functions_include.php',
         '972fda704d680a3a53c68e34e193cb22' => __DIR__ . '/..' . '/react/promise-timer/src/functions_include.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'Z' => 
-        array (
-            'ZipStream\\' => 10,
-        ),
-        'S' => 
-        array (
-            'Symfony\\Polyfill\\Mbstring\\' => 26,
-        ),
         'R' => 
         array (
             'React\\Stream\\' => 13,
@@ -40,13 +30,7 @@ class ComposerStaticInitfe69f7a09abff127e59ac3ee20567245
         array (
             'Psr\\SimpleCache\\' => 16,
             'Psr\\Http\\Message\\' => 17,
-            'Psr\\Http\\Client\\' => 16,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
-        ),
-        'M' => 
-        array (
-            'MyCLabs\\Enum\\' => 13,
-            'Matrix\\' => 7,
         ),
         'F' => 
         array (
@@ -56,21 +40,9 @@ class ComposerStaticInitfe69f7a09abff127e59ac3ee20567245
         array (
             'Evenement\\' => 10,
         ),
-        'C' => 
-        array (
-            'Complex\\' => 8,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'ZipStream\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
-        ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
-        ),
         'React\\Stream\\' => 
         array (
             0 => __DIR__ . '/..' . '/react/stream/src',
@@ -113,24 +85,11 @@ class ComposerStaticInitfe69f7a09abff127e59ac3ee20567245
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
-        ),
-        'Psr\\Http\\Client\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/http-client/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
-        ),
-        'MyCLabs\\Enum\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
-        ),
-        'Matrix\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
         ),
         'Fig\\Http\\Message\\' => 
         array (
@@ -140,25 +99,10 @@ class ComposerStaticInitfe69f7a09abff127e59ac3ee20567245
         array (
             0 => __DIR__ . '/..' . '/evenement/evenement/src',
         ),
-        'Complex\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
-        ),
-    );
-
-    public static $prefixesPsr0 = array (
-        'H' => 
-        array (
-            'HTMLPurifier' => 
-            array (
-                0 => __DIR__ . '/..' . '/ezyang/htmlpurifier/library',
-            ),
-        ),
     );
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -166,7 +110,6 @@ class ComposerStaticInitfe69f7a09abff127e59ac3ee20567245
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitfe69f7a09abff127e59ac3ee20567245::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitfe69f7a09abff127e59ac3ee20567245::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitfe69f7a09abff127e59ac3ee20567245::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitfe69f7a09abff127e59ac3ee20567245::$classMap;
 
         }, null, ClassLoader::class);

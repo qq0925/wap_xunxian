@@ -42,14 +42,14 @@ class BIFFwriter
     /**
      * The byte order of this architecture. 0 => little endian, 1 => big endian.
      *
-     * @var ?int
+     * @var int
      */
     private static $byteOrder;
 
     /**
      * The string containing the data of the BIFF stream.
      *
-     * @var null|string
+     * @var string
      */
     public $_data;
 
@@ -109,7 +109,7 @@ class BIFFwriter
      *
      * @param string $data binary data to append
      */
-    protected function append($data): void
+    protected function append($data)
     {
         if (strlen($data) - 4 > $this->limit) {
             $data = $this->addContinue($data);
@@ -142,7 +142,7 @@ class BIFFwriter
      * @param int $type type of BIFF file to write: 0x0005 Workbook,
      *                       0x0010 Worksheet
      */
-    protected function storeBof($type): void
+    protected function storeBof($type)
     {
         $record = 0x0809; // Record identifier    (BIFF5-BIFF8)
         $length = 0x0010;
@@ -163,7 +163,7 @@ class BIFFwriter
     /**
      * Writes Excel EOF record to indicate the end of a BIFF stream.
      */
-    protected function storeEof(): void
+    protected function storeEof()
     {
         $record = 0x000A; // Record identifier
         $length = 0x0000; // Number of bytes to follow
@@ -175,7 +175,7 @@ class BIFFwriter
     /**
      * Writes Excel EOF record to indicate the end of a BIFF stream.
      */
-    public function writeEof(): string
+    public function writeEof()
     {
         $record = 0x000A; // Record identifier
         $length = 0x0000; // Number of bytes to follow

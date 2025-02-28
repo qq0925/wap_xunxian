@@ -18,7 +18,7 @@ class Legend
     const POSITION_TOP = 't';
     const POSITION_TOPRIGHT = 'tr';
 
-    const POSITION_XLREF = [
+    private static $positionXLref = [
         self::XL_LEGEND_POSITION_BOTTOM => self::POSITION_BOTTOM,
         self::XL_LEGEND_POSITION_CORNER => self::POSITION_TOPRIGHT,
         self::XL_LEGEND_POSITION_CUSTOM => '??',
@@ -44,38 +44,22 @@ class Legend
     /**
      * Legend Layout.
      *
-     * @var ?Layout
+     * @var Layout
      */
     private $layout;
-
-    /** @var GridLines */
-    private $borderLines;
-
-    /** @var ChartColor */
-    private $fillColor;
-
-    /** @var ?AxisText */
-    private $legendText;
 
     /**
      * Create a new Legend.
      *
      * @param string $position
-     * @param ?Layout $layout
+     * @param null|Layout $layout
      * @param bool $overlay
      */
-    public function __construct($position = self::POSITION_RIGHT, ?Layout $layout = null, $overlay = false)
+    public function __construct($position = self::POSITION_RIGHT, Layout $layout = null, $overlay = false)
     {
         $this->setPosition($position);
         $this->layout = $layout;
         $this->setOverlay($overlay);
-        $this->borderLines = new GridLines();
-        $this->fillColor = new ChartColor();
-    }
-
-    public function getFillColor(): ChartColor
-    {
-        return $this->fillColor;
     }
 
     /**
@@ -97,7 +81,7 @@ class Legend
      */
     public function setPosition($position)
     {
-        if (!in_array($position, self::POSITION_XLREF)) {
+        if (!in_array($position, self::$positionXLref)) {
             return false;
         }
 
@@ -109,12 +93,11 @@ class Legend
     /**
      * Get legend position as an Excel internal numeric value.
      *
-     * @return false|int
+     * @return int
      */
     public function getPositionXL()
     {
-        // Scrutinizer thinks the following could return string. It is wrong.
-        return array_search($this->position, self::POSITION_XLREF);
+        return array_search($this->position, self::$positionXLref);
     }
 
     /**
@@ -126,11 +109,11 @@ class Legend
      */
     public function setPositionXL($positionXL)
     {
-        if (!isset(self::POSITION_XLREF[$positionXL])) {
+        if (!isset(self::$positionXLref[$positionXL])) {
             return false;
         }
 
-        $this->position = self::POSITION_XLREF[$positionXL];
+        $this->position = self::$positionXLref[$positionXL];
 
         return true;
     }
@@ -149,43 +132,27 @@ class Legend
      * Set allow overlay of other elements?
      *
      * @param bool $overlay
+     *
+     * @return bool
      */
-    public function setOverlay($overlay): void
+    public function setOverlay($overlay)
     {
+        if (!is_bool($overlay)) {
+            return false;
+        }
+
         $this->overlay = $overlay;
+
+        return true;
     }
 
     /**
      * Get Layout.
      *
-     * @return ?Layout
+     * @return Layout
      */
     public function getLayout()
     {
         return $this->layout;
-    }
-
-    public function getLegendText(): ?AxisText
-    {
-        return $this->legendText;
-    }
-
-    public function setLegendText(?AxisText $legendText): self
-    {
-        $this->legendText = $legendText;
-
-        return $this;
-    }
-
-    public function getBorderLines(): GridLines
-    {
-        return $this->borderLines;
-    }
-
-    public function setBorderLines(GridLines $borderLines): self
-    {
-        $this->borderLines = $borderLines;
-
-        return $this;
     }
 }

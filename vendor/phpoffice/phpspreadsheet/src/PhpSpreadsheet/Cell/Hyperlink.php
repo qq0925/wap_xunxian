@@ -21,14 +21,14 @@ class Hyperlink
     /**
      * Create a new Hyperlink.
      *
-     * @param string $url Url to link the cell to
-     * @param string $tooltip Tooltip to display on the hyperlink
+     * @param string $pUrl Url to link the cell to
+     * @param string $pTooltip Tooltip to display on the hyperlink
      */
-    public function __construct($url = '', $tooltip = '')
+    public function __construct($pUrl = '', $pTooltip = '')
     {
         // Initialise member variables
-        $this->url = $url;
-        $this->tooltip = $tooltip;
+        $this->url = $pUrl;
+        $this->tooltip = $pTooltip;
     }
 
     /**
@@ -44,13 +44,13 @@ class Hyperlink
     /**
      * Set URL.
      *
-     * @param string $url
+     * @param string $value
      *
-     * @return $this
+     * @return Hyperlink
      */
-    public function setUrl($url)
+    public function setUrl($value)
     {
-        $this->url = $url;
+        $this->url = $value;
 
         return $this;
     }
@@ -68,13 +68,13 @@ class Hyperlink
     /**
      * Set tooltip.
      *
-     * @param string $tooltip
+     * @param string $value
      *
-     * @return $this
+     * @return Hyperlink
      */
-    public function setTooltip($tooltip)
+    public function setTooltip($value)
     {
-        $this->tooltip = $tooltip;
+        $this->tooltip = $value;
 
         return $this;
     }
@@ -87,14 +87,6 @@ class Hyperlink
     public function isInternal()
     {
         return strpos($this->url, 'sheet://') !== false;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTypeHyperlink()
-    {
-        return $this->isInternal() ? '' : 'External';
     }
 
     /**

@@ -4,28 +4,22 @@ namespace PhpOffice\PhpSpreadsheet\Worksheet;
 
 use ArrayObject;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
-use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Cell\AddressRange;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
-use PhpOffice\PhpSpreadsheet\Cell\CellAddress;
-use PhpOffice\PhpSpreadsheet\Cell\CellRange;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 use PhpOffice\PhpSpreadsheet\Cell\Hyperlink;
-use PhpOffice\PhpSpreadsheet\Cell\IValueBinder;
 use PhpOffice\PhpSpreadsheet\Chart\Chart;
 use PhpOffice\PhpSpreadsheet\Collection\Cells;
 use PhpOffice\PhpSpreadsheet\Collection\CellsFactory;
 use PhpOffice\PhpSpreadsheet\Comment;
-use PhpOffice\PhpSpreadsheet\DefinedName;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\IComparable;
+use PhpOffice\PhpSpreadsheet\NamedRange;
 use PhpOffice\PhpSpreadsheet\ReferenceHelper;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Shared;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Conditional;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
@@ -34,22 +28,14 @@ use PhpOffice\PhpSpreadsheet\Style\Style;
 class Worksheet implements IComparable
 {
     // Break types
-    public const BREAK_NONE = 0;
-    public const BREAK_ROW = 1;
-    public const BREAK_COLUMN = 2;
-    // Maximum column for row break
-    public const BREAK_ROW_MAX_COLUMN = 16383;
+    const BREAK_NONE = 0;
+    const BREAK_ROW = 1;
+    const BREAK_COLUMN = 2;
 
     // Sheet state
-    public const SHEETSTATE_VISIBLE = 'visible';
-    public const SHEETSTATE_HIDDEN = 'hidden';
-    public const SHEETSTATE_VERYHIDDEN = 'veryHidden';
-
-    public const MERGE_CELL_CONTENT_EMPTY = 'empty';
-    public const MERGE_CELL_CONTENT_HIDE = 'hide';
-    public const MERGE_CELL_CONTENT_MERGE = 'merge';
-
-    protected const SHEET_NAME_REQUIRES_NO_QUOTES = '/^[_\p{L}][_\p{L}\p{N}]*$/mui';
+    const SHEETSTATE_VISIBLE = 'visible';
+    const SHEETSTATE_HIDDEN = 'hidden';
+    const SHEETSTATE_VERYHIDDEN = 'veryHidden';
 
     /**
      * Maximum 31 characters allowed for sheet title.
@@ -68,7 +54,7 @@ class Worksheet implements IComparable
     /**
      * Parent spreadsheet.
      *
-     * @var ?Spreadsheet
+     * @var Spreadsheet
      */
     private $parent;
 
@@ -110,23 +96,16 @@ class Worksheet implements IComparable
     /**
      * Collection of drawings.
      *
-     * @var ArrayObject<int, BaseDrawing>
+     * @var BaseDrawing[]
      */
     private $drawingCollection;
 
     /**
      * Collection of Chart objects.
      *
-     * @var ArrayObject<int, Chart>
+     * @var Chart[]
      */
-    private $chartCollection;
-
-    /**
-     * Collection of Table objects.
-     *
-     * @var ArrayObject<int, Table>
-     */
-    private $tableCollection;
+    private $chartCollection = [];
 
     /**
      * Worksheet title.
@@ -192,30 +171,30 @@ class Worksheet implements IComparable
     private $conditionalStylesCollection = [];
 
     /**
-     * Collection of row breaks.
+     * Is the current cell collection sorted already?
      *
-     * @var PageBreak[]
+     * @var bool
      */
-    private $rowBreaks = [];
+    private $cellCollectionIsSorted = false;
 
     /**
-     * Collection of column breaks.
+     * Collection of breaks.
      *
-     * @var PageBreak[]
+     * @var array
      */
-    private $columnBreaks = [];
+    private $breaks = [];
 
     /**
      * Collection of merged cell ranges.
      *
-     * @var string[]
+     * @var array
      */
     private $mergeCells = [];
 
     /**
      * Collection of protected cell ranges.
      *
-     * @var string[]
+     * @var array
      */
     private $protectedCells = [];
 
@@ -299,9 +278,9 @@ class Worksheet implements IComparable
     /**
      * Cached highest column.
      *
-     * @var int
+     * @var string
      */
-    private $cachedHighestColumn = 1;
+    private $cachedHighestColumn = 'A';
 
     /**
      * Cached highest row.
@@ -334,7 +313,7 @@ class Worksheet implements IComparable
     /**
      * Tab color.
      *
-     * @var null|Color
+     * @var Color
      */
     private $tabColor;
 
@@ -362,13 +341,14 @@ class Worksheet implements IComparable
     /**
      * Create a new worksheet.
      *
-     * @param string $title
+     * @param Spreadsheet $parent
+     * @param string $pTitle
      */
-    public function __construct(?Spreadsheet $parent = null, $title = 'Worksheet')
+    public function __construct(Spreadsheet $parent = null, $pTitle = 'Worksheet')
     {
         // Set parent and title
         $this->parent = $parent;
-        $this->setTitle($title, false);
+        $this->setTitle($pTitle, false);
         // setTitle can change $pTitle
         $this->setCodeName($this->getTitle());
         $this->setSheetState(self::SHEETSTATE_VISIBLE);
@@ -383,30 +363,26 @@ class Worksheet implements IComparable
         // Set sheet view
         $this->sheetView = new SheetView();
         // Drawing collection
-        $this->drawingCollection = new ArrayObject();
+        $this->drawingCollection = new \ArrayObject();
         // Chart collection
-        $this->chartCollection = new ArrayObject();
+        $this->chartCollection = new \ArrayObject();
         // Protection
         $this->protection = new Protection();
         // Default row dimension
         $this->defaultRowDimension = new RowDimension(null);
         // Default column dimension
         $this->defaultColumnDimension = new ColumnDimension(null);
-        // AutoFilter
-        $this->autoFilter = new AutoFilter('', $this);
-        // Table collection
-        $this->tableCollection = new ArrayObject();
+        $this->autoFilter = new AutoFilter(null, $this);
     }
 
     /**
      * Disconnect all cells from this Worksheet object,
      * typically so that the worksheet object can be unset.
      */
-    public function disconnectCells(): void
+    public function disconnectCells()
     {
         if ($this->cellCollection !== null) {
             $this->cellCollection->unsetWorksheetCells();
-            // @phpstan-ignore-next-line
             $this->cellCollection = null;
         }
         //    detach ourself from the workbook, so that it can then delete this worksheet successfully
@@ -421,7 +397,6 @@ class Worksheet implements IComparable
         Calculation::getInstance($this->parent)->clearCalculationCacheForWorksheet($this->title);
 
         $this->disconnectCells();
-        $this->rowDimensions = [];
     }
 
     /**
@@ -447,53 +422,55 @@ class Worksheet implements IComparable
     /**
      * Check sheet code name for valid Excel syntax.
      *
-     * @param string $sheetCodeName The string to check
+     * @param string $pValue The string to check
+     *
+     * @throws Exception
      *
      * @return string The valid string
      */
-    private static function checkSheetCodeName($sheetCodeName)
+    private static function checkSheetCodeName($pValue)
     {
-        $charCount = Shared\StringHelper::countCharacters($sheetCodeName);
-        if ($charCount == 0) {
+        $CharCount = Shared\StringHelper::countCharacters($pValue);
+        if ($CharCount == 0) {
             throw new Exception('Sheet code name cannot be empty.');
         }
         // Some of the printable ASCII characters are invalid:  * : / \ ? [ ] and  first and last characters cannot be a "'"
-        if (
-            (str_replace(self::$invalidCharacters, '', $sheetCodeName) !== $sheetCodeName) ||
-            (Shared\StringHelper::substring($sheetCodeName, -1, 1) == '\'') ||
-            (Shared\StringHelper::substring($sheetCodeName, 0, 1) == '\'')
-        ) {
+        if ((str_replace(self::$invalidCharacters, '', $pValue) !== $pValue) ||
+            (Shared\StringHelper::substring($pValue, -1, 1) == '\'') ||
+            (Shared\StringHelper::substring($pValue, 0, 1) == '\'')) {
             throw new Exception('Invalid character found in sheet code name');
         }
 
         // Enforce maximum characters allowed for sheet title
-        if ($charCount > self::SHEET_TITLE_MAXIMUM_LENGTH) {
+        if ($CharCount > self::SHEET_TITLE_MAXIMUM_LENGTH) {
             throw new Exception('Maximum ' . self::SHEET_TITLE_MAXIMUM_LENGTH . ' characters allowed in sheet code name.');
         }
 
-        return $sheetCodeName;
+        return $pValue;
     }
 
     /**
      * Check sheet title for valid Excel syntax.
      *
-     * @param string $sheetTitle The string to check
+     * @param string $pValue The string to check
+     *
+     * @throws Exception
      *
      * @return string The valid string
      */
-    private static function checkSheetTitle($sheetTitle)
+    private static function checkSheetTitle($pValue)
     {
         // Some of the printable ASCII characters are invalid:  * : / \ ? [ ]
-        if (str_replace(self::$invalidCharacters, '', $sheetTitle) !== $sheetTitle) {
+        if (str_replace(self::$invalidCharacters, '', $pValue) !== $pValue) {
             throw new Exception('Invalid character found in sheet title');
         }
 
         // Enforce maximum characters allowed for sheet title
-        if (Shared\StringHelper::countCharacters($sheetTitle) > self::SHEET_TITLE_MAXIMUM_LENGTH) {
+        if (Shared\StringHelper::countCharacters($pValue) > self::SHEET_TITLE_MAXIMUM_LENGTH) {
             throw new Exception('Maximum ' . self::SHEET_TITLE_MAXIMUM_LENGTH . ' characters allowed in sheet title.');
         }
 
-        return $sheetTitle;
+        return $pValue;
     }
 
     /**
@@ -543,16 +520,7 @@ class Worksheet implements IComparable
      */
     public function getColumnDimensions()
     {
-        /** @var callable */
-        $callable = [self::class, 'columnDimensionCompare'];
-        uasort($this->columnDimensions, $callable);
-
         return $this->columnDimensions;
-    }
-
-    private static function columnDimensionCompare(ColumnDimension $a, ColumnDimension $b): int
-    {
-        return $a->getColumnNumeric() - $b->getColumnNumeric();
     }
 
     /**
@@ -568,7 +536,7 @@ class Worksheet implements IComparable
     /**
      * Get collection of drawings.
      *
-     * @return ArrayObject<int, BaseDrawing>
+     * @return BaseDrawing[]
      */
     public function getDrawingCollection()
     {
@@ -578,7 +546,7 @@ class Worksheet implements IComparable
     /**
      * Get collection of charts.
      *
-     * @return ArrayObject<int, Chart>
+     * @return Chart[]
      */
     public function getChartCollection()
     {
@@ -588,22 +556,22 @@ class Worksheet implements IComparable
     /**
      * Add chart.
      *
-     * @param null|int $chartIndex Index where chart should go (0,1,..., or null for last)
+     * @param Chart $pChart
+     * @param null|int $iChartIndex Index where chart should go (0,1,..., or null for last)
      *
      * @return Chart
      */
-    public function addChart(Chart $chart, $chartIndex = null)
+    public function addChart(Chart $pChart, $iChartIndex = null)
     {
-        $chart->setWorksheet($this);
-        if ($chartIndex === null) {
-            $this->chartCollection[] = $chart;
+        $pChart->setWorksheet($this);
+        if ($iChartIndex === null) {
+            $this->chartCollection[] = $pChart;
         } else {
             // Insert the chart at the requested index
-            // @phpstan-ignore-next-line
-            array_splice(/** @scrutinizer ignore-type */ $this->chartCollection, $chartIndex, 0, [$chart]);
+            array_splice($this->chartCollection, $iChartIndex, 0, [$pChart]);
         }
 
-        return $chart;
+        return $pChart;
     }
 
     /**
@@ -619,7 +587,7 @@ class Worksheet implements IComparable
     /**
      * Get a chart by its index position.
      *
-     * @param ?string $index Chart index position
+     * @param string $index Chart index position
      *
      * @return Chart|false
      */
@@ -663,9 +631,13 @@ class Worksheet implements IComparable
      */
     public function getChartByName($chartName)
     {
+        $chartCount = count($this->chartCollection);
+        if ($chartCount == 0) {
+            return false;
+        }
         foreach ($this->chartCollection as $index => $chart) {
             if ($chart->getName() == $chartName) {
-                return $chart;
+                return $this->chartCollection[$index];
             }
         }
 
@@ -675,12 +647,14 @@ class Worksheet implements IComparable
     /**
      * Refresh column dimensions.
      *
-     * @return $this
+     * @return Worksheet
      */
     public function refreshColumnDimensions()
     {
+        $currentColumnDimensions = $this->getColumnDimensions();
         $newColumnDimensions = [];
-        foreach ($this->getColumnDimensions() as $objColumnDimension) {
+
+        foreach ($currentColumnDimensions as $objColumnDimension) {
             $newColumnDimensions[$objColumnDimension->getColumnIndex()] = $objColumnDimension;
         }
 
@@ -692,12 +666,14 @@ class Worksheet implements IComparable
     /**
      * Refresh row dimensions.
      *
-     * @return $this
+     * @return Worksheet
      */
     public function refreshRowDimensions()
     {
+        $currentRowDimensions = $this->getRowDimensions();
         $newRowDimensions = [];
-        foreach ($this->getRowDimensions() as $objRowDimension) {
+
+        foreach ($currentRowDimensions as $objRowDimension) {
             $newRowDimensions[$objRowDimension->getRowIndex()] = $objRowDimension;
         }
 
@@ -714,7 +690,7 @@ class Worksheet implements IComparable
     public function calculateWorksheetDimension()
     {
         // Return
-        return 'A1:' . $this->getHighestColumn() . $this->getHighestRow();
+        return 'A1' . ':' . $this->getHighestColumn() . $this->getHighestRow();
     }
 
     /**
@@ -725,13 +701,13 @@ class Worksheet implements IComparable
     public function calculateWorksheetDataDimension()
     {
         // Return
-        return 'A1:' . $this->getHighestDataColumn() . $this->getHighestDataRow();
+        return 'A1' . ':' . $this->getHighestDataColumn() . $this->getHighestDataRow();
     }
 
     /**
      * Calculate widths for auto-size columns.
      *
-     * @return $this
+     * @return Worksheet;
      */
     public function calculateColumnWidths()
     {
@@ -753,12 +729,9 @@ class Worksheet implements IComparable
                 }
             }
 
-            $autoFilterIndentRanges = (new AutoFit($this))->getAutoFilterIndentRanges();
-
             // loop through all cells in the worksheet
             foreach ($this->getCoordinates(false) as $coordinate) {
-                $cell = $this->getCellOrNull($coordinate);
-
+                $cell = $this->getCell($coordinate, false);
                 if ($cell !== null && isset($autoSizes[$this->cellCollection->getCurrentColumn()])) {
                     //Determine if cell is in merge range
                     $isMerged = isset($isMergeCell[$this->cellCollection->getCurrentCoordinate()]);
@@ -766,58 +739,33 @@ class Worksheet implements IComparable
                     //By default merged cells should be ignored
                     $isMergedButProceed = false;
 
-                    //The only exception is if it's a merge range value cell of a 'vertical' range (1 column wide)
+                    //The only exception is if it's a merge range value cell of a 'vertical' randge (1 column wide)
                     if ($isMerged && $cell->isMergeRangeValueCell()) {
-                        $range = (string) $cell->getMergeRange();
+                        $range = $cell->getMergeRange();
                         $rangeBoundaries = Coordinate::rangeDimension($range);
-                        if ($rangeBoundaries[0] === 1) {
+                        if ($rangeBoundaries[0] == 1) {
                             $isMergedButProceed = true;
                         }
                     }
 
-                    // Determine width if cell is not part of a merge or does and is a value cell of 1-column wide range
+                    // Determine width if cell does not participate in a merge or does and is a value cell of 1-column wide range
                     if (!$isMerged || $isMergedButProceed) {
-                        // Determine if we need to make an adjustment for the first row in an AutoFilter range that
-                        //    has a column filter dropdown
-                        $filterAdjustment = false;
-                        if (!empty($autoFilterIndentRanges)) {
-                            foreach ($autoFilterIndentRanges as $autoFilterFirstRowRange) {
-                                if ($cell->isInRange($autoFilterFirstRowRange)) {
-                                    $filterAdjustment = true;
-
-                                    break;
-                                }
-                            }
-                        }
-
-                        $indentAdjustment = $cell->getStyle()->getAlignment()->getIndent();
-                        $indentAdjustment += (int) ($cell->getStyle()->getAlignment()->getHorizontal() === Alignment::HORIZONTAL_CENTER);
-
                         // Calculated value
                         // To formatted string
                         $cellValue = NumberFormat::toFormattedString(
                             $cell->getCalculatedValue(),
-                            (string) $this->getParentOrThrow()->getCellXfByIndex($cell->getXfIndex())
-                                ->getNumberFormat()->getFormatCode()
+                            $this->getParent()->getCellXfByIndex($cell->getXfIndex())->getNumberFormat()->getFormatCode()
                         );
 
-                        if ($cellValue !== null && $cellValue !== '') {
-                            $autoSizes[$this->cellCollection->getCurrentColumn()] = max(
-                                $autoSizes[$this->cellCollection->getCurrentColumn()],
-                                round(
-                                    Shared\Font::calculateColumnWidth(
-                                        $this->getParentOrThrow()->getCellXfByIndex($cell->getXfIndex())->getFont(),
-                                        $cellValue,
-                                        (int) $this->getParentOrThrow()->getCellXfByIndex($cell->getXfIndex())
-                                            ->getAlignment()->getTextRotation(),
-                                        $this->getParentOrThrow()->getDefaultStyle()->getFont(),
-                                        $filterAdjustment,
-                                        $indentAdjustment
-                                    ),
-                                    3
-                                )
-                            );
-                        }
+                        $autoSizes[$this->cellCollection->getCurrentColumn()] = max(
+                            (float) $autoSizes[$this->cellCollection->getCurrentColumn()],
+                            (float) Shared\Font::calculateColumnWidth(
+                                $this->getParent()->getCellXfByIndex($cell->getXfIndex())->getFont(),
+                                $cellValue,
+                                $this->getParent()->getCellXfByIndex($cell->getXfIndex())->getAlignment()->getTextRotation(),
+                                $this->getParent()->getDefaultStyle()->getFont()
+                            )
+                        );
                     }
                 }
             }
@@ -835,36 +783,28 @@ class Worksheet implements IComparable
     }
 
     /**
-     * Get parent or null.
+     * Get parent.
+     *
+     * @return Spreadsheet
      */
-    public function getParent(): ?Spreadsheet
+    public function getParent()
     {
         return $this->parent;
     }
 
     /**
-     * Get parent, throw exception if null.
-     */
-    public function getParentOrThrow(): Spreadsheet
-    {
-        if ($this->parent !== null) {
-            return $this->parent;
-        }
-
-        throw new Exception('Sheet does not have a parent.');
-    }
-
-    /**
      * Re-bind parent.
      *
-     * @return $this
+     * @param Spreadsheet $parent
+     *
+     * @return Worksheet
      */
     public function rebindParent(Spreadsheet $parent)
     {
         if ($this->parent !== null) {
-            $definedNames = $this->parent->getDefinedNames();
-            foreach ($definedNames as $definedName) {
-                $parent->addDefinedName($definedName);
+            $namedRanges = $this->parent->getNamedRanges();
+            foreach ($namedRanges as $namedRange) {
+                $parent->addNamedRange($namedRange);
             }
 
             $this->parent->removeSheetByIndex(
@@ -889,7 +829,7 @@ class Worksheet implements IComparable
     /**
      * Set title.
      *
-     * @param string $title String containing the dimension of this worksheet
+     * @param string $pValue String containing the dimension of this worksheet
      * @param bool $updateFormulaCellReferences Flag indicating whether cell references in formulae should
      *            be updated to reflect the new sheet name.
      *          This should be left as the default true, unless you are
@@ -898,12 +838,12 @@ class Worksheet implements IComparable
      * @param bool $validate False to skip validation of new title. WARNING: This should only be set
      *                       at parse time (by Readers), where titles can be assumed to be valid.
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setTitle($title, $updateFormulaCellReferences = true, $validate = true)
+    public function setTitle($pValue, $updateFormulaCellReferences = true, $validate = true)
     {
         // Is this a 'rename' or not?
-        if ($this->getTitle() == $title) {
+        if ($this->getTitle() == $pValue) {
             return $this;
         }
 
@@ -912,37 +852,37 @@ class Worksheet implements IComparable
 
         if ($validate) {
             // Syntax check
-            self::checkSheetTitle($title);
+            self::checkSheetTitle($pValue);
 
             if ($this->parent) {
                 // Is there already such sheet name?
-                if ($this->parent->sheetNameExists($title)) {
+                if ($this->parent->sheetNameExists($pValue)) {
                     // Use name, but append with lowest possible integer
 
-                    if (Shared\StringHelper::countCharacters($title) > 29) {
-                        $title = Shared\StringHelper::substring($title, 0, 29);
+                    if (Shared\StringHelper::countCharacters($pValue) > 29) {
+                        $pValue = Shared\StringHelper::substring($pValue, 0, 29);
                     }
                     $i = 1;
-                    while ($this->parent->sheetNameExists($title . ' ' . $i)) {
+                    while ($this->parent->sheetNameExists($pValue . ' ' . $i)) {
                         ++$i;
                         if ($i == 10) {
-                            if (Shared\StringHelper::countCharacters($title) > 28) {
-                                $title = Shared\StringHelper::substring($title, 0, 28);
+                            if (Shared\StringHelper::countCharacters($pValue) > 28) {
+                                $pValue = Shared\StringHelper::substring($pValue, 0, 28);
                             }
                         } elseif ($i == 100) {
-                            if (Shared\StringHelper::countCharacters($title) > 27) {
-                                $title = Shared\StringHelper::substring($title, 0, 27);
+                            if (Shared\StringHelper::countCharacters($pValue) > 27) {
+                                $pValue = Shared\StringHelper::substring($pValue, 0, 27);
                             }
                         }
                     }
 
-                    $title .= " $i";
+                    $pValue .= " $i";
                 }
             }
         }
 
         // Set title
-        $this->title = $title;
+        $this->title = $pValue;
         $this->dirty = true;
 
         if ($this->parent && $this->parent->getCalculationEngine()) {
@@ -951,7 +891,7 @@ class Worksheet implements IComparable
             $this->parent->getCalculationEngine()
                 ->renameCalculationCacheForWorksheet($oldTitle, $newTitle);
             if ($updateFormulaCellReferences) {
-                ReferenceHelper::getInstance()->updateNamedFormulae($this->parent, $oldTitle, $newTitle);
+                ReferenceHelper::getInstance()->updateNamedFormulas($this->parent, $oldTitle, $newTitle);
             }
         }
 
@@ -973,7 +913,7 @@ class Worksheet implements IComparable
      *
      * @param string $value Sheet state (visible, hidden, veryHidden)
      *
-     * @return $this
+     * @return Worksheet
      */
     public function setSheetState($value)
     {
@@ -995,11 +935,13 @@ class Worksheet implements IComparable
     /**
      * Set page setup.
      *
-     * @return $this
+     * @param PageSetup $pValue
+     *
+     * @return Worksheet
      */
-    public function setPageSetup(PageSetup $pageSetup)
+    public function setPageSetup(PageSetup $pValue)
     {
-        $this->pageSetup = $pageSetup;
+        $this->pageSetup = $pValue;
 
         return $this;
     }
@@ -1017,11 +959,13 @@ class Worksheet implements IComparable
     /**
      * Set page margins.
      *
-     * @return $this
+     * @param PageMargins $pValue
+     *
+     * @return Worksheet
      */
-    public function setPageMargins(PageMargins $pageMargins)
+    public function setPageMargins(PageMargins $pValue)
     {
-        $this->pageMargins = $pageMargins;
+        $this->pageMargins = $pValue;
 
         return $this;
     }
@@ -1039,11 +983,13 @@ class Worksheet implements IComparable
     /**
      * Set page header/footer.
      *
-     * @return $this
+     * @param HeaderFooter $pValue
+     *
+     * @return Worksheet
      */
-    public function setHeaderFooter(HeaderFooter $headerFooter)
+    public function setHeaderFooter(HeaderFooter $pValue)
     {
-        $this->headerFooter = $headerFooter;
+        $this->headerFooter = $pValue;
 
         return $this;
     }
@@ -1061,11 +1007,13 @@ class Worksheet implements IComparable
     /**
      * Set sheet view.
      *
-     * @return $this
+     * @param SheetView $pValue
+     *
+     * @return Worksheet
      */
-    public function setSheetView(SheetView $sheetView)
+    public function setSheetView(SheetView $pValue)
     {
-        $this->sheetView = $sheetView;
+        $this->sheetView = $pValue;
 
         return $this;
     }
@@ -1083,11 +1031,13 @@ class Worksheet implements IComparable
     /**
      * Set Protection.
      *
-     * @return $this
+     * @param Protection $pValue
+     *
+     * @return Worksheet
      */
-    public function setProtection(Protection $protection)
+    public function setProtection(Protection $pValue)
     {
-        $this->protection = $protection;
+        $this->protection = $pValue;
         $this->dirty = true;
 
         return $this;
@@ -1096,15 +1046,15 @@ class Worksheet implements IComparable
     /**
      * Get highest worksheet column.
      *
-     * @param null|int|string $row Return the data highest column for the specified row,
+     * @param string $row Return the data highest column for the specified row,
      *                                     or the highest column of any row if no row number is passed
      *
      * @return string Highest column name
      */
     public function getHighestColumn($row = null)
     {
-        if ($row === null) {
-            return Coordinate::stringFromColumnIndex($this->cachedHighestColumn);
+        if ($row == null) {
+            return $this->cachedHighestColumn;
         }
 
         return $this->getHighestDataColumn($row);
@@ -1113,7 +1063,7 @@ class Worksheet implements IComparable
     /**
      * Get highest worksheet column that contains data.
      *
-     * @param null|int|string $row Return the highest data column for the specified row,
+     * @param string $row Return the highest data column for the specified row,
      *                                     or the highest data column of any row if no row number is passed
      *
      * @return string Highest column name that contains data
@@ -1126,14 +1076,14 @@ class Worksheet implements IComparable
     /**
      * Get highest worksheet row.
      *
-     * @param null|string $column Return the highest data row for the specified column,
+     * @param string $column Return the highest data row for the specified column,
      *                                     or the highest row of any column if no column letter is passed
      *
      * @return int Highest row number
      */
     public function getHighestRow($column = null)
     {
-        if ($column === null) {
+        if ($column == null) {
             return $this->cachedHighestRow;
         }
 
@@ -1143,10 +1093,10 @@ class Worksheet implements IComparable
     /**
      * Get highest worksheet row that contains data.
      *
-     * @param null|string $column Return the highest data row for the specified column,
+     * @param string $column Return the highest data row for the specified column,
      *                                     or the highest data row of any column if no column letter is passed
      *
-     * @return int Highest row number that contains data
+     * @return string Highest row number that contains data
      */
     public function getHighestDataRow($column = null)
     {
@@ -1166,17 +1116,14 @@ class Worksheet implements IComparable
     /**
      * Set a cell value.
      *
-     * @param array<int>|CellAddress|string $coordinate Coordinate of the cell as a string, eg: 'C5';
-     *               or as an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @param mixed $value Value for the cell
-     * @param null|IValueBinder $binder Value Binder to override the currently set Value Binder
+     * @param string $pCoordinate Coordinate of the cell, eg: 'A1'
+     * @param mixed $pValue Value of the cell
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setCellValue($coordinate, $value, ?IValueBinder $binder = null)
+    public function setCellValue($pCoordinate, $pValue)
     {
-        $cellAddress = Functions::trimSheetFromCellReference(Validations::validateCellAddress($coordinate));
-        $this->getCell($cellAddress)->setValue($value, $binder);
+        $this->getCell($pCoordinate)->setValue($pValue);
 
         return $this;
     }
@@ -1184,21 +1131,15 @@ class Worksheet implements IComparable
     /**
      * Set a cell value by using numeric cell coordinates.
      *
-     * @deprecated 1.23.0
-     *      Use the setCellValue() method with a cell address such as 'C5' instead;,
-     *          or passing in an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @see Worksheet::setCellValue()
-     *
      * @param int $columnIndex Numeric column coordinate of the cell
      * @param int $row Numeric row coordinate of the cell
      * @param mixed $value Value of the cell
-     * @param null|IValueBinder $binder Value Binder to override the currently set Value Binder
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setCellValueByColumnAndRow($columnIndex, $row, $value, ?IValueBinder $binder = null)
+    public function setCellValueByColumnAndRow($columnIndex, $row, $value)
     {
-        $this->getCell(Coordinate::stringFromColumnIndex($columnIndex) . $row)->setValue($value, $binder);
+        $this->getCellByColumnAndRow($columnIndex, $row)->setValue($value);
 
         return $this;
     }
@@ -1206,24 +1147,16 @@ class Worksheet implements IComparable
     /**
      * Set a cell value.
      *
-     * @param array<int>|CellAddress|string $coordinate Coordinate of the cell as a string, eg: 'C5';
-     *               or as an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @param mixed $value Value of the cell
-     * @param string $dataType Explicit data type, see DataType::TYPE_*
-     *        Note that PhpSpreadsheet does not validate that the value and datatype are consistent, in using this
-     *             method, then it is your responsibility as an end-user developer to validate that the value and
-     *             the datatype match.
-     *       If you do mismatch value and datatpe, then the value you enter may be changed to match the datatype
-     *          that you specify.
+     * @param string $pCoordinate Coordinate of the cell, eg: 'A1'
+     * @param mixed $pValue Value of the cell
+     * @param string $pDataType Explicit data type, see DataType::TYPE_*
      *
-     * @see DataType
-     *
-     * @return $this
+     * @return Worksheet
      */
-    public function setCellValueExplicit($coordinate, $value, $dataType)
+    public function setCellValueExplicit($pCoordinate, $pValue, $pDataType)
     {
-        $cellAddress = Functions::trimSheetFromCellReference(Validations::validateCellAddress($coordinate));
-        $this->getCell($cellAddress)->setValueExplicit($value, $dataType);
+        // Set value
+        $this->getCell($pCoordinate)->setValueExplicit($pValue, $pDataType);
 
         return $this;
     }
@@ -1231,28 +1164,16 @@ class Worksheet implements IComparable
     /**
      * Set a cell value by using numeric cell coordinates.
      *
-     * @deprecated 1.23.0
-     *      Use the setCellValueExplicit() method with a cell address such as 'C5' instead;,
-     *          or passing in an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @see Worksheet::setCellValueExplicit()
-     *
      * @param int $columnIndex Numeric column coordinate of the cell
      * @param int $row Numeric row coordinate of the cell
      * @param mixed $value Value of the cell
      * @param string $dataType Explicit data type, see DataType::TYPE_*
-     *        Note that PhpSpreadsheet does not validate that the value and datatype are consistent, in using this
-     *             method, then it is your responsibility as an end-user developer to validate that the value and
-     *             the datatype match.
-     *       If you do mismatch value and datatpe, then the value you enter may be changed to match the datatype
-     *          that you specify.
      *
-     * @see DataType
-     *
-     * @return $this
+     * @return Worksheet
      */
     public function setCellValueExplicitByColumnAndRow($columnIndex, $row, $value, $dataType)
     {
-        $this->getCell(Coordinate::stringFromColumnIndex($columnIndex) . $row)->setValueExplicit($value, $dataType);
+        $this->getCellByColumnAndRow($columnIndex, $row)->setValueExplicit($value, $dataType);
 
         return $this;
     }
@@ -1260,171 +1181,106 @@ class Worksheet implements IComparable
     /**
      * Get cell at a specific coordinate.
      *
-     * @param array<int>|CellAddress|string $coordinate Coordinate of the cell as a string, eg: 'C5';
-     *               or as an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
+     * @param string $pCoordinate Coordinate of the cell, eg: 'A1'
+     * @param bool $createIfNotExists Flag indicating whether a new cell should be created if it doesn't
+     *                                       already exist, or a null should be returned instead
      *
-     * @return Cell Cell that was found or created
-     *              WARNING: Because the cell collection can be cached to reduce memory, it only allows one
-     *              "active" cell at a time in memory. If you assign that cell to a variable, then select
-     *              another cell using getCell() or any of its variants, the newly selected cell becomes
-     *              the "active" cell, and any previous assignment becomes a disconnected reference because
-     *              the active cell has changed.
+     * @throws Exception
+     *
+     * @return null|Cell Cell that was found/created or null
      */
-    public function getCell($coordinate): Cell
+    public function getCell($pCoordinate, $createIfNotExists = true)
     {
-        $cellAddress = Functions::trimSheetFromCellReference(Validations::validateCellAddress($coordinate));
-
-        // Shortcut for increased performance for the vast majority of simple cases
-        if ($this->cellCollection->has($cellAddress)) {
-            /** @var Cell $cell */
-            $cell = $this->cellCollection->get($cellAddress);
-
-            return $cell;
+        // Check cell collection
+        if ($this->cellCollection->has(strtoupper($pCoordinate))) {
+            return $this->cellCollection->get($pCoordinate);
         }
-
-        /** @var Worksheet $sheet */
-        [$sheet, $finalCoordinate] = $this->getWorksheetAndCoordinate($cellAddress);
-        $cell = $sheet->cellCollection->get($finalCoordinate);
-
-        return $cell ?? $sheet->createNewCell($finalCoordinate);
-    }
-
-    /**
-     * Get the correct Worksheet and coordinate from a coordinate that may
-     * contains reference to another sheet or a named range.
-     *
-     * @return array{0: Worksheet, 1: string}
-     */
-    private function getWorksheetAndCoordinate(string $coordinate): array
-    {
-        $sheet = null;
-        $finalCoordinate = null;
 
         // Worksheet reference?
-        if (strpos($coordinate, '!') !== false) {
-            $worksheetReference = self::extractSheetTitle($coordinate, true);
+        if (strpos($pCoordinate, '!') !== false) {
+            $worksheetReference = self::extractSheetTitle($pCoordinate, true);
 
-            $sheet = $this->getParentOrThrow()->getSheetByName($worksheetReference[0]);
-            $finalCoordinate = strtoupper($worksheetReference[1]);
+            return $this->parent->getSheetByName($worksheetReference[0])->getCell(strtoupper($worksheetReference[1]), $createIfNotExists);
+        }
 
-            if ($sheet === null) {
-                throw new Exception('Sheet not found for name: ' . $worksheetReference[0]);
-            }
-        } elseif (
-            !preg_match('/^' . Calculation::CALCULATION_REGEXP_CELLREF . '$/i', $coordinate) &&
-            preg_match('/^' . Calculation::CALCULATION_REGEXP_DEFINEDNAME . '$/iu', $coordinate)
-        ) {
-            // Named range?
-            $namedRange = $this->validateNamedRange($coordinate, true);
+        // Named range?
+        if ((!preg_match('/^' . Calculation::CALCULATION_REGEXP_CELLREF . '$/i', $pCoordinate, $matches)) &&
+            (preg_match('/^' . Calculation::CALCULATION_REGEXP_NAMEDRANGE . '$/i', $pCoordinate, $matches))) {
+            $namedRange = NamedRange::resolveRange($pCoordinate, $this);
             if ($namedRange !== null) {
-                $sheet = $namedRange->getWorksheet();
-                if ($sheet === null) {
-                    throw new Exception('Sheet not found for named range: ' . $namedRange->getName());
-                }
+                $pCoordinate = $namedRange->getRange();
 
-                /** @phpstan-ignore-next-line */
-                $cellCoordinate = ltrim(substr($namedRange->getValue(), strrpos($namedRange->getValue(), '!')), '!');
-                $finalCoordinate = str_replace('$', '', $cellCoordinate);
+                return $namedRange->getWorksheet()->getCell($pCoordinate, $createIfNotExists);
             }
         }
 
-        if ($sheet === null || $finalCoordinate === null) {
-            $sheet = $this;
-            $finalCoordinate = strtoupper($coordinate);
-        }
+        // Uppercase coordinate
+        $pCoordinate = strtoupper($pCoordinate);
 
-        if (Coordinate::coordinateIsRange($finalCoordinate)) {
-            throw new Exception('Cell coordinate string can not be a range of cells.');
-        } elseif (strpos($finalCoordinate, '$') !== false) {
+        if (Coordinate::coordinateIsRange($pCoordinate)) {
+            throw new Exception('Cell coordinate can not be a range of cells.');
+        } elseif (strpos($pCoordinate, '$') !== false) {
             throw new Exception('Cell coordinate must not be absolute.');
         }
 
-        return [$sheet, $finalCoordinate];
-    }
-
-    /**
-     * Get an existing cell at a specific coordinate, or null.
-     *
-     * @param string $coordinate Coordinate of the cell, eg: 'A1'
-     *
-     * @return null|Cell Cell that was found or null
-     */
-    private function getCellOrNull($coordinate): ?Cell
-    {
-        // Check cell collection
-        if ($this->cellCollection->has($coordinate)) {
-            return $this->cellCollection->get($coordinate);
-        }
-
-        return null;
+        // Create new cell object, if required
+        return $createIfNotExists ? $this->createNewCell($pCoordinate) : null;
     }
 
     /**
      * Get cell at a specific coordinate by using numeric cell coordinates.
      *
-     * @deprecated 1.23.0
-     *      Use the getCell() method with a cell address such as 'C5' instead;,
-     *          or passing in an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @see Worksheet::getCell()
-     *
      * @param int $columnIndex Numeric column coordinate of the cell
      * @param int $row Numeric row coordinate of the cell
+     * @param bool $createIfNotExists Flag indicating whether a new cell should be created if it doesn't
+     *                                       already exist, or a null should be returned instead
      *
-     * @return Cell Cell that was found/created or null
-     *              WARNING: Because the cell collection can be cached to reduce memory, it only allows one
-     *              "active" cell at a time in memory. If you assign that cell to a variable, then select
-     *              another cell using getCell() or any of its variants, the newly selected cell becomes
-     *              the "active" cell, and any previous assignment becomes a disconnected reference because
-     *              the active cell has changed.
+     * @return null|Cell Cell that was found/created or null
      */
-    public function getCellByColumnAndRow($columnIndex, $row): Cell
+    public function getCellByColumnAndRow($columnIndex, $row, $createIfNotExists = true)
     {
-        return $this->getCell(Coordinate::stringFromColumnIndex($columnIndex) . $row);
+        $columnLetter = Coordinate::stringFromColumnIndex($columnIndex);
+        $coordinate = $columnLetter . $row;
+
+        if ($this->cellCollection->has($coordinate)) {
+            return $this->cellCollection->get($coordinate);
+        }
+
+        // Create new cell object, if required
+        return $createIfNotExists ? $this->createNewCell($coordinate) : null;
     }
 
     /**
      * Create a new cell at the specified coordinate.
      *
-     * @param string $coordinate Coordinate of the cell
+     * @param string $pCoordinate Coordinate of the cell
      *
      * @return Cell Cell that was created
-     *              WARNING: Because the cell collection can be cached to reduce memory, it only allows one
-     *              "active" cell at a time in memory. If you assign that cell to a variable, then select
-     *              another cell using getCell() or any of its variants, the newly selected cell becomes
-     *              the "active" cell, and any previous assignment becomes a disconnected reference because
-     *              the active cell has changed.
      */
-    public function createNewCell($coordinate): Cell
+    private function createNewCell($pCoordinate)
     {
-        [$column, $row, $columnString] = Coordinate::indexesFromString($coordinate);
         $cell = new Cell(null, DataType::TYPE_NULL, $this);
-        $this->cellCollection->add($coordinate, $cell);
+        $this->cellCollection->add($pCoordinate, $cell);
+        $this->cellCollectionIsSorted = false;
 
         // Coordinates
-        if ($column > $this->cachedHighestColumn) {
-            $this->cachedHighestColumn = $column;
+        $aCoordinates = Coordinate::coordinateFromString($pCoordinate);
+        if (Coordinate::columnIndexFromString($this->cachedHighestColumn) < Coordinate::columnIndexFromString($aCoordinates[0])) {
+            $this->cachedHighestColumn = $aCoordinates[0];
         }
-        if ($row > $this->cachedHighestRow) {
-            $this->cachedHighestRow = $row;
-        }
+        $this->cachedHighestRow = max($this->cachedHighestRow, $aCoordinates[1]);
 
         // Cell needs appropriate xfIndex from dimensions records
         //    but don't create dimension records if they don't already exist
-        $rowDimension = $this->rowDimensions[$row] ?? null;
-        $columnDimension = $this->columnDimensions[$columnString] ?? null;
+        $rowDimension = $this->getRowDimension($aCoordinates[1], false);
+        $columnDimension = $this->getColumnDimension($aCoordinates[0], false);
 
-        if ($rowDimension !== null) {
-            $rowXf = (int) $rowDimension->getXfIndex();
-            if ($rowXf > 0) {
-                // then there is a row dimension with explicit style, assign it to the cell
-                $cell->setXfIndex($rowXf);
-            }
-        } elseif ($columnDimension !== null) {
-            $colXf = (int) $columnDimension->getXfIndex();
-            if ($colXf > 0) {
-                // then there is a column dimension, assign it to the cell
-                $cell->setXfIndex($colXf);
-            }
+        if ($rowDimension !== null && $rowDimension->getXfIndex() > 0) {
+            // then there is a row dimension with explicit style, assign it to the cell
+            $cell->setXfIndex($rowDimension->getXfIndex());
+        } elseif ($columnDimension !== null && $columnDimension->getXfIndex() > 0) {
+            // then there is a column dimension, assign it to the cell
+            $cell->setXfIndex($columnDimension->getXfIndex());
         }
 
         return $cell;
@@ -1433,30 +1289,61 @@ class Worksheet implements IComparable
     /**
      * Does the cell at a specific coordinate exist?
      *
-     * @param array<int>|CellAddress|string $coordinate Coordinate of the cell as a string, eg: 'C5';
-     *               or as an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
+     * @param string $pCoordinate Coordinate of the cell eg: 'A1'
+     *
+     * @throws Exception
+     *
+     * @return bool
      */
-    public function cellExists($coordinate): bool
+    public function cellExists($pCoordinate)
     {
-        $cellAddress = Validations::validateCellAddress($coordinate);
-        /** @var Worksheet $sheet */
-        [$sheet, $finalCoordinate] = $this->getWorksheetAndCoordinate($cellAddress);
+        // Worksheet reference?
+        if (strpos($pCoordinate, '!') !== false) {
+            $worksheetReference = self::extractSheetTitle($pCoordinate, true);
 
-        return $sheet->cellCollection->has($finalCoordinate);
+            return $this->parent->getSheetByName($worksheetReference[0])->cellExists(strtoupper($worksheetReference[1]));
+        }
+
+        // Named range?
+        if ((!preg_match('/^' . Calculation::CALCULATION_REGEXP_CELLREF . '$/i', $pCoordinate, $matches)) &&
+            (preg_match('/^' . Calculation::CALCULATION_REGEXP_NAMEDRANGE . '$/i', $pCoordinate, $matches))) {
+            $namedRange = NamedRange::resolveRange($pCoordinate, $this);
+            if ($namedRange !== null) {
+                $pCoordinate = $namedRange->getRange();
+                if ($this->getHashCode() != $namedRange->getWorksheet()->getHashCode()) {
+                    if (!$namedRange->getLocalOnly()) {
+                        return $namedRange->getWorksheet()->cellExists($pCoordinate);
+                    }
+
+                    throw new Exception('Named range ' . $namedRange->getName() . ' is not accessible from within sheet ' . $this->getTitle());
+                }
+            } else {
+                return false;
+            }
+        }
+
+        // Uppercase coordinate
+        $pCoordinate = strtoupper($pCoordinate);
+
+        if (Coordinate::coordinateIsRange($pCoordinate)) {
+            throw new Exception('Cell coordinate can not be a range of cells.');
+        } elseif (strpos($pCoordinate, '$') !== false) {
+            throw new Exception('Cell coordinate must not be absolute.');
+        }
+
+        // Cell exists?
+        return $this->cellCollection->has($pCoordinate);
     }
 
     /**
      * Cell at a specific coordinate by using numeric cell coordinates exists?
      *
-     * @deprecated 1.23.0
-     *      Use the cellExists() method with a cell address such as 'C5' instead;,
-     *          or passing in an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @see Worksheet::cellExists()
-     *
      * @param int $columnIndex Numeric column coordinate of the cell
      * @param int $row Numeric row coordinate of the cell
+     *
+     * @return bool
      */
-    public function cellExistsByColumnAndRow($columnIndex, $row): bool
+    public function cellExistsByColumnAndRow($columnIndex, $row)
     {
         return $this->cellExists(Coordinate::stringFromColumnIndex($columnIndex) . $row);
     }
@@ -1464,54 +1351,65 @@ class Worksheet implements IComparable
     /**
      * Get row dimension at a specific row.
      *
-     * @param int $row Numeric index of the row
+     * @param int $pRow Numeric index of the row
+     * @param bool $create
+     *
+     * @return RowDimension
      */
-    public function getRowDimension(int $row): RowDimension
+    public function getRowDimension($pRow, $create = true)
     {
-        // Get row dimension
-        if (!isset($this->rowDimensions[$row])) {
-            $this->rowDimensions[$row] = new RowDimension($row);
+        // Found
+        $found = null;
 
-            $this->cachedHighestRow = max($this->cachedHighestRow, $row);
+        // Get row dimension
+        if (!isset($this->rowDimensions[$pRow])) {
+            if (!$create) {
+                return null;
+            }
+            $this->rowDimensions[$pRow] = new RowDimension($pRow);
+
+            $this->cachedHighestRow = max($this->cachedHighestRow, $pRow);
         }
 
-        return $this->rowDimensions[$row];
-    }
-
-    public function rowDimensionExists(int $row): bool
-    {
-        return isset($this->rowDimensions[$row]);
+        return $this->rowDimensions[$pRow];
     }
 
     /**
      * Get column dimension at a specific column.
      *
-     * @param string $column String index of the column eg: 'A'
+     * @param string $pColumn String index of the column eg: 'A'
+     * @param bool $create
+     *
+     * @return ColumnDimension
      */
-    public function getColumnDimension(string $column): ColumnDimension
+    public function getColumnDimension($pColumn, $create = true)
     {
         // Uppercase coordinate
-        $column = strtoupper($column);
+        $pColumn = strtoupper($pColumn);
 
         // Fetch dimensions
-        if (!isset($this->columnDimensions[$column])) {
-            $this->columnDimensions[$column] = new ColumnDimension($column);
+        if (!isset($this->columnDimensions[$pColumn])) {
+            if (!$create) {
+                return null;
+            }
+            $this->columnDimensions[$pColumn] = new ColumnDimension($pColumn);
 
-            $columnIndex = Coordinate::columnIndexFromString($column);
-            if ($this->cachedHighestColumn < $columnIndex) {
-                $this->cachedHighestColumn = $columnIndex;
+            if (Coordinate::columnIndexFromString($this->cachedHighestColumn) < Coordinate::columnIndexFromString($pColumn)) {
+                $this->cachedHighestColumn = $pColumn;
             }
         }
 
-        return $this->columnDimensions[$column];
+        return $this->columnDimensions[$pColumn];
     }
 
     /**
      * Get column dimension at a specific column by using numeric cell coordinates.
      *
      * @param int $columnIndex Numeric column coordinate of the cell
+     *
+     * @return ColumnDimension
      */
-    public function getColumnDimensionByColumn(int $columnIndex): ColumnDimension
+    public function getColumnDimensionByColumn($columnIndex)
     {
         return $this->getColumnDimension(Coordinate::stringFromColumnIndex($columnIndex));
     }
@@ -1529,131 +1427,62 @@ class Worksheet implements IComparable
     /**
      * Get style for cell.
      *
-     * @param AddressRange|array<int>|CellAddress|int|string $cellCoordinate
-     *              A simple string containing a cell address like 'A1' or a cell range like 'A1:E10'
-     *              or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *              or a CellAddress or AddressRange object.
-     */
-    public function getStyle($cellCoordinate): Style
-    {
-        $cellCoordinate = Validations::validateCellOrCellRange($cellCoordinate);
-
-        // set this sheet as active
-        $this->getParentOrThrow()->setActiveSheetIndex($this->getParentOrThrow()->getIndex($this));
-
-        // set cell coordinate as active
-        $this->setSelectedCells($cellCoordinate);
-
-        return $this->getParentOrThrow()->getCellXfSupervisor();
-    }
-
-    /**
-     * Get style for cell by using numeric cell coordinates.
+     * @param string $pCellCoordinate Cell coordinate (or range) to get style for, eg: 'A1'
      *
-     * @deprecated 1.23.0
-     *      Use the getStyle() method with a cell address range such as 'C5:F8' instead;,
-     *          or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *          or an AddressRange object.
-     * @see Worksheet::getStyle()
-     *
-     * @param int $columnIndex1 Numeric column coordinate of the cell
-     * @param int $row1 Numeric row coordinate of the cell
-     * @param null|int $columnIndex2 Numeric column coordinate of the range cell
-     * @param null|int $row2 Numeric row coordinate of the range cell
+     * @throws Exception
      *
      * @return Style
      */
-    public function getStyleByColumnAndRow($columnIndex1, $row1, $columnIndex2 = null, $row2 = null)
+    public function getStyle($pCellCoordinate)
     {
-        if ($columnIndex2 !== null && $row2 !== null) {
-            $cellRange = new CellRange(
-                CellAddress::fromColumnAndRow($columnIndex1, $row1),
-                CellAddress::fromColumnAndRow($columnIndex2, $row2)
-            );
+        // set this sheet as active
+        $this->parent->setActiveSheetIndex($this->parent->getIndex($this));
 
-            return $this->getStyle($cellRange);
-        }
+        // set cell coordinate as active
+        $this->setSelectedCells(strtoupper($pCellCoordinate));
 
-        return $this->getStyle(CellAddress::fromColumnAndRow($columnIndex1, $row1));
+        return $this->parent->getCellXfSupervisor();
     }
 
     /**
      * Get conditional styles for a cell.
      *
-     * @param string $coordinate eg: 'A1' or 'A1:A3'.
-     *          If a single cell is referenced, then the array of conditional styles will be returned if the cell is
-     *               included in a conditional style range.
-     *          If a range of cells is specified, then the styles will only be returned if the range matches the entire
-     *               range of the conditional.
+     * @param string $pCoordinate eg: 'A1'
      *
      * @return Conditional[]
      */
-    public function getConditionalStyles(string $coordinate): array
+    public function getConditionalStyles($pCoordinate)
     {
-        $coordinate = strtoupper($coordinate);
-        if (strpos($coordinate, ':') !== false) {
-            return $this->conditionalStylesCollection[$coordinate] ?? [];
+        $pCoordinate = strtoupper($pCoordinate);
+        if (!isset($this->conditionalStylesCollection[$pCoordinate])) {
+            $this->conditionalStylesCollection[$pCoordinate] = [];
         }
 
-        $cell = $this->getCell($coordinate);
-        foreach (array_keys($this->conditionalStylesCollection) as $conditionalRange) {
-            if ($cell->isInRange($conditionalRange)) {
-                return $this->conditionalStylesCollection[$conditionalRange];
-            }
-        }
-
-        return [];
-    }
-
-    public function getConditionalRange(string $coordinate): ?string
-    {
-        $coordinate = strtoupper($coordinate);
-        $cell = $this->getCell($coordinate);
-        foreach (array_keys($this->conditionalStylesCollection) as $conditionalRange) {
-            if ($cell->isInRange($conditionalRange)) {
-                return $conditionalRange;
-            }
-        }
-
-        return null;
+        return $this->conditionalStylesCollection[$pCoordinate];
     }
 
     /**
      * Do conditional styles exist for this cell?
      *
-     * @param string $coordinate eg: 'A1' or 'A1:A3'.
-     *          If a single cell is specified, then this method will return true if that cell is included in a
-     *               conditional style range.
-     *          If a range of cells is specified, then true will only be returned if the range matches the entire
-     *               range of the conditional.
+     * @param string $pCoordinate eg: 'A1'
+     *
+     * @return bool
      */
-    public function conditionalStylesExists($coordinate): bool
+    public function conditionalStylesExists($pCoordinate)
     {
-        $coordinate = strtoupper($coordinate);
-        if (strpos($coordinate, ':') !== false) {
-            return isset($this->conditionalStylesCollection[$coordinate]);
-        }
-
-        $cell = $this->getCell($coordinate);
-        foreach (array_keys($this->conditionalStylesCollection) as $conditionalRange) {
-            if ($cell->isInRange($conditionalRange)) {
-                return true;
-            }
-        }
-
-        return false;
+        return isset($this->conditionalStylesCollection[strtoupper($pCoordinate)]);
     }
 
     /**
      * Removes conditional styles for a cell.
      *
-     * @param string $coordinate eg: 'A1'
+     * @param string $pCoordinate eg: 'A1'
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function removeConditionalStyles($coordinate)
+    public function removeConditionalStyles($pCoordinate)
     {
-        unset($this->conditionalStylesCollection[strtoupper($coordinate)]);
+        unset($this->conditionalStylesCollection[strtoupper($pCoordinate)]);
 
         return $this;
     }
@@ -1671,16 +1500,37 @@ class Worksheet implements IComparable
     /**
      * Set conditional styles.
      *
-     * @param string $coordinate eg: 'A1'
-     * @param Conditional[] $styles
+     * @param string $pCoordinate eg: 'A1'
+     * @param $pValue Conditional[]
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setConditionalStyles($coordinate, $styles)
+    public function setConditionalStyles($pCoordinate, $pValue)
     {
-        $this->conditionalStylesCollection[strtoupper($coordinate)] = $styles;
+        $this->conditionalStylesCollection[strtoupper($pCoordinate)] = $pValue;
 
         return $this;
+    }
+
+    /**
+     * Get style for cell by using numeric cell coordinates.
+     *
+     * @param int $columnIndex1 Numeric column coordinate of the cell
+     * @param int $row1 Numeric row coordinate of the cell
+     * @param null|int $columnIndex2 Numeric column coordinate of the range cell
+     * @param null|int $row2 Numeric row coordinate of the range cell
+     *
+     * @return Style
+     */
+    public function getStyleByColumnAndRow($columnIndex1, $row1, $columnIndex2 = null, $row2 = null)
+    {
+        if ($columnIndex2 !== null && $row2 !== null) {
+            $cellRange = Coordinate::stringFromColumnIndex($columnIndex1) . $row1 . ':' . Coordinate::stringFromColumnIndex($columnIndex2) . $row2;
+
+            return $this->getStyle($cellRange);
+        }
+
+        return $this->getStyle(Coordinate::stringFromColumnIndex($columnIndex1) . $row1);
     }
 
     /**
@@ -1688,26 +1538,28 @@ class Worksheet implements IComparable
      *
      * Please note that this will overwrite existing cell styles for cells in range!
      *
-     * @param Style $style Cell style to duplicate
-     * @param string $range Range of cells (i.e. "A1:B10"), or just one cell (i.e. "A1")
+     * @param Style $pCellStyle Cell style to duplicate
+     * @param string $pRange Range of cells (i.e. "A1:B10"), or just one cell (i.e. "A1")
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function duplicateStyle(Style $style, $range)
+    public function duplicateStyle(Style $pCellStyle, $pRange)
     {
         // Add the style to the workbook if necessary
-        $workbook = $this->getParentOrThrow();
-        if ($existingStyle = $workbook->getCellXfByHashCode($style->getHashCode())) {
+        $workbook = $this->parent;
+        if ($existingStyle = $this->parent->getCellXfByHashCode($pCellStyle->getHashCode())) {
             // there is already such cell Xf in our collection
             $xfIndex = $existingStyle->getIndex();
         } else {
             // we don't have such a cell Xf, need to add
-            $workbook->addCellXf($style);
-            $xfIndex = $style->getIndex();
+            $workbook->addCellXf($pCellStyle);
+            $xfIndex = $pCellStyle->getIndex();
         }
 
         // Calculate range outer borders
-        [$rangeStart, $rangeEnd] = Coordinate::rangeBoundaries($range . ':' . $range);
+        list($rangeStart, $rangeEnd) = Coordinate::rangeBoundaries($pRange . ':' . $pRange);
 
         // Make sure we can loop upwards on rows and columns
         if ($rangeStart[0] > $rangeEnd[0] && $rangeStart[1] > $rangeEnd[1]) {
@@ -1731,21 +1583,23 @@ class Worksheet implements IComparable
      *
      * Please note that this will overwrite existing cell styles for cells in range!
      *
-     * @param Conditional[] $styles Cell style to duplicate
-     * @param string $range Range of cells (i.e. "A1:B10"), or just one cell (i.e. "A1")
+     * @param Conditional[] $pCellStyle Cell style to duplicate
+     * @param string $pRange Range of cells (i.e. "A1:B10"), or just one cell (i.e. "A1")
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function duplicateConditionalStyle(array $styles, $range = '')
+    public function duplicateConditionalStyle(array $pCellStyle, $pRange = '')
     {
-        foreach ($styles as $cellStyle) {
+        foreach ($pCellStyle as $cellStyle) {
             if (!($cellStyle instanceof Conditional)) {
                 throw new Exception('Style is not a conditional style');
             }
         }
 
         // Calculate range outer borders
-        [$rangeStart, $rangeEnd] = Coordinate::rangeBoundaries($range . ':' . $range);
+        list($rangeStart, $rangeEnd) = Coordinate::rangeBoundaries($pRange . ':' . $pRange);
 
         // Make sure we can loop upwards on rows and columns
         if ($rangeStart[0] > $rangeEnd[0] && $rangeStart[1] > $rangeEnd[1]) {
@@ -1757,7 +1611,7 @@ class Worksheet implements IComparable
         // Loop through cells and apply styles
         for ($col = $rangeStart[0]; $col <= $rangeEnd[0]; ++$col) {
             for ($row = $rangeStart[1]; $row <= $rangeEnd[1]; ++$row) {
-                $this->setConditionalStyles(Coordinate::stringFromColumnIndex($col) . $row, $styles);
+                $this->setConditionalStyles(Coordinate::stringFromColumnIndex($col) . $row, $pCellStyle);
             }
         }
 
@@ -1767,22 +1621,28 @@ class Worksheet implements IComparable
     /**
      * Set break on a cell.
      *
-     * @param array<int>|CellAddress|string $coordinate Coordinate of the cell as a string, eg: 'C5';
-     *               or as an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @param int $break Break type (type of Worksheet::BREAK_*)
+     * @param string $pCoordinate Cell coordinate (e.g. A1)
+     * @param int $pBreak Break type (type of Worksheet::BREAK_*)
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function setBreak($coordinate, $break, int $max = -1)
+    public function setBreak($pCoordinate, $pBreak)
     {
-        $cellAddress = Functions::trimSheetFromCellReference(Validations::validateCellAddress($coordinate));
+        // Uppercase coordinate
+        $pCoordinate = strtoupper($pCoordinate);
 
-        if ($break === self::BREAK_NONE) {
-            unset($this->rowBreaks[$cellAddress], $this->columnBreaks[$cellAddress]);
-        } elseif ($break === self::BREAK_ROW) {
-            $this->rowBreaks[$cellAddress] = new PageBreak($break, $cellAddress, $max);
-        } elseif ($break === self::BREAK_COLUMN) {
-            $this->columnBreaks[$cellAddress] = new PageBreak($break, $cellAddress, $max);
+        if ($pCoordinate != '') {
+            if ($pBreak == self::BREAK_NONE) {
+                if (isset($this->breaks[$pCoordinate])) {
+                    unset($this->breaks[$pCoordinate]);
+                }
+            } else {
+                $this->breaks[$pCoordinate] = $pBreak;
+            }
+        } else {
+            throw new Exception('No cell coordinate specified.');
         }
 
         return $this;
@@ -1791,16 +1651,11 @@ class Worksheet implements IComparable
     /**
      * Set break on a cell by using numeric cell coordinates.
      *
-     * @deprecated 1.23.0
-     *      Use the setBreak() method with a cell address such as 'C5' instead;,
-     *          or passing in an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @see Worksheet::setBreak()
-     *
      * @param int $columnIndex Numeric column coordinate of the cell
      * @param int $row Numeric row coordinate of the cell
      * @param int $break Break type (type of Worksheet::BREAK_*)
      *
-     * @return $this
+     * @return Worksheet
      */
     public function setBreakByColumnAndRow($columnIndex, $row, $break)
     {
@@ -1810,245 +1665,93 @@ class Worksheet implements IComparable
     /**
      * Get breaks.
      *
-     * @return int[]
+     * @return array[]
      */
     public function getBreaks()
     {
-        $breaks = [];
-        /** @var callable */
-        $compareFunction = [self::class, 'compareRowBreaks'];
-        uksort($this->rowBreaks, $compareFunction);
-        foreach ($this->rowBreaks as $break) {
-            $breaks[$break->getCoordinate()] = self::BREAK_ROW;
-        }
-        /** @var callable */
-        $compareFunction = [self::class, 'compareColumnBreaks'];
-        uksort($this->columnBreaks, $compareFunction);
-        foreach ($this->columnBreaks as $break) {
-            $breaks[$break->getCoordinate()] = self::BREAK_COLUMN;
-        }
-
-        return $breaks;
-    }
-
-    /**
-     * Get row breaks.
-     *
-     * @return PageBreak[]
-     */
-    public function getRowBreaks()
-    {
-        /** @var callable */
-        $compareFunction = [self::class, 'compareRowBreaks'];
-        uksort($this->rowBreaks, $compareFunction);
-
-        return $this->rowBreaks;
-    }
-
-    protected static function compareRowBreaks(string $coordinate1, string $coordinate2): int
-    {
-        $row1 = Coordinate::indexesFromString($coordinate1)[1];
-        $row2 = Coordinate::indexesFromString($coordinate2)[1];
-
-        return $row1 - $row2;
-    }
-
-    protected static function compareColumnBreaks(string $coordinate1, string $coordinate2): int
-    {
-        $column1 = Coordinate::indexesFromString($coordinate1)[0];
-        $column2 = Coordinate::indexesFromString($coordinate2)[0];
-
-        return $column1 - $column2;
-    }
-
-    /**
-     * Get column breaks.
-     *
-     * @return PageBreak[]
-     */
-    public function getColumnBreaks()
-    {
-        /** @var callable */
-        $compareFunction = [self::class, 'compareColumnBreaks'];
-        uksort($this->columnBreaks, $compareFunction);
-
-        return $this->columnBreaks;
+        return $this->breaks;
     }
 
     /**
      * Set merge on a cell range.
      *
-     * @param AddressRange|array<int>|string $range A simple string containing a Cell range like 'A1:E10'
-     *              or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *              or an AddressRange.
-     * @param string $behaviour How the merged cells should behave.
-     *               Possible values are:
-     *                   MERGE_CELL_CONTENT_EMPTY - Empty the content of the hidden cells
-     *                   MERGE_CELL_CONTENT_HIDE - Keep the content of the hidden cells
-     *                   MERGE_CELL_CONTENT_MERGE - Move the content of the hidden cells into the first cell
+     * @param string $pRange Cell range (e.g. A1:E1)
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function mergeCells($range, $behaviour = self::MERGE_CELL_CONTENT_EMPTY)
+    public function mergeCells($pRange)
     {
-        $range = Functions::trimSheetFromCellReference(Validations::validateCellRange($range));
+        // Uppercase coordinate
+        $pRange = strtoupper($pRange);
 
-        if (strpos($range, ':') === false) {
-            $range .= ":{$range}";
-        }
+        if (strpos($pRange, ':') !== false) {
+            $this->mergeCells[$pRange] = $pRange;
 
-        if (preg_match('/^([A-Z]+)(\\d+):([A-Z]+)(\\d+)$/', $range, $matches) !== 1) {
-            throw new Exception('Merge must be on a valid range of cells.');
-        }
+            // make sure cells are created
 
-        $this->mergeCells[$range] = $range;
-        $firstRow = (int) $matches[2];
-        $lastRow = (int) $matches[4];
-        $firstColumn = $matches[1];
-        $lastColumn = $matches[3];
-        $firstColumnIndex = Coordinate::columnIndexFromString($firstColumn);
-        $lastColumnIndex = Coordinate::columnIndexFromString($lastColumn);
-        $numberRows = $lastRow - $firstRow;
-        $numberColumns = $lastColumnIndex - $firstColumnIndex;
+            // get the cells in the range
+            $aReferences = Coordinate::extractAllCellReferencesInRange($pRange);
 
-        if ($numberRows === 1 && $numberColumns === 1) {
-            return $this;
-        }
-
-        // create upper left cell if it does not already exist
-        $upperLeft = "{$firstColumn}{$firstRow}";
-        if (!$this->cellExists($upperLeft)) {
-            $this->getCell($upperLeft)->setValueExplicit(null, DataType::TYPE_NULL);
-        }
-
-        if ($behaviour !== self::MERGE_CELL_CONTENT_HIDE) {
-            // Blank out the rest of the cells in the range (if they exist)
-            if ($numberRows > $numberColumns) {
-                $this->clearMergeCellsByColumn($firstColumn, $lastColumn, $firstRow, $lastRow, $upperLeft, $behaviour);
-            } else {
-                $this->clearMergeCellsByRow($firstColumn, $lastColumnIndex, $firstRow, $lastRow, $upperLeft, $behaviour);
+            // create upper left cell if it does not already exist
+            $upperLeft = $aReferences[0];
+            if (!$this->cellExists($upperLeft)) {
+                $this->getCell($upperLeft)->setValueExplicit(null, DataType::TYPE_NULL);
             }
+
+            // Blank out the rest of the cells in the range (if they exist)
+            $count = count($aReferences);
+            for ($i = 1; $i < $count; ++$i) {
+                if ($this->cellExists($aReferences[$i])) {
+                    $this->getCell($aReferences[$i])->setValueExplicit(null, DataType::TYPE_NULL);
+                }
+            }
+        } else {
+            throw new Exception('Merge must be set on a range of cells.');
         }
 
         return $this;
     }
 
-    private function clearMergeCellsByColumn(string $firstColumn, string $lastColumn, int $firstRow, int $lastRow, string $upperLeft, string $behaviour): void
-    {
-        $leftCellValue = ($behaviour === self::MERGE_CELL_CONTENT_MERGE)
-            ? [$this->getCell($upperLeft)->getFormattedValue()]
-            : [];
-
-        foreach ($this->getColumnIterator($firstColumn, $lastColumn) as $column) {
-            $iterator = $column->getCellIterator($firstRow);
-            $iterator->setIterateOnlyExistingCells(true);
-            foreach ($iterator as $cell) {
-                if ($cell !== null) {
-                    $row = $cell->getRow();
-                    if ($row > $lastRow) {
-                        break;
-                    }
-                    $leftCellValue = $this->mergeCellBehaviour($cell, $upperLeft, $behaviour, $leftCellValue);
-                }
-            }
-        }
-
-        if ($behaviour === self::MERGE_CELL_CONTENT_MERGE) {
-            $this->getCell($upperLeft)->setValueExplicit(implode(' ', $leftCellValue), DataType::TYPE_STRING);
-        }
-    }
-
-    private function clearMergeCellsByRow(string $firstColumn, int $lastColumnIndex, int $firstRow, int $lastRow, string $upperLeft, string $behaviour): void
-    {
-        $leftCellValue = ($behaviour === self::MERGE_CELL_CONTENT_MERGE)
-            ? [$this->getCell($upperLeft)->getFormattedValue()]
-            : [];
-
-        foreach ($this->getRowIterator($firstRow, $lastRow) as $row) {
-            $iterator = $row->getCellIterator($firstColumn);
-            $iterator->setIterateOnlyExistingCells(true);
-            foreach ($iterator as $cell) {
-                if ($cell !== null) {
-                    $column = $cell->getColumn();
-                    $columnIndex = Coordinate::columnIndexFromString($column);
-                    if ($columnIndex > $lastColumnIndex) {
-                        break;
-                    }
-                    $leftCellValue = $this->mergeCellBehaviour($cell, $upperLeft, $behaviour, $leftCellValue);
-                }
-            }
-        }
-
-        if ($behaviour === self::MERGE_CELL_CONTENT_MERGE) {
-            $this->getCell($upperLeft)->setValueExplicit(implode(' ', $leftCellValue), DataType::TYPE_STRING);
-        }
-    }
-
-    public function mergeCellBehaviour(Cell $cell, string $upperLeft, string $behaviour, array $leftCellValue): array
-    {
-        if ($cell->getCoordinate() !== $upperLeft) {
-            Calculation::getInstance($cell->getWorksheet()->getParentOrThrow())->flushInstance();
-            if ($behaviour === self::MERGE_CELL_CONTENT_MERGE) {
-                $cellValue = $cell->getFormattedValue();
-                if ($cellValue !== '') {
-                    $leftCellValue[] = $cellValue;
-                }
-            }
-            $cell->setValueExplicit(null, DataType::TYPE_NULL);
-        }
-
-        return $leftCellValue;
-    }
-
     /**
      * Set merge on a cell range by using numeric cell coordinates.
-     *
-     * @deprecated 1.23.0
-     *      Use the mergeCells() method with a cell address range such as 'C5:F8' instead;,
-     *          or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *          or an AddressRange object.
-     * @see Worksheet::mergeCells()
      *
      * @param int $columnIndex1 Numeric column coordinate of the first cell
      * @param int $row1 Numeric row coordinate of the first cell
      * @param int $columnIndex2 Numeric column coordinate of the last cell
      * @param int $row2 Numeric row coordinate of the last cell
-     * @param string $behaviour How the merged cells should behave.
-     *               Possible values are:
-     *                   MERGE_CELL_CONTENT_EMPTY - Empty the content of the hidden cells
-     *                   MERGE_CELL_CONTENT_HIDE - Keep the content of the hidden cells
-     *                   MERGE_CELL_CONTENT_MERGE - Move the content of the hidden cells into the first cell
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function mergeCellsByColumnAndRow($columnIndex1, $row1, $columnIndex2, $row2, $behaviour = self::MERGE_CELL_CONTENT_EMPTY)
+    public function mergeCellsByColumnAndRow($columnIndex1, $row1, $columnIndex2, $row2)
     {
-        $cellRange = new CellRange(
-            CellAddress::fromColumnAndRow($columnIndex1, $row1),
-            CellAddress::fromColumnAndRow($columnIndex2, $row2)
-        );
+        $cellRange = Coordinate::stringFromColumnIndex($columnIndex1) . $row1 . ':' . Coordinate::stringFromColumnIndex($columnIndex2) . $row2;
 
-        return $this->mergeCells($cellRange, $behaviour);
+        return $this->mergeCells($cellRange);
     }
 
     /**
      * Remove merge on a cell range.
      *
-     * @param AddressRange|array<int>|string $range A simple string containing a Cell range like 'A1:E10'
-     *              or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *              or an AddressRange.
+     * @param string $pRange Cell range (e.g. A1:E1)
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function unmergeCells($range)
+    public function unmergeCells($pRange)
     {
-        $range = Functions::trimSheetFromCellReference(Validations::validateCellRange($range));
+        // Uppercase coordinate
+        $pRange = strtoupper($pRange);
 
-        if (strpos($range, ':') !== false) {
-            if (isset($this->mergeCells[$range])) {
-                unset($this->mergeCells[$range]);
+        if (strpos($pRange, ':') !== false) {
+            if (isset($this->mergeCells[$pRange])) {
+                unset($this->mergeCells[$pRange]);
             } else {
-                throw new Exception('Cell range ' . $range . ' not known as merged.');
+                throw new Exception('Cell range ' . $pRange . ' not known as merged.');
             }
         } else {
             throw new Exception('Merge can only be removed from a range of cells.');
@@ -2060,25 +1763,18 @@ class Worksheet implements IComparable
     /**
      * Remove merge on a cell range by using numeric cell coordinates.
      *
-     * @deprecated 1.23.0
-     *      Use the unmergeCells() method with a cell address range such as 'C5:F8' instead;,
-     *          or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *          or an AddressRange object.
-     * @see Worksheet::unmergeCells()
-     *
      * @param int $columnIndex1 Numeric column coordinate of the first cell
      * @param int $row1 Numeric row coordinate of the first cell
      * @param int $columnIndex2 Numeric column coordinate of the last cell
      * @param int $row2 Numeric row coordinate of the last cell
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
     public function unmergeCellsByColumnAndRow($columnIndex1, $row1, $columnIndex2, $row2)
     {
-        $cellRange = new CellRange(
-            CellAddress::fromColumnAndRow($columnIndex1, $row1),
-            CellAddress::fromColumnAndRow($columnIndex2, $row2)
-        );
+        $cellRange = Coordinate::stringFromColumnIndex($columnIndex1) . $row1 . ':' . Coordinate::stringFromColumnIndex($columnIndex2) . $row2;
 
         return $this->unmergeCells($cellRange);
     }
@@ -2086,7 +1782,7 @@ class Worksheet implements IComparable
     /**
      * Get merge cells array.
      *
-     * @return string[]
+     * @return array[]
      */
     public function getMergeCells()
     {
@@ -2097,48 +1793,41 @@ class Worksheet implements IComparable
      * Set merge cells array for the entire sheet. Use instead mergeCells() to merge
      * a single cell range.
      *
-     * @param string[] $mergeCells
+     * @param array $pValue
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setMergeCells(array $mergeCells)
+    public function setMergeCells(array $pValue)
     {
-        $this->mergeCells = $mergeCells;
+        $this->mergeCells = $pValue;
 
         return $this;
     }
 
     /**
-     * Set protection on a cell or cell range.
+     * Set protection on a cell range.
      *
-     * @param AddressRange|array<int>|CellAddress|int|string $range A simple string containing a Cell range like 'A1:E10'
-     *              or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *              or a CellAddress or AddressRange object.
-     * @param string $password Password to unlock the protection
-     * @param bool $alreadyHashed If the password has already been hashed, set this to true
+     * @param string $pRange Cell (e.g. A1) or cell range (e.g. A1:E1)
+     * @param string $pPassword Password to unlock the protection
+     * @param bool $pAlreadyHashed If the password has already been hashed, set this to true
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function protectCells($range, $password, $alreadyHashed = false)
+    public function protectCells($pRange, $pPassword, $pAlreadyHashed = false)
     {
-        $range = Functions::trimSheetFromCellReference(Validations::validateCellOrCellRange($range));
+        // Uppercase coordinate
+        $pRange = strtoupper($pRange);
 
-        if (!$alreadyHashed) {
-            $password = Shared\PasswordHasher::hashPassword($password);
+        if (!$pAlreadyHashed) {
+            $pPassword = Shared\PasswordHasher::hashPassword($pPassword);
         }
-        $this->protectedCells[$range] = $password;
+        $this->protectedCells[$pRange] = $pPassword;
 
         return $this;
     }
 
     /**
      * Set protection on a cell range by using numeric cell coordinates.
-     *
-     * @deprecated 1.23.0
-     *      Use the protectCells() method with a cell address range such as 'C5:F8' instead;,
-     *          or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *          or an AddressRange object.
-     * @see Worksheet::protectCells()
      *
      * @param int $columnIndex1 Numeric column coordinate of the first cell
      * @param int $row1 Numeric row coordinate of the first cell
@@ -2147,35 +1836,33 @@ class Worksheet implements IComparable
      * @param string $password Password to unlock the protection
      * @param bool $alreadyHashed If the password has already been hashed, set this to true
      *
-     * @return $this
+     * @return Worksheet
      */
     public function protectCellsByColumnAndRow($columnIndex1, $row1, $columnIndex2, $row2, $password, $alreadyHashed = false)
     {
-        $cellRange = new CellRange(
-            CellAddress::fromColumnAndRow($columnIndex1, $row1),
-            CellAddress::fromColumnAndRow($columnIndex2, $row2)
-        );
+        $cellRange = Coordinate::stringFromColumnIndex($columnIndex1) . $row1 . ':' . Coordinate::stringFromColumnIndex($columnIndex2) . $row2;
 
         return $this->protectCells($cellRange, $password, $alreadyHashed);
     }
 
     /**
-     * Remove protection on a cell or cell range.
+     * Remove protection on a cell range.
      *
-     * @param AddressRange|array<int>|CellAddress|int|string $range A simple string containing a Cell range like 'A1:E10'
-     *              or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *              or a CellAddress or AddressRange object.
+     * @param string $pRange Cell (e.g. A1) or cell range (e.g. A1:E1)
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function unprotectCells($range)
+    public function unprotectCells($pRange)
     {
-        $range = Functions::trimSheetFromCellReference(Validations::validateCellOrCellRange($range));
+        // Uppercase coordinate
+        $pRange = strtoupper($pRange);
 
-        if (isset($this->protectedCells[$range])) {
-            unset($this->protectedCells[$range]);
+        if (isset($this->protectedCells[$pRange])) {
+            unset($this->protectedCells[$pRange]);
         } else {
-            throw new Exception('Cell range ' . $range . ' not known as protected.');
+            throw new Exception('Cell range ' . $pRange . ' not known as protected.');
         }
 
         return $this;
@@ -2184,25 +1871,18 @@ class Worksheet implements IComparable
     /**
      * Remove protection on a cell range by using numeric cell coordinates.
      *
-     * @deprecated 1.23.0
-     *      Use the unprotectCells() method with a cell address range such as 'C5:F8' instead;,
-     *          or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *          or an AddressRange object.
-     * @see Worksheet::unprotectCells()
-     *
      * @param int $columnIndex1 Numeric column coordinate of the first cell
      * @param int $row1 Numeric row coordinate of the first cell
      * @param int $columnIndex2 Numeric column coordinate of the last cell
      * @param int $row2 Numeric row coordinate of the last cell
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
     public function unprotectCellsByColumnAndRow($columnIndex1, $row1, $columnIndex2, $row2)
     {
-        $cellRange = new CellRange(
-            CellAddress::fromColumnAndRow($columnIndex1, $row1),
-            CellAddress::fromColumnAndRow($columnIndex2, $row2)
-        );
+        $cellRange = Coordinate::stringFromColumnIndex($columnIndex1) . $row1 . ':' . Coordinate::stringFromColumnIndex($columnIndex2) . $row2;
 
         return $this->unprotectCells($cellRange);
     }
@@ -2210,7 +1890,7 @@ class Worksheet implements IComparable
     /**
      * Get protected cells.
      *
-     * @return string[]
+     * @return array[]
      */
     public function getProtectedCells()
     {
@@ -2230,21 +1910,19 @@ class Worksheet implements IComparable
     /**
      * Set AutoFilter.
      *
-     * @param AddressRange|array<int>|AutoFilter|string $autoFilterOrRange
+     * @param AutoFilter|string $pValue
      *            A simple string containing a Cell range like 'A1:E10' is permitted for backward compatibility
-     *              or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *              or an AddressRange.
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function setAutoFilter($autoFilterOrRange)
+    public function setAutoFilter($pValue)
     {
-        if (is_object($autoFilterOrRange) && ($autoFilterOrRange instanceof AutoFilter)) {
-            $this->autoFilter = $autoFilterOrRange;
-        } else {
-            $cellRange = Functions::trimSheetFromCellReference(Validations::validateCellRange($autoFilterOrRange));
-
-            $this->autoFilter->setRange($cellRange);
+        if (is_string($pValue)) {
+            $this->autoFilter->setRange($pValue);
+        } elseif (is_object($pValue) && ($pValue instanceof AutoFilter)) {
+            $this->autoFilter = $pValue;
         }
 
         return $this;
@@ -2253,137 +1931,32 @@ class Worksheet implements IComparable
     /**
      * Set Autofilter Range by using numeric cell coordinates.
      *
-     * @deprecated 1.23.0
-     *      Use the setAutoFilter() method with a cell address range such as 'C5:F8' instead;,
-     *          or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *          or an AddressRange object or AutoFilter object.
-     * @see Worksheet::setAutoFilter()
-     *
      * @param int $columnIndex1 Numeric column coordinate of the first cell
      * @param int $row1 Numeric row coordinate of the first cell
      * @param int $columnIndex2 Numeric column coordinate of the second cell
      * @param int $row2 Numeric row coordinate of the second cell
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
     public function setAutoFilterByColumnAndRow($columnIndex1, $row1, $columnIndex2, $row2)
     {
-        $cellRange = new CellRange(
-            CellAddress::fromColumnAndRow($columnIndex1, $row1),
-            CellAddress::fromColumnAndRow($columnIndex2, $row2)
+        return $this->setAutoFilter(
+            Coordinate::stringFromColumnIndex($columnIndex1) . $row1
+            . ':' .
+            Coordinate::stringFromColumnIndex($columnIndex2) . $row2
         );
-
-        return $this->setAutoFilter($cellRange);
     }
 
     /**
      * Remove autofilter.
-     */
-    public function removeAutoFilter(): self
-    {
-        $this->autoFilter->setRange('');
-
-        return $this;
-    }
-
-    /**
-     * Get collection of Tables.
      *
-     * @return ArrayObject<int, Table>
+     * @return Worksheet
      */
-    public function getTableCollection()
+    public function removeAutoFilter()
     {
-        return $this->tableCollection;
-    }
-
-    /**
-     * Add Table.
-     *
-     * @return $this
-     */
-    public function addTable(Table $table): self
-    {
-        $table->setWorksheet($this);
-        $this->tableCollection[] = $table;
-
-        return $this;
-    }
-
-    /**
-     * @return string[] array of Table names
-     */
-    public function getTableNames(): array
-    {
-        $tableNames = [];
-
-        foreach ($this->tableCollection as $table) {
-            /** @var Table $table */
-            $tableNames[] = $table->getName();
-        }
-
-        return $tableNames;
-    }
-
-    /** @var null|Table */
-    private static $scrutinizerNullTable;
-
-    /** @var null|int */
-    private static $scrutinizerNullInt;
-
-    /**
-     * @param string $name the table name to search
-     *
-     * @return null|Table The table from the tables collection, or null if not found
-     */
-    public function getTableByName(string $name): ?Table
-    {
-        $tableIndex = $this->getTableIndexByName($name);
-
-        return ($tableIndex === null) ? self::$scrutinizerNullTable : $this->tableCollection[$tableIndex];
-    }
-
-    /**
-     * @param string $name the table name to search
-     *
-     * @return null|int The index of the located table in the tables collection, or null if not found
-     */
-    protected function getTableIndexByName(string $name): ?int
-    {
-        $name = Shared\StringHelper::strToUpper($name);
-        foreach ($this->tableCollection as $index => $table) {
-            /** @var Table $table */
-            if (Shared\StringHelper::strToUpper($table->getName()) === $name) {
-                return $index;
-            }
-        }
-
-        return self::$scrutinizerNullInt;
-    }
-
-    /**
-     * Remove Table by name.
-     *
-     * @param string $name Table name
-     *
-     * @return $this
-     */
-    public function removeTableByName(string $name): self
-    {
-        $tableIndex = $this->getTableIndexByName($name);
-
-        if ($tableIndex !== null) {
-            unset($this->tableCollection[$tableIndex]);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove collection of Tables.
-     */
-    public function removeTableCollection(): self
-    {
-        $this->tableCollection = new ArrayObject();
+        $this->autoFilter->setRange(null);
 
         return $this;
     }
@@ -2391,7 +1964,7 @@ class Worksheet implements IComparable
     /**
      * Get Freeze Pane.
      *
-     * @return null|string
+     * @return string
      */
     public function getFreezePane()
     {
@@ -2407,40 +1980,25 @@ class Worksheet implements IComparable
      *     - B1 will freeze the columns to the left of cell B1 (i.e column A)
      *     - B2 will freeze the rows above and to the left of cell B2 (i.e row 1 and column A)
      *
-     * @param null|array<int>|CellAddress|string $coordinate Coordinate of the cell as a string, eg: 'C5';
-     *            or as an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     *        Passing a null value for this argument will clear any existing freeze pane for this worksheet.
-     * @param null|array<int>|CellAddress|string $topLeftCell default position of the right bottom pane
-     *            Coordinate of the cell as a string, eg: 'C5'; or as an array of [$columnIndex, $row] (e.g. [3, 5]),
-     *            or a CellAddress object.
+     * @param null|string $cell Position of the split
+     * @param null|string $topLeftCell default position of the right bottom pane
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function freezePane($coordinate, $topLeftCell = null)
+    public function freezePane($cell, $topLeftCell = null)
     {
-        $cellAddress = ($coordinate !== null)
-            ? Functions::trimSheetFromCellReference(Validations::validateCellAddress($coordinate))
-            : null;
-        if ($cellAddress !== null && Coordinate::coordinateIsRange($cellAddress)) {
+        if (is_string($cell) && Coordinate::coordinateIsRange($cell)) {
             throw new Exception('Freeze pane can not be set on a range of cells.');
         }
-        $topLeftCell = ($topLeftCell !== null)
-            ? Functions::trimSheetFromCellReference(Validations::validateCellAddress($topLeftCell))
-            : null;
 
-        if ($cellAddress !== null && $topLeftCell === null) {
-            $coordinate = Coordinate::coordinateFromString($cellAddress);
+        if ($cell !== null && $topLeftCell === null) {
+            $coordinate = Coordinate::coordinateFromString($cell);
             $topLeftCell = $coordinate[0] . $coordinate[1];
         }
 
-        $this->freezePane = $cellAddress;
-        $this->topLeftCell = $topLeftCell;
-
-        return $this;
-    }
-
-    public function setTopLeftCell(string $topLeftCell): self
-    {
+        $this->freezePane = $cell;
         $this->topLeftCell = $topLeftCell;
 
         return $this;
@@ -2449,15 +2007,10 @@ class Worksheet implements IComparable
     /**
      * Freeze Pane by using numeric cell coordinates.
      *
-     * @deprecated 1.23.0
-     *      Use the freezePane() method with a cell address such as 'C5' instead;,
-     *          or passing in an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @see Worksheet::freezePane()
-     *
      * @param int $columnIndex Numeric column coordinate of the cell
      * @param int $row Numeric row coordinate of the cell
      *
-     * @return $this
+     * @return Worksheet
      */
     public function freezePaneByColumnAndRow($columnIndex, $row)
     {
@@ -2467,7 +2020,7 @@ class Worksheet implements IComparable
     /**
      * Unfreeze Pane.
      *
-     * @return $this
+     * @return Worksheet
      */
     public function unfreezePane()
     {
@@ -2477,7 +2030,7 @@ class Worksheet implements IComparable
     /**
      * Get the default position of the right bottom pane.
      *
-     * @return null|string
+     * @return int
      */
     public function getTopLeftCell()
     {
@@ -2487,16 +2040,18 @@ class Worksheet implements IComparable
     /**
      * Insert a new row, updating all possible related data.
      *
-     * @param int $before Insert before this row number
-     * @param int $numberOfRows Number of new rows to insert
+     * @param int $pBefore Insert before this one
+     * @param int $pNumRows Number of rows to insert
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function insertNewRowBefore(int $before, int $numberOfRows = 1)
+    public function insertNewRowBefore($pBefore, $pNumRows = 1)
     {
-        if ($before >= 1) {
+        if ($pBefore >= 1) {
             $objReferenceHelper = ReferenceHelper::getInstance();
-            $objReferenceHelper->insertNewBefore('A' . $before, 0, $numberOfRows, $this);
+            $objReferenceHelper->insertNewBefore('A' . $pBefore, 0, $pNumRows, $this);
         } else {
             throw new Exception('Rows can only be inserted before at least row 1.');
         }
@@ -2507,16 +2062,18 @@ class Worksheet implements IComparable
     /**
      * Insert a new column, updating all possible related data.
      *
-     * @param string $before Insert before this column Name, eg: 'A'
-     * @param int $numberOfColumns Number of new columns to insert
+     * @param int $pBefore Insert before this one, eg: 'A'
+     * @param int $pNumCols Number of columns to insert
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function insertNewColumnBefore(string $before, int $numberOfColumns = 1)
+    public function insertNewColumnBefore($pBefore, $pNumCols = 1)
     {
-        if (!is_numeric($before)) {
+        if (!is_numeric($pBefore)) {
             $objReferenceHelper = ReferenceHelper::getInstance();
-            $objReferenceHelper->insertNewBefore($before . '1', $numberOfColumns, 0, $this);
+            $objReferenceHelper->insertNewBefore($pBefore . '1', $pNumCols, 0, $this);
         } else {
             throw new Exception('Column references should not be numeric.');
         }
@@ -2527,15 +2084,17 @@ class Worksheet implements IComparable
     /**
      * Insert a new column, updating all possible related data.
      *
-     * @param int $beforeColumnIndex Insert before this column ID (numeric column coordinate of the cell)
-     * @param int $numberOfColumns Number of new columns to insert
+     * @param int $beforeColumnIndex Insert before this one (numeric column coordinate of the cell)
+     * @param int $pNumCols Number of columns to insert
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function insertNewColumnBeforeByIndex(int $beforeColumnIndex, int $numberOfColumns = 1)
+    public function insertNewColumnBeforeByIndex($beforeColumnIndex, $pNumCols = 1)
     {
         if ($beforeColumnIndex >= 1) {
-            return $this->insertNewColumnBefore(Coordinate::stringFromColumnIndex($beforeColumnIndex), $numberOfColumns);
+            return $this->insertNewColumnBefore(Coordinate::stringFromColumnIndex($beforeColumnIndex), $pNumCols);
         }
 
         throw new Exception('Columns can only be inserted before at least column A (1).');
@@ -2544,130 +2103,69 @@ class Worksheet implements IComparable
     /**
      * Delete a row, updating all possible related data.
      *
-     * @param int $row Remove rows, starting with this row number
-     * @param int $numberOfRows Number of rows to remove
+     * @param int $pRow Remove starting with this one
+     * @param int $pNumRows Number of rows to remove
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function removeRow(int $row, int $numberOfRows = 1)
+    public function removeRow($pRow, $pNumRows = 1)
     {
-        if ($row < 1) {
+        if ($pRow >= 1) {
+            $highestRow = $this->getHighestDataRow();
+            $objReferenceHelper = ReferenceHelper::getInstance();
+            $objReferenceHelper->insertNewBefore('A' . ($pRow + $pNumRows), 0, -$pNumRows, $this);
+            for ($r = 0; $r < $pNumRows; ++$r) {
+                $this->getCellCollection()->removeRow($highestRow);
+                --$highestRow;
+            }
+        } else {
             throw new Exception('Rows to be deleted should at least start from row 1.');
         }
 
-        $holdRowDimensions = $this->removeRowDimensions($row, $numberOfRows);
-        $highestRow = $this->getHighestDataRow();
-        $removedRowsCounter = 0;
-
-        for ($r = 0; $r < $numberOfRows; ++$r) {
-            if ($row + $r <= $highestRow) {
-                $this->getCellCollection()->removeRow($row + $r);
-                ++$removedRowsCounter;
-            }
-        }
-
-        $objReferenceHelper = ReferenceHelper::getInstance();
-        $objReferenceHelper->insertNewBefore('A' . ($row + $numberOfRows), 0, -$numberOfRows, $this);
-        for ($r = 0; $r < $removedRowsCounter; ++$r) {
-            $this->getCellCollection()->removeRow($highestRow);
-            --$highestRow;
-        }
-
-        $this->rowDimensions = $holdRowDimensions;
-
         return $this;
-    }
-
-    private function removeRowDimensions(int $row, int $numberOfRows): array
-    {
-        $highRow = $row + $numberOfRows - 1;
-        $holdRowDimensions = [];
-        foreach ($this->rowDimensions as $rowDimension) {
-            $num = $rowDimension->getRowIndex();
-            if ($num < $row) {
-                $holdRowDimensions[$num] = $rowDimension;
-            } elseif ($num > $highRow) {
-                $num -= $numberOfRows;
-                $cloneDimension = clone $rowDimension;
-                $cloneDimension->setRowIndex(/** @scrutinizer ignore-type */ $num);
-                $holdRowDimensions[$num] = $cloneDimension;
-            }
-        }
-
-        return $holdRowDimensions;
     }
 
     /**
      * Remove a column, updating all possible related data.
      *
-     * @param string $column Remove columns starting with this column name, eg: 'A'
-     * @param int $numberOfColumns Number of columns to remove
+     * @param string $pColumn Remove starting with this one, eg: 'A'
+     * @param int $pNumCols Number of columns to remove
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function removeColumn(string $column, int $numberOfColumns = 1)
+    public function removeColumn($pColumn, $pNumCols = 1)
     {
-        if (is_numeric($column)) {
+        if (!is_numeric($pColumn)) {
+            $highestColumn = $this->getHighestDataColumn();
+            $pColumn = Coordinate::stringFromColumnIndex(Coordinate::columnIndexFromString($pColumn) + $pNumCols);
+            $objReferenceHelper = ReferenceHelper::getInstance();
+            $objReferenceHelper->insertNewBefore($pColumn . '1', -$pNumCols, 0, $this);
+            for ($c = 0; $c < $pNumCols; ++$c) {
+                $this->getCellCollection()->removeColumn($highestColumn);
+                $highestColumn = Coordinate::stringFromColumnIndex(Coordinate::columnIndexFromString($highestColumn) - 1);
+            }
+        } else {
             throw new Exception('Column references should not be numeric.');
         }
 
-        $highestColumn = $this->getHighestDataColumn();
-        $highestColumnIndex = Coordinate::columnIndexFromString($highestColumn);
-        $pColumnIndex = Coordinate::columnIndexFromString($column);
-
-        $holdColumnDimensions = $this->removeColumnDimensions($pColumnIndex, $numberOfColumns);
-
-        $column = Coordinate::stringFromColumnIndex($pColumnIndex + $numberOfColumns);
-        $objReferenceHelper = ReferenceHelper::getInstance();
-        $objReferenceHelper->insertNewBefore($column . '1', -$numberOfColumns, 0, $this);
-
-        $this->columnDimensions = $holdColumnDimensions;
-
-        if ($pColumnIndex > $highestColumnIndex) {
-            return $this;
-        }
-
-        $maxPossibleColumnsToBeRemoved = $highestColumnIndex - $pColumnIndex + 1;
-
-        for ($c = 0, $n = min($maxPossibleColumnsToBeRemoved, $numberOfColumns); $c < $n; ++$c) {
-            $this->getCellCollection()->removeColumn($highestColumn);
-            $highestColumn = Coordinate::stringFromColumnIndex(Coordinate::columnIndexFromString($highestColumn) - 1);
-        }
-
-        $this->garbageCollect();
-
         return $this;
-    }
-
-    private function removeColumnDimensions(int $pColumnIndex, int $numberOfColumns): array
-    {
-        $highCol = $pColumnIndex + $numberOfColumns - 1;
-        $holdColumnDimensions = [];
-        foreach ($this->columnDimensions as $columnDimension) {
-            $num = $columnDimension->getColumnNumeric();
-            if ($num < $pColumnIndex) {
-                $str = $columnDimension->getColumnIndex();
-                $holdColumnDimensions[$str] = $columnDimension;
-            } elseif ($num > $highCol) {
-                $cloneDimension = clone $columnDimension;
-                $cloneDimension->setColumnNumeric($num - $numberOfColumns);
-                $str = $cloneDimension->getColumnIndex();
-                $holdColumnDimensions[$str] = $cloneDimension;
-            }
-        }
-
-        return $holdColumnDimensions;
     }
 
     /**
      * Remove a column, updating all possible related data.
      *
-     * @param int $columnIndex Remove starting with this column Index (numeric column coordinate)
+     * @param int $columnIndex Remove starting with this one (numeric column coordinate of the cell)
      * @param int $numColumns Number of columns to remove
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function removeColumnByIndex(int $columnIndex, int $numColumns = 1)
+    public function removeColumnByIndex($columnIndex, $numColumns = 1)
     {
         if ($columnIndex >= 1) {
             return $this->removeColumn(Coordinate::stringFromColumnIndex($columnIndex), $numColumns);
@@ -2678,8 +2176,10 @@ class Worksheet implements IComparable
 
     /**
      * Show gridlines?
+     *
+     * @return bool
      */
-    public function getShowGridlines(): bool
+    public function getShowGridlines()
     {
         return $this->showGridlines;
     }
@@ -2687,21 +2187,23 @@ class Worksheet implements IComparable
     /**
      * Set show gridlines.
      *
-     * @param bool $showGridLines Show gridlines (true/false)
+     * @param bool $pValue Show gridlines (true/false)
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setShowGridlines(bool $showGridLines): self
+    public function setShowGridlines($pValue)
     {
-        $this->showGridlines = $showGridLines;
+        $this->showGridlines = $pValue;
 
         return $this;
     }
 
     /**
      * Print gridlines?
+     *
+     * @return bool
      */
-    public function getPrintGridlines(): bool
+    public function getPrintGridlines()
     {
         return $this->printGridlines;
     }
@@ -2709,21 +2211,23 @@ class Worksheet implements IComparable
     /**
      * Set print gridlines.
      *
-     * @param bool $printGridLines Print gridlines (true/false)
+     * @param bool $pValue Print gridlines (true/false)
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setPrintGridlines(bool $printGridLines): self
+    public function setPrintGridlines($pValue)
     {
-        $this->printGridlines = $printGridLines;
+        $this->printGridlines = $pValue;
 
         return $this;
     }
 
     /**
      * Show row and column headers?
+     *
+     * @return bool
      */
-    public function getShowRowColHeaders(): bool
+    public function getShowRowColHeaders()
     {
         return $this->showRowColHeaders;
     }
@@ -2731,21 +2235,23 @@ class Worksheet implements IComparable
     /**
      * Set show row and column headers.
      *
-     * @param bool $showRowColHeaders Show row and column headers (true/false)
+     * @param bool $pValue Show row and column headers (true/false)
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setShowRowColHeaders(bool $showRowColHeaders): self
+    public function setShowRowColHeaders($pValue)
     {
-        $this->showRowColHeaders = $showRowColHeaders;
+        $this->showRowColHeaders = $pValue;
 
         return $this;
     }
 
     /**
      * Show summary below? (Row/Column outlining).
+     *
+     * @return bool
      */
-    public function getShowSummaryBelow(): bool
+    public function getShowSummaryBelow()
     {
         return $this->showSummaryBelow;
     }
@@ -2753,21 +2259,23 @@ class Worksheet implements IComparable
     /**
      * Set show summary below.
      *
-     * @param bool $showSummaryBelow Show summary below (true/false)
+     * @param bool $pValue Show summary below (true/false)
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setShowSummaryBelow(bool $showSummaryBelow): self
+    public function setShowSummaryBelow($pValue)
     {
-        $this->showSummaryBelow = $showSummaryBelow;
+        $this->showSummaryBelow = $pValue;
 
         return $this;
     }
 
     /**
      * Show summary right? (Row/Column outlining).
+     *
+     * @return bool
      */
-    public function getShowSummaryRight(): bool
+    public function getShowSummaryRight()
     {
         return $this->showSummaryRight;
     }
@@ -2775,13 +2283,13 @@ class Worksheet implements IComparable
     /**
      * Set show summary right.
      *
-     * @param bool $showSummaryRight Show summary right (true/false)
+     * @param bool $pValue Show summary right (true/false)
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setShowSummaryRight(bool $showSummaryRight): self
+    public function setShowSummaryRight($pValue)
     {
-        $this->showSummaryRight = $showSummaryRight;
+        $this->showSummaryRight = $pValue;
 
         return $this;
     }
@@ -2799,40 +2307,13 @@ class Worksheet implements IComparable
     /**
      * Set comments array for the entire sheet.
      *
-     * @param Comment[] $comments
+     * @param Comment[] $pValue
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setComments(array $comments): self
+    public function setComments(array $pValue)
     {
-        $this->comments = $comments;
-
-        return $this;
-    }
-
-    /**
-     * Remove comment from cell.
-     *
-     * @param array<int>|CellAddress|string $cellCoordinate Coordinate of the cell as a string, eg: 'C5';
-     *               or as an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     *
-     * @return $this
-     */
-    public function removeComment($cellCoordinate): self
-    {
-        $cellAddress = Functions::trimSheetFromCellReference(Validations::validateCellAddress($cellCoordinate));
-
-        if (Coordinate::coordinateIsRange($cellAddress)) {
-            throw new Exception('Cell coordinate string can not be a range of cells.');
-        } elseif (strpos($cellAddress, '$') !== false) {
-            throw new Exception('Cell coordinate string must not be absolute.');
-        } elseif ($cellAddress == '') {
-            throw new Exception('Cell coordinate can not be zero-length string.');
-        }
-        // Check if we have a comment for this cell and delete it
-        if (isset($this->comments[$cellAddress])) {
-            unset($this->comments[$cellAddress]);
-        }
+        $this->comments = $pValue;
 
         return $this;
     }
@@ -2840,29 +2321,33 @@ class Worksheet implements IComparable
     /**
      * Get comment for cell.
      *
-     * @param array<int>|CellAddress|string $cellCoordinate Coordinate of the cell as a string, eg: 'C5';
-     *               or as an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
+     * @param string $pCellCoordinate Cell coordinate to get comment for, eg: 'A1'
+     *
+     * @throws Exception
+     *
+     * @return Comment
      */
-    public function getComment($cellCoordinate): Comment
+    public function getComment($pCellCoordinate)
     {
-        $cellAddress = Functions::trimSheetFromCellReference(Validations::validateCellAddress($cellCoordinate));
+        // Uppercase coordinate
+        $pCellCoordinate = strtoupper($pCellCoordinate);
 
-        if (Coordinate::coordinateIsRange($cellAddress)) {
+        if (Coordinate::coordinateIsRange($pCellCoordinate)) {
             throw new Exception('Cell coordinate string can not be a range of cells.');
-        } elseif (strpos($cellAddress, '$') !== false) {
+        } elseif (strpos($pCellCoordinate, '$') !== false) {
             throw new Exception('Cell coordinate string must not be absolute.');
-        } elseif ($cellAddress == '') {
+        } elseif ($pCellCoordinate == '') {
             throw new Exception('Cell coordinate can not be zero-length string.');
         }
 
         // Check if we already have a comment for this cell.
-        if (isset($this->comments[$cellAddress])) {
-            return $this->comments[$cellAddress];
+        if (isset($this->comments[$pCellCoordinate])) {
+            return $this->comments[$pCellCoordinate];
         }
 
         // If not, create a new comment.
         $newComment = new Comment();
-        $this->comments[$cellAddress] = $newComment;
+        $this->comments[$pCellCoordinate] = $newComment;
 
         return $newComment;
     }
@@ -2870,15 +2355,12 @@ class Worksheet implements IComparable
     /**
      * Get comment for cell by using numeric cell coordinates.
      *
-     * @deprecated 1.23.0
-     *      Use the getComment() method with a cell address such as 'C5' instead;,
-     *          or passing in an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @see Worksheet::getComment()
-     *
      * @param int $columnIndex Numeric column coordinate of the cell
      * @param int $row Numeric row coordinate of the cell
+     *
+     * @return Comment
      */
-    public function getCommentByColumnAndRow($columnIndex, $row): Comment
+    public function getCommentByColumnAndRow($columnIndex, $row)
     {
         return $this->getComment(Coordinate::stringFromColumnIndex($columnIndex) . $row);
     }
@@ -2906,38 +2388,46 @@ class Worksheet implements IComparable
     /**
      * Selected cell.
      *
-     * @param string $coordinate Cell (i.e. A1)
+     * @param string $pCoordinate Cell (i.e. A1)
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setSelectedCell($coordinate)
+    public function setSelectedCell($pCoordinate)
     {
-        return $this->setSelectedCells($coordinate);
+        return $this->setSelectedCells($pCoordinate);
     }
 
     /**
      * Select a range of cells.
      *
-     * @param AddressRange|array<int>|CellAddress|int|string $coordinate A simple string containing a Cell range like 'A1:E10'
-     *              or passing in an array of [$fromColumnIndex, $fromRow, $toColumnIndex, $toRow] (e.g. [3, 5, 6, 8]),
-     *              or a CellAddress or AddressRange object.
+     * @param string $pCoordinate Cell range, examples: 'A1', 'B2:G5', 'A:C', '3:6'
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setSelectedCells($coordinate)
+    public function setSelectedCells($pCoordinate)
     {
-        if (is_string($coordinate)) {
-            $coordinate = Validations::definedNameToCoordinate($coordinate, $this);
-        }
-        $coordinate = Validations::validateCellOrCellRange($coordinate);
+        // Uppercase coordinate
+        $pCoordinate = strtoupper($pCoordinate);
 
-        if (Coordinate::coordinateIsRange($coordinate)) {
-            [$first] = Coordinate::splitRange($coordinate);
+        // Convert 'A' to 'A:A'
+        $pCoordinate = preg_replace('/^([A-Z]+)$/', '${1}:${1}', $pCoordinate);
+
+        // Convert '1' to '1:1'
+        $pCoordinate = preg_replace('/^(\d+)$/', '${1}:${1}', $pCoordinate);
+
+        // Convert 'A:C' to 'A1:C1048576'
+        $pCoordinate = preg_replace('/^([A-Z]+):([A-Z]+)$/', '${1}1:${2}1048576', $pCoordinate);
+
+        // Convert '1:3' to 'A1:XFD3'
+        $pCoordinate = preg_replace('/^(\d+):(\d+)$/', 'A${1}:XFD${2}', $pCoordinate);
+
+        if (Coordinate::coordinateIsRange($pCoordinate)) {
+            list($first) = Coordinate::splitRange($pCoordinate);
             $this->activeCell = $first[0];
         } else {
-            $this->activeCell = $coordinate;
+            $this->activeCell = $pCoordinate;
         }
-        $this->selectedCells = $coordinate;
+        $this->selectedCells = $pCoordinate;
 
         return $this;
     }
@@ -2945,15 +2435,12 @@ class Worksheet implements IComparable
     /**
      * Selected cell by using numeric cell coordinates.
      *
-     * @deprecated 1.23.0
-     *      Use the setSelectedCells() method with a cell address such as 'C5' instead;,
-     *          or passing in an array of [$columnIndex, $row] (e.g. [3, 5]), or a CellAddress object.
-     * @see Worksheet::setSelectedCells()
-     *
      * @param int $columnIndex Numeric column coordinate of the cell
      * @param int $row Numeric row coordinate of the cell
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
     public function setSelectedCellByColumnAndRow($columnIndex, $row)
     {
@@ -2975,7 +2462,7 @@ class Worksheet implements IComparable
      *
      * @param bool $value Right-to-left true/false
      *
-     * @return $this
+     * @return Worksheet
      */
     public function setRightToLeft($value)
     {
@@ -2992,7 +2479,9 @@ class Worksheet implements IComparable
      * @param string $startCell Insert array starting from this cell address as the top left coordinate
      * @param bool $strictNullComparison Apply strict comparison when testing for null values in the array
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
     public function fromArray(array $source, $nullValue = null, $startCell = 'A1', $strictNullComparison = false)
     {
@@ -3002,7 +2491,7 @@ class Worksheet implements IComparable
         }
 
         // start coordinate
-        [$startColumn, $startRow] = Coordinate::coordinateFromString($startCell);
+        list($startColumn, $startRow) = Coordinate::coordinateFromString($startCell);
 
         // Loop through $source
         foreach ($source as $rowData) {
@@ -3028,60 +2517,23 @@ class Worksheet implements IComparable
     }
 
     /**
-     * @param mixed $nullValue
-     *
-     * @throws Exception
-     * @throws \PhpOffice\PhpSpreadsheet\Calculation\Exception
-     *
-     * @return mixed
-     */
-    protected function cellToArray(Cell $cell, bool $calculateFormulas, bool $formatData, $nullValue)
-    {
-        $returnValue = $nullValue;
-
-        if ($cell->getValue() !== null) {
-            if ($cell->getValue() instanceof RichText) {
-                $returnValue = $cell->getValue()->getPlainText();
-            } else {
-                $returnValue = ($calculateFormulas) ? $cell->getCalculatedValue() : $cell->getValue();
-            }
-
-            if ($formatData) {
-                $style = $this->getParentOrThrow()->getCellXfByIndex($cell->getXfIndex());
-                $returnValue = NumberFormat::toFormattedString(
-                    $returnValue,
-                    $style->getNumberFormat()->getFormatCode() ?? NumberFormat::FORMAT_GENERAL
-                );
-            }
-        }
-
-        return $returnValue;
-    }
-
-    /**
      * Create array from a range of cells.
      *
+     * @param string $pRange Range of cells (i.e. "A1:B10"), or just one cell (i.e. "A1")
      * @param mixed $nullValue Value returned in the array entry if a cell doesn't exist
      * @param bool $calculateFormulas Should formulas be calculated?
      * @param bool $formatData Should formatting be applied to cell values?
      * @param bool $returnCellRef False - Return a simple array of rows and columns indexed by number counting from zero
-     *                             True - Return rows and columns indexed by their actual row and column IDs
-     * @param bool $ignoreHidden False - Return values for rows/columns even if they are defined as hidden.
-     *                            True - Don't return values for rows/columns that are defined as hidden.
+     *                               True - Return rows and columns indexed by their actual row and column IDs
+     *
+     * @return array
      */
-    public function rangeToArray(
-        string $range,
-        $nullValue = null,
-        bool $calculateFormulas = true,
-        bool $formatData = true,
-        bool $returnCellRef = false,
-        bool $ignoreHidden = false
-    ): array {
-        $range = Validations::validateCellOrCellRange($range);
-
+    public function rangeToArray($pRange, $nullValue = null, $calculateFormulas = true, $formatData = true, $returnCellRef = false)
+    {
+        // Returnvalue
         $returnValue = [];
         //    Identify the range that we need to extract from the worksheet
-        [$rangeStart, $rangeEnd] = Coordinate::rangeBoundaries($range);
+        list($rangeStart, $rangeEnd) = Coordinate::rangeBoundaries($pRange);
         $minCol = Coordinate::stringFromColumnIndex($rangeStart[0]);
         $minRow = $rangeStart[1];
         $maxCol = Coordinate::stringFromColumnIndex($rangeEnd[0]);
@@ -3091,23 +2543,41 @@ class Worksheet implements IComparable
         // Loop through rows
         $r = -1;
         for ($row = $minRow; $row <= $maxRow; ++$row) {
-            if (($ignoreHidden === true) && ($this->getRowDimension($row)->getVisible() === false)) {
-                continue;
-            }
-            $rowRef = $returnCellRef ? $row : ++$r;
+            $rRef = ($returnCellRef) ? $row : ++$r;
             $c = -1;
             // Loop through columns in the current row
-            for ($col = $minCol; $col !== $maxCol; ++$col) {
-                if (($ignoreHidden === true) && ($this->getColumnDimension($col)->getVisible() === false)) {
-                    continue;
-                }
-                $columnRef = $returnCellRef ? $col : ++$c;
+            for ($col = $minCol; $col != $maxCol; ++$col) {
+                $cRef = ($returnCellRef) ? $col : ++$c;
                 //    Using getCell() will create a new cell if it doesn't already exist. We don't want that to happen
                 //        so we test and retrieve directly against cellCollection
-                $cell = $this->cellCollection->get("{$col}{$row}");
-                $returnValue[$rowRef][$columnRef] = $nullValue;
-                if ($cell !== null) {
-                    $returnValue[$rowRef][$columnRef] = $this->cellToArray($cell, $calculateFormulas, $formatData, $nullValue);
+                if ($this->cellCollection->has($col . $row)) {
+                    // Cell exists
+                    $cell = $this->cellCollection->get($col . $row);
+                    if ($cell->getValue() !== null) {
+                        if ($cell->getValue() instanceof RichText) {
+                            $returnValue[$rRef][$cRef] = $cell->getValue()->getPlainText();
+                        } else {
+                            if ($calculateFormulas) {
+                                $returnValue[$rRef][$cRef] = $cell->getCalculatedValue();
+                            } else {
+                                $returnValue[$rRef][$cRef] = $cell->getValue();
+                            }
+                        }
+
+                        if ($formatData) {
+                            $style = $this->parent->getCellXfByIndex($cell->getXfIndex());
+                            $returnValue[$rRef][$cRef] = NumberFormat::toFormattedString(
+                                $returnValue[$rRef][$cRef],
+                                ($style && $style->getNumberFormat()) ? $style->getNumberFormat()->getFormatCode() : NumberFormat::FORMAT_GENERAL
+                            );
+                        }
+                    } else {
+                        // Cell holds a NULL
+                        $returnValue[$rRef][$cRef] = $nullValue;
+                    }
+                } else {
+                    // Cell doesn't exist
+                    $returnValue[$rRef][$cRef] = $nullValue;
                 }
             }
         }
@@ -3116,73 +2586,31 @@ class Worksheet implements IComparable
         return $returnValue;
     }
 
-    private function validateNamedRange(string $definedName, bool $returnNullIfInvalid = false): ?DefinedName
-    {
-        $namedRange = DefinedName::resolveName($definedName, $this);
-        if ($namedRange === null) {
-            if ($returnNullIfInvalid) {
-                return null;
-            }
-
-            throw new Exception('Named Range ' . $definedName . ' does not exist.');
-        }
-
-        if ($namedRange->isFormula()) {
-            if ($returnNullIfInvalid) {
-                return null;
-            }
-
-            throw new Exception('Defined Named ' . $definedName . ' is a formula, not a range or cell.');
-        }
-
-        if ($namedRange->getLocalOnly()) {
-            $worksheet = $namedRange->getWorksheet();
-            if ($worksheet === null || $this->getHashCode() !== $worksheet->getHashCode()) {
-                if ($returnNullIfInvalid) {
-                    return null;
-                }
-
-                throw new Exception(
-                    'Named range ' . $definedName . ' is not accessible from within sheet ' . $this->getTitle()
-                );
-            }
-        }
-
-        return $namedRange;
-    }
-
     /**
      * Create array from a range of cells.
      *
-     * @param string $definedName The Named Range that should be returned
+     * @param string $pNamedRange Name of the Named Range
      * @param mixed $nullValue Value returned in the array entry if a cell doesn't exist
      * @param bool $calculateFormulas Should formulas be calculated?
      * @param bool $formatData Should formatting be applied to cell values?
      * @param bool $returnCellRef False - Return a simple array of rows and columns indexed by number counting from zero
-     *                             True - Return rows and columns indexed by their actual row and column IDs
-     * @param bool $ignoreHidden False - Return values for rows/columns even if they are defined as hidden.
-     *                            True - Don't return values for rows/columns that are defined as hidden.
+     *                                True - Return rows and columns indexed by their actual row and column IDs
+     *
+     * @throws Exception
+     *
+     * @return array
      */
-    public function namedRangeToArray(
-        string $definedName,
-        $nullValue = null,
-        bool $calculateFormulas = true,
-        bool $formatData = true,
-        bool $returnCellRef = false,
-        bool $ignoreHidden = false
-    ): array {
-        $retVal = [];
-        $namedRange = $this->validateNamedRange($definedName);
+    public function namedRangeToArray($pNamedRange, $nullValue = null, $calculateFormulas = true, $formatData = true, $returnCellRef = false)
+    {
+        $namedRange = NamedRange::resolveRange($pNamedRange, $this);
         if ($namedRange !== null) {
-            $cellRange = ltrim(substr($namedRange->getValue(), (int) strrpos($namedRange->getValue(), '!')), '!');
-            $cellRange = str_replace('$', '', $cellRange);
-            $workSheet = $namedRange->getWorksheet();
-            if ($workSheet !== null) {
-                $retVal = $workSheet->rangeToArray($cellRange, $nullValue, $calculateFormulas, $formatData, $returnCellRef, $ignoreHidden);
-            }
+            $pWorkSheet = $namedRange->getWorksheet();
+            $pCellRange = $namedRange->getRange();
+
+            return $pWorkSheet->rangeToArray($pCellRange, $nullValue, $calculateFormulas, $formatData, $returnCellRef);
         }
 
-        return $retVal;
+        throw new Exception('Named Range ' . $pNamedRange . ' does not exist.');
     }
 
     /**
@@ -3192,17 +2620,12 @@ class Worksheet implements IComparable
      * @param bool $calculateFormulas Should formulas be calculated?
      * @param bool $formatData Should formatting be applied to cell values?
      * @param bool $returnCellRef False - Return a simple array of rows and columns indexed by number counting from zero
-     *                             True - Return rows and columns indexed by their actual row and column IDs
-     * @param bool $ignoreHidden False - Return values for rows/columns even if they are defined as hidden.
-     *                            True - Don't return values for rows/columns that are defined as hidden.
+     *                               True - Return rows and columns indexed by their actual row and column IDs
+     *
+     * @return array
      */
-    public function toArray(
-        $nullValue = null,
-        bool $calculateFormulas = true,
-        bool $formatData = true,
-        bool $returnCellRef = false,
-        bool $ignoreHidden = false
-    ): array {
+    public function toArray($nullValue = null, $calculateFormulas = true, $formatData = true, $returnCellRef = false)
+    {
         // Garbage collect...
         $this->garbageCollect();
 
@@ -3211,7 +2634,7 @@ class Worksheet implements IComparable
         $maxRow = $this->getHighestRow();
 
         // Return
-        return $this->rangeToArray("A1:{$maxCol}{$maxRow}", $nullValue, $calculateFormulas, $formatData, $returnCellRef, $ignoreHidden);
+        return $this->rangeToArray('A1:' . $maxCol . $maxRow, $nullValue, $calculateFormulas, $formatData, $returnCellRef);
     }
 
     /**
@@ -3243,7 +2666,7 @@ class Worksheet implements IComparable
     /**
      * Run PhpSpreadsheet garbage collector.
      *
-     * @return $this
+     * @return Worksheet
      */
     public function garbageCollect()
     {
@@ -3267,9 +2690,9 @@ class Worksheet implements IComparable
 
         // Cache values
         if ($highestColumn < 1) {
-            $this->cachedHighestColumn = 1;
+            $this->cachedHighestColumn = 'A';
         } else {
-            $this->cachedHighestColumn = $highestColumn;
+            $this->cachedHighestColumn = Coordinate::stringFromColumnIndex($highestColumn);
         }
         $this->cachedHighestRow = $highestRow;
 
@@ -3296,68 +2719,61 @@ class Worksheet implements IComparable
      * Extract worksheet title from range.
      *
      * Example: extractSheetTitle("testSheet!A1") ==> 'A1'
-     * Example: extractSheetTitle("testSheet!A1:C3") ==> 'A1:C3'
      * Example: extractSheetTitle("'testSheet 1'!A1", true) ==> ['testSheet 1', 'A1'];
-     * Example: extractSheetTitle("'testSheet 1'!A1:C3", true) ==> ['testSheet 1', 'A1:C3'];
-     * Example: extractSheetTitle("A1", true) ==> ['', 'A1'];
-     * Example: extractSheetTitle("A1:C3", true) ==> ['', 'A1:C3']
      *
-     * @param string $range Range to extract title from
+     * @param string $pRange Range to extract title from
      * @param bool $returnRange Return range? (see example)
      *
      * @return mixed
      */
-    public static function extractSheetTitle($range, $returnRange = false)
+    public static function extractSheetTitle($pRange, $returnRange = false)
     {
-        if (empty($range)) {
-            return $returnRange ? [null, null] : null;
-        }
-
         // Sheet title included?
-        if (($sep = strrpos($range, '!')) === false) {
-            return $returnRange ? ['', $range] : '';
+        if (($sep = strpos($pRange, '!')) === false) {
+            return '';
         }
 
         if ($returnRange) {
-            return [substr($range, 0, $sep), substr($range, $sep + 1)];
+            return [trim(substr($pRange, 0, $sep), "'"), substr($pRange, $sep + 1)];
         }
 
-        return substr($range, $sep + 1);
+        return substr($pRange, $sep + 1);
     }
 
     /**
      * Get hyperlink.
      *
-     * @param string $cellCoordinate Cell coordinate to get hyperlink for, eg: 'A1'
+     * @param string $pCellCoordinate Cell coordinate to get hyperlink for, eg: 'A1'
      *
      * @return Hyperlink
      */
-    public function getHyperlink($cellCoordinate)
+    public function getHyperlink($pCellCoordinate)
     {
         // return hyperlink if we already have one
-        if (isset($this->hyperlinkCollection[$cellCoordinate])) {
-            return $this->hyperlinkCollection[$cellCoordinate];
+        if (isset($this->hyperlinkCollection[$pCellCoordinate])) {
+            return $this->hyperlinkCollection[$pCellCoordinate];
         }
 
         // else create hyperlink
-        $this->hyperlinkCollection[$cellCoordinate] = new Hyperlink();
+        $this->hyperlinkCollection[$pCellCoordinate] = new Hyperlink();
 
-        return $this->hyperlinkCollection[$cellCoordinate];
+        return $this->hyperlinkCollection[$pCellCoordinate];
     }
 
     /**
      * Set hyperlink.
      *
-     * @param string $cellCoordinate Cell coordinate to insert hyperlink, eg: 'A1'
+     * @param string $pCellCoordinate Cell coordinate to insert hyperlink, eg: 'A1'
+     * @param null|Hyperlink $pHyperlink
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setHyperlink($cellCoordinate, ?Hyperlink $hyperlink = null)
+    public function setHyperlink($pCellCoordinate, Hyperlink $pHyperlink = null)
     {
-        if ($hyperlink === null) {
-            unset($this->hyperlinkCollection[$cellCoordinate]);
+        if ($pHyperlink === null) {
+            unset($this->hyperlinkCollection[$pCellCoordinate]);
         } else {
-            $this->hyperlinkCollection[$cellCoordinate] = $hyperlink;
+            $this->hyperlinkCollection[$pCellCoordinate] = $pHyperlink;
         }
 
         return $this;
@@ -3366,13 +2782,13 @@ class Worksheet implements IComparable
     /**
      * Hyperlink at a specific coordinate exists?
      *
-     * @param string $coordinate eg: 'A1'
+     * @param string $pCoordinate eg: 'A1'
      *
      * @return bool
      */
-    public function hyperlinkExists($coordinate)
+    public function hyperlinkExists($pCoordinate)
     {
-        return isset($this->hyperlinkCollection[$coordinate]);
+        return isset($this->hyperlinkCollection[$pCoordinate]);
     }
 
     /**
@@ -3388,36 +2804,37 @@ class Worksheet implements IComparable
     /**
      * Get data validation.
      *
-     * @param string $cellCoordinate Cell coordinate to get data validation for, eg: 'A1'
+     * @param string $pCellCoordinate Cell coordinate to get data validation for, eg: 'A1'
      *
      * @return DataValidation
      */
-    public function getDataValidation($cellCoordinate)
+    public function getDataValidation($pCellCoordinate)
     {
         // return data validation if we already have one
-        if (isset($this->dataValidationCollection[$cellCoordinate])) {
-            return $this->dataValidationCollection[$cellCoordinate];
+        if (isset($this->dataValidationCollection[$pCellCoordinate])) {
+            return $this->dataValidationCollection[$pCellCoordinate];
         }
 
         // else create data validation
-        $this->dataValidationCollection[$cellCoordinate] = new DataValidation();
+        $this->dataValidationCollection[$pCellCoordinate] = new DataValidation();
 
-        return $this->dataValidationCollection[$cellCoordinate];
+        return $this->dataValidationCollection[$pCellCoordinate];
     }
 
     /**
      * Set data validation.
      *
-     * @param string $cellCoordinate Cell coordinate to insert data validation, eg: 'A1'
+     * @param string $pCellCoordinate Cell coordinate to insert data validation, eg: 'A1'
+     * @param null|DataValidation $pDataValidation
      *
-     * @return $this
+     * @return Worksheet
      */
-    public function setDataValidation($cellCoordinate, ?DataValidation $dataValidation = null)
+    public function setDataValidation($pCellCoordinate, DataValidation $pDataValidation = null)
     {
-        if ($dataValidation === null) {
-            unset($this->dataValidationCollection[$cellCoordinate]);
+        if ($pDataValidation === null) {
+            unset($this->dataValidationCollection[$pCellCoordinate]);
         } else {
-            $this->dataValidationCollection[$cellCoordinate] = $dataValidation;
+            $this->dataValidationCollection[$pCellCoordinate] = $pDataValidation;
         }
 
         return $this;
@@ -3426,13 +2843,13 @@ class Worksheet implements IComparable
     /**
      * Data validation at a specific coordinate exists?
      *
-     * @param string $coordinate eg: 'A1'
+     * @param string $pCoordinate eg: 'A1'
      *
      * @return bool
      */
-    public function dataValidationExists($coordinate)
+    public function dataValidationExists($pCoordinate)
     {
-        return isset($this->dataValidationCollection[$coordinate]);
+        return isset($this->dataValidationCollection[$pCoordinate]);
     }
 
     /**
@@ -3477,8 +2894,9 @@ class Worksheet implements IComparable
             $rangeSet = $rangeBoundaries[0][0] . $rangeBoundaries[0][1] . ':' . $rangeBoundaries[1][0] . $rangeBoundaries[1][1];
         }
         unset($rangeSet);
+        $stRange = implode(' ', $rangeBlocks);
 
-        return implode(' ', $rangeBlocks);
+        return $stRange;
     }
 
     /**
@@ -3498,11 +2916,12 @@ class Worksheet implements IComparable
     /**
      * Reset tab color.
      *
-     * @return $this
+     * @return Worksheet
      */
     public function resetTabColor()
     {
         $this->tabColor = null;
+        unset($this->tabColor);
 
         return $this;
     }
@@ -3520,71 +2939,13 @@ class Worksheet implements IComparable
     /**
      * Copy worksheet (!= clone!).
      *
-     * @return static
+     * @return Worksheet
      */
     public function copy()
     {
-        return clone $this;
-    }
+        $copied = clone $this;
 
-    /**
-     * Returns a boolean true if the specified row contains no cells. By default, this means that no cell records
-     *          exist in the collection for this row. false will be returned otherwise.
-     *     This rule can be modified by passing a $definitionOfEmptyFlags value:
-     *          1 - CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL If the only cells in the collection are null value
-     *                  cells, then the row will be considered empty.
-     *          2 - CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL If the only cells in the collection are empty
-     *                  string value cells, then the row will be considered empty.
-     *          3 - CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL | CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL
-     *                  If the only cells in the collection are null value or empty string value cells, then the row
-     *                  will be considered empty.
-     *
-     * @param int $definitionOfEmptyFlags
-     *              Possible Flag Values are:
-     *                  CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL
-     *                  CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL
-     */
-    public function isEmptyRow(int $rowId, int $definitionOfEmptyFlags = 0): bool
-    {
-        try {
-            $iterator = new RowIterator($this, $rowId, $rowId);
-            $iterator->seek($rowId);
-            $row = $iterator->current();
-        } catch (Exception $e) {
-            return true;
-        }
-
-        return $row->isEmpty($definitionOfEmptyFlags);
-    }
-
-    /**
-     * Returns a boolean true if the specified column contains no cells. By default, this means that no cell records
-     *          exist in the collection for this column. false will be returned otherwise.
-     *     This rule can be modified by passing a $definitionOfEmptyFlags value:
-     *          1 - CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL If the only cells in the collection are null value
-     *                  cells, then the column will be considered empty.
-     *          2 - CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL If the only cells in the collection are empty
-     *                  string value cells, then the column will be considered empty.
-     *          3 - CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL | CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL
-     *                  If the only cells in the collection are null value or empty string value cells, then the column
-     *                  will be considered empty.
-     *
-     * @param int $definitionOfEmptyFlags
-     *              Possible Flag Values are:
-     *                  CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL
-     *                  CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL
-     */
-    public function isEmptyColumn(string $columnId, int $definitionOfEmptyFlags = 0): bool
-    {
-        try {
-            $iterator = new ColumnIterator($this, $columnId, $columnId);
-            $iterator->seek($columnId);
-            $column = $iterator->current();
-        } catch (Exception $e) {
-            return true;
-        }
-
-        return $column->isEmpty($definitionOfEmptyFlags);
+        return $copied;
     }
 
     /**
@@ -3592,7 +2953,6 @@ class Worksheet implements IComparable
      */
     public function __clone()
     {
-        // @phpstan-ignore-next-line
         foreach ($this as $key => $val) {
             if ($key == 'parent') {
                 continue;
@@ -3603,14 +2963,13 @@ class Worksheet implements IComparable
                     $newCollection = $this->cellCollection->cloneCellCollection($this);
                     $this->cellCollection = $newCollection;
                 } elseif ($key == 'drawingCollection') {
-                    $currentCollection = $this->drawingCollection;
-                    $this->drawingCollection = new ArrayObject();
-                    foreach ($currentCollection as $item) {
+                    $newCollection = new ArrayObject();
+                    foreach ($this->drawingCollection as $id => $item) {
                         if (is_object($item)) {
-                            $newDrawing = clone $item;
-                            $newDrawing->setWorksheet($this);
+                            $newCollection[$id] = clone $this->drawingCollection[$id];
                         }
                     }
+                    $this->drawingCollection = $newCollection;
                 } elseif (($key == 'autoFilter') && ($this->autoFilter instanceof AutoFilter)) {
                     $newAutoFilter = clone $this->autoFilter;
                     $this->autoFilter = $newAutoFilter;
@@ -3625,57 +2984,59 @@ class Worksheet implements IComparable
     /**
      * Define the code name of the sheet.
      *
-     * @param string $codeName Same rule as Title minus space not allowed (but, like Excel, change
+     * @param string $pValue Same rule as Title minus space not allowed (but, like Excel, change
      *                       silently space to underscore)
      * @param bool $validate False to skip validation of new title. WARNING: This should only be set
      *                       at parse time (by Readers), where titles can be assumed to be valid.
      *
-     * @return $this
+     * @throws Exception
+     *
+     * @return Worksheet
      */
-    public function setCodeName($codeName, $validate = true)
+    public function setCodeName($pValue, $validate = true)
     {
         // Is this a 'rename' or not?
-        if ($this->getCodeName() == $codeName) {
+        if ($this->getCodeName() == $pValue) {
             return $this;
         }
 
         if ($validate) {
-            $codeName = str_replace(' ', '_', $codeName); //Excel does this automatically without flinching, we are doing the same
+            $pValue = str_replace(' ', '_', $pValue); //Excel does this automatically without flinching, we are doing the same
 
             // Syntax check
             // throw an exception if not valid
-            self::checkSheetCodeName($codeName);
+            self::checkSheetCodeName($pValue);
 
             // We use the same code that setTitle to find a valid codeName else not using a space (Excel don't like) but a '_'
 
-            if ($this->parent !== null) {
+            if ($this->getParent()) {
                 // Is there already such sheet name?
-                if ($this->parent->sheetCodeNameExists($codeName)) {
+                if ($this->getParent()->sheetCodeNameExists($pValue)) {
                     // Use name, but append with lowest possible integer
 
-                    if (Shared\StringHelper::countCharacters($codeName) > 29) {
-                        $codeName = Shared\StringHelper::substring($codeName, 0, 29);
+                    if (Shared\StringHelper::countCharacters($pValue) > 29) {
+                        $pValue = Shared\StringHelper::substring($pValue, 0, 29);
                     }
                     $i = 1;
-                    while ($this->getParentOrThrow()->sheetCodeNameExists($codeName . '_' . $i)) {
+                    while ($this->getParent()->sheetCodeNameExists($pValue . '_' . $i)) {
                         ++$i;
                         if ($i == 10) {
-                            if (Shared\StringHelper::countCharacters($codeName) > 28) {
-                                $codeName = Shared\StringHelper::substring($codeName, 0, 28);
+                            if (Shared\StringHelper::countCharacters($pValue) > 28) {
+                                $pValue = Shared\StringHelper::substring($pValue, 0, 28);
                             }
                         } elseif ($i == 100) {
-                            if (Shared\StringHelper::countCharacters($codeName) > 27) {
-                                $codeName = Shared\StringHelper::substring($codeName, 0, 27);
+                            if (Shared\StringHelper::countCharacters($pValue) > 27) {
+                                $pValue = Shared\StringHelper::substring($pValue, 0, 27);
                             }
                         }
                     }
 
-                    $codeName .= '_' . $i; // ok, we have a valid name
+                    $pValue = $pValue . '_' . $i; // ok, we have a valid name
                 }
             }
         }
 
-        $this->codeName = $codeName;
+        $this->codeName = $pValue;
 
         return $this;
     }
@@ -3697,11 +3058,6 @@ class Worksheet implements IComparable
      */
     public function hasCodeName()
     {
-        return $this->codeName !== null;
-    }
-
-    public static function nameRequiresQuotes(string $sheetName): bool
-    {
-        return preg_match(self::SHEET_NAME_REQUIRES_NO_QUOTES, $sheetName) !== 1;
+        return !($this->codeName === null);
     }
 }

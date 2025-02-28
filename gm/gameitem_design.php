@@ -17,8 +17,10 @@ $gm_game_itemdefine_6 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=�
 $gm_game_itemdefine_7 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=任务物品&sid=$sid");
 $gm_game_itemdefine_8 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=其它&sid=$sid");
 $gm_game_itemdefine_9 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=导出&sid=$sid");
+$gm_game_itemdefine_10 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=导入&sid=$sid");
 $gm_html = <<<HTML
 <a href="?cmd=$gm_game_itemdefine_9">导出物品数据到->excel</a><br/>
+<a href="?cmd=$gm_game_itemdefine_10" >导出物品数据从<-excel</a><br/>
 <p>[物品设计]<br/>
 请选择物品类别：<br/>
 <a href="?cmd=$gm_game_itemdefine_1">消耗品</a><br/>

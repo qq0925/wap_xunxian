@@ -21,8 +21,8 @@ namespace PhpOffice\PhpSpreadsheet\Calculation;
  * whether in an action of contract, tort or otherwise, arising from, out of or in connection with the
  * software or the use or other dealings in the software.
  *
- * https://ewbi.blogs.com/develops/2007/03/excel_formula_p.html
- * https://ewbi.blogs.com/develops/2004/12/excel_formula_p.html
+ * http://ewbi.blogs.com/develops/2007/03/excel_formula_p.html
+ * http://ewbi.blogs.com/develops/2004/12/excel_formula_p.html
  */
 class FormulaParser
 {
@@ -61,17 +61,19 @@ class FormulaParser
     /**
      * Create a new FormulaParser.
      *
-     * @param ?string $formula Formula to parse
+     * @param string $pFormula Formula to parse
+     *
+     * @throws Exception
      */
-    public function __construct($formula = '')
+    public function __construct($pFormula = '')
     {
         // Check parameters
-        if ($formula === null) {
+        if ($pFormula === null) {
             throw new Exception('Invalid parameter passed: formula');
         }
 
         // Initialise values
-        $this->formula = trim($formula);
+        $this->formula = trim($pFormula);
         // Parse!
         $this->parseToTokens();
     }
@@ -89,15 +91,19 @@ class FormulaParser
     /**
      * Get Token.
      *
-     * @param int $id Token id
+     * @param int $pId Token id
+     *
+     * @throws Exception
+     *
+     * @return string
      */
-    public function getToken(int $id = 0): FormulaToken
+    public function getToken($pId = 0)
     {
-        if (isset($this->tokens[$id])) {
-            return $this->tokens[$id];
+        if (isset($this->tokens[$pId])) {
+            return $this->tokens[$pId];
         }
 
-        throw new Exception("Token with id $id does not exist.");
+        throw new Exception("Token with id $pId does not exist.");
     }
 
     /**
@@ -123,7 +129,7 @@ class FormulaParser
     /**
      * Parse to tokens.
      */
-    private function parseToTokens(): void
+    private function parseToTokens()
     {
         // No attempt is made to verify formulas; assumes formulas are derived from Excel, where
         // they can only exist if valid; stack overflows/underflows sunk as nulls without exceptions.
@@ -137,8 +143,7 @@ class FormulaParser
         // Helper variables
         $tokens1 = $tokens2 = $stack = [];
         $inString = $inPath = $inRange = $inError = false;
-        $nextToken = null;
-        //$token = $previousToken = null;
+        $token = $previousToken = $nextToken = null;
 
         $index = 1;
         $value = '';
@@ -489,13 +494,11 @@ class FormulaParser
                 continue;
             }
 
-            if (
-                !(
-                    (($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_FUNCTION) && ($previousToken->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_STOP)) ||
+            if (!(
+                (($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_FUNCTION) && ($previousToken->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_STOP)) ||
                 (($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_SUBEXPRESSION) && ($previousToken->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_STOP)) ||
                 ($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_OPERAND)
-                )
-            ) {
+            )) {
                 continue;
             }
 
@@ -503,13 +506,11 @@ class FormulaParser
                 continue;
             }
 
-            if (
-                !(
-                    (($nextToken->getTokenType() == FormulaToken::TOKEN_TYPE_FUNCTION) && ($nextToken->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_START)) ||
+            if (!(
+                (($nextToken->getTokenType() == FormulaToken::TOKEN_TYPE_FUNCTION) && ($nextToken->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_START)) ||
                 (($nextToken->getTokenType() == FormulaToken::TOKEN_TYPE_SUBEXPRESSION) && ($nextToken->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_START)) ||
                 ($nextToken->getTokenType() == FormulaToken::TOKEN_TYPE_OPERAND)
-                )
-            ) {
+            )) {
                 continue;
             }
 
@@ -528,11 +529,11 @@ class FormulaParser
             } else {
                 $previousToken = null;
             }
-            //if (isset($tokens2[$i + 1])) {
-            //    $nextToken = $tokens2[$i + 1];
-            //} else {
-            //    $nextToken = null;
-            //}
+            if (isset($tokens2[$i + 1])) {
+                $nextToken = $tokens2[$i + 1];
+            } else {
+                $nextToken = null;
+            }
 
             if ($token === null) {
                 continue;
@@ -541,14 +542,12 @@ class FormulaParser
             if ($token->getTokenType() == FormulaToken::TOKEN_TYPE_OPERATORINFIX && $token->getValue() == '-') {
                 if ($i == 0) {
                     $token->setTokenType(FormulaToken::TOKEN_TYPE_OPERATORPREFIX);
-                } elseif (
-                    (($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_FUNCTION) &&
+                } elseif ((($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_FUNCTION) &&
                         ($previousToken->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_STOP)) ||
                     (($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_SUBEXPRESSION) &&
                         ($previousToken->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_STOP)) ||
                     ($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_OPERATORPOSTFIX) ||
-                    ($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_OPERAND)
-                ) {
+                    ($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_OPERAND)) {
                     $token->setTokenSubType(FormulaToken::TOKEN_SUBTYPE_MATH);
                 } else {
                     $token->setTokenType(FormulaToken::TOKEN_TYPE_OPERATORPREFIX);
@@ -562,14 +561,12 @@ class FormulaParser
             if ($token->getTokenType() == FormulaToken::TOKEN_TYPE_OPERATORINFIX && $token->getValue() == '+') {
                 if ($i == 0) {
                     continue;
-                } elseif (
-                    (($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_FUNCTION) &&
+                } elseif ((($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_FUNCTION) &&
                         ($previousToken->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_STOP)) ||
                     (($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_SUBEXPRESSION) &&
                         ($previousToken->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_STOP)) ||
                     ($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_OPERATORPOSTFIX) ||
-                    ($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_OPERAND)
-                ) {
+                    ($previousToken->getTokenType() == FormulaToken::TOKEN_TYPE_OPERAND)) {
                     $token->setTokenSubType(FormulaToken::TOKEN_SUBTYPE_MATH);
                 } else {
                     continue;
@@ -580,10 +577,8 @@ class FormulaParser
                 continue;
             }
 
-            if (
-                $token->getTokenType() == FormulaToken::TOKEN_TYPE_OPERATORINFIX &&
-                $token->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_NOTHING
-            ) {
+            if ($token->getTokenType() == FormulaToken::TOKEN_TYPE_OPERATORINFIX &&
+                $token->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_NOTHING) {
                 if (strpos('<>=', substr($token->getValue(), 0, 1)) !== false) {
                     $token->setTokenSubType(FormulaToken::TOKEN_SUBTYPE_LOGICAL);
                 } elseif ($token->getValue() == '&') {
@@ -597,10 +592,8 @@ class FormulaParser
                 continue;
             }
 
-            if (
-                $token->getTokenType() == FormulaToken::TOKEN_TYPE_OPERAND &&
-                $token->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_NOTHING
-            ) {
+            if ($token->getTokenType() == FormulaToken::TOKEN_TYPE_OPERAND &&
+                $token->getTokenSubType() == FormulaToken::TOKEN_SUBTYPE_NOTHING) {
                 if (!is_numeric($token->getValue())) {
                     if (strtoupper($token->getValue()) == 'TRUE' || strtoupper($token->getValue()) == 'FALSE') {
                         $token->setTokenSubType(FormulaToken::TOKEN_SUBTYPE_LOGICAL);

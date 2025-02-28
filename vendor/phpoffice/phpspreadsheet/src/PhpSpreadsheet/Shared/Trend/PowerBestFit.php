@@ -21,7 +21,7 @@ class PowerBestFit extends BestFit
      */
     public function getValueOfYForX($xValue)
     {
-        return $this->getIntersect() * ($xValue - $this->xOffset) ** $this->getSlope();
+        return $this->getIntersect() * pow(($xValue - $this->xOffset), $this->getSlope());
     }
 
     /**
@@ -33,7 +33,7 @@ class PowerBestFit extends BestFit
      */
     public function getValueOfXForY($yValue)
     {
-        return (($yValue + $this->yOffset) / $this->getIntersect()) ** (1 / $this->getSlope());
+        return pow((($yValue + $this->yOffset) / $this->getIntersect()), (1 / $this->getSlope()));
     }
 
     /**
@@ -72,23 +72,28 @@ class PowerBestFit extends BestFit
      *
      * @param float[] $yValues The set of Y-values for this regression
      * @param float[] $xValues The set of X-values for this regression
+     * @param bool $const
      */
-    private function powerRegression(array $yValues, array $xValues, bool $const): void
+    private function powerRegression($yValues, $xValues, $const)
     {
-        $adjustedYValues = array_map(
-            function ($value) {
-                return ($value < 0.0) ? 0 - log(abs($value)) : log($value);
-            },
-            $yValues
-        );
-        $adjustedXValues = array_map(
-            function ($value) {
-                return ($value < 0.0) ? 0 - log(abs($value)) : log($value);
-            },
-            $xValues
-        );
+        foreach ($xValues as &$value) {
+            if ($value < 0.0) {
+                $value = 0 - log(abs($value));
+            } elseif ($value > 0.0) {
+                $value = log($value);
+            }
+        }
+        unset($value);
+        foreach ($yValues as &$value) {
+            if ($value < 0.0) {
+                $value = 0 - log(abs($value));
+            } elseif ($value > 0.0) {
+                $value = log($value);
+            }
+        }
+        unset($value);
 
-        $this->leastSquareFit($adjustedYValues, $adjustedXValues, $const);
+        $this->leastSquareFit($yValues, $xValues, $const);
     }
 
     /**
@@ -100,10 +105,8 @@ class PowerBestFit extends BestFit
      */
     public function __construct($yValues, $xValues = [], $const = true)
     {
-        parent::__construct($yValues, $xValues);
-
-        if (!$this->error) {
-            $this->powerRegression($yValues, $xValues, (bool) $const);
+        if (parent::__construct($yValues, $xValues) !== false) {
+            $this->powerRegression($yValues, $xValues, $const);
         }
     }
 }

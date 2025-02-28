@@ -2,6 +2,7 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer;
 
+use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
 use PhpOffice\PhpSpreadsheet\Shared\File;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
@@ -26,16 +27,23 @@ abstract class Pdf extends Html
     /**
      * Orientation (Over-ride).
      *
-     * @var ?string
+     * @var string
      */
     protected $orientation;
 
     /**
      * Paper size (Over-ride).
      *
-     * @var ?int
+     * @var int
      */
     protected $paperSize;
+
+    /**
+     * Temporary storage for Save Array Return type.
+     *
+     * @var string
+     */
+    private $saveArrayReturnType;
 
     /**
      * Paper Sizes xRef List.
@@ -119,9 +127,8 @@ abstract class Pdf extends Html
     public function __construct(Spreadsheet $spreadsheet)
     {
         parent::__construct($spreadsheet);
-        //$this->setUseInlineCss(true);
-        $this->tempDir = File::sysGetTempDir() . '/phpsppdf';
-        $this->isPdf = true;
+        $this->setUseInlineCss(true);
+        $this->tempDir = File::sysGetTempDir();
     }
 
     /**
@@ -143,7 +150,7 @@ abstract class Pdf extends Html
      *
      * @param string $fontName
      *
-     * @return $this
+     * @return Pdf
      */
     public function setFont($fontName)
     {
@@ -155,7 +162,7 @@ abstract class Pdf extends Html
     /**
      * Get Paper Size.
      *
-     * @return ?int
+     * @return int
      */
     public function getPaperSize()
     {
@@ -165,21 +172,23 @@ abstract class Pdf extends Html
     /**
      * Set Paper Size.
      *
-     * @param int $paperSize Paper size see PageSetup::PAPERSIZE_*
+     * @param string $pValue Paper size see PageSetup::PAPERSIZE_*
      *
      * @return self
      */
-    public function setPaperSize($paperSize)
+    public function setPaperSize($pValue)
     {
-        $this->paperSize = $paperSize;
+        $this->paperSize = $pValue;
 
         return $this;
     }
 
     /**
      * Get Orientation.
+     *
+     * @return string
      */
-    public function getOrientation(): ?string
+    public function getOrientation()
     {
         return $this->orientation;
     }
@@ -187,13 +196,13 @@ abstract class Pdf extends Html
     /**
      * Set Orientation.
      *
-     * @param string $orientation Page orientation see PageSetup::ORIENTATION_*
+     * @param string $pValue Page orientation see PageSetup::ORIENTATION_*
      *
      * @return self
      */
-    public function setOrientation($orientation)
+    public function setOrientation($pValue)
     {
-        $this->orientation = $orientation;
+        $this->orientation = $pValue;
 
         return $this;
     }
@@ -211,16 +220,18 @@ abstract class Pdf extends Html
     /**
      * Set temporary storage directory.
      *
-     * @param string $temporaryDirectory Temporary storage directory
+     * @param string $pValue Temporary storage directory
+     *
+     * @throws WriterException when directory does not exist
      *
      * @return self
      */
-    public function setTempDir($temporaryDirectory)
+    public function setTempDir($pValue)
     {
-        if (is_dir($temporaryDirectory)) {
-            $this->tempDir = $temporaryDirectory;
+        if (is_dir($pValue)) {
+            $this->tempDir = $pValue;
         } else {
-            throw new WriterException("Directory does not exist: $temporaryDirectory");
+            throw new WriterException("Directory does not exist: $pValue");
         }
 
         return $this;
@@ -229,23 +240,44 @@ abstract class Pdf extends Html
     /**
      * Save Spreadsheet to PDF file, pre-save.
      *
-     * @param string $filename Name of the file to save as
+     * @param string $pFilename Name of the file to save as
+     *
+     * @throws WriterException
      *
      * @return resource
      */
-    protected function prepareForSave($filename)
+    protected function prepareForSave($pFilename)
     {
-        //  Open file
-        $this->openFileHandle($filename);
+        //  garbage collect
+        $this->spreadsheet->garbageCollect();
 
-        return $this->fileHandle;
+        $this->saveArrayReturnType = Calculation::getArrayReturnType();
+        Calculation::setArrayReturnType(Calculation::RETURN_ARRAY_AS_VALUE);
+
+        //  Open file
+        $fileHandle = fopen($pFilename, 'w');
+        if ($fileHandle === false) {
+            throw new WriterException("Could not open file $pFilename for writing.");
+        }
+
+        //  Set PDF
+        $this->isPdf = true;
+        //  Build CSS
+        $this->buildCSS(true);
+
+        return $fileHandle;
     }
 
     /**
      * Save PhpSpreadsheet to PDF file, post-save.
+     *
+     * @param resource $fileHandle
      */
-    protected function restoreStateAfterSave(): void
+    protected function restoreStateAfterSave($fileHandle)
     {
-        $this->maybeCloseFileHandle();
+        //  Close file
+        fclose($fileHandle);
+
+        Calculation::setArrayReturnType($this->saveArrayReturnType);
     }
 }

@@ -9,18 +9,18 @@ class Run extends TextElement implements ITextElement
     /**
      * Font.
      *
-     * @var ?Font
+     * @var Font
      */
     private $font;
 
     /**
      * Create a new Run instance.
      *
-     * @param string $text Text
+     * @param string $pText Text
      */
-    public function __construct($text = '')
+    public function __construct($pText = '')
     {
-        parent::__construct($text);
+        parent::__construct($pText);
         // Initialise variables
         $this->font = new Font();
     }
@@ -28,7 +28,7 @@ class Run extends TextElement implements ITextElement
     /**
      * Get font.
      *
-     * @return null|\PhpOffice\PhpSpreadsheet\Style\Font
+     * @return Font
      */
     public function getFont()
     {
@@ -38,13 +38,13 @@ class Run extends TextElement implements ITextElement
     /**
      * Set font.
      *
-     * @param Font $font Font
+     * @param Font $pFont Font
      *
-     * @return $this
+     * @return ITextElement
      */
-    public function setFont(?Font $font = null)
+    public function setFont(Font $pFont = null)
     {
-        $this->font = $font;
+        $this->font = $pFont;
 
         return $this;
     }
@@ -58,7 +58,7 @@ class Run extends TextElement implements ITextElement
     {
         return md5(
             $this->getText() .
-            (($this->font === null) ? '' : $this->font->getHashCode()) .
+            $this->font->getHashCode() .
             __CLASS__
         );
     }

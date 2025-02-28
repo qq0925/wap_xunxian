@@ -21,7 +21,7 @@ if ($main_type == 1) {
 
 if(!empty($main_type)){
 echo "<br/>";
-echo "文本值：".$text."<br/>"."显示条件：".$cond."<br/>"."当前位置：".$position."<br/>"."元素类别：".$op_value;
+echo "文本值：".nl2br($text)."<br/>"."显示条件：".$cond."<br/>"."当前位置：".$position."<br/>"."元素类别：".$op_value;
 echo "<br/>";
 }
 }

@@ -2,7 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx\Namespaces;
 use PhpOffice\PhpSpreadsheet\Shared\File;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -14,7 +13,10 @@ class ContentTypes extends WriterPart
     /**
      * Write content types to XML format.
      *
+     * @param Spreadsheet $spreadsheet
      * @param bool $includeCharts Flag indicating if we should include drawing details for charts
+     *
+     * @throws WriterException
      *
      * @return string XML Output
      */
@@ -33,7 +35,7 @@ class ContentTypes extends WriterPart
 
         // Types
         $objWriter->startElement('Types');
-        $objWriter->writeAttribute('xmlns', Namespaces::CONTENT_TYPES);
+        $objWriter->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/package/2006/content-types');
 
         // Theme
         $this->writeOverrideContentType($objWriter, '/xl/theme/theme1.xml', 'application/vnd.openxmlformats-officedocument.theme+xml');
@@ -85,16 +87,6 @@ class ContentTypes extends WriterPart
 
         // Shared strings
         $this->writeOverrideContentType($objWriter, '/xl/sharedStrings.xml', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml');
-
-        // Table
-        $table = 1;
-        for ($i = 0; $i < $sheetCount; ++$i) {
-            $tableCount = $spreadsheet->getSheet($i)->getTableCollection()->count();
-
-            for ($t = 1; $t <= $tableCount; ++$t) {
-                $this->writeOverrideContentType($objWriter, '/xl/tables/table' . $table++ . '.xml', 'application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml');
-            }
-        }
 
         // Add worksheet relationship content types
         $unparsedLoadedData = $spreadsheet->getUnparsedLoadedData();
@@ -152,7 +144,7 @@ class ContentTypes extends WriterPart
         if ($spreadsheet->hasRibbonBinObjects()) {
             // Some additional objects in the ribbon ?
             // we need to write "Extension" but not already write for media content
-            $tabRibbonTypes = array_diff($spreadsheet->getRibbonBinObjects('types') ?? [], array_keys($aMediaContentTypes));
+            $tabRibbonTypes = array_diff($spreadsheet->getRibbonBinObjects('types'), array_keys($aMediaContentTypes));
             foreach ($tabRibbonTypes as $aRibbonType) {
                 $mimeType = 'image/.' . $aRibbonType; //we wrote $mimeType like customUI Editor
                 $this->writeDefaultContentType($objWriter, $aRibbonType, $mimeType);
@@ -166,23 +158,6 @@ class ContentTypes extends WriterPart
                         $aMediaContentTypes[strtolower($image->getExtension())] = $this->getImageMimeType($image->getPath());
 
                         $this->writeDefaultContentType($objWriter, strtolower($image->getExtension()), $aMediaContentTypes[strtolower($image->getExtension())]);
-                    }
-                }
-            }
-
-            if (count($spreadsheet->getSheet($i)->getComments()) > 0) {
-                foreach ($spreadsheet->getSheet($i)->getComments() as $comment) {
-                    if (!$comment->hasBackgroundImage()) {
-                        continue;
-                    }
-
-                    $bgImage = $comment->getBackgroundImage();
-                    $bgImageExtentionKey = strtolower($bgImage->getImageFileExtensionForSave(false));
-
-                    if (!isset($aMediaContentTypes[$bgImageExtentionKey])) {
-                        $aMediaContentTypes[$bgImageExtentionKey] = $bgImage->getImageMimeType();
-
-                        $this->writeDefaultContentType($objWriter, $bgImageExtentionKey, $aMediaContentTypes[$bgImageExtentionKey]);
                     }
                 }
             }
@@ -211,34 +186,39 @@ class ContentTypes extends WriterPart
     /**
      * Get image mime type.
      *
-     * @param string $filename Filename
+     * @param string $pFile Filename
+     *
+     * @throws WriterException
      *
      * @return string Mime Type
      */
-    private function getImageMimeType($filename)
+    private function getImageMimeType($pFile)
     {
-        if (File::fileExists($filename)) {
-            $image = getimagesize($filename);
+        if (File::fileExists($pFile)) {
+            $image = getimagesize($pFile);
 
-            return image_type_to_mime_type((is_array($image) && count($image) >= 3) ? $image[2] : 0);
+            return image_type_to_mime_type($image[2]);
         }
 
-        throw new WriterException("File $filename does not exist");
+        throw new WriterException("File $pFile does not exist");
     }
 
     /**
      * Write Default content type.
      *
-     * @param string $partName Part name
-     * @param string $contentType Content type
+     * @param XMLWriter $objWriter XML Writer
+     * @param string $pPartname Part name
+     * @param string $pContentType Content type
+     *
+     * @throws WriterException
      */
-    private function writeDefaultContentType(XMLWriter $objWriter, $partName, $contentType): void
+    private function writeDefaultContentType(XMLWriter $objWriter, $pPartname, $pContentType)
     {
-        if ($partName != '' && $contentType != '') {
+        if ($pPartname != '' && $pContentType != '') {
             // Write content type
             $objWriter->startElement('Default');
-            $objWriter->writeAttribute('Extension', $partName);
-            $objWriter->writeAttribute('ContentType', $contentType);
+            $objWriter->writeAttribute('Extension', $pPartname);
+            $objWriter->writeAttribute('ContentType', $pContentType);
             $objWriter->endElement();
         } else {
             throw new WriterException('Invalid parameters passed.');
@@ -248,16 +228,19 @@ class ContentTypes extends WriterPart
     /**
      * Write Override content type.
      *
-     * @param string $partName Part name
-     * @param string $contentType Content type
+     * @param XMLWriter $objWriter XML Writer
+     * @param string $pPartname Part name
+     * @param string $pContentType Content type
+     *
+     * @throws WriterException
      */
-    private function writeOverrideContentType(XMLWriter $objWriter, $partName, $contentType): void
+    private function writeOverrideContentType(XMLWriter $objWriter, $pPartname, $pContentType)
     {
-        if ($partName != '' && $contentType != '') {
+        if ($pPartname != '' && $pContentType != '') {
             // Write content type
             $objWriter->startElement('Override');
-            $objWriter->writeAttribute('PartName', $partName);
-            $objWriter->writeAttribute('ContentType', $contentType);
+            $objWriter->writeAttribute('PartName', $pPartname);
+            $objWriter->writeAttribute('ContentType', $pContentType);
             $objWriter->endElement();
         } else {
             throw new WriterException('Invalid parameters passed.');

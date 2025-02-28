@@ -56,6 +56,11 @@ if($main_value ==''){
 if($link_value ==''){
     $link_value = "http://";
 }
+
+if ($main_value === "\r\n") {
+    $main_value = "\n\n"; // 直接替换整个字符串为两个换行符
+}
+
 switch($main_type){
     case '1':
         $game_main = $encode->encode("cmd=game_self_page&self_id=$self_id&sid=$sid");
@@ -65,8 +70,8 @@ switch($main_type){
 <input type="hidden" name="add_id" value="$max_id">
 <input type="hidden" name="main_type" value="$main_type"> 
 <input type="hidden" name="op_type" value="$op_type"> 
-元素名称:<textarea name="text" maxlength="1024" rows="4" cols="40">$main_value</textarea><br/>
-显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">$main_cond</textarea><br/>
+元素名称:<textarea name="text" maxlength="1024" rows="4" cols="40">{$main_value}</textarea><br/>
+显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">{$main_cond}</textarea><br/>
 位置:<input name="position" maxlength="3" value="$last_pos"><br/>
 <input name="submit" type="submit" title="确定" value="确定"/>
 </form><br/>

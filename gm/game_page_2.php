@@ -150,6 +150,9 @@ $cxjg->bindColumn('target_func',$target_func);
 $cxjg->bindColumn('link_value',$link_value);
 $cxjg->bindColumn('position',$last_pos);
 $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+if ($main_value === "\r\n") {
+    $main_value = "\n\n"; // 直接替换整个字符串为两个换行符
+}
 if($target_func !=0){
     $sql="select name from system_function where id='$target_func'";
     $cxjg = $dblj->query($sql);

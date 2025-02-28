@@ -64,7 +64,7 @@ if ($main_type == 1) {
 
 if(!empty($main_type)){
 echo "<br/>";
-echo "文本值：".$text."<br/>"."显示条件：".$cond."<br/>"."当前位置：".$position."<br/>"."元素类别：".$op_value;
+echo "文本值：".nl2br($text)."<br/>"."显示条件：".$cond."<br/>"."当前位置：".$position."<br/>"."元素类别：".$op_value;
 echo "<br/>";
 }
 }
@@ -121,11 +121,11 @@ $game_page_13_4 = $encode->encode("cmd=game_self_page_2&self_id=$self_id&main_ty
 $gm = $encode->encode("cmd=gm&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
-$get_main_page = \gm\get_self_page_list($dblj,$self_id);
-$self_name = $get_main_page[0]['name'];
-$self_call_sum = $get_main_page[0]['call_sum'];
-$self_id = $get_main_page[0]['id'];
-$not_return = $get_main_page[0]['not_return'];
+$get_main_page = \gm\get_self_page_list($dblj,$self_id)[0];
+$self_name = $get_main_page['name'];
+$self_call_sum = $get_main_page['call_sum'];
+$self_id = $get_main_page['id'];
+$not_return = $get_main_page['not_return'];
 
 if($not_return ==0){
     $choose_html = <<<HTML
