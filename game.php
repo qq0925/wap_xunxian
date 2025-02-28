@@ -2208,6 +2208,8 @@ echo $refresh_html;
             \player\update_temp_attr($sid,'busy',3,$dblj,1,0);
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
             $dblj->exec("DELETE from system_npc_midguaiwu where nsid = '$sid'");
+            $dblj->exec("DELETE from system_fight_state where sid = '$sid'");
+            $dblj->exec("DELETE from game2 where sid = '$sid'");
             $ym = 'module_all/main_page.php';
             break;
         case 'iteminfo_new'://物品信息

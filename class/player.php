@@ -212,6 +212,28 @@ function update_message_sql($sid,$dblj,$input,$view_type=null){
 
 function update_fight_msg($sid,$pid,$gid,$round,$type,$dblj){
 
+$checkStmt = $dblj->prepare("
+    SELECT 1
+    FROM system_fight_state 
+    WHERE sid = :sid
+      AND pid = :pid
+      AND gid = :gid
+      AND round = :round
+      AND type = :type
+    LIMIT 1
+");
+
+// 绑定检查参数
+$checkStmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
+$checkStmt->bindParam(':pid', $pid, \PDO::PARAM_STR);
+$checkStmt->bindParam(':gid', $gid, \PDO::PARAM_STR);
+$checkStmt->bindParam(':round', $round, \PDO::PARAM_INT);
+$checkStmt->bindParam(':type', $type, \PDO::PARAM_INT);
+
+$checkStmt->execute();
+
+
+if($checkStmt->rowCount() === 0) {
 switch($type){
     case '1':
         $sql = "SELECT uhp,ump from game1 where sid = '$sid'";
@@ -236,7 +258,27 @@ switch($type){
         break;
 }
 
-$dblj->exec("insert into system_fight_state(sid,pid,gid,round,type,now_hp,now_mp)values('$sid','$pid','$gid','$round','$type','$update_hp','$update_mp')");
+    $insertStmt = $dblj->prepare("
+        INSERT INTO system_fight_state(
+            sid, pid, gid, round, 
+            type, now_hp, now_mp
+        ) VALUES (
+            :sid, :pid, :gid, :round, 
+            :type, :now_hp, :now_mp
+        )
+    ");
+    
+    // 绑定插入参数（与检查参数相同）
+    $insertStmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
+    $insertStmt->bindParam(':pid', $pid, \PDO::PARAM_STR);
+    $insertStmt->bindParam(':gid', $gid, \PDO::PARAM_STR);
+    $insertStmt->bindParam(':round', $round, \PDO::PARAM_INT);
+    $insertStmt->bindParam(':type', $type, \PDO::PARAM_INT);
+    $insertStmt->bindParam(':now_hp', $update_hp, \PDO::PARAM_INT);
+    $insertStmt->bindParam(':now_mp', $update_mp, \PDO::PARAM_INT);
+    
+    $insertStmt->execute();
+}
 }
 
 function put_system_message_sql($uid,$dblj){

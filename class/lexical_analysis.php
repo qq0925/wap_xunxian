@@ -2862,8 +2862,6 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $op = @eval("return $op;");
                     //$op = @eval("return $op;");
                     }
-                    //var_dump("递归前值：".$op."<br/>");
-                    //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'r':
                     if(!is_numeric($attr2)){
@@ -2873,8 +2871,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     if(intval($attr2) <=0){
                     $attr2 = 1;
                     }
-                    $op ="'". rand(0, intval($attr2) - 1)."'"; // 生成随机整数
-                    //$op = "\"$op\"";
+                    $op = rand(0, intval($attr2) - 1); // 生成随机整数
                     break;
                 case 'gph':
                     $attr_para = explode(".","$attr2");
