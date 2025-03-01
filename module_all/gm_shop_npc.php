@@ -46,9 +46,10 @@ $npc_item_count = @count($npc_item);
 if (!empty($npc_item[0])){
 foreach ($npc_item as $item_detail){
     $pos +=1;
-    $item_id = explode('|',$item_detail)[0];
-    $item_count = explode('|',$item_detail)[1];
-    $item_money_type = explode('|',$item_detail)[2]?:'money';
+    $item_one = explode('|',$item_detail);
+    $item_id = $item_one[0];
+    $item_count = $item_one[1];
+    $item_money_type = $item_one[2]?:'money';
     $sql = "select rname,runit from system_money_type where rid = '$item_money_type'";
     $cxjg = $dblj->query($sql);
     $money_ret = $cxjg->fetch(PDO::FETCH_ASSOC);
@@ -88,10 +89,8 @@ $item_name = $item_para ->iname;
 $item_name = \lexical_analysis\color_string($item_name);
 $item_value = $item_para ->iprice;
 $item_weight = $item_para ->iweight;
-$item_desc = $item_para ->idesc;
-if(!$item_desc){
-    $item_desc = "无";
-}
+$item_desc = $item_para ->idesc?:'无';
+
 // $cmid = $cmid + 1;
 // $cdid[] = $cmid;
 // $clj[] = $cmd;
