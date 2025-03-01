@@ -1,47 +1,28 @@
 <?php
 include_once 'class/events_steps_change.php';
 $parents_page = $currentFilePath;
-if($_POST['iid']){
-    if($count >0){
-    $item_weight = \player\getitem($_POST['iid'],$dblj)->iweight;
-    $item_total_weight = ($_POST['count']) * $item_weight;
-    $player = \player\getplayer($sid,$dblj);
-    $player_last_burthen = $player->umax_burthen - $player->uburthen;
-    if($player->umoney >=($_POST['count'])*($_POST['item_value'])&&$player_last_burthen >=$item_total_weight){
-        $total = ($_POST['count'])*($_POST['item_value']);
-        $item_name = \player\getitem($_POST['iid'],$dblj)->iname;
-        $item_name = \lexical_analysis\color_string($item_name);
-        \player\additem($sid,$_POST['iid'],$_POST['count'],$dblj);
-        $sql = "update game1 set umoney = umoney - '$total' where sid = '$sid' ";
-        $dblj->exec($sql);
-        echo "购买成功，你花了{$total}{$gm_post->money_measure}{$gm_post->money_name}购买了{$item_name}x{$count}!<br/>";
-        $parents_cmd = 'gm_shop_npc';
-        $event_id = \gm\get_self_event($dblj,$nid,'npc_shop');
-        events_steps_change($event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/gm_shop_npc.php','npc_scene',$mid,$para);
-        $player = \player\getplayer($sid,$dblj);
-    }else{
-        echo "购买失败!<br/>";
-    }
-    }else{
-        echo "请不要输入负数!<br/>";
-    }
-    
-}
-
 if($canshu == 'buy'){
     if($count >0){
     $player = \player\getplayer($sid,$dblj);
     $item_weight = \player\getitem($iid,$dblj)->iweight;
     $item_total_weight = $count * $item_weight;
     $player_last_burthen = $player->umax_burthen - $player->uburthen;
-    if($player->umoney >=($count)*($item_value)&&$player_last_burthen >=$item_total_weight){
+    $money_count = unitmoneycount($sid,$money_name,$db);
+    //后续加入数量判断以及购买数量变更。刷新随着场景刷新
+    if($money_count >=($count)*($item_value)&&$player_last_burthen >=$item_total_weight){
         $total = ($count)*($item_value);
         $item_name = \player\getitem($iid,$dblj)->iname;
         $item_name = \lexical_analysis\color_string($item_name);
         \player\additem($sid,$iid,$count,$dblj);
-        $sql = "update game1 set umoney = umoney -  '$total' where sid = '$sid' ";
-        $dblj->exec($sql);
-        echo "购买成功，你花了{$total}{$gm_post->money_measure}{$gm_post->money_name}购买了{$item_name}x{$count}!<br/>";
+        $buy_result = calcmoney($sid,$money_name,$total,$db);
+
+        $sql = "select rname,runit from system_money_type where rid = '$money_name'";
+        $cxjg = $dblj->query($sql);
+        $money_ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+        $pay_type = $money_ret['rname'];
+        $pay_runit = $money_ret['runit'];
+
+        echo "购买成功，你花了{$total}{$pay_type}{$pay_runit}购买了{$item_name}x{$count}!<br/>";
         $parents_cmd = 'gm_shop_npc';
         $event_id = \gm\get_self_event($dblj,$nid,'npc_shop');
         events_steps_change($event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/gm_shop_npc.php','npc_scene',$mid,$para);
@@ -95,7 +76,6 @@ $cdid[] = $cmid;
 $clj[] = $cmd;
 $gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $shop_html = <<<HTML
-你身上有{$gm_post->money_name}:{$player->umoney}{$gm_post->money_measure}<br/>
 负重:{$player->uburthen}/{$player->umax_burthen}<br/>
 {$npc_name}身上可购买的物品:<br/>
 $shop_item_list
@@ -128,7 +108,7 @@ if(!$item_desc){
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$buy_form = $encode->encode("cmd=gm_shop_npc&mid=$mid&ucmd=$cmid&sid=$sid");
+$buy_form = $encode->encode("cmd=gm_shop_npc&canshu=buy&mid=$mid&iid=$iid&item_value=$item_value&money_name=$money_type&ucmd=$cmid&sid=$sid");
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
@@ -138,7 +118,7 @@ $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
 $gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
-$item_money_player = $player->{'u' . $money_type}?:0;
+$item_money_player = unitmoneycount($sid,$money_type,$db);
 //<a href="?cmd=$buy_5">购买+5</a><br/>
 // <a href="?cmd=$buy_10">购买+10</a><br/>
 // <a href="?cmd=$buy_20">购买+20</a><br/>
@@ -151,8 +131,6 @@ $shop_html = <<<HTML
 你身上有{$item_money_name}:{$item_money_player}{$item_money_unit}<br/>
 负重:{$player->uburthen}/{$player->umax_burthen}<br/><br/>
 <form action="?cmd=$buy_form" method="post">
-<input name="iid" type="hidden" value="{$iid}">
-<input name="item_value" type="hidden" value="{$item_value}">
 请输入你要购买的数量：<input name="count" type="tel" value="1" format="*N" style="-wap-input-format:*N" maxlength="5"/><br/>
 <input name="submit" type="submit" title="购买" value="购买"/></form><br/>
 <a href="?cmd=$gobacklist">返回列表</a><br/>
@@ -161,4 +139,47 @@ $shop_html = <<<HTML
 HTML;
 }
 echo $shop_html;
+
+function calcmoney($sid,$money_name,$total,$db){
+    $name = 'u'.$money_name;
+    $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$name'");
+    $result_2 = $db->query("SELECT value from system_addition_attr where name = '$name' and sid = '$sid'");
+    if ($result->num_rows > 0) {
+            // 字段存在于 game1 表
+        $sql = "UPDATE game1 SET $name = $name - ? WHERE sid = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('is', $total, $sid);
+        $stmt->execute();
+        return true;
+    }elseif ($result_2->num_rows > 0){
+            // 字段存在于 addition 表
+        $sql = "UPDATE system_addition_attr SET value = value - ? WHERE name = ? and sid = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('iss', $total,$name, $sid);
+        $stmt->execute();
+        return true;
+    }else{
+        return 0;
+    }
+}
+
+function unitmoneycount($sid,$name,$db){
+    $name = 'u'.$name;
+    $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$name'");
+    $result_2 = $db->query("SELECT value from system_addition_attr where name = '$name' and sid = '$sid'");
+    if ($result->num_rows > 0) {
+            // 字段存在于 game1 表
+        $sql = "SELECT `$name` from game1 where sid = '$sid'";
+        $result = $db->query($sql);
+        $row = $result->fetch_assoc();
+        return $row[$name];
+    }elseif ($result_2->num_rows > 0){
+            // 字段存在于 addition 表
+        $row_2 = $result_2->fetch_assoc();
+        return $row_2['value'];
+    }else{
+        return 0;
+    }
+}
+
 ?>
