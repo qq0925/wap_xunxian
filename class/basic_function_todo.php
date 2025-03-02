@@ -1334,6 +1334,7 @@ global $encode;
 $player = player\getplayer($sid,$dblj);
 $gameconfig = player\getgameconfig($dblj);
 $scene_message_count = $gameconfig->scene_message_count;
+$scene_chat_time = $gameconfig->scene_chat_time;
 $long_exist_message = $gameconfig->long_exist_message;
 $can_input = $gameconfig->can_input;
 $sql = "SELECT * FROM system_chat_data where viewed = 0 ORDER BY id DESC LIMIT 0,$scene_message_count";//聊天列表获取
@@ -1372,19 +1373,29 @@ if ($ltcxjg){
         }elseif($send_type==1){
             $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$sid");
         }
-        
+        if($scene_chat_time ==1){
+        $lthtml .="[<span style='color: orangered;'>公共</span>]<a href='?cmd=$u_cmd''>$uname</a>:$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
+        }else{
         $lthtml .="[<span style='color: orangered;'>公共</span>]<a href='?cmd=$u_cmd''>$uname</a>:$umsg<span class='txt-fade'></span><br/>";
-        
+        }
         }elseif($imuid == $player->uid && $chat_type == 1 && $viewed == 0){
         $cmid = $cmid + 1;
         $cdid[] = $cmid;
         $clj[] = $cmd;
         $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
         if($uid){
+            if($scene_chat_time ==1){
+            $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
+            }else{
             $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'></span><br/>";
+            }
             $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }else{
+            if($scene_chat_time ==1){
+            $lthtml .="[系统]:{$umsg}<span class='txt-fade'>[{$send_time}]</span><br/>";
+            }else{
             $lthtml .="[系统]:{$umsg}<span class='txt-fade'></span><br/>";
+            }
             $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }
         
@@ -1425,10 +1436,18 @@ if ($ltcxjg){
         $clj[] = $cmd;
         $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
         if($uid){
+            if($scene_chat_time ==1){
+            $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
+            }else{
             $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'></span><br/>";
+            }
             $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }else{
+            if($scene_chat_time ==1){
+            $lthtml .="[系统]:{$umsg}<span class='txt-fade'>[{$send_time}]</span><br/>";
+            }else{
             $lthtml .="[系统]:{$umsg}<span class='txt-fade'></span><br/>";
+            }
             $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
         }
         

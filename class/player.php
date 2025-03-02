@@ -1833,6 +1833,7 @@ class gameconfig{
     var $team_max_count;
     var $game_max_char;
     var $scene_message_count;
+    var $scene_chat_time;
     var $long_exist_message;
     var $can_input;
     var $offline_time;
@@ -1861,6 +1862,7 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('team_max_count',$gameconfig->team_max_count);
     $cxjg->bindColumn('game_max_char',$gameconfig->game_max_char);
     $cxjg->bindColumn('scene_message_count',$gameconfig->scene_message_count);
+    $cxjg->bindColumn('scene_chat_time',$gameconfig->scene_chat_time);
     $cxjg->bindColumn('long_exist_message',$gameconfig->long_exist_message);
     $cxjg->bindColumn('can_input',$gameconfig->can_input);
     $cxjg->bindColumn('player_offline_time',$gameconfig->offline_time);

@@ -198,6 +198,23 @@ foreach ($keyValuePairs as $pair) {
                     $stmt->execute();
                     
                     }
+                elseif(strpos($ele_1_2, "g_msg") === 0){
+                    $sql = "select uid,uname from game1 where sid ='$sid'";
+                    $result = $db->query($sql);
+                    $row = $result->fetch_assoc();
+                    $player_uid = $row['uid'];
+                    $player_uname = $row['uname'];
+                    $ltmsg = htmlspecialchars($ele_2);
+                    $send_time = date('Y-m-d H:i:s');
+                    $updateQuery = "insert into system_chat_data(name,msg,uid,send_time) values(?,?,?,?)";
+
+                    // 使用预处理语句
+                    $stmt = $db->prepare($updateQuery);
+                    $stmt->bind_param("ssis", $player_uname, $ltmsg, $player_uid, $send_time);
+                    // 执行查询
+                    $stmt->execute();
+                    
+                    }
                 else{
                 $sql = "select name from gm_game_attr where value_type =1 and id = '$ele_1_2'";
                 $result = $db->query($sql);
@@ -256,6 +273,23 @@ foreach ($keyValuePairs as $pair) {
                     $updateQuery = "insert into system_chat_data (name,msg,send_time,uid,imuid,chat_type)values('系统','$ele_2','$send_time','0','$player_uid','1')";
                     // 使用预处理语句
                     $stmt = $db->prepare($updateQuery);
+                    // 执行查询
+                    $stmt->execute();
+                    
+                    }
+                elseif(strpos($ele_1_2, "g_msg") === 0){
+                    $sql = "select uid,uname from game1 where sid ='$oid'";
+                    $result = $db->query($sql);
+                    $row = $result->fetch_assoc();
+                    $player_uid = $row['uid'];
+                    $player_uname = $row['uname'];
+                    $ltmsg = htmlspecialchars($ele_2);
+                    $send_time = date('Y-m-d H:i:s');
+                    $updateQuery = "insert into system_chat_data(name,msg,uid,send_time) values(?,?,?,?)";
+
+                    // 使用预处理语句
+                    $stmt = $db->prepare($updateQuery);
+                    $stmt->bind_param("ssis", $player_uname, $ltmsg, $player_uid, $send_time);
                     // 执行查询
                     $stmt->execute();
                     

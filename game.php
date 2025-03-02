@@ -662,6 +662,7 @@ echo $refresh_html;
                             echo "每{$msg_interval}秒才能发言一次！下次发言还需要{$least_time}秒！<br/>";
                         }
                         if($scene ==1){
+                        unset($_POST);
                         $cmd = 'gm_scene_new';
                         $ym = 'module_all/main_page.php';
                         }else{

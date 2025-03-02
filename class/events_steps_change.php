@@ -284,6 +284,10 @@ HTML;
                                 case 'tasks':
                                     $ym = 'module_all/task.php';
                                     break;
+                                case 'chat':
+                                    $ltlx = $_POST['ltlx']?:'all';
+                                    $ym = 'module_all/liaotian.php';
+                                    break;
                                 default:
                                     $page_id = str_replace('ct_', '', $step_page_name);
                                     //这里写事件核心
