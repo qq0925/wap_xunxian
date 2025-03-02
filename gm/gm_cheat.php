@@ -29,7 +29,7 @@ HTML;
 
 
 $player = \player\getplayer($sid,$dblj);
-$gonowmid = $encode->encode("cmd=gm_scene_new&newmid=$player->nowmid&sid=$sid");
+$gonowmid = $encode->encode("cmd=gm_scene_new&sid=$sid");
 $gm_cheat = $encode->encode("cmd=gm_cheat&sid=$sid");
 $gm_html =<<<HTML
     <h1>GM修改器</h1>

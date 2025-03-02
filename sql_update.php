@@ -52,6 +52,18 @@
         $stmt->execute();
     }
 
+    $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'fight_mod'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE gm_game_basic ADD COLUMN fight_mod INT(1) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
     $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'scene_chat_time'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();

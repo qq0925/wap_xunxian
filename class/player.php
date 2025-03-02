@@ -1838,6 +1838,7 @@ class gameconfig{
     var $can_input;
     var $offline_time;
     var $can_verify;
+    var $fight_mod;
     var $npc_seg;
     var $player_send_global_msg_interval;
     var $near_player_show;
@@ -1867,6 +1868,7 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('can_input',$gameconfig->can_input);
     $cxjg->bindColumn('player_offline_time',$gameconfig->offline_time);
     $cxjg->bindColumn('can_verify',$gameconfig->can_verify);
+    $cxjg->bindColumn('fight_mod',$gameconfig->fight_mod);
     $cxjg->bindColumn('npc_seg',$gameconfig->npc_seg);
     $cxjg->bindColumn('player_send_global_msg_interval',$gameconfig->player_send_global_msg_interval);
     $cxjg->bindColumn('near_player_show',$gameconfig->near_player_show);

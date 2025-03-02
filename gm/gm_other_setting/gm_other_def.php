@@ -31,6 +31,10 @@ foreach ($_POST as $key => $value) {
             $sql = "update  gm_game_basic set near_player_show = '$value' where game_id = 19980925";
             $dblj->exec($sql);
             break;
+        case 'fight_mod':
+            $sql = "update  gm_game_basic set fight_mod = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
         case 'equip_mosaic_link':
             $sql = "update  gm_game_basic set equip_mosaic_link = '$value' where game_id = 19980925";
             $dblj->exec($sql);
@@ -120,6 +124,8 @@ $selectedOption_6 = ($game_config->long_exist_message == "1") ? 'selected' : '';
 $selectedOption_7 = ($game_config->can_verify == "1") ? 'selected' : '';
 $selectedOption_8 = ($game_config->can_input == "1") ? 'selected' : '';
 $selectedOption_9 = ($game_config->scene_chat_time == "1") ? 'selected' : '';
+$selectedOption_10 = ($game_config->fight_mod == "1") ? 'selected' : '';
+$selectedOption_11 = ($game_config->fight_mod == "2") ? 'selected' : '';
 $other_html = <<<HTML
 [杂项设置]<br/><br/>
 <form action="?cmd=$other_set" method="POST">
@@ -136,6 +142,10 @@ $other_html = <<<HTML
 <form action="?cmd=$other_set" method="POST">
 列表行数：<input type="tel" name="list_row" size="5" value="{$game_config->list_row}">
 <input type="submit" value="保存"/>
+</form>
+<form action="?cmd=$other_set" method="POST">
+战斗模式：<select name="fight_mod">
+<option value =0>统一出招回合制</option><option value =1 {$selectedOption_10}>分配出招回合制</option><option value =2 {$selectedOption_11}>自动动画回合制</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
 ---<br/>
 <form action="?cmd=$other_set" method="POST">

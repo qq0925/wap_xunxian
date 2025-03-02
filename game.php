@@ -523,6 +523,7 @@ echo $refresh_html;
             
             // 检查是否有 POST 请求
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $cmd = "gm_scene_new";
             // 获取输入框的值
             $id = $_POST['id'];
             $attr_name = 'u'.$_POST['attr_name'];
@@ -537,19 +538,17 @@ echo $refresh_html;
                 $updateQuery = "UPDATE game1 SET $attr_name = '$attr_value' WHERE sid = '$up_sid'";
                 $db->query($updateQuery);
                 echo "标准属性值更新成功。<br/>";
-                $cmd = "gm_scene_new";
             } elseif($result_2->num_rows > 0){
                 $updateQuery = "UPDATE system_addition_attr SET value = '$attr_value' WHERE sid = '$up_sid' and name = '$attr_name'";
                 $db->query($updateQuery);
             echo "自定属性值更新成功。<br/>";
-            $cmd = "gm_scene_new";
             } else{
                 // 字段不存在，添加新字段并更新值
                 $alterQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$attr_name','$attr_value','$up_sid')";
                 $db->query($alterQuery);
             echo "自定属性添加并更新成功。<br/>";
-            $cmd = "gm_scene_new";
             }
+            unset($_POST);
             $ym = 'module_all/main_page.php';
         }else{
             $ym = 'gm/gm_cheat.php';
