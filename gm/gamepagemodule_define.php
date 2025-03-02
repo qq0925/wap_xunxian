@@ -244,6 +244,7 @@ $game_page_1_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=1&main_type=1&s
 $game_page_1_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=1&main_type=2&sid=$sid");
 $game_page_1_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=1&main_type=3&sid=$sid");
 $game_page_1_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=1&main_type=4&sid=$sid");
+$game_page_1_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=1&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_scene_page($dblj);
@@ -279,7 +280,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_1_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_1_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_1_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_1_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_1_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_1_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 2) {
 $encode = new \encode\encode();
@@ -289,6 +291,7 @@ $game_page_2_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=2&main_type=1&s
 $game_page_2_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=2&main_type=2&sid=$sid");
 $game_page_2_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=2&main_type=3&sid=$sid");
 $game_page_2_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=2&main_type=4&sid=$sid");
+$game_page_2_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=2&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_npc_page($dblj);
@@ -323,7 +326,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_2_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_2_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_2_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_2_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_2_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_2_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 3) {
 $encode = new \encode\encode();
@@ -333,6 +337,7 @@ $game_page_3_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=3&main_type=1&s
 $game_page_3_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=3&main_type=2&sid=$sid");
 $game_page_3_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=3&main_type=3&sid=$sid");
 $game_page_3_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=3&main_type=4&sid=$sid");
+$game_page_3_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=3&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_pet_page($dblj);
@@ -367,7 +372,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_3_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_3_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_3_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_3_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_3_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_3_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 4) {
 $encode = new \encode\encode();
@@ -377,6 +383,7 @@ $game_page_4_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=4&main_type=1&s
 $game_page_4_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=4&main_type=2&sid=$sid");
 $game_page_4_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=4&main_type=3&sid=$sid");
 $game_page_4_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=4&main_type=4&sid=$sid");
+$game_page_4_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=4&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_item_page($dblj);
@@ -411,7 +418,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_4_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_4_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_4_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_4_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_4_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_4_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 5) {
 $encode = new \encode\encode();
@@ -421,6 +429,7 @@ $game_page_5_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=5&main_type=1&s
 $game_page_5_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=5&main_type=2&sid=$sid");
 $game_page_5_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=5&main_type=3&sid=$sid");
 $game_page_5_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=5&main_type=4&sid=$sid");
+$game_page_5_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=5&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_oplayer_page($dblj);
@@ -464,7 +473,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_5_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_5_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_5_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_5_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_5_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_5_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 6) {
 $encode = new \encode\encode();
@@ -474,6 +484,7 @@ $game_page_6_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=6&main_type=1&s
 $game_page_6_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=6&main_type=2&sid=$sid");
 $game_page_6_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=6&main_type=3&sid=$sid");
 $game_page_6_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=6&main_type=4&sid=$sid");
+$game_page_6_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=6&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_equip_page($dblj);
@@ -518,7 +529,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_6_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_6_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_6_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_6_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_6_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_6_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 14) {
 $encode = new \encode\encode();
@@ -528,6 +540,7 @@ $game_page_14_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=14&main_type=1
 $game_page_14_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=14&main_type=2&sid=$sid");
 $game_page_14_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=14&main_type=3&sid=$sid");
 $game_page_14_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=14&main_type=4&sid=$sid");
+$game_page_14_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=14&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_equip_detail_page($dblj);
@@ -571,7 +584,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_14_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_14_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_14_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_14_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_14_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_14_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 7) {
 $encode = new \encode\encode();
@@ -581,6 +595,7 @@ $game_page_7_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=7&main_type=1&s
 $game_page_7_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=7&main_type=2&sid=$sid");
 $game_page_7_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=7&main_type=3&sid=$sid");
 $game_page_7_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=7&main_type=4&sid=$sid");
+$game_page_7_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=7&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_player_page($dblj);
@@ -625,7 +640,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_7_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_7_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_7_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_7_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_7_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_7_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 8) {
 $encode = new \encode\encode();
@@ -635,6 +651,7 @@ $game_page_8_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=8&main_type=1&s
 $game_page_8_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=8&main_type=2&sid=$sid");
 $game_page_8_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=8&main_type=3&sid=$sid");
 $game_page_8_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=8&main_type=4&sid=$sid");
+$game_page_8_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=8&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_skill_page($dblj);
@@ -678,7 +695,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_8_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_8_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_8_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_8_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_8_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_8_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 9) {
 $encode = new \encode\encode();
@@ -688,6 +706,7 @@ $game_page_9_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=9&main_type=1&s
 $game_page_9_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=9&main_type=2&sid=$sid");
 $game_page_9_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=9&main_type=3&sid=$sid");
 $game_page_9_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=9&main_type=4&sid=$sid");
+$game_page_9_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=9&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_function_page($dblj);
@@ -732,7 +751,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_9_1">添加文本元素</a><br/>
 <a href="?cmd=$game_page_9_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_9_3">添加功能元素</a><br/>
-<a href="?cmd=$game_page_9_4">添加链接元素</a><br/><br/>
+<a href="?cmd=$game_page_9_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_9_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 10) {
 $encode = new \encode\encode();
@@ -742,6 +762,7 @@ $game_page_10_1 = $encode->encode("cmd=game_page_2&gm_post_canshu=10&main_type=1
 $game_page_10_2 = $encode->encode("cmd=game_page_2&gm_post_canshu=10&main_type=2&sid=$sid");
 $game_page_10_3 = $encode->encode("cmd=game_page_2&gm_post_canshu=10&main_type=3&sid=$sid");
 $game_page_10_4 = $encode->encode("cmd=game_page_2&gm_post_canshu=10&main_type=4&sid=$sid");
+$game_page_10_5 = $encode->encode("cmd=game_page_2&gm_post_canshu=10&main_type=5&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_pve_page($dblj);
@@ -786,6 +807,7 @@ $game_main<br/>
 <a href="?cmd=$game_page_10_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_10_3">添加功能元素</a><br/>
 <a href="?cmd=$game_page_10_4">添加链接元素</a><br/>
+<a href="?cmd=$game_page_10_5">添加输入框元素</a><br/><br/>
 <a href="fight_test">模拟战斗动画</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 11) {
@@ -842,7 +864,7 @@ $game_main<br/>
 <a href="?cmd=$game_page_11_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_11_3">添加功能元素</a><br/>
 <a href="?cmd=$game_page_11_4">添加链接元素</a><br/>
-<a href="?cmd=$game_page_11_5">添加输入框元素(敬请期待)</a><br/><br/>
+<a href="?cmd=$game_page_11_5">添加输入框元素</a><br/><br/>
 HTML;
 }elseif ($gm_post_canshu == 13) {
 $add_self_module = $encode->encode("cmd=game_self_page_add&sid=$sid");

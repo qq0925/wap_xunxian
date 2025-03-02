@@ -2,6 +2,12 @@
 $gm = $encode->encode("cmd=gm&sid=$sid");
 $last_page = $encode->encode("cmd=gm_npc_second&npc_id=$npc_id&sid=$sid");
 
+if($delete_all ==1){
+    echo "已经清空了该npc的全部出售物品！<br/>";
+    $sql = "UPDATE system_npc SET nshop_item_id = '' where nid = '$npc_id'";
+    $dblj->exec($sql);
+}
+
 if($_POST['change_this_id']){
     if($no_money_type == 1){
     $old = $_POST['change_this_id']."|".$_POST['change_this_count'];
@@ -93,14 +99,18 @@ foreach ($npc_item as $item_detail){
 HTML;
     }
 }
+
+$delete_all = $encode->encode("cmd=gm_type_npc&gm_post_canshu=12&npc_id=$npc_id&delete_all=1&sid=$sid");
+$del_url = "game.php?cmd=$delete_all";
+
 $item_html = <<<HTML
-请确保你已定义了对应货币的人物属性并设置为显示!<br/>
-<p>定义npc“{$npc_name}”的销售物品<br/>
+<font color='red'>请确保你已定义了对应货币的人物属性并设置为显示!</font><br/>
+<a href="#" onclick="return confirmAction('$del_url', '{$npc_name}')">清空物品列表</a><br/>
+定义npc“{$npc_name}”的销售物品<br/>
 $item_list_html
 <a href="?cmd=$add_item">添加物品</a><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
-</p>
 HTML;
 if($change_id !=0){
 $stmt = $dblj->prepare('SELECT * FROM system_money_type');
@@ -238,3 +248,13 @@ HTML;
 
 echo $item_html;
 ?>
+<script>
+function confirmAction(del_url, step_order) {
+    // 在确认框中显示具体的操作名称
+    if (confirm("你确定要删除 “" + step_order + "” 的所有出售物品吗？")) {
+        // 使用传入的具体删除链接
+        window.location.href = del_url;
+    }
+    return false;
+}
+</script>

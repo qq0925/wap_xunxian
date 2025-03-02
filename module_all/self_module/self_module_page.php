@@ -117,6 +117,7 @@ $game_page_13_1 = $encode->encode("cmd=game_self_page_2&self_id=$self_id&main_ty
 $game_page_13_2 = $encode->encode("cmd=game_self_page_2&self_id=$self_id&main_type=2&sid=$sid");
 $game_page_13_3 = $encode->encode("cmd=game_self_page_2&self_id=$self_id&main_type=3&sid=$sid");
 $game_page_13_4 = $encode->encode("cmd=game_self_page_2&self_id=$self_id&main_type=4&sid=$sid");
+$game_page_13_5 = $encode->encode("cmd=game_self_page_2&self_id=$self_id&main_type=5&sid=$sid");
 
 $gm = $encode->encode("cmd=gm&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
@@ -152,7 +153,7 @@ $page_mid_count = $cxjg->fetch(PDO::FETCH_ASSOC);
 $page_count = $page_mid_count['self_call_count'];
 $hangshu =0;
 $last_page = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=13&sid=$sid");
-$game_page_13_5 = $encode->encode("cmd=game_self_page_2&self_name=$self_name&delete_all=1&self_id=$self_id&sid=$sid");
+$game_page_13_6 = $encode->encode("cmd=game_self_page_2&self_name=$self_name&delete_all=1&self_id=$self_id&sid=$sid");
 
 for ($i=0;$i<count($get_main_page);$i++){
     $hangshu +=1;
@@ -211,7 +212,8 @@ $game_main<br/>
 <a href="?cmd=$game_page_13_2">添加操作元素</a><br/>
 <a href="?cmd=$game_page_13_3">添加功能元素</a><br/>
 <a href="?cmd=$game_page_13_4">添加链接元素</a><br/>
-<a href="?cmd=$game_page_13_5">清空所有元素</a><br/><br/>
+<a href="?cmd=$game_page_13_5">添加输入框元素</a><br/>
+<a href="?cmd=$game_page_13_6">清空所有元素</a><br/><br/>
 <a href="?cmd=$last_page">返回上一级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
 HTML;

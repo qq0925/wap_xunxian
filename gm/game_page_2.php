@@ -310,6 +310,45 @@ break;
 </form><br/>
 HTML;
 break;
+    case '5':
+        if(!empty($target_event) && !empty($main_id)){
+        $game_main_event = $encode->encode("cmd=game_main_event&gm_post_canshu=$gm_post_canshu&main_id=$main_id&main_type=$main_type&event_id=$target_event&sid=$sid");
+        $game_main_event_del = $encode->encode("cmd=game_main_event&del_event=1&gm_post_canshu=$gm_post_canshu&main_id=$main_id&main_type=$main_type&event_id=$target_event&sid=$sid");
+        $event_show_text = <<<HTML
+<a href="?cmd=$game_main_event">修改事件</a><a href="?cmd=$game_main_event_del">删除事件</a>
+HTML;
+        }elseif(empty($target_event) &&empty($main_id)){
+        $event_show_text = <<<HTML
+定义事件
+HTML;
+        }elseif(empty($target_event) && !empty($main_id)){
+        $game_main_event = $encode->encode("cmd=game_main_event&add_event=1&add_value=$main_value&gm_post_canshu=$gm_post_canshu&main_id=$main_id&main_type=$main_type&sid=$sid");
+        $event_show_text = <<<HTML
+<a href="?cmd=$game_main_event">定义事件</a>
+HTML;
+        }
+        if($main_value=='未命名'){
+            $main_value =<<<HTML
+请输入：<input name ="test">
+<input type ="submit">
+HTML;
+        }
+        $game_main = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=$gm_post_canshu&sid=$sid");
+        $page=<<<HTML
+<script type="text/javascript" src="js/auto_insert.js"></script>
+<form action="?cmd=$game_main" method="post">
+<input type="hidden" name="ele_id" value="{$main_id}">
+<input type="hidden" name="add_id" value="{$max_id}">
+<input type="hidden" name="main_type" value="{$main_type}"> 
+<input type="hidden" name="op_type" value="{$op_type}"> 
+输入框表达式:<textarea name="text" maxlength="1024" rows="4" cols="40 value="输入框1">{$main_value}</textarea><br/>
+显示条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">{$main_cond}</textarea><button type="button" onclick="insertTextAtCursorDesigner()">插入设计者权限判断</button><br/>
+触发事件:{$event_show_text}<br/>
+位置:<input name="position" maxlength="3" value="$last_pos" size="5"><br/>
+<input name="submit" type="submit" title="确定" value="确定"/>
+</form><br/>
+HTML;
+break;
 }
 if(!empty($main_id)){
 $gm_html =<<<HTML

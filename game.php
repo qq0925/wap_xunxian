@@ -123,7 +123,7 @@ while (\player\upplayerlvl($sid, $dblj) == 1) {
 
 //10-11ms
 
-if($cmd !='main_target_event'||!$para){
+if($cmd !='main_target_event'||!$para||!$_POST){
 $sql = "delete from system_player_inputs where sid = '$sid'";
 $dblj->exec($sql);
 }

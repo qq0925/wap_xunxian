@@ -84,6 +84,13 @@ HTML;
 <a href="$main_link_value" >{$main_value}</a>{$br_count_html}
 HTML;
             break;
+        case '5':
+                $game_main .=<<<HTML
+<form action="?cmd={$main_target_event}" method="POST">
+{$main_value}{$br_count_html}
+</form>
+HTML;
+            break;
     }
     }
 }
