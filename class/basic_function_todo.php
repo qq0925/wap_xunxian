@@ -224,6 +224,9 @@ $value = $value?$value:$func_name;
         case '88':
             $equip_mosaic_url = equip_mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $equip_mosaic_url;
+        case '89':
+            $shop_core_url = shop_core_list($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $shop_core_url;
         default:
             // code...
             break;
@@ -2300,6 +2303,93 @@ HTML;
 ----------<br/>
 HTML;
     return $equip_html;
+}
+
+function shop_core_list($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+$shop_para = explode('|',$value);
+$shop_short_name = $shop_para[0];
+$shop_belong_module = 'ct_'.$shop_short_name;
+$shop_id = rtrim($shop_para[1]);
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+//刷新功能实现
+global $encode;
+
+$sql = "SELECT * FROM system_shop WHERE shop_id = '$shop_id'";
+$cxjg = $dblj->query($sql);
+$ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+$shop_buy_input_pos = $ret['buy_input_pos'];
+$shop_one_page_count = $ret['one_page_count'];
+$shop_one_css = $ret['one_css'];
+
+// 获取商品列表
+$sql = "SELECT * FROM system_shop_item WHERE belong = :shop_id";
+$stmt = $dblj->prepare($sql);
+$stmt->execute(['shop_id' => $shop_id]);
+$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// 解析模板并渲染每个商品
+$rendered_html = '';
+
+foreach ($items as $item) {
+    $item_template = $shop_one_css;
+    $item_iid = $item['bind_iid'];
+    $item_money_type = $item['sale_money_type'];
+    $money_type_para = \player\getmoney_type_all($dblj,$item_money_type);
+    $money_count = $item['sale_money'];
+    $money_type_name = $money_type_para['rname'];
+    $money_type_unit = $money_type_para['runit'];
+    $cons_text = $money_type_unit.$money_type_name;
+    $item_name = \lexical_analysis\color_string(\player\getitem($item_iid,$dblj)->iname);
+    $buy_text = $item_name;
+    $item_url = $encode->encode("cmd=check_shop_item&shop_id=$shop_id&item_id=$item_iid&ucmd=$cmid&page_name=$shop_belong_module&sid=$sid");
+    $item_name_url ="<a href='?cmd=$item_url'>{$item_name}</a>";
+    // 替换商品名称和价格
+    $buy_url = $encode->encode("cmd=check_shop_item&buy_canshu=1&shop_id=$shop_id&item_id=$item_iid&ucmd=$cmid&page_name=$shop_short_name&sid=$sid");
+    $item_template = str_replace('{item_name_text}', $item_name, $item_template);
+    $item_template = str_replace('{item_name_url}', $item_name_url, $item_template);
+    $item_template = str_replace('{item_money}', $money_count, $item_template);
+    $item_template = str_replace('{item_money_name}', $money_type_name, $item_template);
+    $item_template = str_replace('{item_money_unit}', $money_type_unit, $item_template);
+    // 替换输入框
+    if (strpos($item_template, '{input_pos}') !== false) {
+        $input_html = "<form action='?cmd=$buy_url' method='post'>";
+        $input_html .= "<input type='number' name='buy_count' min='1' value='1'>";
+        $item_template = str_replace('{input_pos}', $input_html, $item_template);
+    }
+    
+    // 替换提交按钮
+    if (strpos($item_template, '{submit_pos}') !== false) {
+        // $sure_url ='game.php?cmd='. $encode->encode("cmd=check_shop_item&buy_canshu=1&shop_id=$shop_id&item_id=$item_iid&ucmd=$cmid&page_name=$shop_short_name&sid=$sid");
+
+//         $submit_html =<<<HTML
+// <a href="#" onclick="return confirmAction('{$sure_url}')">购买</a>
+// HTML;
+
+        $submit_html = "<input type='submit' value='购买'>";
+        $item_template = str_replace('{submit_pos}', $submit_html, $item_template);
+        $item_template .= "</form>";
+    }
+
+    $order = array("\r\n", "\n", "\r");
+    $replace = "<br/>";
+    $item_template=str_replace($order, $replace, $item_template);
+    
+    $rendered_html .= $item_template;
+}
+
+// $rendered_html .=<<<HTML
+// <script>
+// function confirmAction(sure_url) {
+//     if (confirm("你确定要购买吗?")) {
+//         window.location.href = sure_url;
+//     }
+//     return false;
+// }
+// </script>
+// HTML;
+    return $rendered_html;
 }
 
 ?>

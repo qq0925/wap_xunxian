@@ -274,6 +274,7 @@ if($post_canshu == -1){
     for($i=0;$i<8;$i++){
         $add_item_type[$i] = $encode->encode("cmd=gm_game_othersetting&op_canshu=1&post_canshu=$i&reward_change=$reward_change&canshu=5&sid=$sid");
     }
+$ret_page = $encode->encode("cmd=gm_game_othersetting&reward_change=$reward_change&canshu=5&sid=$sid");
 $item_html = <<<HTML
 [定义抽奖的消耗物品]<br/>
 请选择物品的类型：<br/>
@@ -285,7 +286,7 @@ $item_html = <<<HTML
 <a href="?cmd={$add_item_type[5]}">防具镶嵌物</a><br/>
 <a href="?cmd={$add_item_type[6]}">任务物品</a><br/>
 <a href="?cmd={$add_item_type[7]}">其它</a><br/>
-<a href="#" onClick="javascript:window.history.back();return false;">返回上一页</a><br/>
+<a href="?cmd=$ret_page">返回上级</a><br/>
 HTML;
 }else{
 switch ($post_canshu) {
@@ -327,10 +328,11 @@ switch ($post_canshu) {
         <a href="?cmd=$target_iid" >$hangshu.$iname(i{$iid})</a><br/>
 HTML;
 }
+$ret_just = $encode->encode("cmd=gm_game_othersetting&op_canshu=1&post_canshu=-1&reward_change=$reward_change&canshu=5&sid=$sid");
 $item_html = <<<HTML
 请选择物品<br/>
 $item_list_detail<br/>
-<a href="#" onClick="javascript:window.history.back();return false;">返回上一页</a><br/>
+<a href="?cmd=$ret_just" >返回上一页</a><br/>
 HTML;
 }
 
@@ -429,6 +431,7 @@ if($post_canshu == -1){
     for($i=0;$i<8;$i++){
         $add_item_type[$i] = $encode->encode("cmd=gm_game_othersetting&edit_canshu=additem&op_canshu=2&post_canshu=$i&reward_change=$reward_change&canshu=5&sid=$sid");
     }
+$ret_page = $encode->encode("cmd=gm_game_othersetting&op_canshu=2&reward_change=$reward_change&canshu=5&sid=$sid");
 $item_html = <<<HTML
 [定义抽奖的奖品]<br/>
 请选择物品的类型：<br/>
@@ -440,7 +443,7 @@ $item_html = <<<HTML
 <a href="?cmd={$add_item_type[5]}">防具镶嵌物</a><br/>
 <a href="?cmd={$add_item_type[6]}">任务物品</a><br/>
 <a href="?cmd={$add_item_type[7]}">其它</a><br/>
-<a href="#" onClick="javascript:window.history.back();return false;">返回上一页</a><br/>
+<a href="?cmd=$ret_page">返回上级</a><br/>
 HTML;
 }else{
 switch ($post_canshu) {
@@ -482,10 +485,11 @@ switch ($post_canshu) {
         <a href="?cmd=$target_iid" >$hangshu.$iname(i{$iid})</a><br/>
 HTML;
 }
+$ret_just = $encode->encode("cmd=gm_game_othersetting&op_canshu=2&edit_canshu=additem&post_canshu=-1&reward_change=$reward_change&canshu=5&sid=$sid");
 $item_html = <<<HTML
 请选择物品<br/>
 $item_list_detail<br/>
-<a href="#" onClick="javascript:window.history.back();return false;">返回上一页</a><br/>
+<a href="?cmd=$ret_just" >返回上一页</a><br/>
 HTML;
 }
 }

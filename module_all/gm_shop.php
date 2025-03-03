@@ -20,7 +20,7 @@ if($canshu == 'buy'){
         $pay_type = $money_ret['rname'];
         $pay_runit = $money_ret['runit'];
 
-        echo "购买成功，你花了{$total}{$pay_type}{$pay_runit}购买了{$item_name}x{$count}!<br/>";
+        echo "购买成功，你花了{$total}{$pay_runit}{$pay_type}购买了{$item_name}x{$count}!<br/>";
         $player = \player\getplayer($sid,$dblj);
     }else{
         echo "购买失败!<br/>";

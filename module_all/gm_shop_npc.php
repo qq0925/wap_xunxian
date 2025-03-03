@@ -7,14 +7,14 @@ if($canshu == 'buy'){
     $item_weight = \player\getitem($iid,$dblj)->iweight;
     $item_total_weight = $count * $item_weight;
     $player_last_burthen = $player->umax_burthen - $player->uburthen;
-    $money_count = unitmoneycount($sid,$money_name,$db);
+    $money_count = \gm\unitmoneycount($sid,$money_name,$db);
     //后续加入数量判断以及购买数量变更。刷新随着场景刷新
     if($money_count >=($count)*($item_value)&&$player_last_burthen >=$item_total_weight){
         $total = ($count)*($item_value);
         $item_name = \player\getitem($iid,$dblj)->iname;
         $item_name = \lexical_analysis\color_string($item_name);
         \player\additem($sid,$iid,$count,$dblj);
-        $buy_result = calcmoney($sid,$money_name,$total,$db);
+        $buy_result = \gm\calcmoney($sid,$money_name,$total,$db);
 
         $sql = "select rname,runit from system_money_type where rid = '$money_name'";
         $cxjg = $dblj->query($sql);
@@ -22,10 +22,13 @@ if($canshu == 'buy'){
         $pay_type = $money_ret['rname'];
         $pay_runit = $money_ret['runit'];
 
-        echo "购买成功，你花了{$total}{$pay_type}{$pay_runit}购买了{$item_name}x{$count}!<br/>";
+        echo "购买成功，你花了{$total}{$pay_runit}{$pay_type}购买了{$item_name}x{$count}!<br/>";
+        unset($_POST);
         $parents_cmd = 'gm_shop_npc';
         $event_id = \gm\get_self_event($dblj,$nid,'npc_shop');
+        if($event_id){
         events_steps_change($event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/gm_shop_npc.php','npc_scene',$mid,$para);
+        }
         $player = \player\getplayer($sid,$dblj);
     }else{
         echo "购买失败!<br/>";
@@ -117,7 +120,7 @@ $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
 $gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
-$item_money_player = unitmoneycount($sid,$money_type,$db);
+$item_money_player = \gm\unitmoneycount($sid,$money_type,$db);
 //<a href="?cmd=$buy_5">购买+5</a><br/>
 // <a href="?cmd=$buy_10">购买+10</a><br/>
 // <a href="?cmd=$buy_20">购买+20</a><br/>
@@ -138,47 +141,5 @@ $shop_html = <<<HTML
 HTML;
 }
 echo $shop_html;
-
-function calcmoney($sid,$money_name,$total,$db){
-    $name = 'u'.$money_name;
-    $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$name'");
-    $result_2 = $db->query("SELECT value from system_addition_attr where name = '$name' and sid = '$sid'");
-    if ($result->num_rows > 0) {
-            // 字段存在于 game1 表
-        $sql = "UPDATE game1 SET $name = $name - ? WHERE sid = ?";
-        $stmt = $db->prepare($sql);
-        $stmt->bind_param('is', $total, $sid);
-        $stmt->execute();
-        return true;
-    }elseif ($result_2->num_rows > 0){
-            // 字段存在于 addition 表
-        $sql = "UPDATE system_addition_attr SET value = value - ? WHERE name = ? and sid = ?";
-        $stmt = $db->prepare($sql);
-        $stmt->bind_param('iss', $total,$name, $sid);
-        $stmt->execute();
-        return true;
-    }else{
-        return 0;
-    }
-}
-
-function unitmoneycount($sid,$name,$db){
-    $name = 'u'.$name;
-    $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$name'");
-    $result_2 = $db->query("SELECT value from system_addition_attr where name = '$name' and sid = '$sid'");
-    if ($result->num_rows > 0) {
-            // 字段存在于 game1 表
-        $sql = "SELECT `$name` from game1 where sid = '$sid'";
-        $result = $db->query($sql);
-        $row = $result->fetch_assoc();
-        return $row[$name];
-    }elseif ($result_2->num_rows > 0){
-            // 字段存在于 addition 表
-        $row_2 = $result_2->fetch_assoc();
-        return $row_2['value'];
-    }else{
-        return 0;
-    }
-}
 
 ?>

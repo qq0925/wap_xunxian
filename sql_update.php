@@ -315,6 +315,53 @@ try {
 
 try {
     // 1. 查询表是否存在
+    $query = $dblj->prepare("SHOW TABLES LIKE 'system_shop'");
+    $query->execute();
+    $table_exists = $query->fetch();
+
+    if (!$table_exists) {
+
+        
+        // 使用事务来保证所有操作的原子性
+        $dblj->beginTransaction();
+
+        $sql = "CREATE TABLE IF NOT EXISTS system_shop (
+                shop_id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                shop_name VARCHAR(255) NOT NULL,
+                shop_desc VARCHAR(255) NOT NULL,
+                item_list TEXT NOT NULL,
+                buy_input_pos INT(1) NOT NULL,
+                one_page_count INT(11) NOT NULL,
+                one_css TEXT NOT NULL,
+                one_detail_css TEXT NOT NULL)";
+        $dblj->exec($sql);
+
+        $sql = "CREATE TABLE IF NOT EXISTS system_shop_item (
+                belong INT(11) NOT NULL,
+                id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                bind_iid INT(11) NOT NULL,
+                sale_open_time DATETIME NOT NULL,
+                sale_close_time DATETIME NOT NULL,
+                sale_money_type TEXT NOT NULL,
+                sale_money INT(20) NOT NULL,
+                sale_discount INT(11) NOT NULL)";
+        $dblj->exec($sql);
+
+
+        // 提交事务
+        $dblj->commit();
+    }
+} catch (PDOException $e) {
+    // 回滚事务（如果有进行事务处理）
+    if ($dblj->inTransaction()) {
+        $dblj->rollBack();
+    }
+    echo "操作时出错: " . $e->getMessage();
+}
+
+
+try {
+    // 1. 查询表是否存在
     $query = $dblj->prepare("SHOW TABLES LIKE 'system_npc_drop_list'");
     $query->execute();
     $table_exists = $query->fetch();
@@ -827,7 +874,12 @@ AFTER nwin_event_id ;";
         $sql = "insert into system_function (belong,id,name,link_function,default_value) values (2,77,'镶嵌装备',77,'镶嵌装备')";
         $dblj->exec($sql);
     }
-    
+    $result = $dblj->query("select id from system_function where id = 89");
+    if ($result->rowCount() == 0) {
+        // 表不存在，创建表
+        $sql = "insert into system_function (belong,id,name,link_function,default_value) values (13,89,'商品列表',89,'商品列表')";
+        $dblj->exec($sql);
+    }
         // 检查某功能字段是否存在
     $result = $dblj->query("select id from system_function where id = 78");
     if ($result->rowCount() == 0) {

@@ -1061,6 +1061,13 @@ echo $refresh_html;
                 case '10':
                     $ym = 'gm/gm_other_setting/reboot_all.php';
                     break;
+                case '11':
+                    if(!$shop_change){
+                    $ym = 'gm/gm_other_setting/gm_shop_def.php';
+                    }else{
+                    $ym = 'gm/gm_other_setting/gm_shop_def_2.php';
+                    }
+                    break;
                 case 'other':
                     echo "更新成功！<br/>";
                     $ym = 'gm/gm_other_setting/gm_other_def.php';
@@ -3649,6 +3656,47 @@ echo $refresh_html;
             }else{
                 echo "抽奖项目不存在！<br/>";
             $ym = "module_all/main_page.php";
+            }
+            break;
+        case 'check_shop_item':
+            if($buy_canshu==1){
+                $buy_count = $_POST['buy_count'];
+                if($buy_count<=0){
+                    echo "输入有误！<br/>";
+                }else{
+                $pre_item = \gm\getshop_item($shop_id,$item_id,$dblj);
+                $buy_sale_money_type = $pre_item['sale_money_type'];
+                $buy_sale_money = $pre_item['sale_money'];
+                $buy_sale_discount = $pre_item['sale_discount'];
+                $need_count = floor($buy_sale_money *$buy_count*$buy_sale_discount/100);
+                $player = \player\getplayer($sid,$dblj);
+                $item_weight = \player\getitem($item_id,$dblj)->iweight;
+                $item_total_weight = $buy_count * $item_weight;
+                $player_last_burthen = $player->umax_burthen - $player->uburthen;
+                $player_money_count = \gm\unitmoneycount($sid,$buy_sale_money_type,$db);
+                if($player_last_burthen >=$item_total_weight){
+                if($player_money_count>=$need_count){
+                $item_name = \player\getitem($item_id,$dblj)->iname;
+                $item_name = \lexical_analysis\color_string($item_name);
+                \player\additem($sid,$item_id,$buy_count,$dblj);
+                $buy_result = \gm\calcmoney($sid,$buy_sale_money_type,$need_count,$db);
+                $sql = "select rname,runit from system_money_type where rid = '$buy_sale_money_type'";
+                $cxjg = $dblj->query($sql);
+                $money_ret = $cxjg->fetch(PDO::FETCH_ASSOC);
+                $pay_type = $money_ret['rname'];
+                $pay_runit = $money_ret['runit'];
+                echo "购买成功，你花了{$need_count}{$pay_type}{$pay_runit}购买了{$item_name}x{$buy_count}!<br/>";
+                }else{
+                    echo "你的对应货币不足！<br/>";
+                }
+                }else{
+                    echo "负重不足！<br/>";
+                }
+                }
+            $page_id = $page_name;
+            $ym = "module_all/self_page.php";
+            }else{
+            $ym = "module_all/check_shop_item.php";
             }
             break;
         case "nowonline"://当前在线人数

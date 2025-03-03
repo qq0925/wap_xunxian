@@ -570,6 +570,56 @@ function getclan($clan_id,$dblj){
     return $ret;
 }
 
+function getshop_item($belong,$iid,$dblj){
+    $sql = "select * from `system_shop_item` where belong = '$belong' and bind_iid = '$iid'";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    return $ret;
+}
+
+function calcmoney($sid,$money_name,$total,$db){
+    $name = 'u'.$money_name;
+    $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$name'");
+    $result_2 = $db->query("SELECT value from system_addition_attr where name = '$name' and sid = '$sid'");
+    if ($result->num_rows > 0) {
+            // 字段存在于 game1 表
+        $sql = "UPDATE game1 SET $name = $name - ? WHERE sid = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('is', $total, $sid);
+        $stmt->execute();
+        return true;
+    }elseif ($result_2->num_rows > 0){
+            // 字段存在于 addition 表
+        $sql = "UPDATE system_addition_attr SET value = value - ? WHERE name = ? and sid = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('iss', $total,$name, $sid);
+        $stmt->execute();
+        return true;
+    }else{
+        return 0;
+    }
+}
+
+function unitmoneycount($sid,$name,$db){
+    $name = 'u'.$name;
+    $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$name'");
+    $result_2 = $db->query("SELECT value from system_addition_attr where name = '$name' and sid = '$sid'");
+    if ($result->num_rows > 0) {
+            // 字段存在于 game1 表
+        $sql = "SELECT `$name` from game1 where sid = '$sid'";
+        $result = $db->query($sql);
+        $row = $result->fetch_assoc();
+        return $row[$name];
+    }elseif ($result_2->num_rows > 0){
+            // 字段存在于 addition 表
+        $row_2 = $result_2->fetch_assoc();
+        return $row_2['value'];
+    }else{
+        return 0;
+    }
+}
+
+
 function checkBalancedBrackets(string $str): bool {
     // 定义括号对
     $pairs = [
