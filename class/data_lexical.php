@@ -62,13 +62,11 @@ global $redis;
 $updateAll = [];
 // 使用逗号分割字符串
 $keyValuePairs = explode(",", $input);
+$data = json_decode($input, true);
 
-foreach ($keyValuePairs as $pair) {
+foreach ($data as $ele_1 => $ele_2) {
     // 使用等号分割键值对
     $firstEqualsPos = strpos($pair, '=');
-    if ($firstEqualsPos !== false) {
-        $ele_1 = substr($pair, 0, $firstEqualsPos);
-        $ele_2 = substr($pair, $firstEqualsPos + 1);
         if($can_redis == 1){
         $check_cache = \gm\check_redis($db,$ele_1,$sid,$oid,$mid,$jid,$type,$para);
         }
@@ -524,10 +522,6 @@ foreach ($keyValuePairs as $pair) {
         // echo "ele_1: " . $ele_1 . "<br/>";
         // echo "ele_2: " . $ele_2 . "<br/>";
         //这里要获取到属性字段表中玩家属性类别下id等于$ele_1的name名称
-    } else {
-        //echo "无法匹配到键值对<br/>";
-        break;
-    }
 }
 if($updateAll){
 // 开启一个事务
@@ -556,15 +550,11 @@ if($can_redis == 1){
 global $redis;
 }
 $updateAll = [];
-$keyValuePairs = explode(",", $input);
+$data = json_decode($input, true);
 $old_sid = $sid;
-foreach ($keyValuePairs as $pair) {
+foreach ($data as $ele_1 => $ele_2) {
     // 找到第一个等号的位置
 $sid = $old_sid;
-    $firstEqualsPos = strpos($pair, '=');
-    if ($firstEqualsPos !== false) {
-        $ele_1 = substr($pair, 0, $firstEqualsPos);
-        $ele_2 = substr($pair, $firstEqualsPos + 1);
         if($can_redis == 1){
         $check_cache = \gm\check_redis($db,$ele_1,$sid,$oid,$mid,$jid,$type,$para);
         }
@@ -885,10 +875,7 @@ $sid = $old_sid;
          "ele_1: " . $ele_1 . "<br/>";
          "ele_2: " . $ele_2 . "<br/>";
         }
-    } else {
-        //echo "无法匹配到键值对<br/>";
-        break;
-    }
+
 }
 if($updateAll){
 // 开启一个事务

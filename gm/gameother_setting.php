@@ -23,7 +23,7 @@ $setting_html = <<<HTML
 <a href="?cmd=$player_def">玩家数据管理</a>(✔)<br/>
 <a href="?cmd=$designer_def">设计者管理</a>(✔)<br/>
 <a href="?cmd=$other_def">杂项管理</a>(✔)<br/>
-<a href="?cmd=$shop_def">商城管理</a><br/>
+<a href="?cmd=$shop_def">商城管理</a>(✔)<br/>
 ---<br/>
 <a href="?cmd=$reboot_all">清空游戏数据</a><br/>
 <br/><a href="?cmd=$gm_main">设计大厅</a><br/>

@@ -8,6 +8,7 @@ $dblj->exec("update system_designer_assist set op_target = 'item_design',op_cans
 }
 
 if($gm_post_canshu ==""){
+$gm_game_itemdefine_0 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=分类定义&sid=$sid");
 $gm_game_itemdefine_1 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=消耗品&sid=$sid");
 $gm_game_itemdefine_2 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=兵器&sid=$sid");
 $gm_game_itemdefine_3 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=防具&sid=$sid");
@@ -18,10 +19,12 @@ $gm_game_itemdefine_7 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=�
 $gm_game_itemdefine_8 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=其它&sid=$sid");
 $gm_game_itemdefine_9 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=导出&sid=$sid");
 $gm_game_itemdefine_10 = $encode->encode("cmd=gm_game_itemdefine&gm_post_canshu=导入&sid=$sid");
+
 $gm_html = <<<HTML
 <a href="?cmd=$gm_game_itemdefine_9">导出物品数据到->excel</a><br/>
 <a href="?cmd=$gm_game_itemdefine_10" >导出物品数据从<-excel</a><br/>
 <p>[物品设计]<br/>
+<a href="?cmd=$gm_game_itemdefine_0">定义物品类别</a><br/>
 请选择物品类别：<br/>
 <a href="?cmd=$gm_game_itemdefine_1">消耗品</a><br/>
 <a href="?cmd=$gm_game_itemdefine_2">兵器</a><br/>

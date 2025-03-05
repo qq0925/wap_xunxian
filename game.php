@@ -1442,20 +1442,6 @@ echo $refresh_html;
         case 'npc_op_event'://npc事件未定义
             $ym = 'class/events_npc_steps_change.php';
             break;
-        case 'game_event_attradd'://步骤属性新增
-            if($post_type ==0){
-                $ym = 'gm/gm_event_exec/gm_event_attrset_2.php';
-            }else{
-                $ym = 'gm/gm_event_exec/gm_event_attrchange_2.php';
-            }
-            break;
-        case 'game_event_attradd_self'://步骤属性新增
-            if($post_type ==0){
-                $ym = 'gm/gm_event_exec_self/gm_event_attrset_2.php';
-            }else{
-                $ym = 'gm/gm_event_exec_self/gm_event_attrchange_2.php';
-            }
-            break;
         case 'game_event_attrset'://步骤属性更新
             $ym = 'gm/gm_event_exec/gm_event_attrset.php';
             break;

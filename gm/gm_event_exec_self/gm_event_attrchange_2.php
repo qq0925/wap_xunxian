@@ -9,8 +9,8 @@ $gm_html =<<<HTML
 <form action="?cmd=$attrchange_post" method="post">
 <input type="hidden" name="event_id" value="$event_id">
 <input type="hidden" name="step_id" value="$step_id">
+<input type="hidden" name="canshu" value="$canshu">
 <input name="old_key" type="hidden" value="{$attr_key}"/>
-<input name="old_value" type="hidden" value="{$attr_value_2}"/>
 属性名:<input name="key" type="text" value="$attr_key" maxlength="50"/><br/>
 属性值表达式(以""包裹起来表示字符串表达式):<textarea name="value" maxlength="4096" rows="4" cols="40">{$attr_value}</textarea><br/>
 <input name="submit" type="submit" title="确定" value="确定"/><input name="submit" type="hidden" title="确定" value="确定"/></form><br/>
