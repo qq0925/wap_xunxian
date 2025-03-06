@@ -707,11 +707,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     }
                     $row = $result->fetch_assoc();
                     $row_result = $row[$attr3];
-                    if ($row_result === null ||$row_result ==='') {
-                        //$op = "\"\""; // 或其他默认值
-                        }else{
                     $op = nl2br($row_result);
-                        }
                     $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
 
                         break;
@@ -1284,15 +1280,28 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         
                         }else{
                         $bid = "i".$bid;
-                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$op')";
-                        // 使用预处理语句
-                        $stmt = $db->prepare($sql);
-                        // 执行查询
-                        $stmt->execute();
                         
-                        // 获取查询结果
-                        $result = $stmt->get_result();
-                        $row = $result->fetch_assoc();
+                        $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$op' and name = '$bid'";
+                        $result = $db->query($sql);
+                        if($result->num_rows >0){
+                        $attr_type = 1;
+                        }else{
+                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$op')";
+                        }
+                        $stmt = $db->prepare($sql);
+                        $stmt->execute();
+                        $result_2 = $stmt->get_result();
+                        if (!$result_2) {
+                            die('查询失败: ' . $db->error);
+                        }
+                        $row = $result_2->fetch_assoc();
+                        
+                        if($attr_type ==1){
+                        $row_result = $row['value'];
+                        }else{
+                        $row_result = $row[$bid];
+                        }
+
                         if($attr4 =="count"){
                             $op = $op?1:0;
                         }elseif($attr4 =="embed_count"){
@@ -1311,11 +1320,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         //$op = "\"\"";
                         }
                         }else{
-                        if ($row === null||$row =='') {
-                            //$op = "\"\""; // 或其他默认值
-                        }else{
-                            $op = nl2br($row[$bid]);
-                        }
+                        $op = $row_result;
                         }
                         }
                         }
@@ -1400,15 +1405,27 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         //镶物属性相关
                         }else{
                         $fid = "i".$fid;
+                    
+                        $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$op' and name = '$fid'";
+                        $result = $db->query($sql);
+                        if($result->num_rows >0){
+                        $attr_type = 1;
+                        }else{
                         $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$op')";
-                        // 使用预处理语句
+                        }
                         $stmt = $db->prepare($sql);
-                        // 执行查询
                         $stmt->execute();
+                        $result_2 = $stmt->get_result();
+                        if (!$result_2) {
+                            die('查询失败: ' . $db->error);
+                        }
+                        $row = $result_2->fetch_assoc();
                         
-                        // 获取查询结果
-                        $result = $stmt->get_result();
-                        $row = $result->fetch_assoc();
+                        if($attr_type ==1){
+                        $row_result = $row['value'];
+                        }else{
+                        $row_result = $row[$fid];
+                        }
                         if($attr4 =="count"){
                             $op = $op?1:0;
                         }elseif($attr4 =="embed_count"){
@@ -1427,11 +1444,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         //$op = "\"\"";
                         }
                         }else{
-                        if ($row === null||$row =='') {
-                            //$op = "\"\""; // 或其他默认值
-                        }else{
-                            $op = nl2br($row[$fid]);
-                        }
+                        $op = $row_result;
                         }
                         }
                         }
