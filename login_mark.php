@@ -40,9 +40,9 @@ if ($result) {
     include './ini/xuser_ini.php';
     $a10 = ($iniFile->getItem('验证信息', 'xcmid值'));
     
-    
+if($uid ==1){
     include 'sql_update.php';
-
+}
 $sql = "SELECT username, designer FROM userinfo WHERE token = :token";
 $stmt = $dblj->prepare($sql);
 $stmt->bindParam(':token', $token);
