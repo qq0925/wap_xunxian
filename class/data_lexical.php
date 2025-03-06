@@ -589,62 +589,24 @@ $sid = $old_sid;
         if ($SecondEqualsPos !== false){
         $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
         $ele_1_2 = substr($ele_1, $SecondEqualsPos + 1);
-//                 switch($ele_1_1){
-//     case 'u':
-//         $cacheKey = 'user:'.$sid.':'.$ele_1;
-//         break;
-//     case 'o':
-//         $cacheKey = 'obj_type:'.$oid.':'.'obj_value:'.$mid.':'.$ele_1;
-//         break;
-//     case 'e':
-//         $cacheKey = 'expr:'.':'.$ele_1_2;
-//         break;
-//     case 'c':
-//         $cacheKey = 'system:'.':'.$ele_1_2;
-//         break;
-//     case 'g':
-//         $cacheKey = 'global:'.':'.$ele_1_2;
-//         break;
-//     case 'm':
-//         $cacheKey = 'm_type:'.$oid.':'.'m_value:'.$mid.'m_j:'.$jid.':'.$ele_1;
-//         break;
-// }
-// if($cacheKey){
-//     global $redis;
-// $redis->del($cacheKey);
-// }
-        
-        
 
-        
         $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
-
+        $ele_1_2 = str_replace('\'', '', $ele_1_2);
         //@$ele_1_2 = eval("return $ele_1_2;");
 
         $ThirdEqualsPos = strpos($ele_1_2, '.');
         if ($ThirdEqualsPos !== false){
-           $ele_1_3 = substr($ele_1_2, 0, $ThirdEqualsPos);
+            $ele_1_3 = substr($ele_1_2, 0, $ThirdEqualsPos);
         if($ele_1_3 == 'icc'){
             $ele_1_4 = substr($ele_1_2, $ThirdEqualsPos + 1);
-            $ele_1_4 = str_replace(array("'"), '', $ele_1_4);
         }else{
         $ele_1_2 = str_replace('.', '', $ele_1_2);
+        }
+        }else{
+        $ele_1_2 = str_replace('.', '', $ele_1_2);
+        }
         }
 
-        }else{
-        $ele_1_2 = str_replace('.', '', $ele_1_2);
-        }
-        }else{
-            echo "错误语法警告！<br/>";
-        }
-        // if (count($parts) >= 2) {
-        //     $ele_1_1 = $parts[0]; // 小数点左边的内容
-        //     $ele_1_2 = $parts[1];// 小数点右边的内容
-        //     } else {
-        //     echo "无法匹配到小数点 '.'<br/>";
-        //     };
-        
-        
         if(!is_numeric($ele_2)){
             if($can_redis == 1){
         $redis->del($check_cache);
