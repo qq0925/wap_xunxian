@@ -2200,13 +2200,12 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }
                         //镶物属性相关
                             }else{
-                                $sql = "SHOW COLUMNS FROM system_item_module LIKE '$attr3'";
+                                $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr3'";
                                 $result = $db->query($sql);
                                 if($result->num_rows >0){
-                                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mid')";
-                                }else{
-                                $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr3'";
                                 $attr_type = 1;
+                                }else{
+                                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mid')";
                                 }
                                 $stmt = $db->prepare($sql);
                                 $stmt->execute();
@@ -2239,14 +2238,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                 $row_result = "未知来源";
                                 }
                             }
-                            if ($row_result === null ||$row_result ==='') {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row_result);
-                                }
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
                             break;
                         case 'mosaic_equip':
                             $attr3 = 'i'.$attr2;
@@ -2277,9 +2270,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $row = $result->fetch_assoc();
                         $mosaic_list = $row['equip_mosaic'];
                         $mosaic_para = explode('|',$mosaic_list);
-                        if(!$mosaic_para[$mosaic_pos]){
-                            //$op = "\"\"";
-                        }else{
+                        if($mosaic_para[$mosaic_pos]){
                         $mosaic_id = $mosaic_para[$mosaic_pos];
                         $xid = "i".$attr5;
                         $sql = "SELECT * FROM system_item_module WHERE iid = '$mosaic_id'";
@@ -2295,13 +2286,12 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }
                         //镶物属性相关
                             }else{
-                                $sql = "SHOW COLUMNS FROM system_item_module LIKE '$attr3'";
+                                $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr3'";
                                 $result = $db->query($sql);
                                 if($result->num_rows >0){
-                                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mid')";
+                                    $attr_type = 1;
                                 }else{
-                                $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr3'";
-                                $attr_type = 1;
+                                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mid')";
                                 }
                                 $stmt = $db->prepare($sql);
                                 $stmt->execute();
@@ -2334,11 +2324,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                                 $row_result = "未知来源";
                                 }
                             }
-                            if ($row_result === null ||$row_result ==='') {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row_result);
-                                }
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                             break;
                         case 'item_module':
@@ -2358,14 +2344,9 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             }else{
                             $row_result = $row['value'];
                             }
-                            if ($row_result === null ||$row_result ==='') {
-                                //$op = "\"\""; // 或其他默认值
-                                }else{
                             $op = nl2br($row_result);
-                                }
                             $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
+
                             break;
                         case 'scene_oplayer':
                             if (strpos($attr2, "env.") === 0) {
