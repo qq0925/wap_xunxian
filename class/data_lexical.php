@@ -152,7 +152,8 @@ foreach ($data as $ele_1 => $ele_2) {
         $ele_1_2 = substr($ele_1, $SecondEqualsPos + 1);
         $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
         //@$ele_1_2 = eval("return $ele_1_2;");
-        $ele_1_2 = str_replace('.', '', $ele_1_2);
+        $ele_1_2 = str_replace(array(".","'"), '', $ele_1_2);
+        
         }else{
             echo "错误语法警告！<br/>";
         }

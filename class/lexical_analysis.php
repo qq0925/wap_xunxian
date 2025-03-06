@@ -630,8 +630,6 @@ $expr = preg_replace_callback('/\{getarr\((.*?)\)\}/', function($matches) use ($
 
 $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     $attr = $matches[1]; // 获取匹配到的变量名
-
-    
     if(is_numeric($attr)){
     $op = $attr;
     }else{
@@ -642,10 +640,11 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     }else{
     $firstDotPosition = strpos($attr, '.');
     if ($firstDotPosition !== false) {
-        $attr1 = \lexical_analysis\getSubstringBetweenDots($attr, 0, 1);
-        $attr2 = \lexical_analysis\getSubstringBetweenDots($attr, 1);
+        $attr1 = substr($attr, 0, $firstDotPosition);  // 第一个点前的部分
+        $attr2 = substr($attr, $firstDotPosition + 1); // 第一个点后的部分
+        $attr2 = str_replace("'", '', $attr2);
         //$attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
-        $op = \lexical_analysis\process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
+    $op = \lexical_analysis\process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
     }
     }
     }
@@ -1280,8 +1279,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         
                         }else{
                         $bid = "i".$bid;
-                        
-                        $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$op' and name = '$bid'";
+                        $attr_3 = str_replace(".", '', $bid);
+                        $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$op' and name = '$attr_3'";
                         $result = $db->query($sql);
                         if($result->num_rows >0){
                         $attr_type = 1;
@@ -1405,8 +1404,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         //镶物属性相关
                         }else{
                         $fid = "i".$fid;
-                    
-                        $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$op' and name = '$fid'";
+                        $attr_3 = str_replace(".", '', $fid);
+                        $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$op' and name = '$attr_3'";
                         $result = $db->query($sql);
                         if($result->num_rows >0){
                         $attr_type = 1;
@@ -1563,11 +1562,13 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     }else{
                     $attr3 = $attr1.$attr2;
                     $attr3 = str_replace('\'', '', $attr3);
+
                     $sql = "SHOW COLUMNS FROM game1 LIKE '$attr3'";
                     $result = $db->query($sql);
                     if($result->num_rows >0){
                     $sql = "SELECT * FROM game1 WHERE sid = ?";
                     }else{
+                    $attr3 = str_replace(".", '', $attr3);
                     $sql = "SELECT * FROM system_addition_attr WHERE sid = ? and name = '$attr3'";
                     $attr_type = 1;
                     }
@@ -2213,7 +2214,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }
                         //镶物属性相关
                             }else{
-                                $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr3'";
+                                $attr_3 = str_replace(".", '', $attr3);
+                                $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr_3'";
                                 $result = $db->query($sql);
                                 if($result->num_rows >0){
                                 $attr_type = 1;
@@ -2299,7 +2301,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         }
                         //镶物属性相关
                             }else{
-                                $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr3'";
+                                $attr_3 = str_replace(".", '', $attr3);
+                                $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr_3'";
                                 $result = $db->query($sql);
                                 if($result->num_rows >0){
                                     $attr_type = 1;
@@ -2515,7 +2518,8 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             if($result->num_rows >0){
                             $sql = "SELECT * FROM game1 WHERE sid = ?";
                             }else{
-                            $sql = "SELECT * FROM system_addition_attr WHERE sid = ? and name = '$attr3'";
+                            $attr_3 = str_replace(".", '', $attr3);
+                            $sql = "SELECT * FROM system_addition_attr WHERE sid = ? and name = '$attr_3'";
                             $attr_type = 1;
                             }
                             $stmt = $db->prepare($sql);
@@ -3241,7 +3245,6 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
         }
     }
 }
-
 if($input){
 $input = evaluate_expression($input,$db,$sid,$oid,$mid,$jid,$type,$para);
 }
@@ -3784,7 +3787,8 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             $attr3 = 'u'.$attr2;
                             // 检查字段是否存在
                             $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$attr3'");
-                            $result_2 = $db->query("SELECT value from system_addition_attr where name = '$attr3' and sid = '$mid'");
+                            $attr_3 = str_replace(".", '', $attr3);
+                            $result_2 = $db->query("SELECT value from system_addition_attr where name = '$attr_3' and sid = '$mid'");
                             // 如果字段存在，则更新字段值
                             if ($result->num_rows > 0 ) {
                                 $sql = "SELECT * FROM game1 WHERE sid = ?";
@@ -3799,7 +3803,7 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                             } elseif($result_2->num_rows > 0){
                                 $sql = "SELECT value FROM system_addition_attr WHERE sid = ? and name = ?";
                                 $stmt = $db->prepare($sql);
-                                $stmt->bind_param("ss",$mid,$attr3);
+                                $stmt->bind_param("ss",$mid,$attr_3);
                                 $stmt->execute();
                                 $result = $stmt->get_result();
                                 if (!$result) {
@@ -4386,7 +4390,8 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             $attr3 = 'n'.$attr2;
                             // 检查字段是否存在
                             $result = $db->query("SHOW COLUMNS FROM system_npc_midguaiwu LIKE '$attr3'");
-                            $result_2 = $db->query("SELECT value from system_addition_attr where name = '$attr3' and oid = '$mid'");
+                            $attr_3 = str_replace(".", '', $attr3);
+                            $result_2 = $db->query("SELECT value from system_addition_attr where name = '$attr_3' and oid = '$mid'");
                             // 如果字段存在，则更新字段值
                             if ($result->num_rows > 0 ) {
                                             $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = ?";
@@ -4401,7 +4406,7 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             } elseif($result_2->num_rows > 0){
                                             $sql = "SELECT value FROM system_addition_attr WHERE oid = ? and name = ?";
                                             $stmt = $db->prepare($sql);
-                                            $stmt->bind_param("ss",$mid,$attr3);
+                                            $stmt->bind_param("ss",$mid,$attr_3);
                                             $stmt->execute();
                                             $result = $stmt->get_result();
                                             if (!$result) {

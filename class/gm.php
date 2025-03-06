@@ -10,10 +10,11 @@ global $redis;
         // 检查缓存中是否已有值
             // 如果缓存中没有，则查询数据库并缓存
 $firstDotPosition = strpos($attr, '.');
+
 if ($firstDotPosition !== false) {
-    $attr1 = \lexical_analysis\getSubstringBetweenDots($attr, 0, 1);
-    $attr2 = \lexical_analysis\getSubstringBetweenDots($attr, 1);
-    $attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
+        $attr1 = substr($attr, 0, $firstDotPosition);  // 第一个点前的部分
+        $attr2 = substr($attr, $firstDotPosition + 1); // 第一个点后的部分
+        $attr2 = str_replace("'", '', $attr2);
     switch($attr1){
         case 'u':
             $cacheKey = 'player::'.$sid.'::'.$attr;
@@ -58,9 +59,9 @@ global $redis;
             // 如果缓存中没有，则查询数据库并缓存
 $firstDotPosition = strpos($attr, '.');
 if ($firstDotPosition !== false) {
-    $attr1 = \lexical_analysis\getSubstringBetweenDots($attr, 0, 1);
-    $attr2 = \lexical_analysis\getSubstringBetweenDots($attr, 1);
-    $attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
+        $attr1 = substr($attr, 0, $firstDotPosition);  // 第一个点前的部分
+        $attr2 = substr($attr, $firstDotPosition + 1); // 第一个点后的部分
+        $attr2 = str_replace("'", '', $attr2);
     switch($attr1){
         case 'u':
             $cacheKey = 'player::'.$sid.'::'.$attr;
@@ -98,9 +99,9 @@ global $redis;
             // 如果缓存中没有，则查询数据库并缓存
 $firstDotPosition = strpos($attr, '.');
 if ($firstDotPosition !== false) {
-    $attr1 = \lexical_analysis\getSubstringBetweenDots($attr, 0, 1);
-    $attr2 = \lexical_analysis\getSubstringBetweenDots($attr, 1);
-    $attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
+        $attr1 = substr($attr, 0, $firstDotPosition);  // 第一个点前的部分
+        $attr2 = substr($attr, $firstDotPosition + 1); // 第一个点后的部分
+        $attr2 = str_replace("'", '', $attr2);
     switch($attr1){
         case 'u':
             $cacheKey = 'player::'.$sid.'::'.$attr;
