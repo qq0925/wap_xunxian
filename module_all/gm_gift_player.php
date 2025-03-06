@@ -5,8 +5,15 @@ if($_POST['item_true_id']){
     $oplayer = \player\getplayer($oid,$dblj);
     $oplayer_bag = ($oplayer->umax_burthen)-($oplayer->uburthen);
     $player = \player\getplayer($sid,$dblj);
-    $item_name = \player\getitem_true($_POST['item_true_id'],$dblj)->iname;
-    $item_weight = \player\getitem_true($_POST['item_true_id'],$dblj)->iweight;
+    $item_true_id = $_POST['item_true_id'];
+    $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+    $stmt = $dblj->query($sql_2);
+    if($stmt->rowCount() >0){
+    $item_name = $stmt->fetchColumn();
+    }else{
+    $item_name = \player\getitem_true($item_true_id,$dblj)->iname;
+    }
+    $item_weight = \player\getitem_true($item_true_id,$dblj)->iweight;
     $item_total_weight = ($_POST['count']) * $item_weight;
     $item_bak_name = $item_name;
     $item_name = \lexical_analysis\color_string($item_name);
@@ -222,6 +229,11 @@ $cxjg = $dblj->query($sql);
 $retitem = $cxjg->fetch(PDO::FETCH_ASSOC);
 $itemid = $retitem['iid'];
 $itemname = $retitem['iname'];
+$sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+$stmt = $dblj->query($sql_2);
+if($stmt->rowCount() >0){
+$itemname = $stmt->fetchColumn();
+}
 $itemtype = $retitem['itype'];
 $item_ino_give = $retitem['ino_give'];
 $itemname = \lexical_analysis\process_photoshow($itemname);

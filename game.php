@@ -2224,6 +2224,12 @@ echo $refresh_html;
             $item = \player\getitem_true($item_true_id,$dblj);
             $itype = $item->itype;
             $iname = $item->iname;
+            $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+            $stmt = $dblj->query($sql_2);
+            if($stmt->rowCount() >0){
+            $iname = $stmt->fetchColumn();
+            }
+            $iname = \lexical_analysis\color_string($iname);
             $ino_out = $item->ino_out;
             $ino_give = $item->ino_give;
             $iweight = $item->iweight;
@@ -2701,7 +2707,14 @@ echo $refresh_html;
                 if ($row) {
                     $iid = $row['iid'];
                     $itype = $row['itype'];
-                    $iname = \lexical_analysis\color_string($row['iname']);
+                    $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$equip_true_id' and name = 'iname'";
+                    $stmt = $dblj->query($sql_2);
+                    if($stmt->rowCount() >0){
+                    $iname = $stmt->fetchColumn();
+                    }else{
+                    $iname = $row['iname'];
+                    }
+                    $iname = \lexical_analysis\color_string($iname);
                     $iequip_cond = $row['iequip_cond'];
                 }
             }

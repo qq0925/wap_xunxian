@@ -2132,17 +2132,24 @@ foreach ($ret as $row) {
 $equipitem = $encode->encode("cmd=equip_op_basic&eq_type=1&target_event=choose&ucmd=$cmid&sid=$sid");
 $equipbhtml = "无<a href='?cmd=$equipitem'>[装备]</a>";
 if ($equipbid) {
-    $sql = "select * from system_item_module where iid = (select iid from system_item where item_true_id = '$equipbid')";
+$sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$equipbid' and name = 'iname'";
+$stmt = $dblj->query($sql_2);
+if($stmt->rowCount() >0){
+$equipbname = $stmt->fetchColumn();
+}else{
+    $sql = "select iname from system_item_module where iid = (select iid from system_item where item_true_id = '$equipbid')";
     $cxjg = $dblj->query($sql);
-    if ($cxjg) {
+    if ($cxjg ->rowCount()>0) {
         $row = $cxjg->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            $equipbname = \lexical_analysis\color_string($row['iname']);
-            $removeitem = $encode->encode("cmd=equip_op_basic&target_event=remove&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
-            $ckequipbinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
-            $equipbhtml = "<a href='?cmd=$ckequipbinfo'>{$equipbname}</a><a href='?cmd=$removeitem'>[卸下]</a>";
-        }
+            $equipbname = $row['iname'];
+            }
     }
+}
+        $equipbname = \lexical_analysis\color_string($equipbname);
+        $removeitem = $encode->encode("cmd=equip_op_basic&target_event=remove&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
+        $ckequipbinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_true_id=$equipbid&sid=$sid");
+        $equipbhtml = "<a href='?cmd=$ckequipbinfo'>{$equipbname}</a><a href='?cmd=$removeitem'>[卸下]</a>";
 }
 
 $sql = "select * from system_equip_def WHERE type = 2";

@@ -171,12 +171,15 @@ for ($i=0;$i<@$totalRows;$i++){
 
 $sql = "SELECT * FROM system_item_module WHERE " . ($conditions[$canshu] ?? $conditions['全部']);
 
-
-
 $cxjg = $dblj->query($sql);
 $retitem = $cxjg->fetch(PDO::FETCH_ASSOC);
 $itemid = $retitem['iid'];
 $itemname = $retitem['iname'];
+$sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+$stmt = $dblj->query($sql_2);
+if($stmt->rowCount() >0){
+$itemname = $stmt->fetchColumn();
+}
 $itemtype = $retitem['itype'];
 $itemname = \lexical_analysis\process_photoshow($itemname);
 $itemname = \lexical_analysis\color_string($itemname);

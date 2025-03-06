@@ -979,7 +979,7 @@ foreach ($keyValuePairs as $pair) {
     
         $iname = lexical_analysis\color_string($iname);
         //这里进行结果文本输出,查询物品对应名称
-        if($ele_2 >=0){
+        if($ele_2 >0){
         echo "获得了：{$iname}x{$ele_2}<br/>";
         \player\addplayersx('uburthen',$ele_2*$iweight,$sid,null,$db);
         }else{

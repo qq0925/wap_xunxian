@@ -742,39 +742,6 @@ function get_mysqldata($dblj, $data_type, $data_id){
             $just_return = $evsRow['just_return'];
             $not_return_link = ($not_return_link == 0) ? "F" : "T";
             $just_return = ($just_return == 1) ? "F" : "T";
-            if(!empty($s_attrs)){
-            $pairs = explode(',', $s_attrs);
-            $s_attrs_2 = [];
-        
-            foreach ($pairs as $pair) {
-                // 分割键和值
-                $equal_pos = strpos($pair, '=');
-                if ($equal_pos !== false) {
-                    // 提取键和值
-                    $key = trim(substr($pair, 0, $equal_pos));
-                    $value = trim(substr($pair, $equal_pos + 1));
-                    // 添加到新的关联数组中
-                    $s_attrs_2[$key] = $value;
-    }
-            }
-            }
-            // 构建每个 evs 数组元素
-            if(!empty($m_attrs)){
-            $pairs = explode(',', $m_attrs);
-            $m_attrs_2 = [];
-        
-            foreach ($pairs as $pair) {
-                // 分割键和值
-                $equal_pos = strpos($pair, '=');
-                if ($equal_pos !== false) {
-                    // 提取键和值
-                    $key = trim(substr($pair, 0, $equal_pos));
-                    $value = trim(substr($pair, $equal_pos + 1));
-                    // 添加到新的关联数组中
-                    $m_attrs_2[$key] = $value;
-    }
-            }
-            }
             
             if(!empty($a_skills)){
                 $pairs = explode(',', $a_skills);
@@ -814,7 +781,7 @@ function get_mysqldata($dblj, $data_type, $data_id){
             }
             
             // 检查 s_attrs 字段是否为 null，如果不为 null 则添加到最终的数据数组中
-            if(empty($s_attrs_2) && empty($m_attrs_2) && empty($a_skills_2) && empty($r_skills_2)){
+            if(empty($s_attrs) && empty($m_attrs) && empty($a_skills_2) && empty($r_skills_2)){
             $evs[] = [
                 '#data_events_Mapping#' => [
                     'id' => $evsRow['id'],
@@ -832,8 +799,8 @@ function get_mysqldata($dblj, $data_type, $data_id){
             $evs[] = [
             '#data_events_Mapping#' => [
             'id' => $evsRow['id'],
-            's_attrs' => $s_attrs_2,
-            'm_attrs' => $m_attrs_2,
+            's_attrs' => $s_attrs,
+            'm_attrs' => $m_attrs,
             'a_skills' => $a_skills_2,
             'r_skills' => $r_skills_2,
             'items' => $items_2,
@@ -846,17 +813,13 @@ function get_mysqldata($dblj, $data_type, $data_id){
             "view_user_exp" => $evsRow['view_user_exp'],
             "page_name" => $evsRow['page_name']
                 ]
-            ];                
+            ];
             }
             unset($s_attrs_2);
             unset($m_attrs_2);
             unset($a_skills_2);
             unset($r_skills_2);
             unset($not_return_link);
-        
-        
-        
-        
         
             $evsRow = $evsStmt->fetch(\PDO::FETCH_ASSOC);
         }
@@ -941,44 +904,10 @@ function get_mysqldata_2($dblj, $data_type, $data_id){
             $just_return = $evsRow['just_return'];
             $not_return_link = ($not_return_link == 0) ? "F" : "T";
             $just_return = ($just_return == 1) ? "F" : "T";
-            if(!empty($s_attrs)){
-            $pairs = explode(',', $s_attrs);
-            $s_attrs_2 = [];
-        
-            foreach ($pairs as $pair) {
-                // 分割键和值
-                $equal_pos = strpos($pair, '=');
-                if ($equal_pos !== false) {
-                    // 提取键和值
-                    $key = trim(substr($pair, 0, $equal_pos));
-                    $value = trim(substr($pair, $equal_pos + 1));
-                    // 添加到新的关联数组中
-                    $s_attrs_2[$key] = $value;
-    }
-            }
-            }
-            // 构建每个 evs 数组元素
-            if(!empty($m_attrs)){
-            $pairs = explode(',', $m_attrs);
-            $m_attrs_2 = [];
-        
-            foreach ($pairs as $pair) {
-                // 分割键和值
-                $equal_pos = strpos($pair, '=');
-                if ($equal_pos !== false) {
-                    // 提取键和值
-                    $key = trim(substr($pair, 0, $equal_pos));
-                    $value = trim(substr($pair, $equal_pos + 1));
-                    // 添加到新的关联数组中
-                    $m_attrs_2[$key] = $value;
-    }
-            }
-            }
-            
-            
-            
+
+
             // 检查 s_attrs 字段是否为 null，如果不为 null 则添加到最终的数据数组中
-            if(empty($s_attrs_2) && empty($m_attrs_2)){
+            if(empty($s_attrs) && empty($m_attrs)){
             $evs[] = [
                 '#data_events_Mapping#' => [
                     'id' => $evsRow['id'],
@@ -998,8 +927,8 @@ function get_mysqldata_2($dblj, $data_type, $data_id){
             $evs[] = [
             '#data_events_Mapping#' => [
             'id' => $evsRow['id'],
-            's_attrs' => $s_attrs_2,
-            'm_attrs' => $m_attrs_2,
+            's_attrs' => $s_attrs,
+            'm_attrs' => $m_attrs,
             'a_skills' => $evsRow['a_skills'],
             'r_skills' => $evsRow['r_skills'],
             'cond' => $evsRow['cond'],
