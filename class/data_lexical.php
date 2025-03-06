@@ -626,6 +626,7 @@ $sid = $old_sid;
            $ele_1_3 = substr($ele_1_2, 0, $ThirdEqualsPos);
         if($ele_1_3 == 'icc'){
             $ele_1_4 = substr($ele_1_2, $ThirdEqualsPos + 1);
+            $ele_1_4 = str_replace(array("'"), '', $ele_1_4);
         }else{
         $ele_1_2 = str_replace('.', '', $ele_1_2);
         }
