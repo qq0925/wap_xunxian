@@ -334,10 +334,6 @@ foreach ($data as $ele_1 => $ele_2) {
                     $db->query($updateQuery);
                 }
                 }elseif($oid =='item'){
-                // $sql = "select name from gm_game_attr where value_type =4 and id = '$ele_1_2'";
-                // $result = $db->query($sql);
-                // $row = $result->fetch_assoc();
-                // $attr_name = $row['name'];
                 $ele_1_2 = 'i'.$ele_1_2;
                 // 检查字段是否存在
                 $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and oid = 'item' and mid = '$mid'");
@@ -524,20 +520,20 @@ foreach ($data as $ele_1 => $ele_2) {
         // echo "ele_2: " . $ele_2 . "<br/>";
         //这里要获取到属性字段表中玩家属性类别下id等于$ele_1的name名称
 }
-if($updateAll){
+// if($updateAll){
 // 开启一个事务
-$db->autocommit(false);
-foreach($updateAll as $onesql){
-if($onesql){
-$db->query($onesql);
-}
-}
-$db->commit();
-// 重新开启自动提交
-$db->autocommit(true);
+// $db->autocommit(false);
+// foreach($updateAll as $onesql){
+// if($onesql){
+// $db->query($onesql);
+// }
+// }
+// $db->commit();
+// // 重新开启自动提交
+// $db->autocommit(true);
  
 //var_dump($updateAll);
-}
+// }
 return 1;
 }
 

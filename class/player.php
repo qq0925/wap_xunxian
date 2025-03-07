@@ -1147,10 +1147,13 @@ function additem($sid,$iid,$icount,$dblj){
         if($item_type !="兵器"&&$item_type !="防具"){
         $sql = "update system_item set icount = icount + $icount where sid='$sid' and iid = '$iid'";
         $dblj->exec($sql);
+        exec_global_event(37,'item',$ret['item_true_id'],$sid,$dblj);
         }elseif($item_type =="兵器"||$item_type =="防具"){
         for($i=0;$i<$icount;$i++){
         $sql = "insert into system_item(icount,sid,uid,iid) VALUES (1,'$sid','$player->uid',$iid)";
         $dblj->exec($sql);
+        $the_true_id = $dblj->lastInsertId();
+        exec_global_event(37,'item',$the_true_id,$sid,$dblj);
             }
         }
     }
@@ -1160,11 +1163,13 @@ function additem($sid,$iid,$icount,$dblj){
         $dblj->exec($sql);
         // 获取自增ID
         $item_true_id = $dblj->lastInsertId();
+        exec_global_event(37,'item',$item_true_id,$sid,$dblj);
         }elseif($item_type =="兵器"||$item_type =="防具"){
         for($i=0;$i<$icount;$i++){
         $sql = "insert into system_item(icount,sid,uid,iid) VALUES (1,'$sid','$player->uid',$iid)";
         $dblj->exec($sql);
         $item_true_id = $dblj->lastInsertId();
+        exec_global_event(37,'item',$item_true_id,$sid,$dblj);
             }
         }
     }
@@ -2237,11 +2242,11 @@ if(!empty($event_data['system_event']['link_evs'])){
         }
     if(!$step_triggle){
         if($step_cmmt2){
-        echo \lexical_analysis\process_photoshow(\lexical_analysis\process_string($step_cmmt2,$sid))."<br/>";
+        echo \lexical_analysis\process_photoshow(\lexical_analysis\process_string($step_cmmt2,$sid,$event_type,$event_obj))."<br/>";
         }
         }elseif($step_triggle){
             if($step_cmmt){
-        echo \lexical_analysis\process_photoshow(\lexical_analysis\process_string($step_cmmt,$sid))."<br/>";
+        echo \lexical_analysis\process_photoshow(\lexical_analysis\process_string($step_cmmt,$sid,$event_type,$event_obj))."<br/>";
             }
         if($step_s_attrs){
         $ret = attrsetting($step_s_attrs,$sid,$event_type,$event_obj);
