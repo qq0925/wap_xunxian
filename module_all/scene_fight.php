@@ -295,8 +295,7 @@ if($round ==0&&$cmd =='pve_fight'){
             for($j=0;$j<$drop_item_count;$j++){
                 $drop_para = explode('|',$drop_item[$j]);
                 $drop_id = $drop_para[0];
-                $drop_item_name = \player\getitem($drop_id,$dblj)->iname;
-                $drop_item_name = \lexical_analysis\color_string($drop_item_name);
+                
                 $drop_count = $drop_para[1];
                 $drop_count = \lexical_analysis\process_string($drop_count,$sid);
                 $drop_count = @eval("return $drop_count;");
@@ -306,10 +305,12 @@ if($round ==0&&$cmd =='pve_fight'){
                 $player_last_burthen = $player->umax_burthen - $player->uburthen;
                 if($drop_count >0 && $player_last_burthen >=$drop_total_weight && $player_last_burthen>0){
                     $get_ret = \player\additem($sid,$drop_id,$drop_count,$dblj);
-                    if($get_ret!=-2){
-                        \player\changeitem_belong($get_ret,1, $alive_monster->nid,$dblj);//更新物品掉落来源
+                    if($get_ret>0){
+                        \player\changeitem_belong($get_ret,1, $alive_monster->nid,$dblj);//更新物品掉落
+                    $drop_item_name = \player\getownitem($get_ret,'iname',$dblj);
+                    $drop_item_name = \lexical_analysis\color_string($drop_item_name);
                     }
-                    
+
                         // 更新物品数量
                     if (isset($item_counts[$drop_item_name])) {
                         $item_counts[$drop_item_name] += $drop_count;
@@ -323,6 +324,9 @@ if($round ==0&&$cmd =='pve_fight'){
                     $item_true_id = \player\getplayeritem_attr('item_true_id',$sid,$drop_id,$dblj)['item_true_id'];
                     \player\changeplayeritem($item_true_id,$drop_count,$sid,$dblj);
                     \player\addplayersx('uburthen',-$drop_total_weight,$sid,$dblj);
+                    
+                    
+                    
                     
                         // 更新物品数量
                     if (isset($item_counts[$drop_item_name])) {

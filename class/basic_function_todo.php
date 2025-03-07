@@ -2157,11 +2157,12 @@ foreach ($ret as $row) {
                 if ($cxjg) {
                     $row = $cxjg->fetch(PDO::FETCH_ASSOC);
                     if ($row) {
-                        $equipfname = \lexical_analysis\color_string($row['iname']);
+                        $equipfname = $row['iname'];
                     }
                 }
             }
             }
+            $equipfname = \lexical_analysis\color_string($equipfname);
             $removeitem = $encode->encode("cmd=equip_op_basic&target_event=remove&ucmd=$cmid&equip_true_id=$equipfid&sid=$sid");
             $ckequipfinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_true_id=$equipfid&sid=$sid");
             $equipfhtml .= "{$equiptypename}：<a href='?cmd=$ckequipfinfo'>{$equipfname}</a><a href='?cmd=$removeitem'>[卸下]</a><br/>";

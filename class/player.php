@@ -628,6 +628,25 @@ function getitem($iid,$dblj){
     return $item;
 }
 
+function getownitem($item_true_id,$attr,$dblj){
+$sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = '$attr'";
+$stmt = $dblj->query($sql_2);
+if($stmt->rowCount() >0){
+$result = $stmt->fetchColumn();
+}else{
+
+$sql = "select $attr from system_item_module where iid = (select iid from system_item where item_true_id = '$item_true_id')";
+$cxjg = $dblj->query($sql);
+if ($cxjg ->rowCount()>0) {
+    $row = $cxjg->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        $result = $row[$attr];
+        }
+}
+}
+return $result;
+}
+
 function getitem_root($item_true_id,$sid,$dblj){
     $sql = "select iid from `system_item` where item_true_id = '$item_true_id' and sid = '$sid'";
     $cxjg = $dblj->query($sql);
@@ -1139,6 +1158,7 @@ function additem($sid,$iid,$icount,$dblj){
     $iweight = $item_para->iweight;
     $ino_give = $item_para->ino_give;
     $ino_out = $item_para->ino_out;
+    $icreat_event_id = $item_para->icreat_event_id;
     $itotal_weight = $icount*$iweight;
     $player_last_burthen = $player->umax_burthen - $player->uburthen;
     if($player_last_burthen >=$itotal_weight && $player_last_burthen>0){
@@ -1150,13 +1170,16 @@ function additem($sid,$iid,$icount,$dblj){
         if($item_type !="兵器"&&$item_type !="防具"){
         $sql = "update system_item set icount = icount + $icount where sid='$sid' and iid = '$iid'";
         $dblj->exec($sql);
-        exec_global_event(37,'item',$ret['item_true_id'],$sid,$dblj);
+        // exec_global_event(37,'item',$ret['item_true_id'],$sid,$dblj);
         }elseif($item_type =="兵器"||$item_type =="防具"){
         for($i=0;$i<$icount;$i++){
         $sql = "insert into system_item(icount,sid,uid,iid,ino_give,ino_out) VALUES (1,'$sid','$player->uid','$iid','$ino_give','$ino_out')";
         $dblj->exec($sql);
-        $the_true_id = $dblj->lastInsertId();
-        exec_global_event(37,'item',$the_true_id,$sid,$dblj);
+        $item_true_id = $dblj->lastInsertId();
+        exec_global_event(37,'item',$item_true_id,$sid,$dblj);
+        if($icreat_event_id>0){
+        exec_self_event($icreat_event_id,'item',$item_true_id,$sid,$dblj);
+        }
             }
         }
     }
@@ -1166,13 +1189,22 @@ function additem($sid,$iid,$icount,$dblj){
         $dblj->exec($sql);
         // 获取自增ID
         $item_true_id = $dblj->lastInsertId();
-        exec_global_event(37,'item',$item_true_id,$sid,$dblj);
+        // exec_global_event(37,'item',$item_true_id,$sid,$dblj);
+        
+        // if($icreat_event_id>0){
+        
+        
+        // }
+        
         }elseif($item_type =="兵器"||$item_type =="防具"){
         for($i=0;$i<$icount;$i++){
         $sql = "insert into system_item(icount,sid,uid,iid,ino_give,ino_out) VALUES (1,'$sid','$player->uid','$iid','$ino_give','$ino_out')";
         $dblj->exec($sql);
         $item_true_id = $dblj->lastInsertId();
         exec_global_event(37,'item',$item_true_id,$sid,$dblj);
+        if($icreat_event_id>0){
+        exec_self_event($icreat_event_id,'item',$item_true_id,$sid,$dblj);
+        }
             }
         }
     }
@@ -2220,6 +2252,60 @@ function getlp_detail($lp_id,$dblj){
 
 function exec_global_event($event_id,$event_type,$event_obj,$sid,$dblj){
 $event_data = global_event_data_get($event_id,$dblj);
+$event_cond = $event_data['system_event']['cond'];
+$event_cmmt = $event_data['system_event']['cmmt'];
+$register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,$event_type,$event_obj);
+if(is_null($register_triggle)){
+    $register_triggle =1;
+}
+if(!$register_triggle){
+}elseif($register_triggle){
+if(!empty($event_data['system_event']['link_evs'])){
+    $system_event_evs = $event_data["system_event_evs"];
+    foreach ($system_event_evs as $index => $event) {
+    $step_cond = $event['cond'];
+    $step_cmmt = $event['cmmt'];
+    $step_cmmt2 = $event['cmmt2'];
+    $step_s_attrs = $event['s_attrs'];
+    $step_m_attrs = $event['m_attrs'];
+    $step_items = $event['items'];
+    $step_a_skills = $event['a_skills'];
+    $step_r_skills = $event['r_skills'];
+    $step_triggle = checkTriggerCondition($step_cond,$dblj,$sid,$event_type,$event_obj);
+    if(is_null($step_triggle)){
+    $step_triggle =1;
+        }
+    if(!$step_triggle){
+        if($step_cmmt2){
+        echo \lexical_analysis\process_photoshow(\lexical_analysis\process_string($step_cmmt2,$sid,$event_type,$event_obj))."<br/>";
+        }
+        }elseif($step_triggle){
+            if($step_cmmt){
+        echo \lexical_analysis\process_photoshow(\lexical_analysis\process_string($step_cmmt,$sid,$event_type,$event_obj))."<br/>";
+            }
+        if($step_s_attrs){
+        $ret = attrsetting($step_s_attrs,$sid,$event_type,$event_obj);
+        }
+        if($step_m_attrs){
+        $ret = attrchanging($step_m_attrs,$sid,$event_type,$event_obj);
+        }
+        if($step_items){
+        $ret = itemchanging($step_items,$sid,$event_type,$event_obj);
+        }
+        if($step_a_skills){
+        $ret = skillschanging($step_a_skills,$sid,1,$event_type,$event_obj);
+        }
+        if($step_r_skills){
+        $ret = skillschanging($step_r_skills,$sid,2,$event_type,$event_obj);
+        }
+        }
+    }
+}
+}
+}
+
+function exec_self_event($event_id,$event_type,$event_obj,$sid,$dblj){
+$event_data = self_event_data_get($event_id,$dblj);
 $event_cond = $event_data['system_event']['cond'];
 $event_cmmt = $event_data['system_event']['cmmt'];
 $register_triggle = checkTriggerCondition($event_cond,$dblj,$sid,$event_type,$event_obj);
