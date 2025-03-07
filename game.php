@@ -674,7 +674,7 @@ echo $refresh_html;
                             $ltmsg = htmlspecialchars($ltmsg);
                                 $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','$ltmsg',$player->uid,{$imuid},1,'$nowdate')";
                             $cxjg = $dblj->exec($sql);
-                            $oid = $imuid;
+                            $mid = \player\getplayer(null,$dblj,$imuid)->sid;
                             $ltmsg = \lexical_analysis\color_string($ltmsg);
                             echo "发送成功!"."你对对方说：".$ltmsg."<br/>";
                             $ym = 'module_all/scene_oplayer_detail.php';
@@ -1067,6 +1067,9 @@ echo $refresh_html;
                     }else{
                     $ym = 'gm/gm_other_setting/gm_shop_def_2.php';
                     }
+                    break;
+                case '12':
+                    $ym = 'gm/gm_other_setting/gm_attr_data.php';
                     break;
                 case 'other':
                     echo "更新成功！<br/>";

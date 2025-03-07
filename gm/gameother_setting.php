@@ -12,6 +12,7 @@ $battle_def = $encode->encode("cmd=gm_game_othersetting&canshu=8&sid=$sid");
 $auc_def = $encode->encode("cmd=gm_game_othersetting&auc_canshu=0&canshu=9&sid=$sid");
 $reboot_all = $encode->encode("cmd=gm_game_othersetting&canshu=10&sid=$sid");
 $shop_def = $encode->encode("cmd=gm_game_othersetting&canshu=11&sid=$sid");
+$addition_def = $encode->encode("cmd=gm_game_othersetting&canshu=12&sid=$sid");
 $setting_html = <<<HTML
 [功能列表]<br/><br/>
 <a href="?cmd=$area_def">分区管理</a>(✔)<br/>
@@ -21,6 +22,7 @@ $setting_html = <<<HTML
 <a href="?cmd=$rank_def">排行榜管理</a>(✔)<br/>
 <a href="?cmd=$battle_def">竟技场管理</a><br/>
 <a href="?cmd=$player_def">玩家数据管理</a>(✔)<br/>
+<a href="?cmd=$addition_def">addition表管理</a>(✔)<br/>
 <a href="?cmd=$designer_def">设计者管理</a>(✔)<br/>
 <a href="?cmd=$other_def">杂项管理</a>(✔)<br/>
 <a href="?cmd=$shop_def">商城管理</a>(✔)<br/>

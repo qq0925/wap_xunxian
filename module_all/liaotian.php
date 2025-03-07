@@ -155,12 +155,12 @@ if ($ltlx == 'im'){
 
 if($delete_canshu ==1){
     echo "已清空私聊信息!<br/>";
-    $dblj->exec("delete from system_chat_data where (imuid = {$player->uid}) and chat_type =1");
+    $dblj->exec("delete from system_chat_data where (imuid = {$player->uid}) and (chat_type =1 or chat_type = 6)");
 }
 
 //(uid= {$player->uid} or imuid = {$player->uid})
 
-$sqlCount = "SELECT COUNT(*) as total FROM system_chat_data where (imuid = {$player->uid}) and chat_type =1";
+$sqlCount = "SELECT COUNT(*) as total FROM system_chat_data where (imuid = {$player->uid}) and (chat_type =1 ||chat_type = 6)";
 $countResult = $dblj->query($sqlCount);
 $countRow = $countResult->fetch(PDO::FETCH_ASSOC);
 $totalRows = $countRow['total'];
@@ -168,7 +168,7 @@ $totalRows = $countRow['total'];
 // 计算总页数
 $totalPages = ceil($totalRows / $list_row);
     
-    $sql = "SELECT * FROM system_chat_data WHERE (imuid = {$player->uid}) and chat_type = 1 ORDER BY id DESC LIMIT $offset,$list_row";//聊天列表获取
+    $sql = "SELECT * FROM system_chat_data WHERE (imuid = {$player->uid}) and (chat_type =1 ||chat_type = 6) ORDER BY id DESC LIMIT $offset,$list_row";//聊天列表获取
     $ltcxjg = $dblj->query($sql);
     $lthtml='';
     if ($ltcxjg){
@@ -833,7 +833,7 @@ if($delete_msid){
     unset($delete_msid);
 }
 // 计算总行数
-$sqlCount = "SELECT COUNT(*) as total FROM system_chat_data where chat_type =6 and imuid = '$area_mid'";
+$sqlCount = "SELECT COUNT(*) as total FROM system_chat_data where chat_type =6 and imuid = 0";
 $countResult = $dblj->query($sqlCount);
 $countRow = $countResult->fetch(PDO::FETCH_ASSOC);
 $totalRows = $countRow['total'];
@@ -842,7 +842,7 @@ $totalRows = $countRow['total'];
 // 计算总页数
 $totalPages = ceil($totalRows / $list_row);
     
-    $sql = "SELECT * FROM system_chat_data where chat_type = 6 ORDER BY id DESC LIMIT $offset,$list_row";//聊天列表获取
+    $sql = "SELECT * FROM system_chat_data where chat_type = 6 and imuid = 0 ORDER BY id DESC LIMIT $offset,$list_row";//聊天列表获取
     $ltcxjg = $dblj->query($sql);
     $lthtml='';
 

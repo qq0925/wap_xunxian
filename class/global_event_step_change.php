@@ -20,7 +20,7 @@ global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid
     $stmt->bindParam(':input_value', $input_value);
     $stmt->execute();
     }
-global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$parents_page,null,null,$para);
+global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$parents_page,$oid,$mid,$para);
 }
 function global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$cmid,$parents_page,$oid=null,$mid=null,$para=null){
                 //事件逻辑
@@ -279,7 +279,7 @@ HTML;
                                 }
                                 $steps_page +=1;
                                 $input_para = substr($input_para, 0, -1);
-                                    $post_url = $encode->encode("cmd=main_target_event&mid=$mid&para=$input_para&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
+                                    $post_url = $encode->encode("cmd=main_target_event&mid=$mid&oid=$oid&para=$input_para&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
                                     $form_html = <<<HTML
 <form action="?cmd=$post_url" method="post">
 $form_core_html
@@ -329,7 +329,7 @@ HTML;
                                 }
                                 $steps_page +=1;
                                 $input_para = substr($input_para, 0, -1);
-                                    $post_url = $encode->encode("cmd=main_target_event&mid=$mid&para=$input_para&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
+                                    $post_url = $encode->encode("cmd=main_target_event&mid=$mid&oid=$oid&para=$input_para&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
                                     $form_html = <<<HTML
 <form action="?cmd=$post_url" method="post">
 $form_core_html

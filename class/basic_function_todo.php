@@ -1332,150 +1332,128 @@ HTML;
     return $itemhtml;
 }
 
-function get_chat_list($sid,$dblj,&$cmid){
-global $encode;
-$player = player\getplayer($sid,$dblj);
-$gameconfig = player\getgameconfig($dblj);
-$scene_message_count = $gameconfig->scene_message_count;
-$scene_chat_time = $gameconfig->scene_chat_time;
-$long_exist_message = $gameconfig->long_exist_message;
-$can_input = $gameconfig->can_input;
-$sql = "SELECT * FROM system_chat_data where viewed = 0 ORDER BY id DESC LIMIT 0,$scene_message_count";//聊天列表获取
-$ltcxjg = $dblj->query($sql);
-$lthtml='';
-if ($ltcxjg){
-    $ret = $ltcxjg->fetchAll(PDO::FETCH_ASSOC);
-    $ret_count = count($ret);
-    for ($i=0;$i < $ret_count;$i++){
-        $chat_id = $ret[$ret_count - $i-1]['id'];
-        $uname = $ret[$ret_count - $i-1]['name'];
-        $umsg = $ret[$ret_count - $i-1]['msg'];
-        $uid = $ret[$ret_count - $i-1]['uid'];
-        $imuid = $ret[$ret_count - $i-1]['imuid'];
-        $chat_type = $ret[$ret_count - $i-1]['chat_type'];
-        $send_type = $ret[$ret_count - $i-1]['send_type'];
-        $send_time = $ret[$ret_count - $i-1]['send_time'];
-        $viewed = $ret[$ret_count - $i-1]['viewed'];
-        $maxChars = $gameconfig->game_max_char; // 最大字符数量
-        $nowdate = date('Y-m-d H:i:s');
-        if (mb_strlen($umsg, 'utf-8') > $maxChars) {
-            $umsg = mb_substr($umsg, 0, $maxChars, 'utf-8') . "...";
-        }
-        $umsg = lexical_analysis\color_string($umsg);
+function get_chat_list($sid, $dblj, &$cmid) {
+    global $encode;
+    $player = player\getplayer($sid, $dblj);
+    $gameconfig = player\getgameconfig($dblj);
+    $scene_message_count = $gameconfig->scene_message_count;
+    $scene_chat_time = $gameconfig->scene_chat_time;
+    $long_exist_message = $gameconfig->long_exist_message;
+    $can_input = $gameconfig->can_input;
+    $maxChars = $gameconfig->game_max_char;
+    $nowdate = date('Y-m-d H:i:s');
+    
+    // 修改查询以正确处理私聊消息：
+    // 1. 保留所有非私聊消息
+    // 2. 对于私聊消息，仅当用户是接收者(imuid = player->uid)或者不是发送者(uid != player->uid)时显示
+    $sql = "SELECT * FROM system_chat_data WHERE viewed = 0 AND 
+           (chat_type != 1 OR (chat_type = 1 AND imuid = {$player->uid})) 
+           ORDER BY id DESC LIMIT 0,$scene_message_count";
+    $ltcxjg = $dblj->query($sql);
+    $lthtml = '';
+    $viewed_ids = []; // 存储需要更新为已查看的消息ID
+    
+    if ($ltcxjg) {
+        $messages = $ltcxjg->fetchAll(PDO::FETCH_ASSOC);
+        $messages_count = count($messages);
         
-        if($long_exist_message ==0){
-        if ($uid &&  $chat_type ==0 && $player->allchattime < $send_time){
-        $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
-        $stmt = $dblj->exec($sql);
-        $cmid = $cmid + 1;
-        $cdid[] = $cmid;
-        $clj[] = $cmd;
-        
-        if($send_type==0){
-            $u_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
-        }elseif($send_type==1){
-            $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$sid");
-        }
-        if($scene_chat_time ==1){
-        $lthtml .="[<span style='color: orangered;'>公共</span>]<a href='?cmd=$u_cmd''>$uname</a>:$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
-        }else{
-        $lthtml .="[<span style='color: orangered;'>公共</span>]<a href='?cmd=$u_cmd''>$uname</a>:$umsg<span class='txt-fade'></span><br/>";
-        }
-        }elseif($imuid == $player->uid && $chat_type == 1 && $viewed == 0){
-        $cmid = $cmid + 1;
-        $cdid[] = $cmid;
-        $clj[] = $cmd;
-        $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
-        if($uid){
-            if($scene_chat_time ==1){
-            $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
-            }else{
-            $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'></span><br/>";
-            }
-            $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
-        }else{
-            if($scene_chat_time ==1){
-            $lthtml .="[系统]:{$umsg}<span class='txt-fade'>[{$send_time}]</span><br/>";
-            }else{
-            $lthtml .="[系统]:{$umsg}<span class='txt-fade'></span><br/>";
-            }
-            $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
-        }
-        
-        }elseif(!$uid && $imuid == 0 && $chat_type == 6&&$player->allchattime < $send_time){
-            $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
-            $stmt = $dblj->exec($sql);
-            $lthtml .="[<span style='color: orangered;'>系统</span>]:{$umsg}<span class='txt-fade'></span><br/>";
-        }elseif($uid && $chat_type == 6&&$player->allchattime < $send_time){
-            $cmid = $cmid + 1;
-            $cdid[] = $cmid;
-            $clj[] = $cmd;
+        // 倒序处理消息以保持正确顺序
+        for ($i = 0; $i < $messages_count; $i++) {
+            $message = $messages[$messages_count - $i - 1];
+            $chat_id = $message['id'];
+            $uname = $message['name'];
+            $umsg = $message['msg'];
+            $uid = $message['uid'];
+            $imuid = $message['imuid'];
+            $chat_type = $message['chat_type'];
+            $send_type = $message['send_type'];
+            $send_time = $message['send_time'];
+            $viewed = $message['viewed'];
             
-            if($send_type==0){
-                $u_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
-            }elseif($send_type==1){
-                $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$sid");
+            // 跳过用户自己发送的私聊消息 - 保持这个额外检查作为安全措施
+            if ($chat_type == 1 && $uid == $player->uid && $imuid != $player->uid) {
+                continue;
             }
-            $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
-            $stmt = $dblj->exec($sql);
-            $lthtml .="[<span style='color: orangered;'>系统</span>]:<a href='?cmd=$u_cmd''>$uname</a>:{$umsg}<span class='txt-fade'></span><br/>";
-        }
-        }else{
-        if ($uid &&  $chat_type ==0){
-        $cmid = $cmid + 1;
-        $cdid[] = $cmid;
-        $clj[] = $cmd;
-        if($send_type==0){
-            $u_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
-        }elseif($send_type==1){
-            $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$sid");
-        }
-        
-        $lthtml .="[<span style='color: orangered;'>公共</span>]<a href='?cmd=$u_cmd''>$uname</a>:$umsg<span class='txt-fade'></span><br/>";
-        
-        }elseif($imuid == $player->uid && $chat_type == 1 && $viewed == 0){
-        $cmid = $cmid + 1;
-        $cdid[] = $cmid;
-        $clj[] = $cmd;
-        $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
-        if($uid){
-            if($scene_chat_time ==1){
-            $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'>[{$send_time}]</span><br/>";
-            }else{
-            $lthtml .="[私聊]<a href='?cmd=$o_cmd''>{$uname}</a>对你说:$umsg<span class='txt-fade'></span><br/>";
-            }
-            $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
-        }else{
-            if($scene_chat_time ==1){
-            $lthtml .="[系统]:{$umsg}<span class='txt-fade'>[{$send_time}]</span><br/>";
-            }else{
-            $lthtml .="[系统]:{$umsg}<span class='txt-fade'></span><br/>";
-            }
-            $dblj->exec("update system_chat_data set viewed = 1 where id = '$chat_id'");
-        }
-        
-        }elseif(!$uid && $imuid == 0 && $chat_type == 6){
-            $lthtml .="[<span style='color: orangered;'>系统</span>]:{$umsg}<span class='txt-fade'></span><br/>";
-        }elseif($uid && $chat_type == 6){
-            $cmid = $cmid + 1;
-            $cdid[] = $cmid;
-            $clj[] = $cmd;
             
-            if($send_type==0){
-                $u_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
-            }elseif($send_type==1){
-                $u_cmd = $encode->encode("cmd=npc_html&ucmd=$cmid&nid=$uid&sid=$sid");
+            // 截断过长消息
+            if (mb_strlen($umsg, 'utf-8') > $maxChars) {
+                $umsg = mb_substr($umsg, 0, $maxChars, 'utf-8') . "...";
             }
-            $lthtml .="[<span style='color: orangered;'>系统</span>]:<a href='?cmd=$u_cmd''>$uname</a>:{$umsg}<span class='txt-fade'></span><br/>";
-        }
             
+            // 应用颜色处理
+            $umsg = lexical_analysis\color_string($umsg);
+            
+            // 时间显示处理
+            $time_display = $scene_chat_time == 1 ? "<span class='txt-fade'>[{$send_time}]</span>" : "<span class='txt-fade'></span>";
+            
+            // 根据消息类型格式化输出
+            $show_message = false;
+            
+            // 处理公共消息
+            if ($uid && $chat_type == 0) {
+                if ($long_exist_message == 0 && $player->allchattime >= $send_time) {
+                    continue; // 跳过不需要显示的旧消息
+                }
+                
+                // 如果是新消息，更新最后聊天时间
+                if ($long_exist_message == 0 && $player->allchattime < $send_time) {
+                    $dblj->exec("UPDATE game1 SET allchattime = '$nowdate' WHERE sid = '$sid'");
+                }
+                
+                $cmid++;
+                $u_cmd = $encode->encode("cmd=" . ($send_type == 0 ? "getoplayerinfo" : "npc_html") . "&ucmd=$cmid&" . ($send_type == 0 ? "uid" : "nid") . "=$uid&sid=$sid");
+                $lthtml .= "[<span style='color: orangered;'>公共</span>]<a href='?cmd=$u_cmd'>$uname</a>:{$umsg}{$time_display}<br/>";
+                $show_message = true;
+            }
+            
+            // 处理私聊消息
+            else if ($imuid == $player->uid && $chat_type == 1 && $viewed == 0) {
+                $cmid++;
+                
+                if ($uid) {
+                    $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
+                    $lthtml .= "[私聊]<a href='?cmd=$o_cmd'>$uname</a>对你说:{$umsg}{$time_display}<br/>";
+                } else {
+                    $lthtml .= "[系统]:{$umsg}{$time_display}<br/>";
+                }
+                
+                $viewed_ids[] = $chat_id; // 标记为已查看
+                $show_message = true;
+            }
+            
+            // 处理系统消息
+            else if ($chat_type == 6) {
+                if ($long_exist_message == 0 && $player->allchattime >= $send_time && !$imuid) {
+                    continue; // 跳过不需要显示的旧系统消息
+                }
+                
+                if ($long_exist_message == 0 && $player->allchattime < $send_time) {
+                    $dblj->exec("UPDATE game1 SET allchattime = '$nowdate' WHERE sid = '$sid'");
+                }
+                
+                if (!$uid && $imuid == 0) {
+                    $lthtml .= "[<span style='color: orangered;'>系统</span>]:{$umsg}{$time_display}<span class='txt-fade'></span><br/>";
+                    $show_message = true;
+                } else if ($uid) {
+                    $cmid++;
+                    $u_cmd = $encode->encode("cmd=" . ($send_type == 0 ? "getoplayerinfo" : "npc_html") . "&ucmd=$cmid&" . ($send_type == 0 ? "uid" : "nid") . "=$uid&sid=$sid");
+                    $lthtml .= "[<span style='color: orangered;'>系统</span>]:<a href='?cmd=$u_cmd'>$uname</a>:{$umsg}{$time_display}<span class='txt-fade'></span><br/>";
+                    $show_message = true;
+                }
+            }
         }
     }
-}
-
-if($can_input ==1){
-    $all_post = $encode->encode("cmd=sendliaotian&scene=1&ucmd=$cmid&sid=$sid");
-    $lthtml .=<<<HTML
+    
+    // 批量更新已查看状态
+    if (!empty($viewed_ids)) {
+        $ids_string = implode(',', $viewed_ids);
+        $dblj->exec("UPDATE system_chat_data SET viewed = 1 WHERE id IN ($ids_string)");
+    }
+    
+    // 添加聊天输入框
+    if ($can_input == 1) {
+        $all_post = $encode->encode("cmd=sendliaotian&scene=1&ucmd=$cmid&sid=$sid");
+        $lthtml .= <<<HTML
 ===<br/>
 <form action="?cmd=$all_post" method="post">
 <input type="hidden" name="ltlx" value="all">
@@ -1483,12 +1461,14 @@ if($can_input ==1){
 <input type="submit" value="发送">
 </form>
 HTML;
-}
-
-if($lthtml){
-$lthtml = preg_replace('/<br\s*\/?>$/', '', $lthtml); // 去掉结尾的 <br>
-}
-return $lthtml;
+    }
+    
+    // 去掉末尾的换行
+    if ($lthtml) {
+        $lthtml = preg_replace('/<br\s*\/?>$/', '', $lthtml);
+    }
+    
+    return $lthtml;
 }
 
 
@@ -2167,6 +2147,11 @@ foreach ($ret as $row) {
         if ($row) {
             $equipfid = $row['eq_true_id'];
             if ($equipfid) {
+            $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$equipfid' and name = 'iname'";
+            $stmt = $dblj->query($sql_2);
+            if($stmt->rowCount() >0){
+            $equipfname = $stmt->fetchColumn();
+            }else{
                 $sql = "select * from system_item_module where iid = (select iid from system_item where item_true_id = '$equipfid')";
                 $cxjg = $dblj->query($sql);
                 if ($cxjg) {
@@ -2175,6 +2160,7 @@ foreach ($ret as $row) {
                         $equipfname = \lexical_analysis\color_string($row['iname']);
                     }
                 }
+            }
             }
             $removeitem = $encode->encode("cmd=equip_op_basic&target_event=remove&ucmd=$cmid&equip_true_id=$equipfid&sid=$sid");
             $ckequipfinfo = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_true_id=$equipfid&sid=$sid");
