@@ -1134,8 +1134,11 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
 function additem($sid,$iid,$icount,$dblj){
     //在这个函数加入任务物品的增减变化检测判断
     $player = getplayer($sid,$dblj);
-    $item_type = getitem($iid,$dblj)->itype;
-    $iweight = getitem($iid,$dblj)->iweight;
+    $item_para = getitem($iid,$dblj);
+    $item_type = $item_para->itype;
+    $iweight = $item_para->iweight;
+    $ino_give = $item_para->ino_give;
+    $ino_out = $item_para->ino_out;
     $itotal_weight = $icount*$iweight;
     $player_last_burthen = $player->umax_burthen - $player->uburthen;
     if($player_last_burthen >=$itotal_weight && $player_last_burthen>0){
@@ -1150,7 +1153,7 @@ function additem($sid,$iid,$icount,$dblj){
         exec_global_event(37,'item',$ret['item_true_id'],$sid,$dblj);
         }elseif($item_type =="兵器"||$item_type =="防具"){
         for($i=0;$i<$icount;$i++){
-        $sql = "insert into system_item(icount,sid,uid,iid) VALUES (1,'$sid','$player->uid',$iid)";
+        $sql = "insert into system_item(icount,sid,uid,iid,ino_give,ino_out) VALUES (1,'$sid','$player->uid','$iid','$ino_give','$ino_out')";
         $dblj->exec($sql);
         $the_true_id = $dblj->lastInsertId();
         exec_global_event(37,'item',$the_true_id,$sid,$dblj);
@@ -1159,14 +1162,14 @@ function additem($sid,$iid,$icount,$dblj){
     }
     else{
         if($item_type !="兵器"&&$item_type !="防具"){
-        $sql = "insert into system_item(icount,sid,uid,iid) VALUES ($icount,'$sid','$player->uid',$iid)";
+        $sql = "insert into system_item(icount,sid,uid,iid,ino_give,ino_out) VALUES ('$icount','$sid','$player->uid','$iid','$ino_give','$ino_out')";
         $dblj->exec($sql);
         // 获取自增ID
         $item_true_id = $dblj->lastInsertId();
         exec_global_event(37,'item',$item_true_id,$sid,$dblj);
         }elseif($item_type =="兵器"||$item_type =="防具"){
         for($i=0;$i<$icount;$i++){
-        $sql = "insert into system_item(icount,sid,uid,iid) VALUES (1,'$sid','$player->uid',$iid)";
+        $sql = "insert into system_item(icount,sid,uid,iid,ino_give,ino_out) VALUES (1,'$sid','$player->uid','$iid','$ino_give','$ino_out')";
         $dblj->exec($sql);
         $item_true_id = $dblj->lastInsertId();
         exec_global_event(37,'item',$item_true_id,$sid,$dblj);

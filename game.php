@@ -1175,7 +1175,7 @@ echo $refresh_html;
             
             
             $cxjg = $stmt->execute();
-            
+            $excludes = ['iid','iarea_id','iname','iimage','idesc','itype','isubtype','iweight','iprice'];
             switch($gm_post_type_2){
                 case '1':
                     $update_column = "u".$gm_id;
@@ -1193,7 +1193,9 @@ echo $refresh_html;
                     break;
                 case '4':
                     $update_column = "i".$gm_id;
+                    if(!in_array($update_column,$excludes)){
                     $sql = "ALTER TABLE system_item MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
+                    }
                     $sql2 = "ALTER TABLE system_item_module MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
                     $cxjg =$dblj->exec($sql2);
                     break;
@@ -1208,7 +1210,9 @@ echo $refresh_html;
                     $cxjg =$dblj->exec($sql2);
                     break;
             }
+            if(!in_array($update_column,$excludes)){
             $cxjg =$dblj->exec($sql);
+            }
             }elseif ($gm_post_canshu == 8) {
             
             // 检查数据是否存在
