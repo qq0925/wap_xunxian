@@ -619,7 +619,6 @@ $expr = preg_replace_callback('/\{getarr\((.*?)\)\}/', function($matches) use ($
     }, $params);
     // 获取左边的值
     $value = @eval("return {$params[0]};");
-    
     // 获取右边的数组
     $array_str = $params[1];
     $array_str = str_replace(array("'","\""), '', $array_str);
@@ -3054,6 +3053,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
 // 定义处理字符串的函数
 function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $type = null, $para = null) {
     $db = DB::conn();
+    
     $can_redis = $GLOBALS['can_redis'];
     $matches = [];
     if($input){

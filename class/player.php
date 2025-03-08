@@ -1551,6 +1551,8 @@ function changeplayeritem($item_true_id,$gaibian,$sid,$dblj){
     if($now_ret && $now_count <=0){
     $sql = "delete from system_item WHERE sid='$sid' and item_true_id = '$item_true_id'";
     $ret = $dblj->exec($sql);
+    $sql = "delete from system_addition_attr WHERE oid='item' and mid = '$item_true_id'";
+    $ret = $dblj->exec($sql);
     }
     if($ret){
         return $out_count;

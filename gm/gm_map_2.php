@@ -398,12 +398,19 @@ for ($i = 1; $i <= $map_x; $i++) {
         echo "区域内还有场景，不能删除该区域!<br/>";
         }
     }
+    elseif($delete_map == 1){
+        echo "删除成功！<br/>";
+        //查询所有该区域下场景，然后遍历场景相关的事件，步骤，进行删除。
+        $deleteSql = "DELETE FROM system_map WHERE mid = '$target_midid'";
+        //$deleteStmt = $dblj->exec($deleteSql);
+    }
     if(!$cxallmaps){
     $area_delete = $encode->encode("cmd=gm_map_2&delete_id=$qy_id&post_canshu=0&sid=$sid");
     }else{
     $area_delete = $encode->encode("cmd=gm_map_2&delete_id=no&qy_id=$qy_id&post_canshu=1&sid=$sid");
     }
-    
+    $area_map_delete = $encode->encode("cmd=gm_map_2&qy_id=$qy_id&delete_map=1&post_canshu=1&sid=$sid");
+    $del_url = "game.php?cmd=$area_map_delete";
     $game_config = \player\getgameconfig($dblj);
     $list_row = $game_config->list_row;
     
@@ -521,9 +528,20 @@ $page_html
 <a href="?cmd=$npc_add_batch" >批量添加npc</a><br/>
 <a href="?cmd=$update_all_data" >更新该区域内所有对象</a><br/><br/>
 $area_change_html
-<a href="?cmd=$area_delete" >删除该区域</a><br/><br/>
+<a href="?cmd=$area_delete" >删除该区域</a><br/>
+<a href="#" onclick="return confirmAction('$del_url', '{$marea_name}')">删除该区域所有场景</a><br/><br/>
 <a href="?cmd=$re_area" >返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
+<script>
+function confirmAction(del_url, step_order) {
+    // 在确认框中显示具体的操作名称
+    if (confirm("你确定要删除 “" + step_order + "” 这个区域内的所有场景，包括场景相关的元素吗？")) {
+        // 使用传入的具体删除链接
+        window.location.href = del_url;
+    }
+    return false;
+}
+</script>
 HTML;
 echo $allmap;
 }
@@ -565,7 +583,6 @@ $allmap = <<<HTML
 </form><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
-
 HTML;
 echo $allmap;
 }

@@ -86,7 +86,6 @@ foreach ($data as $ele_1 => $ele_2) {
             
         }
 
-        
         if(preg_match('/pusharr.\(([\w.]+)\)/', $ele_1, $matches)){
             $new_recur_1 = $matches[1];
             $try_recur = '{'.$new_recur_1.'}'; // 匹配到的前缀部分（数字加点号)
