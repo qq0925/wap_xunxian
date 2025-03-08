@@ -628,17 +628,16 @@ function getitem($iid,$dblj){
     return $item;
 }
 
-function getownitem($item_true_id,$attr,$dblj){
+function getownitem($item_true_id,$iid,$attr,$dblj){
 $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = '$attr'";
 $stmt = $dblj->query($sql_2);
 if($stmt->rowCount() >0){
 $result = $stmt->fetchColumn();
 }else{
-
-$sql = "select $attr from system_item_module where iid = (select iid from system_item where item_true_id = '$item_true_id')";
+$sql = "select $attr from system_item_module where iid = '$iid'";
 $cxjg = $dblj->query($sql);
 if ($cxjg ->rowCount()>0) {
-    $row = $cxjg->fetch(PDO::FETCH_ASSOC);
+    $row = $cxjg->fetch(\PDO::FETCH_ASSOC);
     if ($row) {
         $result = $row[$attr];
         }

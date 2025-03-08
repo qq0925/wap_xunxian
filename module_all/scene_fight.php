@@ -307,13 +307,12 @@ if($round ==0&&$cmd =='pve_fight'){
                     $get_ret = \player\additem($sid,$drop_id,$drop_count,$dblj);
                     if($get_ret>0){
                         \player\changeitem_belong($get_ret,1, $alive_monster->nid,$dblj);//更新物品掉落
-                    $drop_item_name = \player\getownitem($get_ret,'iname',$dblj);
+                    $drop_item_name = \player\getownitem($get_ret,$drop_id,'iname',$dblj);
                     if(!$drop_item_name){
                     $drop_item_name = \player\getitem($drop_id,$dblj)->iname;
                     }
                     $drop_item_name = \lexical_analysis\color_string($drop_item_name);
                     }
-
                         // 更新物品数量
                     if (isset($item_counts[$drop_item_name])) {
                         $item_counts[$drop_item_name] += $drop_count;
