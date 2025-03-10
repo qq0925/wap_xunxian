@@ -639,115 +639,160 @@ echo $refresh_html;
         case 'quick_set'://调用快捷键设置事件
             $ym = 'module_all/player_fight_quick_set.php';
             break;
-       case 'sendliaotian'://发送聊天功能
-            $player = player\getplayer($sid,$dblj);
+        case 'sendliaotian'://发送聊天功能
+            $player = player\getplayer($sid, $dblj);
             $nowdate = date('Y-m-d H:i:s');
-            //$msg_interval = \player\getgameconfig($dblj)->player_send_global_msg_interval;
-            if (isset($ltlx) && isset($ltmsg)&&$ltmsg!=""){
-                switch ($ltlx){
+            
+            if (isset($ltlx) && isset($ltmsg) && trim($ltmsg) !== "") {
+                // 清理和验证消息内容
+                $ltmsg = trim($ltmsg);
+                $ltmsg = htmlspecialchars($ltmsg, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                
+                // 检查消息长度
+                if (mb_strlen($ltmsg, 'UTF-8') > 200) {
+                    $ltmsg = mb_substr($ltmsg, 0, 200, 'UTF-8');
+                }
+                
+                // 通用插入聊天记录函数
+                function insertChatMessage($dblj, $name, $msg, $uid, $imuid, $chat_type) {
+                    $nowdate = date('Y-m-d H:i:s');
+                    $sql = "INSERT INTO system_chat_data(name, msg, uid, imuid, chat_type, send_time) 
+                            VALUES (?, ?, ?, ?, ?, ?)";
+                    $stmt = $dblj->prepare($sql);
+                    return $stmt->execute([$name, $msg, $uid, $imuid, $chat_type, $nowdate]);
+                }
+                
+                switch ($ltlx) {
                     case 'all':
-                        //$second=floor((strtotime($nowdate)-strtotime($player->allchattime))%86400);//获取刷新间隔&& $second > $msg_interval
-                        if ($player->uname!=''){//间隔公共聊天
-                            $ltmsg = htmlspecialchars($ltmsg);
-                            $sql = "insert into system_chat_data(name,msg,uid,send_time) values(?,?,?,?)";
+                        if ($player->uname !== '') {
+                            // 使用预处理语句防止SQL注入
+                            $sql = "INSERT INTO system_chat_data(name, msg, uid, send_time) VALUES (?, ?, ?, ?)";
                             $stmt = $dblj->prepare($sql);
-                            $exeres = $stmt->execute(array($player->uname,$ltmsg,$player->uid,$nowdate));
-                            // $sql = "UPDATE game1 set allchattime = '$nowdate' where sid = '$sid'";
-                            // $stmt = $dblj->exec($sql);
-                            $ltmsg = \lexical_analysis\color_string($ltmsg);
-                            echo "你对大家说：".$ltmsg."<br/>";
-                        }else{
-                            $least_time = $msg_interval - $second;
-                            echo "每{$msg_interval}秒才能发言一次！下次发言还需要{$least_time}秒！<br/>";
+                            $exeres = $stmt->execute([$player->uname, $ltmsg, $player->uid, $nowdate]);
+                            
+                            if ($exeres) {
+                                echo "发送成功！<br/>";
+                            } else {
+                                echo "发送失败，请稍后再试！<br/>";
+                            }
+                        } else {
+                            echo "无法发送消息，请检查您的账号状态。<br/>";
                         }
-                        if($scene ==1){
-                        unset($_POST);
-                        $cmd = 'gm_scene_new';
-                        $ym = 'module_all/main_page.php';
-                        }else{
-                        $ym = 'module_all/liaotian.php';
+                        
+                        if($scene == 1) {
+                            unset($_POST);
+                            $cmd = 'gm_scene_new';
+                            $ym = 'module_all/main_page.php';
+                        } else {
+                            $ym = 'module_all/liaotian.php';
                         }
                         break;
+                        
                     case "im":
-                        $check_uid = \player\getplayer(null,$dblj,$imuid)->uid;
-                        if ($player->uname!='' &&$player->uid !=$imuid &&$check_uid){
-                            $ltmsg = htmlspecialchars($ltmsg);
-                                $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','$ltmsg',$player->uid,{$imuid},1,'$nowdate')";
-                            $cxjg = $dblj->exec($sql);
-                            $mid = \player\getplayer(null,$dblj,$imuid)->sid;
-                            $ltmsg = \lexical_analysis\color_string($ltmsg);
-                            echo "发送成功!"."你对对方说：".$ltmsg."<br/>";
-                            $ym = 'module_all/scene_oplayer_detail.php';
-                        }else{
-                            echo "发送失败！用户不存在！<br/>";
+                        // 验证imuid参数是否为数字
+                        if (!isset($imuid) || !is_numeric($imuid) || intval($imuid) <= 0) {
+                            echo "无效的目标用户ID！<br/>";
+                            $ltlx = 'im';
+                            $ym = 'module_all/liaotian.php';
+                            break;
+                        }
+                        
+                        $imuid = intval($imuid); // 确保imuid是整数
+                        $check_uid = \player\getplayer(null, $dblj, $imuid)->uid;
+                        
+                        if ($player->uname !== '' && $player->uid != $imuid && $check_uid) {
+                            // 使用安全的插入函数
+                            if (insertChatMessage($dblj, $player->uname, $ltmsg, $player->uid, $imuid, 1)) {
+                                $mid = \player\getplayer(null, $dblj, $imuid)->sid;
+                                echo "发送成功！<br/>";
+                                $ym = 'module_all/scene_oplayer_detail.php';
+                            } else {
+                                echo "发送失败，请稍后再试！<br/>";
+                                $ltlx = 'im';
+                                $ym = 'module_all/liaotian.php';
+                            }
+                        } else {
+                            echo "发送失败！用户不存在或不能发送消息给自己！<br/>";
                             $ltlx = 'im';
                             $ym = 'module_all/liaotian.php';
                         }
                         break;
+                        
                     case "city":
-                        //$second=floor((strtotime($nowdate)-strtotime($player->citychattime))%86400);//获取刷新间隔 && $second > $msg_interval
-                        if ($player->uname!=''){
-                        if ($player->uname!=''){
-                            $ltmsg = htmlspecialchars($ltmsg);
-                                $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','$ltmsg',$player->uid,{$imuid},2,'$nowdate')";
-                            $cxjg = $dblj->exec($sql);
-                            $oid = $imuid;
-                            $sql = "UPDATE game1 set citychattime = '$nowdate' where sid = '$sid'";
-                            $stmt = $dblj->exec($sql);
-                            $ltmsg = \lexical_analysis\color_string($ltmsg);
-                            echo "发送成功!"."你对大家说：".$ltmsg."<br/>";
-                        }else{
-                            echo "发送失败！<br/>";
+                        if (!isset($imuid) || !is_numeric($imuid)) {
+                            echo "无效的城市ID！<br/>";
                             $ltlx = 'city';
+                            $ym = 'module_all/liaotian.php';
+                            break;
                         }
-                        }else{
-                            $least_time = $msg_interval - $second;
-                            echo "每{$msg_interval}秒才能发言一次！下次发言还需要{$least_time}秒！<br/>";
+                        
+                        $imuid = intval($imuid);
+                        if ($player->uname !== '') {
+                            // 使用安全的插入函数
+                            if (insertChatMessage($dblj, $player->uname, $ltmsg, $player->uid, $imuid, 2)) {
+                                $oid = $imuid;
+                                echo "发送成功！<br/>";
+                            } else {
+                                echo "发送失败，请稍后再试！<br/>";
+                            }
+                        } else {
+                            echo "无法发送消息，请检查您的账号状态。<br/>";
                         }
+                        $ltlx = 'city';
                         $ym = 'module_all/liaotian.php';
                         break;
+                        
                     case "area":
-                        //$second=floor((strtotime($nowdate)-strtotime($player->areachattime))%86400);//获取刷新间隔&& $second > $msg_interval
-                        if ($player->uname!='' ){
-                        if ($player->uname!=''){
-                            $ltmsg = htmlspecialchars($ltmsg);
-                                $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','$ltmsg',$player->uid,{$imuid},3,'$nowdate')";
-                            $cxjg = $dblj->exec($sql);
-                            $oid = $imuid;
-                            $sql = "UPDATE game1 set areachattime = '$nowdate' where sid = '$sid'";
-                            $stmt = $dblj->exec($sql);
-                            $ltmsg = \lexical_analysis\color_string($ltmsg);
-                            echo "发送成功!"."你对大家说：".$ltmsg."<br/>";
-                        }else{
-                            echo "发送失败！<br/>";
+                        if (!isset($imuid) || !is_numeric($imuid)) {
+                            echo "无效的区域ID！<br/>";
                             $ltlx = 'area';
+                            $ym = 'module_all/liaotian.php';
+                            break;
                         }
-                        }else{
-                            $least_time = $msg_interval - $second;
-                            echo "每{$msg_interval}秒才能发言一次！下次发言还需要{$least_time}秒！<br/>";
+                        
+                        $imuid = intval($imuid);
+                        if ($player->uname !== '') {
+                            // 使用安全的插入函数
+                            if (insertChatMessage($dblj, $player->uname, $ltmsg, $player->uid, $imuid, 3)) {
+                                $oid = $imuid;
+                                echo "发送成功！<br/>";
+                            } else {
+                                echo "发送失败，请稍后再试！<br/>";
+                            }
+                        } else {
+                            echo "无法发送消息，请检查您的账号状态。<br/>";
                         }
+                        $ltlx = 'area';
                         $ym = 'module_all/liaotian.php';
                         break;
+                        
                     case "team":
-                        if ($player->uname!=''&&$player->uteam_id!=0){
-                            $ltmsg = htmlspecialchars($ltmsg);
-                                $sql = "insert into system_chat_data(name,msg,uid,imuid,chat_type,send_time) values('$player->uname','$ltmsg',$player->uid,{$imuid},4,'$nowdate')";
-                            $cxjg = $dblj->exec($sql);
-                            $oid = $imuid;
-                            $ltmsg = \lexical_analysis\color_string($ltmsg);
-                            echo "发送成功!"."你对大家说：".$ltmsg."<br/>";
-                        }else{
-                            echo "发送失败！<br/>";
+                        if (!isset($imuid) || !is_numeric($imuid)) {
+                            echo "无效的队伍ID！<br/>";
                             $ltlx = 'team';
+                            $ym = 'module_all/liaotian.php';
+                            break;
                         }
+                        
+                        $imuid = intval($imuid);
+                        if ($player->uname !== '' && $player->uteam_id != 0) {
+                            // 使用安全的插入函数
+                            if (insertChatMessage($dblj, $player->uname, $ltmsg, $player->uid, $imuid, 4)) {
+                                $oid = $imuid;
+                                echo "发送成功！<br/>";
+                            } else {
+                                echo "发送失败，请稍后再试！<br/>";
+                            }
+                        } else {
+                            echo "发送失败！您需要先加入一个队伍。<br/>";
+                        }
+                        $ltlx = 'team';
                         $ym = 'module_all/liaotian.php';
                         break;
                 }
-            }
-            else{
+            } else {
                 echo "输入内容不能为空！<br/>";
                 $ym = 'module_all/liaotian.php';
-                break;
             }
             break;
         case 'liaotian'://聊天
@@ -1081,7 +1126,13 @@ echo $refresh_html;
             }
             break;
         case 'gm_game_expdefine'://表达式定义
+            if($out_canshu ==1){
+            $ym ='gm/gameexp_out.php';
+            }elseif($in_canshu == 1){
+            $ym ='gm/gameexp_in.php';
+            }else{
             $ym ='gm/gameexp_define.php';
+            }
             break;
         case 'gm_game_attrdefine'://属性定义
             $ym = 'gm/gameattr_define.php';
@@ -3736,7 +3787,8 @@ echo $refresh_html;
 
     if (!empty($_POST)) {
     foreach ($_POST as $key => $value) {
-       $is_designer_post_str .= $key . ' = ' . $value . '<br>';
+        $value = htmlspecialchars($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $is_designer_post_str .= $key . ' = ' . $value . '<br>';
     }
 }
 

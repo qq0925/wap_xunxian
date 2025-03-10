@@ -69,14 +69,14 @@ if ($firstDotPosition !== false) {
         case 'o':
             $cacheKey = $oid."::".$mid.'::'.$attr;
             break;
-         case 'e':
+        case 'e':
             $cacheKey = 'expr::'.$attr;
             break;
         case 'c':
             $cacheKey = 'system::'.$attr;
             break;
         case 'g':
-            $cacheKey = 'global::'.$attr;
+            $cacheKey = 'global::'.$attr.'::'.'player::'.$sid.'::'.$oid."::".$mid.'::';
             break;
         case 'm':
             $cacheKey = 'm_type::'.$oid.'::'.'m_value::'.$mid.'m_j::'.$jid.'::'.$attr;
@@ -116,7 +116,7 @@ if ($firstDotPosition !== false) {
             $cacheKey = 'system::'.$attr;
             break;
         case 'g':
-            $cacheKey = 'global::'.$attr;
+            $cacheKey = 'global::'.$attr.'::'.'player::'.$sid.'::'.$oid."::".$mid.'::';
             break;
         case 'm':
             $cacheKey = 'm_type::'.$oid.'::'.'m_value::'.$mid.'m_j::'.$jid.'::'.$attr;

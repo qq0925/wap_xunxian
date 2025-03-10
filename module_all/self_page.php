@@ -70,7 +70,6 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_target_func = $get_main_page[$i]['target_func'];
     $main_link_value = $get_main_page[$i]['link_value'];
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
-    //$main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
     if($main_target_event !=0){
@@ -119,10 +118,12 @@ HTML;
 }
 if($player->uis_designer ==1){
 $gm_now_module = $encode->encode("cmd=game_self_page&self_id=$page_id&sid=$sid");
+$gm_module_list = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=13&sid=$sid");
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $gm_html = <<<HTML
 ----------<br/>
 <a href="?cmd=$gm_now_module">设计当前模板</a><br/>
+<a href="?cmd=$gm_module_list">自定义模板列表</a><br/>
 <a href="?cmd=$gm_main">设计大厅</a><br/>
 ----------<br/>
 HTML;

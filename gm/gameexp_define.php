@@ -1,4 +1,3 @@
-<p>[表达式定义]</p>
 <?php
 $game_config = \player\getgameconfig($dblj);
 $list_row = $game_config->list_row;
@@ -108,8 +107,13 @@ if ($totalPages > 2 && $currentPage < $totalPages-1) {
 HTML;
 }
 
-
+$expr_out = $encode->encode("cmd=gm_game_expdefine&out_canshu=1&sid=$sid");
+$expr_in = $encode->encode("cmd=gm_game_expdefine&in_canshu=1&sid=$sid");
 $gm_html = <<<HTML
+[表达式定义]<br/>
+<a href="?cmd=$expr_out" >导出表达式->excel</a><br/>
+<a href="?cmd=$expr_in" >导入表达式<-excel</a><br/>
+---<br/>
 $attr_html
 $page_html<br/>
 <a href="?cmd=$gm_exp_def">增加表达式</a><br/>

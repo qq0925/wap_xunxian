@@ -60,41 +60,45 @@ if($can_redis == 1){
 global $redis;
 }
 $updateAll = [];
-// 使用逗号分割字符串
-$keyValuePairs = explode(",", $input);
-$data = json_decode($input, true);
 
+$data = json_decode($input, true);
+if($data){
 foreach ($data as $ele_1 => $ele_2) {
     // 使用等号分割键值对
-    $firstEqualsPos = strpos($pair, '=');
         if($can_redis == 1){
         $check_cache = \gm\check_redis($db,$ele_1,$sid,$oid,$mid,$jid,$type,$para);
         }
-        //$parts = explode(".", $ele_1);
-
         if(!is_numeric($ele_2)){
         if($can_redis == 1){
         $redis->del($check_cache);
         }
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
-        $ele_2 = str_replace(array("'", "\""), '', $ele_2);
+        $ele_2 = str_replace("'", '', $ele_2);
         }else{
             if($can_redis == 1){
             $redis->set($check_cache,$ele_2);
             }
             
         }
-
         if(preg_match('/pusharr.\(([\w.]+)\)/', $ele_1, $matches)){
             $new_recur_1 = $matches[1];
             $try_recur = '{'.$new_recur_1.'}'; // 匹配到的前缀部分（数字加点号)
             $try_recur_value = lexical_analysis\process_string($try_recur,$sid,$oid,$mid);
             $try_recur_value = str_replace("'",'', $try_recur_value);
+            // 创建JSON格式而不是字符串键值对
             if($try_recur_value){
-            $new_recur = $new_recur_1.'="'.$try_recur_value.'|'.$ele_2.'"';
-            }else{
-            $new_recur = $new_recur_1.'='.$ele_2;
+                // 创建一个关联数组
+                $json_array = [
+                    $new_recur_1 => '"'.$try_recur_value . '|' . $ele_2.'"'
+                ];
+                $new_recur = json_encode($json_array);
+            } else {
+                // 创建一个关联数组
+                $json_array = [
+                    $new_recur_1 => $ele_2
+                ];
+                $new_recur = json_encode($json_array);
             }
             attrsetting($new_recur,$sid,$oid,$mid,$para);
             return;
@@ -115,12 +119,17 @@ foreach ($data as $ele_1 => $ele_2) {
                 echo "数组元素不存在！<br/>";
                 return;
             }
-            
-            if($temp_arr){
-            $new_recur = $new_recur_1.'="'.$temp_arr.'"';
-            }else{
-            $new_recur = $new_recur_1.'=""';
-            }
+                // 创建一个关联数组
+                if($temp_arr){
+                $json_array = [
+                    $new_recur_1 => '"'.$temp_arr.'"'
+                ];
+                }else{
+                $json_array = [
+                    $new_recur_1 => ''
+                ];
+                }
+                $new_recur = json_encode($json_array);
             attrsetting($new_recur,$sid,$oid,$mid,$para);
             return;
             }
@@ -202,7 +211,7 @@ foreach ($data as $ele_1 => $ele_2) {
                     $row = $result->fetch_assoc();
                     $player_uid = $row['uid'];
                     $player_uname = $row['uname'];
-                    $ltmsg = htmlspecialchars($ele_2);
+                    $ltmsg = htmlspecialchars($ele_2, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                     $send_time = date('Y-m-d H:i:s');
                     $updateQuery = "insert into system_chat_data(name,msg,uid,send_time) values(?,?,?,?)";
 
@@ -281,7 +290,7 @@ foreach ($data as $ele_1 => $ele_2) {
                     $row = $result->fetch_assoc();
                     $player_uid = $row['uid'];
                     $player_uname = $row['uname'];
-                    $ltmsg = htmlspecialchars($ele_2);
+                    $ltmsg = htmlspecialchars($ele_2, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                     $send_time = date('Y-m-d H:i:s');
                     $updateQuery = "insert into system_chat_data(name,msg,uid,send_time) values(?,?,?,?)";
 
@@ -508,9 +517,6 @@ foreach ($data as $ele_1 => $ele_2) {
                     $db->query($updateQuery);
                 }
                 break;
-            case 'pusharr':
-                
-                break;
             default:
                 break;
         }
@@ -518,6 +524,7 @@ foreach ($data as $ele_1 => $ele_2) {
         // echo "ele_1: " . $ele_1 . "<br/>";
         // echo "ele_2: " . $ele_2 . "<br/>";
         //这里要获取到属性字段表中玩家属性类别下id等于$ele_1的name名称
+}
 }
 // if($updateAll){
 // 开启一个事务
@@ -548,6 +555,7 @@ global $redis;
 $updateAll = [];
 $data = json_decode($input, true);
 $old_sid = $sid;
+if($data){
 foreach ($data as $ele_1 => $ele_2) {
     // 找到第一个等号的位置
 $sid = $old_sid;
@@ -835,6 +843,7 @@ $sid = $old_sid;
          "ele_2: " . $ele_2 . "<br/>";
         }
 
+}
 }
 if($updateAll){
 // 开启一个事务

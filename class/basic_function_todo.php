@@ -1343,111 +1343,136 @@ function get_chat_list($sid, $dblj, &$cmid) {
     $maxChars = $gameconfig->game_max_char;
     $nowdate = date('Y-m-d H:i:s');
     
-    // 修改查询以正确处理私聊消息：
-    // 1. 保留所有非私聊消息
-    // 2. 对于私聊消息，仅当用户是接收者(imuid = player->uid)或者不是发送者(uid != player->uid)时显示
+    // 使用参数化查询防止SQL注入
     $sql = "SELECT * FROM system_chat_data WHERE viewed = 0 AND 
-           (chat_type != 1 OR (chat_type = 1 AND imuid = {$player->uid})) 
-           ORDER BY id DESC LIMIT 0,$scene_message_count";
-    $ltcxjg = $dblj->query($sql);
+           (chat_type != 1 OR (chat_type = 1 AND imuid = :player_uid)) 
+           ORDER BY id DESC LIMIT :limit";
+    
+    try {
+        $stmt = $dblj->prepare($sql);
+        $stmt->bindValue(':player_uid', $player->uid, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $scene_message_count, PDO::PARAM_INT);
+        $stmt->execute();
+        $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $messages_count = count($messages);
+    } catch (PDOException $e) {
+        error_log("Chat list query error: " . $e->getMessage());
+        return "无法加载聊天信息，请刷新页面或稍后再试。";
+    }
+    
     $lthtml = '';
     $viewed_ids = []; // 存储需要更新为已查看的消息ID
     
-    if ($ltcxjg) {
-        $messages = $ltcxjg->fetchAll(PDO::FETCH_ASSOC);
-        $messages_count = count($messages);
+    // 倒序处理消息以保持正确顺序
+    for ($i = 0; $i < $messages_count; $i++) {
+        $message = $messages[$messages_count - $i - 1];
+        $chat_id = intval($message['id']);
+        $uname = $message['name'];
+        $umsg = $message['msg'];
+        $uid = intval($message['uid']);
+        $imuid = isset($message['imuid']) ? intval($message['imuid']) : 0;
+        $chat_type = intval($message['chat_type']);
+        $send_type = intval($message['send_type']);
+        $send_time = $message['send_time'];
+        $viewed = intval($message['viewed']);
         
-        // 倒序处理消息以保持正确顺序
-        for ($i = 0; $i < $messages_count; $i++) {
-            $message = $messages[$messages_count - $i - 1];
-            $chat_id = $message['id'];
-            $uname = $message['name'];
-            $umsg = $message['msg'];
-            $uid = $message['uid'];
-            $imuid = $message['imuid'];
-            $chat_type = $message['chat_type'];
-            $send_type = $message['send_type'];
-            $send_time = $message['send_time'];
-            $viewed = $message['viewed'];
-            
-            // 跳过用户自己发送的私聊消息 - 保持这个额外检查作为安全措施
-            if ($chat_type == 1 && $uid == $player->uid && $imuid != $player->uid) {
-                continue;
+        // 跳过用户自己发送的私聊消息 - 保持这个额外检查作为安全措施
+        if ($chat_type == 1 && $uid == $player->uid && $imuid != $player->uid) {
+            continue;
+        }
+        
+        // 截断过长消息
+        if (mb_strlen($umsg, 'utf-8') > $maxChars) {
+            $umsg = mb_substr($umsg, 0, $maxChars, 'utf-8') . "...";
+        }
+        
+        // 应用颜色处理(已内置安全处理)
+        $umsg = lexical_analysis\color_string($umsg);
+        
+        // 时间显示处理
+        $time_display = $scene_chat_time == 1 ? "<span class='txt-fade'>[" . $send_time . "]</span>" : "<span class='txt-fade'></span>";
+        
+        // 根据消息类型格式化输出
+        $show_message = false;
+        
+        // 处理公共消息
+        if ($uid && $chat_type == 0) {
+            if ($long_exist_message == 0 && $player->allchattime >= $send_time) {
+                continue; // 跳过不需要显示的旧消息
             }
             
-            // 截断过长消息
-            if (mb_strlen($umsg, 'utf-8') > $maxChars) {
-                $umsg = mb_substr($umsg, 0, $maxChars, 'utf-8') . "...";
+            // 如果是新消息，更新最后聊天时间
+            if ($long_exist_message == 0 && $player->allchattime < $send_time) {
+                $update_stmt = $dblj->prepare("UPDATE game1 SET allchattime = :nowdate WHERE sid = :sid");
+                $update_stmt->execute([':nowdate' => $nowdate, ':sid' => $sid]);
             }
             
-            // 应用颜色处理
-            $umsg = lexical_analysis\color_string($umsg);
+            $cmid++;
+            $u_cmd = $encode->encode("cmd=" . ($send_type == 0 ? "getoplayerinfo" : "npc_html") . "&ucmd=$cmid&" . ($send_type == 0 ? "uid" : "nid") . "=$uid&sid=$sid");
+            $lthtml .= "[<span style='color: orangered;'>公共</span>]<a href='?cmd=" . $u_cmd . "'>{$uname}</a>:{$umsg}{$time_display}<br/>";
+            $show_message = true;
+        }
+        
+        // 处理私聊消息
+        else if ($imuid == $player->uid && $chat_type == 1 && $viewed == 0) {
+            $cmid++;
             
-            // 时间显示处理
-            $time_display = $scene_chat_time == 1 ? "<span class='txt-fade'>[{$send_time}]</span>" : "<span class='txt-fade'></span>";
+            if ($uid) {
+                $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
+                $lthtml .= "[私聊]<a href='?cmd=" . $o_cmd . "'>{$uname}</a>对你说:{$umsg}{$time_display}<br/>";
+            } else {
+                $lthtml .= "[系统]:{$umsg}{$time_display}<br/>";
+            }
             
-            // 根据消息类型格式化输出
-            $show_message = false;
+            $viewed_ids[] = $chat_id; // 标记为已查看
+            $show_message = true;
+        }
+        
+        // 处理系统消息
+        else if ($chat_type == 6) {
+            if ($long_exist_message == 0 && $player->allchattime >= $send_time && !$imuid) {
+                continue; // 跳过不需要显示的旧系统消息
+            }
             
-            // 处理公共消息
-            if ($uid && $chat_type == 0) {
-                if ($long_exist_message == 0 && $player->allchattime >= $send_time) {
-                    continue; // 跳过不需要显示的旧消息
-                }
-                
-                // 如果是新消息，更新最后聊天时间
-                if ($long_exist_message == 0 && $player->allchattime < $send_time) {
-                    $dblj->exec("UPDATE game1 SET allchattime = '$nowdate' WHERE sid = '$sid'");
-                }
-                
+            if ($long_exist_message == 0 && $player->allchattime < $send_time) {
+                $update_stmt = $dblj->prepare("UPDATE game1 SET allchattime = :nowdate WHERE sid = :sid");
+                $update_stmt->execute([':nowdate' => $nowdate, ':sid' => $sid]);
+            }
+            
+            if (!$uid && $imuid == 0) {
+                $lthtml .= "[<span style='color: orangered;'>系统</span>]:{$umsg}{$time_display}<span class='txt-fade'></span><br/>";
+                $show_message = true;
+            } else if ($uid) {
                 $cmid++;
                 $u_cmd = $encode->encode("cmd=" . ($send_type == 0 ? "getoplayerinfo" : "npc_html") . "&ucmd=$cmid&" . ($send_type == 0 ? "uid" : "nid") . "=$uid&sid=$sid");
-                $lthtml .= "[<span style='color: orangered;'>公共</span>]<a href='?cmd=$u_cmd'>$uname</a>:{$umsg}{$time_display}<br/>";
+                $lthtml .= "[<span style='color: orangered;'>系统</span>]:<a href='?cmd=" . $u_cmd . "'>{$uname}</a>:{$umsg}{$time_display}<span class='txt-fade'></span><br/>";
                 $show_message = true;
-            }
-            
-            // 处理私聊消息
-            else if ($imuid == $player->uid && $chat_type == 1 && $viewed == 0) {
-                $cmid++;
-                
-                if ($uid) {
-                    $o_cmd = $encode->encode("cmd=getoplayerinfo&ucmd=$cmid&uid=$uid&sid=$sid");
-                    $lthtml .= "[私聊]<a href='?cmd=$o_cmd'>$uname</a>对你说:{$umsg}{$time_display}<br/>";
-                } else {
-                    $lthtml .= "[系统]:{$umsg}{$time_display}<br/>";
-                }
-                
-                $viewed_ids[] = $chat_id; // 标记为已查看
-                $show_message = true;
-            }
-            
-            // 处理系统消息
-            else if ($chat_type == 6) {
-                if ($long_exist_message == 0 && $player->allchattime >= $send_time && !$imuid) {
-                    continue; // 跳过不需要显示的旧系统消息
-                }
-                
-                if ($long_exist_message == 0 && $player->allchattime < $send_time) {
-                    $dblj->exec("UPDATE game1 SET allchattime = '$nowdate' WHERE sid = '$sid'");
-                }
-                
-                if (!$uid && $imuid == 0) {
-                    $lthtml .= "[<span style='color: orangered;'>系统</span>]:{$umsg}{$time_display}<span class='txt-fade'></span><br/>";
-                    $show_message = true;
-                } else if ($uid) {
-                    $cmid++;
-                    $u_cmd = $encode->encode("cmd=" . ($send_type == 0 ? "getoplayerinfo" : "npc_html") . "&ucmd=$cmid&" . ($send_type == 0 ? "uid" : "nid") . "=$uid&sid=$sid");
-                    $lthtml .= "[<span style='color: orangered;'>系统</span>]:<a href='?cmd=$u_cmd'>$uname</a>:{$umsg}{$time_display}<span class='txt-fade'></span><br/>";
-                    $show_message = true;
-                }
             }
         }
     }
     
-    // 批量更新已查看状态
+    // 批量更新已查看状态 - 使用预处理语句防止SQL注入
     if (!empty($viewed_ids)) {
-        $ids_string = implode(',', $viewed_ids);
-        $dblj->exec("UPDATE system_chat_data SET viewed = 1 WHERE id IN ($ids_string)");
+        try {
+            // 对于大量ID，使用批量处理更高效
+            if (count($viewed_ids) > 20) {
+                // 分批处理，每批20个ID
+                $batches = array_chunk($viewed_ids, 20);
+                foreach ($batches as $batch) {
+                    $placeholders = implode(',', array_fill(0, count($batch), '?'));
+                    $update_sql = "UPDATE system_chat_data SET viewed = 1 WHERE id IN ($placeholders)";
+                    $stmt = $dblj->prepare($update_sql);
+                    $stmt->execute($batch);
+                }
+            } else {
+                $placeholders = implode(',', array_fill(0, count($viewed_ids), '?'));
+                $update_sql = "UPDATE system_chat_data SET viewed = 1 WHERE id IN ($placeholders)";
+                $stmt = $dblj->prepare($update_sql);
+                $stmt->execute($viewed_ids);
+            }
+        } catch (PDOException $e) {
+            error_log("Error updating viewed status: " . $e->getMessage());
+        }
     }
     
     // 添加聊天输入框
@@ -1455,7 +1480,7 @@ function get_chat_list($sid, $dblj, &$cmid) {
         $all_post = $encode->encode("cmd=sendliaotian&scene=1&ucmd=$cmid&sid=$sid");
         $lthtml .= <<<HTML
 ===<br/>
-<form action="?cmd=$all_post" method="post">
+<form action="?cmd={$all_post}" method="post">
 <input type="hidden" name="ltlx" value="all">
 <input name="ltmsg" maxlength="200" rows="4" cols="20"></input>
 <input type="submit" value="发送">

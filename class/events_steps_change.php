@@ -11,9 +11,7 @@ events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$paren
 }else {
     if(!$para){
     foreach ($_POST as $input_para =>$input_value){
-
     if(!is_null($input_value)){
-    
     $sql = "INSERT INTO system_player_inputs (sid, event_id, id, value) VALUES (:sid, :target_event, :input_para, :input_value)";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid);
@@ -402,7 +400,7 @@ HTML;
                                 }
                                 $steps_page +=1;
                                 $input_para = substr($input_para, 0, -1);
-                                    $post_url = $encode->encode("cmd=main_target_event&mid=$mid&oid=$oid&para=$input_para&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
+                                $post_url = $encode->encode("cmd=main_target_event&mid=$mid&oid=$oid&para=$input_para&ucmd=$cmid&target_event=$target_event&parents_cmd=$parents_cmd&parents_page=$parents_page&steps_page=$steps_page&sid=$sid");
                                 $cmid = $cmid + 1;
                                 $cdid[] = $cmid;
                                 $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");

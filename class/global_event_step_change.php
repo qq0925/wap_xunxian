@@ -12,6 +12,7 @@ global_events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid
     $para_para =explode('|',$para);
     foreach ($para_para as $input_para){
     $input_value = $_POST[$input_para];
+    $input_value = htmlspecialchars($input_value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $sql = "INSERT INTO system_player_inputs (sid, event_id, id, value) VALUES (:sid, :target_event, :input_para, :input_value)";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid);

@@ -22,6 +22,9 @@ if($data ===[]){
 unset($data);
 }
 }else{
+if($old_key != $key){
+unset($data[$old_key]);
+}
 $data[$key] = $value; // 自动覆盖重复键
 echo "更新完成！<br/>";
 }

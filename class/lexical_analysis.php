@@ -4589,6 +4589,7 @@ $input = evaluate_expression_3($input,$db,$pid,$oid,$mid,$jid,$type,$para);
 
 
 function color_string($input) {
+    //$input = htmlspecialchars($input, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $pattern = '/@([^@]+)@([^@]+)@end@/'; // 匹配以 @ 开头和结尾的内容，括号内部为捕获组，表示颜色值和文本
     $matches = array();
     preg_match_all($pattern, $input, $matches, PREG_SET_ORDER);
@@ -4601,13 +4602,13 @@ function color_string($input) {
             if (ctype_xdigit($color) && strlen($color) === 6) {
                 $color = '#' . $color; // 添加 "#" 符号
             }
-            $input = str_replace($match[0], '<span style="font-weight: bold;color: ' . $color . ';">' . $text . '</span>', $input);
+            $input = str_replace($match[0], '<font color =  "' . $color . '";>' . $text . '</font>', $input);
         }
     }
 
     $input = str_replace('@end@', '</span>', $input);
 
-    return html_entity_decode($input);
+    return ($input);
 }
 
 function generate_image_link($hashtag) {
