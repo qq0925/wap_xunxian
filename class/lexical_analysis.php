@@ -1866,6 +1866,19 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     break;
                 case 'o':
                     switch($oid){
+                        case 'area':
+                            $sql = "SELECT $attr2 FROM system_area WHERE id = ?";
+                            $stmt = $db->prepare($sql);
+                            $stmt->bind_param("i", $mid);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            if (!$result) {
+                                die('查询失败: ' . $db->error);
+                            }
+                            $row = $result->fetch_assoc();
+                            $op = nl2br($row[$attr2]);
+                            $op = process_string($op,$gid,$oid,$mid,$jid,$type,$para);
+                            break;
                         case 'scene':
                             // 匹配字符串格式 exit_x.xx，不限制.xx的具体值
                             // 匹配字符串格式 exit_x.xx
@@ -3108,11 +3121,12 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
                 if($op =='' || $op == "" || $op ==null){
-                    ////$op = "\"\"";
                     $op = '0';
                 }
-                //var_dump($op);
-                // 替换字符串中的变量
+            }
+            else{
+                $op = $match;
+            }
                 switch ($op[0]) {
                     case 's':
                         $remain = substr($op, 1);
@@ -3123,10 +3137,24 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         }
                         $row = $cxjg->fetch_assoc();
                         $temp_mid = $row['mid'];
-                        //$op = str_replace(array("'", "\"\""), '0', $op);
                         $op = str_replace("f({$match})", "o", $f_temp);
                         if($temp_mid){
                         $f_input = process_string($op, $sid, 'scene', $temp_mid, $jid, $type, $para);
+                        }
+                        $input = str_replace($f_temp, $f_input, $input);
+                        break;
+                    case 'a':
+                        $remain = substr($op, 1);
+                        $sql = "SELECT id FROM system_area where id = '$remain'";
+                        $cxjg = $db->query($sql);
+                        if (!$cxjg) {
+                        die('查询失败: ' . $db->error);
+                        }
+                        $row = $cxjg->fetch_assoc();
+                        $temp_aid = $row['id'];
+                        $op = str_replace("f({$match})", "o", $f_temp);
+                        if($temp_aid){
+                        $f_input = process_string($op, $sid, 'area', $temp_aid, $jid, $type, $para);
                         }
                         $input = str_replace($f_temp, $f_input, $input);
                         break;
@@ -3139,7 +3167,6 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         }
                         $row = $cxjg->fetch_assoc();
                         $temp_iid = $row['iid'];
-                        //$op = str_replace(array("'", "\"\""), '0', $op);
                         $op = str_replace("f({$match})", "o", $f_temp);
                         if($temp_iid){
                         $f_input = process_string($op, $sid, 'item_module', $temp_iid, $jid, $type, $para);
@@ -3155,7 +3182,6 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         }
                         $row = $cxjg->fetch_assoc();
                         $temp_nid = $row['nid'];
-                        //$op = str_replace(array("'", "\"\""), '0', $op);
                         $op = str_replace("f({$match})", "o", $f_temp);
                         if($temp_nid){
                         $f_input = process_string($op, $sid, 'npc', $temp_nid, $jid, $type, $para);
@@ -3170,7 +3196,6 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         }
                         $row = $cxjg->fetch_assoc();
                         $temp_sid = $row['sid'];
-                        //$op = str_replace(array("'", "\"\""), '0', $op);
                         $op = str_replace("f({$match})", "u", $f_temp);
                         if($temp_sid){
                         $f_input = process_string($op, $temp_sid, $oid, $mid, $jid, $type, $para);
@@ -3178,7 +3203,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                         $input = str_replace($f_temp, $f_input, $input);
                         break;
                 }
-            }
+            
         }
     }
 }
@@ -3648,6 +3673,20 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                     break;
                 case 'o':
                     switch($oid){
+                        case 'area':
+                            $sql = "SELECT $attr2 FROM system_area WHERE id = ?";
+                            $stmt = $db->prepare($sql);
+                            $stmt->bind_param("s", $mid);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            if (!$result) {
+                                die('查询失败: ' . $db->error);
+                            }
+                            $row = $result->fetch_assoc();
+                            $op = nl2br($row[$attr2]);
+                            $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
+                            break;
+
                         case 'scene':
                             $attr3 = 'm'.$attr2;
                             $sql = "SELECT $attr3 FROM system_map WHERE mid = ?";
@@ -4295,6 +4334,19 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                     break;
                 case 'o':
                     switch($oid){
+                        case 'area':
+                            $sql = "SELECT $attr2 FROM system_area WHERE id = ?";
+                            $stmt = $db->prepare($sql);
+                            $stmt->bind_param("s", $mid);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            if (!$result) {
+                                die('查询失败: ' . $db->error);
+                            }
+                            $row = $result->fetch_assoc();
+                            $op = nl2br($row[$attr2]);
+                            $op = process_string_3($op,$pid,$oid,$mid,$jid,$type,$para);
+                            break;
                         case 'scene':
                             $attr3 = 'm'.$attr2;
                             $sql = "SELECT * FROM system_map WHERE mid = ?";
@@ -4312,8 +4364,6 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                             $op = nl2br($row[$attr3]);
                                 }
                             $op = process_string_3($op,$pid,$oid,$mid,$jid,$type,$para);
-                            // 替换字符串中的变量
-                            //$input = str_replace("{{$match}}", $op, $input);
                             break;
                         case 'pet_fight':
                             $attr3 = 'n'.$attr2;
