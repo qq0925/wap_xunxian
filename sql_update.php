@@ -51,6 +51,30 @@ include_once "attr_modify.php";
         $stmt->execute();
     }
 
+    $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'flush_limit'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE gm_game_basic ADD COLUMN flush_limit INT(4) DEFAULT 300 NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
+    $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'int_long'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE gm_game_basic ADD COLUMN int_long TINYINT(1) NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
     $sql = "SHOW COLUMNS FROM system_item LIKE 'ino_give'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
@@ -59,6 +83,18 @@ include_once "attr_modify.php";
     if (!$column) {
         // 如果字段不存在，执行添加字段操作
         $sql = "ALTER TABLE system_item ADD COLUMN ino_give TINYINT(1) NOT NULL,ADD COLUMN ino_out TINYINT(1) NOT NULL,DROP COLUMN ibind";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
+    $sql = "SHOW COLUMNS FROM system_item_module LIKE 'itake_on'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE system_item_module ADD COLUMN itake_on INT(11) NOT NULL,ADD COLUMN itake_off INT(11) NOT NULL,ADD COLUMN iembed_on INT(11) NOT NULL,ADD COLUMN iembed_off INT(11) NOT NULL";
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
     }

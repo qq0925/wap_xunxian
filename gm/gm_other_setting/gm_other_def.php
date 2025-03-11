@@ -23,6 +23,14 @@ foreach ($_POST as $key => $value) {
             $sql = "update  gm_game_basic set can_verify = '$value' where game_id = 19980925";
             $dblj->exec($sql);
             break;
+        case 'flush_limit':
+            $sql = "update  gm_game_basic set flush_limit = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
+        case 'int_long':
+            $sql = "update  gm_game_basic set int_long = '$value' where game_id = 19980925";
+            $dblj->exec($sql);
+            break;
         case 'player_send_global_msg_interval':
             $sql = "update  gm_game_basic set player_send_global_msg_interval = '$value' where game_id = 19980925";
             $dblj->exec($sql);
@@ -126,6 +134,7 @@ $selectedOption_8 = ($game_config->can_input == "1") ? 'selected' : '';
 $selectedOption_9 = ($game_config->scene_chat_time == "1") ? 'selected' : '';
 $selectedOption_10 = ($game_config->fight_mod == "1") ? 'selected' : '';
 $selectedOption_11 = ($game_config->fight_mod == "2") ? 'selected' : '';
+$selectedOption_12 = ($game_config->int_long == "1") ? 'selected' : '';
 $other_html = <<<HTML
 [杂项设置]<br/><br/>
 <form action="?cmd=$other_set" method="POST">
@@ -141,6 +150,13 @@ $other_html = <<<HTML
 </form>
 <form action="?cmd=$other_set" method="POST">
 列表行数：<input type="tel" name="list_row" size="5" value="{$game_config->list_row}">
+<input type="submit" value="保存"/>
+</form>
+<form action="?cmd=$other_set" method="POST">
+整数型默认长度：<select name="int_long"><option value =0>11位数</option><option value =1 {$selectedOption_12}>20位数</option></select> <input name="submit" type="submit" title="保存" value="保存" />
+</form>
+<form action="?cmd=$other_set" method="POST">
+刷新频率(0为不限制)：<input type="tel" name="flush_limit" size="5" value="{$game_config->flush_limit}">ms
 <input type="submit" value="保存"/>
 </form>
 <form action="?cmd=$other_set" method="POST">

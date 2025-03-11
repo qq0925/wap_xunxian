@@ -933,10 +933,11 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 
                 
                 $dblj->exec("UPDATE system_equip_user set eq_true_id = '$equip_id' where eq_true_id = '$eq_true_id' and eqsid = '$sid' and eq_type = 1");
-                $sql = "select iattack_value,iname from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
+                $sql = "select iattack_value,iname,itake_off from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['iattack_value']);
+                $iequip_take_off = $sub_result['itake_off'];
                 $equip_name = \lexical_analysis\color_string($sub_result['iname']);
                 \player\addplayersx('ugj',$sub_value,$sid,$dblj);
                 \player\addplayersx('ugj',$equip_add_canshu,$sid,$dblj);
@@ -946,11 +947,18 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 if($mosaic_list){
                     $mosaic_ones = explode("|",$mosaic_list);
                     foreach ($mosaic_ones as $mosaic_one){
+                    $iembed_off = \player\getitem($mosaic_one,$dblj)->iembed_off;
+                    if($iembed_off !=0){
+                    \player\exec_self_event($iembed_off,'item_module',$mosaic_one,$sid,$dblj);
+                    }
                     \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                     }
                 }
                 
                 \player\exec_global_event(41,'item',$eq_true_id,$sid,$dblj);//卸装事件
+                if($iequip_take_off !=0){
+                \player\exec_self_event($iequip_take_off,'item',$eq_true_id,$sid,$dblj);
+                }
             } else {
                 // 记录不存在，插入新记录
                 $sql = "INSERT INTO system_equip_user (eqsid, eq_true_id, eq_type, equiped_pos_id) VALUES (?, ?, 1, ?)";
@@ -1091,10 +1099,11 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 
                 
                 $dblj->exec("UPDATE system_equip_user set eq_true_id = '$equip_id' where eq_true_id = '$eq_true_id' and eqsid = '$sid' and eq_type = 2");
-                $sql = "select irecovery_value,iname from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
+                $sql = "select irecovery_value,iname,itake_off from system_item_module where iid = (select iid from system_item where item_true_id = '$eq_true_id' and sid = '$sid')";
                 $sub_tmt = $dblj->query($sql);
                 $sub_result = $sub_tmt->fetch(\PDO::FETCH_ASSOC);
                 $sub_value = -intval($sub_result['irecovery_value']);
+                $iequip_take_off = $sub_result['itake_off'];
                 $equip_name = \lexical_analysis\color_string($sub_result['iname']);
                 \player\addplayersx('ufy',$sub_value,$sid,$dblj);
                 \player\addplayersx('ufy',$equip_add_canshu,$sid,$dblj);
@@ -1104,11 +1113,18 @@ function changeplayerequip($sid,$dblj,$equip_add_canshu,$equip_id,$equip_pos_id,
                 if($mosaic_list){
                     $mosaic_ones = explode("|",$mosaic_list);
                     foreach ($mosaic_ones as $mosaic_one){
+                    $iembed_off = \player\getitem($mosaic_one,$dblj)->iembed_off;
+                    if($iembed_off !=0){
+                    \player\exec_self_event($iembed_off,'item_module',$mosaic_one,$sid,$dblj);
+                    }
                     \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                     }
                 }
                 
                 \player\exec_global_event(41,'item',$eq_true_id,$sid,$dblj);//卸装事件
+                if($iequip_take_off !=0){
+                \player\exec_self_event($iequip_take_off,'item',$eq_true_id,$sid,$dblj);
+                }
             } else {
                 // 记录不存在，插入新记录
                 $sql = "INSERT INTO system_equip_user (eqsid, eq_true_id, eq_type, equiped_pos_id) VALUES (?, ?, 2, ?)";
@@ -1879,6 +1895,8 @@ class gameconfig{
     var $can_input;
     var $offline_time;
     var $can_verify;
+    var $int_long;
+    var $flush_limit;
     var $fight_mod;
     var $npc_seg;
     var $player_send_global_msg_interval;
@@ -1909,6 +1927,8 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('can_input',$gameconfig->can_input);
     $cxjg->bindColumn('player_offline_time',$gameconfig->offline_time);
     $cxjg->bindColumn('can_verify',$gameconfig->can_verify);
+    $cxjg->bindColumn('flush_limit',$gameconfig->flush_limit);
+    $cxjg->bindColumn('int_long',$gameconfig->int_long);
     $cxjg->bindColumn('fight_mod',$gameconfig->fight_mod);
     $cxjg->bindColumn('npc_seg',$gameconfig->npc_seg);
     $cxjg->bindColumn('player_send_global_msg_interval',$gameconfig->player_send_global_msg_interval);

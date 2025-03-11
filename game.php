@@ -43,7 +43,7 @@ $npc = new \player\npc();
 
 
 $Dcmd = $_SERVER['QUERY_STRING'];
-
+$allow_system_sep = \player\getgameconfig($dblj)->flush_limit;
 $allow_sep = "300";//间隔时间，单位毫秒。
 $can_redis = $GLOBALS['can_redis'];
 function getMillisecond() {
@@ -54,7 +54,7 @@ function getMillisecond() {
 
 if (isset($_SESSION["post_sep"]))
 {
-    if (getMillisecond() - $_SESSION["post_sep"] < $allow_sep)
+    if (getMillisecond() - $_SESSION["post_sep"] < $allow_sep&&$allow_system_sep>0)
     {
         $msg = '<meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">你点击太快了^_^!<br/><a href="?'.$Dcmd.'">继续</a>';
         exit($msg);
@@ -1279,19 +1279,18 @@ echo $refresh_html;
             } else {
             switch($gm_attr_type){
                     case '0':
+                        $int_long = \player\getgameconfig($dblj)->int_long;
+                        if($int_long == 1){
+                        $add_type = "BIGINT(20) DEFAULT '{$gm_default_value}'";
+                        $long_type = 1;
+                        }else{
                         $add_type = "INT(11) DEFAULT '{$gm_default_value}'";
+                        }
                         break;
                     case '1':
                         $add_type = "VARCHAR(255) DEFAULT '{$gm_default_value}'";
                         break;
                     case '2':
-                        /*if(intval($gm_default_value) != 0||intval($gm_default_value) != 1)
-                        {
-                        $ym = 'gm/gameattr_define.php';
-                        break;
-                        }else{
-                        $add_type = "TINYINT(1) DEFAULT {$gm_default_value}";
-                        }*/
                         $add_type = "TINYINT(1) DEFAULT '{$gm_default_value}'";
                         break;
                 }
@@ -1329,7 +1328,8 @@ echo $refresh_html;
                     break;
             }
             $cxjg =$dblj->exec($sql);
-            $sql = "INSERT INTO gm_game_attr(id, name, value_type, default_value, if_show, attr_type) VALUES ('$gm_id', '$gm_name', '$gm_post_canshu_2', '$gm_default_value', '$gm_attr_hidden', '$gm_attr_type')";
+            
+            $sql = "INSERT INTO gm_game_attr(id, name, value_type, default_value, if_show, attr_type,long_type) VALUES ('$gm_id', '$gm_name', '$gm_post_canshu_2', '$gm_default_value', '$gm_attr_hidden', '$gm_attr_type','$long_type')";
             $cxjg =$dblj->exec($sql);
             $gm_post_canshu = $gm_post_canshu_2;
             echo "新增属性“{$gm_id}”成功！<br/>";
@@ -2282,6 +2282,10 @@ echo $refresh_html;
             $item = \player\getitem_true($item_true_id,$dblj);
             $itype = $item->itype;
             $iname = $item->iname;
+            if($itype == '兵器' || $itype =='防具'){
+            $iequip_take_on = $item->itake_on;
+            $iequip_take_off = $item->itake_off;
+            }
             $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
             $stmt = $dblj->query($sql_2);
             if($stmt->rowCount() >0){
@@ -2367,11 +2371,18 @@ echo $refresh_html;
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
                                 foreach ($mosaic_ones as $mosaic_one){
+                                $iembed_on = \player\getitem($mosaic_one,$dblj)->iembed_on;
+                                if($iembed_on !=0){
+                                \player\exec_self_event($iembed_on,'item_module',$mosaic_one,$sid,$dblj);
+                                }
                                 \player\exec_global_event(42,'item_module',$mosaic_one,$sid,$dblj);
                                 }
                             }
                             
                             \player\exec_global_event(40,'item',$item_true_id,$sid,$dblj);
+                            if($iequip_take_on !=0){
+                            \player\exec_self_event($iequip_take_on,'item',$item_true_id,$sid,$dblj);
+                            }
                             }
                             }else{
                             echo "你已经装备了{$iname}！<br/>";
@@ -2405,10 +2416,17 @@ echo $refresh_html;
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
                                 foreach ($mosaic_ones as $mosaic_one){
+                                $iembed_on = \player\getitem($mosaic_one,$dblj)->iembed_on;
+                                if($iembed_on !=0){
+                                \player\exec_self_event($iembed_on,'item_module',$mosaic_one,$sid,$dblj);
+                                }
                                 \player\exec_global_event(42,'item_module',$mosaic_one,$sid,$dblj);
                                 }
                             }
                             \player\exec_global_event(40,'item',$item_true_id,$sid,$dblj);
+                            if($iequip_take_on !=0){
+                            \player\exec_self_event($iequip_take_on,'item',$item_true_id,$sid,$dblj);
+                            }
                             }
                             }else{
                             echo "你已经装备上了{$iname}！<br/>";
@@ -2572,10 +2590,17 @@ echo $refresh_html;
                                 if($mosaic_list){
                                         $mosaic_ones = explode("|",$mosaic_list);
                                         foreach ($mosaic_ones as $mosaic_one){
+                                        $iembed_off = \player\getitem($mosaic_one,$dblj)->iembed_off;
+                                        if($iembed_off !=0){
+                                        \player\exec_self_event($iembed_off,'item_module',$mosaic_one,$sid,$dblj);
+                                        }
                                         \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                                         }
                                     }
                                     \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                                if($iequip_take_off !=0){
+                                \player\exec_self_event($iequip_take_off,'item',$item_true_id,$sid,$dblj);
+                                }
                             } else {
                                 echo "请检测背包负重后再进行操作！<br/>";
                             }
@@ -2587,6 +2612,9 @@ echo $refresh_html;
                         \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
                         \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                        if($iequip_take_off !=0){
+                        \player\exec_self_event($iequip_take_off,'item',$item_true_id,$sid,$dblj);
+                        }
                         }
                     } catch (Exception $e) {
                         echo "操作失败: " . $e->getMessage();
@@ -2601,10 +2629,17 @@ echo $refresh_html;
                         if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
                                 foreach ($mosaic_ones as $mosaic_one){
+                                $iembed_off = \player\getitem($mosaic_one,$dblj)->iembed_off;
+                                if($iembed_off !=0){
+                                \player\exec_self_event($iembed_off,'item_module',$mosaic_one,$sid,$dblj);
+                                }
                                 \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                                 }
                             }
                             \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                            if($iequip_take_off !=0){
+                            \player\exec_self_event($iequip_take_off,'item',$item_true_id,$sid,$dblj);
+                            }
                     }
                         break;
                     case '防具':
@@ -2691,10 +2726,17 @@ echo $refresh_html;
                                 if($mosaic_list){
                                         $mosaic_ones = explode("|",$mosaic_list);
                                         foreach ($mosaic_ones as $mosaic_one){
+                                        $iembed_off = \player\getitem($mosaic_one,$dblj)->iembed_off;
+                                        if($iembed_off !=0){
+                                        \player\exec_self_event($iembed_off,'item_module',$mosaic_one,$sid,$dblj);
+                                        }
                                         \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                                         }
                                     }
                                     \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                                    if($iequip_take_off !=0){
+                                    \player\exec_self_event($iequip_take_off,'item',$item_true_id,$sid,$dblj);
+                                    }
                             } else {
                                 echo "请检测背包负重后再进行操作！<br/>";
                             }
@@ -2705,6 +2747,9 @@ echo $refresh_html;
                         \player\changeequipstate($sid,$dblj,$iid,$item_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$item_true_id' and sid = '$sid'");
                         \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                        if($iequip_take_off !=0){
+                        \player\exec_self_event($iequip_take_off,'item',$item_true_id,$sid,$dblj);
+                        }
                         }
                     } catch (Exception $e) {
                         echo "操作失败: " . $e->getMessage();
@@ -2719,10 +2764,17 @@ echo $refresh_html;
                         if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
                                 foreach ($mosaic_ones as $mosaic_one){
+                                $iembed_off = \player\getitem($mosaic_one,$dblj)->iembed_off;
+                                if($iembed_off !=0){
+                                \player\exec_self_event($iembed_off,'item_module',$mosaic_one,$sid,$dblj);
+                                }
                                 \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                                 }
                             }
                             \player\exec_global_event(41,'item',$item_true_id,$sid,$dblj);
+                            if($iequip_take_off !=0){
+                            \player\exec_self_event($iequip_take_off,'item',$item_true_id,$sid,$dblj);
+                            }
                     }
                         break;
                     }
@@ -2765,6 +2817,8 @@ echo $refresh_html;
                 if ($row) {
                     $iid = $row['iid'];
                     $itype = $row['itype'];
+                    $iequip_take_on = $row['itake_on'];
+                    $iequip_take_off = $row['itake_off'];
                     $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$equip_true_id' and name = 'iname'";
                     $stmt = $dblj->query($sql_2);
                     if($stmt->rowCount() >0){
@@ -2806,11 +2860,17 @@ echo $refresh_html;
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
                                 foreach ($mosaic_ones as $mosaic_one){
+                                $iembed_on = \player\getitem($mosaic_one,$dblj)->iembed_on;
+                                if($iembed_on !=0){
+                                \player\exec_self_event($iembed_on,'item_module',$mosaic_one,$sid,$dblj);
+                                }
                                 \player\exec_global_event(42,'item_module',$mosaic_one,$sid,$dblj);
                                 }
                             }
                                 \player\exec_global_event(40,'item',$equip_true_id,$sid,$dblj);
-                            
+                            if($iequip_take_on !=0){
+                            \player\exec_self_event($iequip_take_on,'item',$equip_true_id,$sid,$dblj);
+                            }
                             }else{
                                 echo "以你的水平暂时无法穿上该装备!<br/>";
                             }
@@ -2838,12 +2898,17 @@ echo $refresh_html;
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
                                 foreach ($mosaic_ones as $mosaic_one){
+                                $iembed_on = \player\getitem($mosaic_one,$dblj)->iembed_on;
+                                if($iembed_on !=0){
+                                \player\exec_self_event($iembed_on,'item_module',$mosaic_one,$sid,$dblj);
+                                }
                                 \player\exec_global_event(42,'item_module',$mosaic_one,$sid,$dblj);
-                                    
                                 }
                             }
                                 \player\exec_global_event(40,'item',$equip_true_id,$sid,$dblj);
-                            
+                            if($iequip_take_on !=0){
+                            \player\exec_self_event($iequip_take_on,'item',$equip_true_id,$sid,$dblj);
+                            }
                             }else{
                                 echo "以你的水平暂时无法穿上该装备!<br/>";
                             }
@@ -2942,10 +3007,17 @@ echo $refresh_html;
                                 if($mosaic_list){
                                         $mosaic_ones = explode("|",$mosaic_list);
                                         foreach ($mosaic_ones as $mosaic_one){
+                                         $iembed_off = \player\getitem($mosaic_one,$dblj)->iembed_off;
+                                        if($iembed_off !=0){
+                                        \player\exec_self_event($iembed_off,'item_module',$mosaic_one,$sid,$dblj);
+                                        }
                                         \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                                         }
                                     }
                                     \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
+                            if($iequip_take_off !=0){
+                            \player\exec_self_event($iequip_take_off,'item',$equip_true_id,$sid,$dblj);
+                            }
                             } else {
                                 echo "请检测背包负重后再进行操作！<br/>";
                             }
@@ -2957,6 +3029,9 @@ echo $refresh_html;
                         \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
                         \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
+                        if($iequip_take_off !=0){
+                        \player\exec_self_event($iequip_take_off,'item',$equip_true_id,$sid,$dblj);
+                        }
                         }
                     } catch (Exception $e) {
                         echo "操作失败: " . $e->getMessage();
@@ -2971,12 +3046,18 @@ echo $refresh_html;
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
                                 foreach ($mosaic_ones as $mosaic_one){
+                                 $iembed_off = \player\getitem($mosaic_one,$dblj)->iembed_off;
+                                if($iembed_off !=0){
+                                \player\exec_self_event($iembed_off,'item_module',$mosaic_one,$sid,$dblj);
+                                }
                                 \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                                 }
                             }
                         
                                 \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
-                        
+                            if($iequip_take_off !=0){
+                            \player\exec_self_event($iequip_take_off,'item',$equip_true_id,$sid,$dblj);
+                            }
                     }
                         break;
                     case '防具':
@@ -3064,10 +3145,17 @@ echo $refresh_html;
                                 if($mosaic_list){
                                         $mosaic_ones = explode("|",$mosaic_list);
                                         foreach ($mosaic_ones as $mosaic_one){
+                                         $iembed_off = \player\getitem($mosaic_one,$dblj)->iembed_off;
+                                        if($iembed_off !=0){
+                                        \player\exec_self_event($iembed_off,'item_module',$mosaic_one,$sid,$dblj);
+                                        }
                                         \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                                         }
                                     }
                                     \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
+                                    if($iequip_take_off !=0){
+                                    \player\exec_self_event($iequip_take_off,'item',$equip_true_id,$sid,$dblj);
+                                    }
                             } else {
                                 echo "请检测背包负重后再进行操作！<br/>";
                             }
@@ -3078,6 +3166,9 @@ echo $refresh_html;
                         \player\changeequipstate($sid,$dblj,$iid,$equip_true_id,2);
                         $dblj->exec("UPDATE system_item set iequiped = 0 where item_true_id = '$equip_true_id' and sid = '$sid'");
                         \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
+                        if($iequip_take_off !=0){
+                        \player\exec_self_event($iequip_take_off,'item',$equip_true_id,$sid,$dblj);
+                        }
                         }
                     } catch (Exception $e) {
                         echo "操作失败: " . $e->getMessage();
@@ -3093,12 +3184,18 @@ echo $refresh_html;
                             if($mosaic_list){
                                 $mosaic_ones = explode("|",$mosaic_list);
                                 foreach ($mosaic_ones as $mosaic_one){
+                                $iembed_off = \player\getitem($mosaic_one,$dblj)->iembed_off;
+                                if($iembed_off !=0){
+                                \player\exec_self_event($iembed_off,'item_module',$mosaic_one,$sid,$dblj);
+                                }
                                 \player\exec_global_event(43,'item_module',$mosaic_one,$sid,$dblj);
                                 }
                             }
                         
                                 \player\exec_global_event(41,'item',$equip_true_id,$sid,$dblj);
-                        
+                                if($iequip_take_off !=0){
+                                \player\exec_self_event($iequip_take_off,'item',$equip_true_id,$sid,$dblj);
+                                }
                     }
                         break;
                     }

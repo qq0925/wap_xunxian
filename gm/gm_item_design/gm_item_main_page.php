@@ -17,8 +17,12 @@ $item_task = $get_item_detail[0]['itask_target'];
 $item_icreat_event = $get_item_detail[0]['icreat_event_id'];
 $item_ilook_event = $get_item_detail[0]['ilook_event_id'];
 $item_iuse_event = $get_item_detail[0]['iuse_event_id'];
+$item_take_on = $get_item_detail[0]['itake_on'];
+$item_take_off = $get_item_detail[0]['itake_off'];
+$item_embed_on = $get_item_detail[0]['iembed_on'];
+$item_embed_off = $get_item_detail[0]['iembed_off'];
 $item_iminute_event = $get_item_detail[0]['iminute_event_id'];
-$item_event_count = ($item_icreat_event ? 1 : 0) + ($item_ilook_event ? 1 : 0) + ($item_iuse_event ? 1 : 0) + ($item_iminute_event ? 1 : 0);
+$item_event_count = ($item_icreat_event ? 1 : 0) + ($item_ilook_event ? 1 : 0) + ($item_iuse_event ? 1 : 0) + ($item_take_on ? 1 : 0) + ($item_take_off ? 1 : 0) + ($item_embed_on ? 1 : 0) + ($item_embed_off ? 1 : 0) + ($item_iminute_event ? 1 : 0);
 
 if($item_op){
 $item_op_count = @count(explode(",",$item_op));

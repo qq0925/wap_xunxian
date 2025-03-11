@@ -330,7 +330,7 @@ $data = [
             echo "没有需要删除的字段。<br>";
         }
         // 保留的字段
-        $keepFields = ['iid', 'iarea_name', 'iarea_id', 'iname', 'iimage', 'idesc', 'idetail_desc', 'itype', 'isubtype', 'iweight', 'iprice', 'ino_give', 'ino_out', 'iop_target', 'itask_target', 'icreat_event_id', 'ilook_event_id', 'iuse_event_id', 'iminute_event_id', 'iuse_attr', 'iuse_value', 'iattack_value', 'irecovery_value', 'iuse_attr', 'iembed_count', 'iequip_cond'];
+        $keepFields = ['iid', 'iarea_name', 'iarea_id', 'iname', 'iimage', 'idesc', 'idetail_desc', 'itype', 'isubtype', 'iweight', 'iprice', 'ino_give', 'ino_out', 'iop_target', 'itask_target', 'icreat_event_id', 'ilook_event_id', 'iuse_event_id', 'iminute_event_id', 'iuse_attr', 'iuse_value', 'iattack_value', 'irecovery_value', 'iuse_attr', 'iembed_count', 'iequip_cond','itake_on','itake_off','iembed_on','iembed_off'];
     
         // 获取 system_item_module 表的所有字段
         $sql = "DESCRIBE system_item_module";
