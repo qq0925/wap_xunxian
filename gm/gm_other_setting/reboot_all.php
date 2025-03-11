@@ -309,7 +309,7 @@ $data = [
         }
 
         // 保留的字段
-        $keepFields = ['item_true_id', 'sid', 'uid', 'iid', 'icount', 'ibind', 'iequiped', 'isale_state', 'isale_price', 'icreate_sale_time', 'iexpire_sale_time', 'isale_time', 'iroot'];
+        $keepFields = ['item_true_id', 'sid', 'uid', 'iid', 'icount', 'ino_give','ino_out', 'iequiped', 'isale_state', 'isale_price', 'icreate_sale_time', 'iexpire_sale_time', 'isale_time', 'iroot'];
     
         // 获取 system_item 表的所有字段
         $sql = "DESCRIBE system_item";
