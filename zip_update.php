@@ -63,7 +63,7 @@ if (isset($download) && $download == 1) {
     }
 } else {
     $excludeFiles = ['favicon.php', 'xunxian.zip']; // 排除的文件
-    $excludeDirs = ['.git', '.well-known', 'ache', 'cache', 'css', 'images', 'js','out_data']; // 排除的文件夹
+    $excludeDirs = ['.git', '.well-known', 'ache', 'cache', 'css', 'images', 'js','out_data','in_data']; // 排除的文件夹
     compressToZip($excludeFiles, $excludeDirs);
 }
 

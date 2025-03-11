@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     $sheet = $spreadsheet->getActiveSheet();
     $highestRow = $sheet->getHighestRow();
     $errors = [];
+    $processedRows = 0;
 
     // SQL语句，插入操作
     $insert_sql = "INSERT INTO system_item_module (iname, idesc,itype,isubtype,iweight,iprice) VALUES (:iname, :idesc, :itype, :isubtype, :iweight, :iprice)";
@@ -43,6 +44,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
         $item_subtype = !is_null($sheet->getCell('D' . $row)->getValue()) ? $sheet->getCell('D' . $row)->getValue() : '未知';
         $item_weight = !is_null($sheet->getCell('E' . $row)->getValue()) ? $sheet->getCell('E' . $row)->getValue() : 1;
         $item_price = !is_null($sheet->getCell('F' . $row)->getValue()) ? $sheet->getCell('F' . $row)->getValue() : 0;
+
+        // 跳过完全空行 (只检查必填字段)
+        if (empty($item_name) && empty($item_desc)) {
+            continue;
+        }
+
+        $processedRows++;
+
+        // 数据校验
+        if (empty($item_name) || empty($item_desc) || !is_numeric($item_weight) || !is_numeric($item_price)) {
+            $errors[] = "第 {$row} 行数据无效：物品名称、描述或其他必填字段为空或格式不正确<br/>";
+            continue;
+        }
+
+        // 检查item_name是否已经存在
+        $check_stmt = $dblj->prepare("SELECT COUNT(*) FROM system_item_module WHERE iname = :iname");
+        $check_stmt->bindParam(':iname', $item_name);
+        $check_stmt->execute();
+        $count = $check_stmt->fetchColumn();
+
+        if ($count > 0) {
+            $errors[] = "第 {$row} 行数据无效：物品名称 {$item_name} 已存在，不能重复插入";
+            continue;
+        }
 
         // 绑定参数并执行插入
         $stmt->bindParam(':iname', $item_name);
@@ -61,11 +86,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
 
     // 输出错误或成功信息
     if (!empty($errors)) {
+        echo "<p>共处理了 {$processedRows} 行有效数据</p>";
         foreach ($errors as $error) {
             echo "<p>{$error}</p>";
         }
     } else {
-        echo "导入成功！";
+        echo "<p>导入成功！共处理了 {$processedRows} 行数据</p>";
     }
 }
 
@@ -75,6 +101,7 @@ $up = <<<HTML
     <input type="file" name="excel_file" accept=".xlsx"><br/>
     <button type="submit" class="btn btn-success">导入Excel文件</button>
 </form>
+<p><small>注意：Excel中空行将被自动跳过。请确保删除行时使用"删除行"功能而不仅是清空内容。</small></p>
 HTML;
 
 // 综合HTML输出

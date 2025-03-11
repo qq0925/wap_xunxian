@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     $sheet = $spreadsheet->getActiveSheet();
     $highestRow = $sheet->getHighestRow();
     $errors = [];
+    $processedRows = 0;
 
     // SQL语句，插入操作
     $insert_sql = "INSERT INTO system_exp_def (id, type, value) VALUES (:expr_id, :expr_type, :expr_value)";
@@ -41,8 +42,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
         $expr_type = $sheet->getCell('B' . $row)->getValue();
         $expr_value = $sheet->getCell('C' . $row)->getValue();
         
+        // 跳过完全空行
+        if (empty($expr_id) && empty($expr_type) && empty($expr_value)) {
+            continue;
+        }
+        
+        $processedRows++;
+        
         // 数据校验
-        if (empty($expr_id) || empty($expr_name) || !is_numeric($refresh_interval)) {
+        if (empty($expr_id) || empty($expr_type) || empty($expr_value)) {
             $errors[] = "第 {$row} 行数据无效：表达式ID、类型以及值格式不正确<br/>";
             continue;
         }
@@ -71,11 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
 
     // 输出错误或成功信息
     if (!empty($errors)) {
+        echo "<p>共处理了 {$processedRows} 行数据</p>";
         foreach ($errors as $error) {
             echo "<p>{$error}</p>";
         }
     } else {
-        echo "导入成功！";
+        echo "<p>导入成功！共处理了 {$processedRows} 行数据</p>";
     }
 }
 
@@ -85,6 +94,7 @@ $up = <<<HTML
     <input type="file" name="excel_file" accept=".xlsx"><br/>
     <button type="submit" class="btn btn-success">导入Excel文件</button>
 </form>
+<p><small>注意：Excel中空行将被自动跳过。为避免Excel保留已删除行信息，建议使用"删除行"功能而不仅是清空内容。</small></p>
 HTML;
 
 // 综合HTML输出

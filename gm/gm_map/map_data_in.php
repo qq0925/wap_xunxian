@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     $sheet = $spreadsheet->getActiveSheet();
     $highestRow = $sheet->getHighestRow();
     $errors = [];
+    $processedRows = 0;
 
     // SQL语句，插入操作
     $insert_sql = "INSERT INTO system_map (mid, mname, mdesc, mrefresh_time, mup, mdown, mleft, mright,marea_name,marea_id) VALUES (:map_id, :mname, :mdesc, :refresh_interval, :top_exit_id, :bottom_exit_id, :left_exit_id, :right_exit_id,'$marea_name','$qy_id')";
@@ -52,6 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
         $left_exit_id = !is_null($sheet->getCell('G' . $row)->getValue()) ? $sheet->getCell('G' . $row)->getValue() : 0;
         $right_exit_id = !is_null($sheet->getCell('H' . $row)->getValue()) ? $sheet->getCell('H' . $row)->getValue() : 0;
 
+        // 跳过完全空行 (只检查必填字段)
+        if (empty($map_id) && empty($map_name)) {
+            continue;
+        }
+
+        $processedRows++;
 
         // 数据校验
         if (empty($map_id) || empty($map_name) || !is_numeric($refresh_interval) || 
@@ -89,11 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
 
     // 输出错误或成功信息
     if (!empty($errors)) {
+        echo "<p>共处理了 {$processedRows} 行有效数据</p>";
         foreach ($errors as $error) {
             echo "<p>{$error}</p>";
         }
     } else {
-        echo "导入成功！";
+        echo "<p>导入成功！共处理了 {$processedRows} 行数据</p>";
     }
 }
 
@@ -103,6 +111,7 @@ $up = <<<HTML
     <input type="file" name="excel_file" accept=".xlsx"><br/>
     <button type="submit" class="btn btn-success">导入Excel文件</button>
 </form>
+<p><small>注意：Excel中空行将被自动跳过。请确保删除行时使用"删除行"功能而不仅是清空内容。</small></p>
 HTML;
 
 // 综合HTML输出
