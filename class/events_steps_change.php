@@ -312,7 +312,11 @@ HTML;
                                 $currentFilePath = $parents_page;
                                 $ym = $currentFilePath;
                                 }
+                                if($ym){
                                 include_once $ym;
+                                }else{
+                                include_once 'module_all/main_page.php';
+                                }
                                 return;
                             }
                             
