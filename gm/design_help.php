@@ -80,6 +80,10 @@ HTML;
     $doc_edit = $encode->encode("cmd=gm_design_guide&edit_canshu=1&sid=$sid");
     $doc_update = $encode->encode("cmd=gm_design_guide&update_canshu=1&sid=$sid");
     $html =<<<HTML
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="请输入搜索关键词...">
+    <button onclick="searchText()">搜索</button>
+</div>
 <a href="?cmd=$doc_edit">编辑文档(不明情况者勿点！)</a>
 <a href="?cmd=$doc_update">获取最新文档</a><br/>
 HTML;
@@ -97,7 +101,76 @@ echo $html;
 let currentPage = 1;
 const totalPages = <?php echo $pageCount; ?>;
 const show_true = <?php echo $edit_canshu?:0; ?>;
+
+function searchText() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    if (!searchTerm) {
+        alert('请输入搜索关键词');
+        return;
+    }
+
+    // 获取当前显示的页面
+    const currentPageElement = document.getElementById('page-' + currentPage);
+    if (!currentPageElement) return;
+
+    // 获取页面的文本内容
+    const content = currentPageElement.textContent.toLowerCase();
+    
+    if (content.includes(searchTerm)) {
+        // 移除之前的高亮
+        currentPageElement.innerHTML = currentPageElement.innerHTML.replace(/<mark class="highlight">(.*?)<\/mark>/g, '$1');
+        
+        // 高亮搜索词（保持原有格式）
+        const textNodes = [];
+        const walk = document.createTreeWalker(
+            currentPageElement,
+            NodeFilter.SHOW_TEXT,
+            null,
+            false
+        );
+
+        let node;
+        while (node = walk.nextNode()) {
+            textNodes.push(node);
+        }
+
+        textNodes.forEach(textNode => {
+            const text = textNode.textContent;
+            const regex = new RegExp(searchTerm, 'gi');
+            if (regex.test(text)) {
+                const span = document.createElement('span');
+                span.innerHTML = text.replace(regex, match => `<mark class="highlight">${match}</mark>`);
+                textNode.parentNode.replaceChild(span, textNode);
+            }
+        });
+
+        // 滚动到第一个高亮处
+        const firstHighlight = currentPageElement.querySelector('.highlight');
+        if (firstHighlight) {
+            firstHighlight.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    } else {
+        alert('当前页面未找到匹配内容');
+    }
+}
+
+// 添加回车键搜索功能
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        searchText();
+    }
+});
+
 function showPage(page) {
+    // 清除所有高亮
+    document.querySelectorAll('.highlight').forEach(el => {
+        const parent = el.parentNode;
+        parent.replaceChild(document.createTextNode(el.textContent), el);
+    });
+    
     // 隐藏所有页面
     for (let i = 1; i <= totalPages; i++) {
         document.getElementById('page-' + i).style.display = 'none';
@@ -119,7 +192,7 @@ function showPage(page) {
 
 // 默认显示第一页
 if(show_true==0){
-showPage(1);
+    showPage(1);
 }
 </script>
 
@@ -136,5 +209,39 @@ showPage(1);
 .pagination-button.active {
     background-color: #007BFF;
     color: white;
+}
+
+.search-container {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.search-container input {
+    padding: 5px 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.search-container button {
+    padding: 5px 15px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-container button:hover {
+    background-color: #0056b3;
+}
+
+.highlight {
+    background-color: yellow;
+    padding: 2px;
+    border-radius: 2px;
 }
 </style>
