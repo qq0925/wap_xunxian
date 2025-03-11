@@ -30,7 +30,6 @@ if(isset($token)){
     if ($result) {
         $username = $result['username'];
         $designer = $result['designer'];
-    }
 
     $sql = "select uid,sid,uis_designer from game1 where token= :token";
     $cxjg = $dblj->prepare($sql);
@@ -48,12 +47,13 @@ if(isset($token)){
         $a10 = ($iniFile->getItem('验证信息', 'xcmid值'));
     }
 
-
-
     if ($sid==null){
         $cmd = "cmd=cj&token=$token";
         if($designer ==1){
         include 'sql_update.php';
+        $welcome = "尊敬的管理员：{$username}，欢迎您回来!<br/>";
+        }else{
+        $welcome = "尊敬的{$username}，欢迎您回来!<br/>";
         }
     }else{
         if($designer ==1&&$uis_designer ==0){
@@ -61,7 +61,12 @@ if(isset($token)){
         $stmt = $dblj->prepare($sql);
         $stmt->execute(array($sid));
         }
-        
+        if($designer ==1){
+        include 'sql_update.php';
+        $welcome = "尊敬的管理员：{$username}，欢迎您回来!<br/>";
+        }else{
+        $welcome = "尊敬的{$username}，欢迎您回来!<br/>";
+        }
         $cmd = "cmd=login&ucmd=0&sid=$sid";
         $nowdate = date('Y-m-d H:i:s');
         $sql = "update game1 set endtime = '$nowdate',sfzx=1 WHERE sid=?";
@@ -80,7 +85,7 @@ if(isset($token)){
     <link rel="stylesheet" href="css/gamecss.css">
 </head>
 <body>
-尊敬的{$username}，欢迎您回来!<br/><br/>
+{$welcome}<br/>
 
 <image src="images/login_arrow.gif"><a href="game.php?cmd=$cmd">快速进入游戏</a><br/><br/>
 
@@ -93,6 +98,12 @@ $now_time<br/>
 </body>
 </html>
 HTML;
+}else{
+        $login_html =<<<HTML
+TOKEN异常！<br/>
+<a href="index.php">返回登录界面</a>
+HTML;
+}
 }
 }
 catch (Exception $e){
