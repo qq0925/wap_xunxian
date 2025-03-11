@@ -1047,7 +1047,7 @@ function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = n
                     }
                     
                     }else{
-                    $checkQuery = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ?";
+                    $checkQuery = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ? and jpid = 0";
                     $checkStmt = $db->prepare($checkQuery);
                     $checkStmt->bind_param("is", $pair, $sid);
                     $checkStmt->execute();
@@ -1074,7 +1074,7 @@ function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = n
 
                 case '2':
                     // 检查字段是否存在
-                    $checkQuery = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ?";
+                    $checkQuery = "SELECT * FROM system_skill_user WHERE jid = ? and jsid = ? and jpid = 0";
                     $checkStmt = $db->prepare($checkQuery);
                     $checkStmt->bind_param("is", $pair, $sid);
                     $checkStmt->execute();
@@ -1082,7 +1082,7 @@ function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = n
 
                     if ($checkResult->num_rows > 0) {
                         // 存在数据，进行删除操作
-                        $deleteQuery = "DELETE FROM system_skill_user WHERE jid = ? and jsid = ?";
+                        $deleteQuery = "DELETE FROM system_skill_user WHERE jid = ? and jsid = ? and jpid = 0";
                         $deleteStmt = $db->prepare($deleteQuery);
                         $deleteStmt->bind_param("is", $pair, $sid);
                         $deleteResult = $deleteStmt->execute();

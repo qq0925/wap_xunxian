@@ -46,7 +46,7 @@ function getPagination($dblj, $chat_type, $filter_condition, $list_row, $current
 }
 
 // 通用函数：获取频道导航
-function getChannelNavigation($encode, $cmid, $sid, $current_channel, $list_page = null) {
+function getChannelNavigation($encode, $cmid, $sid, $current_channel) {
     $channels = [
         'all' => '公共',
         'im' => '私聊',
@@ -59,8 +59,7 @@ function getChannelNavigation($encode, $cmid, $sid, $current_channel, $list_page
     $nav = '';
     foreach ($channels as $channel => $name) {
         $cmid++;
-        $page_param = $list_page ? "&list_page=$list_page" : "";
-        $link = $encode->encode("cmd=liaotian&ucmd=$cmid&ltlx=$channel$page_param&sid=$sid");
+        $link = $encode->encode("cmd=liaotian&ucmd=$cmid&ltlx=$channel&sid=$sid");
         
         if ($channel == $current_channel) {
             $nav .= $name . "|";
@@ -203,7 +202,7 @@ switch ($ltlx) {
         
     case 'im':
         // 恢复原来的私聊查询条件
-        $chat_type_condition = "chat_type IN (1, 6) AND imuid = :imuid";
+        $chat_type_condition = "chat_type IN (1, 6) AND imuid = :imuid AND uid != -1";
         $filter_condition = "";
         $channel_name = "私聊";
         $params = [':imuid' => $player->uid];
@@ -281,10 +280,10 @@ $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // 刷新按钮和导航链接(始终显示)
 $cmid++;
 $refresh_url = $encode->encode("cmd=liaotian&ucmd=$cmid" . ($list_page ? "&list_page=$list_page" : "") . "&ltlx=$ltlx&sid=$sid");
-$navigation = getChannelNavigation($encode, $cmid, $sid, $ltlx, $list_page);
+$navigation = getChannelNavigation($encode, $cmid, $sid, $ltlx);
 
 // 构建基本页面结构(始终显示)
-$lthtml = "【聊天频道：「$channel_name」】<a href='?cmd=$refresh_url'>刷新</a><br/>【{$navigation}】<br/>";
+$lthtml = "【聊天频道：「{$channel_name}」】<a href='?cmd=$refresh_url'>刷新</a><br/>【{$navigation}】<br/>";
 $lthtml .= "<span style='font-weight: bold; color: red'>请勿发表有关辱骂、政治、色情、赌博等相关言论！请确保您的言论符合游戏规则和道德准则。违反规则将导致相应的惩罚措施，包括禁言、封号等。</span><br/>";
 
 // 显示消息或"暂无消息"提示
