@@ -1,10 +1,13 @@
 <?php
 
+if (file_exists(__DIR__ .'/my_db.php')) {
+    $configs = include __DIR__ . '/my_db.php';
+}else{
 if (!file_exists(__DIR__ .'/db_configs.php')) {
     die('未找到配置文件: db_configs.php，请先创建并配置数据库信息，可以参考 configs_example.php 文件');
 }
 $configs = include __DIR__ . '/db_configs.php';
-
+}
 if (!isset($db)) {
     $db = new mysqli(
         $configs['db_host'],
