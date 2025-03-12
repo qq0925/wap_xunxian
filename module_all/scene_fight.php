@@ -306,7 +306,11 @@ if($round ==0&&$cmd =='pve_fight'){
                 if($drop_count >0 && $player_last_burthen >=$drop_total_weight && $player_last_burthen>0){
                     $get_ret = \player\additem($sid,$drop_id,$drop_count,$dblj);
                     if($get_ret>0){
-                        \player\changeitem_belong($get_ret,1, $alive_monster->nid,$dblj);//更新物品掉落
+                    \player\changeitem_belong($get_ret,1, $alive_monster->nid,$dblj);//更新物品掉落
+                    $drop_item_name = \player\getownitem($get_ret,$drop_id,'iname',$dblj);
+                    $drop_item_name = \lexical_analysis\color_string($drop_item_name);
+                    }
+                    else{
                     $drop_item_name = \player\getownitem($get_ret,$drop_id,'iname',$dblj);
                     $drop_item_name = \lexical_analysis\color_string($drop_item_name);
                     }
@@ -316,17 +320,12 @@ if($round ==0&&$cmd =='pve_fight'){
                     } else {
                         $item_counts[$drop_item_name] = $drop_count;
                     }
-                    
                     $rwts_item = \player\update_task($sid,$dblj,$drop_id,null,null);
                     $rwts .= $rwts_item;
                 }elseif($drop_count <0){
                     $item_true_id = \player\getplayeritem_attr('item_true_id',$sid,$drop_id,$dblj)['item_true_id'];
                     \player\changeplayeritem($item_true_id,$drop_count,$sid,$dblj);
                     \player\addplayersx('uburthen',-$drop_total_weight,$sid,$dblj);
-                    
-                    
-                    
-                    
                         // 更新物品数量
                     if (isset($item_counts[$drop_item_name])) {
                         $item_counts[$drop_item_name] -= $drop_count;
@@ -388,7 +387,7 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     if($drop_item_type ==1){
     if($item_counts){
     foreach ($item_counts as $item_name => $count) {
-        if($count >0){
+        if($count >0&&$item_name){
         $huode .= "你看到：{$item_name} x {$count}掉落在地上！ <br/>";
         }
     }
@@ -396,9 +395,9 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     }else{
     if($item_counts){
     foreach ($item_counts as $item_name => $count) {
-        if($count >0){
+        if($count >0&&$item_name){
         $huode .= "得到：{$item_name} x {$count} <br/>";
-        }elseif($count<0){
+        }elseif($count<0&&$item_name){
         $huode .= "失去：{$item_name} x {$count} <br/>";
         }
     }
