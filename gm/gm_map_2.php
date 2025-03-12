@@ -35,26 +35,6 @@ for ($i=0;$i<count($cxallqy);$i++){
     $qy_pos = $cxallqy[$i]['pos'];
     $qy_belong = $cxallqy[$i]['belong'];
     $qy_belong_name = \gm\getregion($qy_belong,$dblj)['name'];
-    // switch ($qy_belong) {
-    //     case '1':
-    //         $qy_belong_name = "日出之地";
-    //         break;
-    //     case '2':
-    //         $qy_belong_name = "灼热之地";
-    //         break;
-    //     case '3':
-    //         $qy_belong_name = "日落之地";
-    //         break;
-    //     case '4':
-    //         $qy_belong_name = "极寒之地";
-    //         break;
-    //     case '5':
-    //         $qy_belong_name = "湿热之地";
-    //         break;
-    //     default:
-    //         $qy_belong_name = "失落之地";
-    //         break;
-    // }
 if (isset($_POST['kw'])) {
     $keyword = $_POST['kw'];
     // 构建查询语句，使用过滤条件
@@ -69,33 +49,13 @@ if (isset($_POST['kw'])) {
     $qy_pos = $cxallqy[$i]['pos'];
     $qy_belong = $cxallqy[$i]['belong'];
     $qy_belong_name = \gm\getregion($qy_belong,$dblj)['name'];
-    // switch ($qy_belong) {
-    //     case '1':
-    //         $qy_belong_name = "日出之地";
-    //         break;
-    //     case '2':
-    //         $qy_belong_name = "灼热之地";
-    //         break;
-    //     case '3':
-    //         $qy_belong_name = "日落之地";
-    //         break;
-    //     case '4':
-    //         $qy_belong_name = "极寒之地";
-    //         break;
-    //     case '5':
-    //         $qy_belong_name = "湿热之地";
-    //         break;
-    //     default:
-    //         $qy_belong_name = "失落之地";
-    //         break;
-    // }
 }
   if($qy_id ==0){
       $cxallmaps = \gm\getmid_detail($dblj,0);
       $qy_map_count = @count($cxallmaps);
       $target_mid = $encode->encode("cmd=gm_map_2&post_canshu=1&qy_id=0&sid=$sid");
         $no_area =<<<HTML
-        [失落之地]<a href="?cmd=$target_mid" >未分区($qy_map_count)</a><br/>
+        [{$qy_belong_name}]<a href="?cmd=$target_mid" >未分区($qy_map_count)</a><br/>
 HTML;
   }elseif($qy_id !=0){
         $cxallmaps = \gm\getmid_detail($dblj,$qy_id);
@@ -171,7 +131,6 @@ if ($update ==2){
             if (count($parts) >= 2) {
                 list($id, $npc_count, $npc_show_cond) = $parts;
         
-                // 对 npc_count 进行处理
                 $npc_count = \lexical_analysis\process_string($npc_count, $sid);//考虑传入更多参数
                 
                 // 安全地处理表达式解析，避免 eval（如有安全风险，考虑使用其他解析工具）
@@ -400,9 +359,52 @@ for ($i = 1; $i <= $map_x; $i++) {
     }
     elseif($delete_map == 1){
         echo "删除成功！<br/>";
+        $cxalldeletemaps = \player\getmid_detail($dblj,$qy_id);
+        
+        for($i=0;$i<@count($cxalldeletemaps);$i++){
+            $deletemapmid = $cxalldeletemaps[$i]['mid'];
+
+            $dblj->exec("UPDATE system_event_evs set dests = '' where dests = '$deletemapmid'");
+            $dblj->exec("UPDATE system_event_evs_self set dests = '' where dests = '$deletemapmid'");
+            
+            $sql = "SELECT link_event FROM system_map_op WHERE belong = :belong";
+            $stmt = $dblj->prepare($sql);
+            $stmt->bindParam(':belong', $deletemapmid, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            $link_event = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            if($link_event){
+                foreach ($link_event as $link_one){
+                    $dblj->exec("DELETE from system_event_evs_self where belong = '$link_one'");
+                    $dblj->exec("DELETE from system_event_evs where id = '$link_one'");
+                }
+            }
+            
+            $sql = "SELECT mcreat_event_id, mlook_event_id, minto_event_id, mout_event_id, mminute_event_id FROM system_map WHERE mid = :belong";
+            $stmt = $dblj->prepare($sql);
+            $stmt->bindParam(':belong', $deletemapmid, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            // 获取所有地图相关事件ID
+            $map_events = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($map_events) {
+                // 遍历所有事件类型并删除相关数据
+                foreach($map_events as $event_id) {
+                    if($event_id) {
+                        $dblj->exec("DELETE from system_event_evs_self where belong = '$event_id'");
+                        $dblj->exec("DELETE from system_event_self where id = '$event_id'");
+                    }
+                }
+            }
+            
+            // 删除地图操作、NPC和场景相关数据
+            $dblj->exec("DELETE from system_map_op where belong = '$deletemapmid'");
+            $dblj->exec("DELETE from system_npc_midguaiwu where nmid = '$deletemapmid'");
+            $dblj->exec("DELETE from system_npc_scene where nmid = '$deletemapmid'");
+        }
+            $deleteSql = "DELETE FROM system_map WHERE marea_id = '$qy_id'";
+            $deleteStmt = $dblj->exec($deleteSql);
         //查询所有该区域下场景，然后遍历场景相关的事件，步骤，进行删除。
-        $deleteSql = "DELETE FROM system_map WHERE mid = '$target_midid'";
-        //$deleteStmt = $dblj->exec($deleteSql);
     }
     if(!$cxallmaps){
     $area_delete = $encode->encode("cmd=gm_map_2&delete_id=$qy_id&post_canshu=0&sid=$sid");
