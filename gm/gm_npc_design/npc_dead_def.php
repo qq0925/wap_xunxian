@@ -72,6 +72,7 @@ $dead_html = <<<HTML
 <option value = "1" $select_para>直接到地上</option><br/>
 </select><br/>
 <input name="submit" type="submit" title="确定" value="确定"><br/><br/>
+</form>
 <a href="?cmd=$area_main">返回上级</a><br/>
 HTML;
 }elseif ($canshu ==2) {
@@ -122,6 +123,7 @@ $dead_html = <<<HTML
 </p>
 <form method="post">
 $drop_list
+</form>
 <a href="?cmd=$add_drop">增加物品</a><br/>
 <a href="?cmd=$area_main">返回上级</a><br/>
 HTML;
@@ -137,6 +139,7 @@ $dead_html = <<<HTML
 物品:{$drop_name}<br/>
 数量表达式:<textarea name="count" maxlength="1024" rows="4" cols="40">{$drop_count}</textarea><br/>
 <input name="submit" type="submit" title="确定" value="确定"><br/>
+</form>
 <a href="?cmd=$last_page">返回上级</a><br/>
 HTML;
 }
@@ -216,19 +219,16 @@ $last_page = $encode->encode("cmd=gm_type_npc&gm_post_canshu=7&canshu=2&npc_id=$
 $item_change = $encode->encode("cmd=gm_type_npc&gm_post_canshu=7&canshu=2&npc_id=$npc_id&sid=$sid");
 $item_add = $encode->encode("cmd=gm_type_npc&gm_post_canshu=7&npc_drop_item_count=$npc_drop_item_count&canshu=2&npc_id=$npc_id&sid=$sid");
 $dead_html = <<<HTML
-<p>定义NPC的死后掉落物品“{$item_name}”<br/>
+定义NPC的死后掉落物品“{$item_name}”<br/>
 <form action="?cmd=$item_add" method="post">
 <input name="add_this_id" type="hidden" title="确定" value="{$add_item_id}">
 数量表达式:<textarea name="add_count" maxlength="1024" rows="4" cols="40"></textarea><br/>
 <input name="submit" type="submit" title="确定" value="确定"/></form><br/>
+</form>
 <a href="?cmd=$last_page">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
-</p>
 HTML;
 }
-
-
-
 
 echo $dead_html;
 ?>

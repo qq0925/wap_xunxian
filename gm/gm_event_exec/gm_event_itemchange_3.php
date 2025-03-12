@@ -2,14 +2,14 @@
 $last_page = $encode->encode("cmd=game_event_itemchange&step_belong_id=$step_belong_id&step_id=$step_id&sid=$sid");
 
 if($gm_post_canshu_2 ==""){
-$game_event_itemadd_1 = $encode->encode("cmd=game_event_itemadd&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=消耗品&sid=$sid");//
-$game_event_itemadd_2 = $encode->encode("cmd=game_event_itemadd&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=兵器&sid=$sid");
-$game_event_itemadd_3 = $encode->encode("cmd=game_event_itemadd&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=防具&sid=$sid");
-$game_event_itemadd_4 = $encode->encode("cmd=game_event_itemadd&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=书籍&sid=$sid");
-$game_event_itemadd_5 = $encode->encode("cmd=game_event_itemadd&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=兵器镶嵌物&sid=$sid");
-$game_event_itemadd_6 = $encode->encode("cmd=game_event_itemadd&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=防具镶嵌物&sid=$sid");
-$game_event_itemadd_7 = $encode->encode("cmd=game_event_itemadd&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=任务物品&sid=$sid");
-$game_event_itemadd_8 = $encode->encode("cmd=game_event_itemadd&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=其它&sid=$sid");//
+$game_event_itemadd_1 = $encode->encode("cmd=game_event_itemchange&add_action=1&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=消耗品&sid=$sid");//
+$game_event_itemadd_2 = $encode->encode("cmd=game_event_itemchange&add_action=1&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=兵器&sid=$sid");
+$game_event_itemadd_3 = $encode->encode("cmd=game_event_itemchange&add_action=1&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=防具&sid=$sid");
+$game_event_itemadd_4 = $encode->encode("cmd=game_event_itemchange&add_action=1&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=书籍&sid=$sid");
+$game_event_itemadd_5 = $encode->encode("cmd=game_event_itemchange&add_action=1&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=兵器镶嵌物&sid=$sid");
+$game_event_itemadd_6 = $encode->encode("cmd=game_event_itemchange&add_action=1&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=防具镶嵌物&sid=$sid");
+$game_event_itemadd_7 = $encode->encode("cmd=game_event_itemchange&add_action=1&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=任务物品&sid=$sid");
+$game_event_itemadd_8 = $encode->encode("cmd=game_event_itemchange&add_action=1&step_belong_id=$step_belong_id&step_id=$step_id&gm_post_canshu_2=其它&sid=$sid");//
 
 $gm_html = <<<HTML
 <p>[事件物品设计]<br/>
@@ -27,7 +27,7 @@ $gm_html = <<<HTML
 HTML;
 echo $gm_html;
 }else{
-$last_page = $encode->encode("cmd=game_event_itemadd&step_belong_id=$step_belong_id&step_id=$step_id&sid=$sid");
+$last_page = $encode->encode("cmd=game_event_itemchange&add_action=1&step_belong_id=$step_belong_id&step_id=$step_id&sid=$sid");
 $page_subtype = 0;
 if(empty($_POST['kw'])){
 $get_item_list = \gm\get_item_list($dblj,$gm_post_canshu_2);

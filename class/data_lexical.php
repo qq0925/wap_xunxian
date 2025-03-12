@@ -727,6 +727,12 @@ $sid = $old_sid;
                     $updateQuery = "UPDATE system_addition_attr SET value = value + '$ele_2' WHERE name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
                     //$db->query($updateQuery);
                 } else{
+                $result_2 = $db->query("SELECT $ele_1_2 from system_item_module where iid = (SELECT iid from system_item where item_true_id = '$mid' and sid = '$sid')");
+                if($result_2->num_rows > 0){
+                    $row_2 = $result_2->fetch_assoc();
+                    $root_attr = $row_2[$ele_1_2];
+                    $ele_2 = $ele_2 + $root_attr;
+                }
                     // 字段不存在，添加新字段并更新值
                     $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
                     //$db->query($updateQuery);
@@ -864,19 +870,10 @@ function itemchanging($input,$sid,$oid=null,$mid=null,$para=null){
     // 创建数据库连接
 $db = DB::conn();
 
-//做负重判断
-
-// 使用逗号分割字符串
-
-$keyValuePairs = explode(",", $input);
-
-foreach ($keyValuePairs as $pair) {
+$data = json_decode($input, true);
+if($data){
+foreach ($data as $ele_1 => $ele_2) {
     // 使用|分割键值对
-    $item_true_id = '';
-    $firstEqualsPos = strpos($pair, '|');
-    if ($firstEqualsPos !== false) {
-        $ele_1 = substr($pair, 0, $firstEqualsPos);
-        $ele_2 = substr($pair, $firstEqualsPos + 1);
         $ele_2 =lexical_analysis\process_string($ele_2,$sid,$oid,$mid);
         @$ele_2 = eval("return $ele_2;");
         $sql = "select iid,iname,itype,iweight from system_item_module where iid = '$ele_1'";
@@ -955,12 +952,8 @@ foreach ($keyValuePairs as $pair) {
         $ele_2 = abs($ele_2);
         echo "失去了：{$iname}x{$ele_2}<br/>";
         }
-    } else {
-        //echo "无法匹配到键值对<br/>";
-        break;
-    }
 }
-
+}
 return 1;
 }
 

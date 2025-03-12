@@ -1,6 +1,7 @@
 <?php
 //数据库更新补丁
 include_once "attr_modify.php";
+include_once "items_modify.php";
     // 检查 equip 是否存在 eqpid 字段
     $sql = "SHOW COLUMNS FROM system_equip_user LIKE 'eqpid'";
     $stmt = $dblj->prepare($sql);

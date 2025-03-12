@@ -1525,14 +1525,15 @@ echo $refresh_html;
             $ym = 'gm/gm_event_exec_self/gm_event_attrchange_2.php';
             break;
         case 'game_event_itemchange'://步骤属性更新
+        if($add_action == '1'){
+            $ym = 'gm/gm_event_exec/gm_event_itemchange_3.php';
+        }else{
         if($item_name){
             $ym = 'gm/gm_event_exec/gm_event_itemchange_2.php';
         }else{
             $ym = 'gm/gm_event_exec/gm_event_itemchange.php';
         }
-            break;
-        case 'game_event_itemadd':
-            $ym = 'gm/gm_event_exec/gm_event_itemchange_3.php';
+        }
             break;
         case 'game_event_skilladd':
             if($add ==1){
@@ -1563,14 +1564,16 @@ echo $refresh_html;
             }
             break;
         case 'game_event_itemchange_self'://步骤属性更新
+        if($add_action == '1'){
+            $ym = 'gm/gm_event_exec_self/gm_event_itemchange_3.php';
+            break;
+        }else{
         if($item_name){
             $ym = 'gm/gm_event_exec_self/gm_event_itemchange_2.php';
         }else{
             $ym = 'gm/gm_event_exec_self/gm_event_itemchange.php';
         }
-            break;
-        case 'game_event_itemadd_self':
-            $ym = 'gm/gm_event_exec_self/gm_event_itemchange_3.php';
+}
             break;
         case 'game_event_skilladd_self':
             if($add ==1){
@@ -1645,9 +1648,47 @@ echo $refresh_html;
                 $target_midid = $dblj->lastInsertId();
                 $ym = 'gm/gm_map_3.php';
             }elseif($delete_canshu == 1){
-                
                 //地图删除相关事件
-                
+//1.和地图相关的地方：system_addition_attr（oid='map',mid = $target_midid）
+
+$dblj->exec("UPDATE system_event_evs set dests = '' where dests = '$target_midid'");
+$dblj->exec("UPDATE system_event_evs_self set dests = '' where dests = '$target_midid'");
+
+$sql = "SELECT link_event FROM system_map_op WHERE belong = :belong";
+$stmt = $dblj->prepare($sql);
+$stmt->bindParam(':belong', $target_midid, PDO::PARAM_STR);
+$stmt->execute();
+
+$link_event = $stmt->fetchAll(PDO::FETCH_COLUMN);
+if($link_event){
+    foreach ($link_event as $link_one){
+        $dblj->exec("DELETE from system_event_evs_self where belong = '$link_one'");
+        $dblj->exec("DELETE from system_event_evs where id = '$link_one'");
+    }
+}
+
+$sql = "SELECT mcreat_event_id, mlook_event_id, minto_event_id, mout_event_id, mminute_event_id FROM system_map WHERE mid = :belong";
+$stmt = $dblj->prepare($sql);
+$stmt->bindParam(':belong', $target_midid, PDO::PARAM_STR);
+$stmt->execute();
+
+// 获取所有地图相关事件ID
+$map_events = $stmt->fetch(PDO::FETCH_ASSOC);
+if($map_events) {
+    // 遍历所有事件类型并删除相关数据
+    foreach($map_events as $event_id) {
+        if($event_id) {
+            $dblj->exec("DELETE from system_event_evs_self where belong = '$event_id'");
+            $dblj->exec("DELETE from system_event_self where id = '$event_id'");
+        }
+    }
+}
+
+// 删除地图操作、NPC和场景相关数据
+$dblj->exec("DELETE from system_map_op where belong = '$target_midid'");
+$dblj->exec("DELETE from system_npc_midguaiwu where nmid = '$target_midid'");
+$dblj->exec("DELETE from system_npc_scene where nmid = '$target_midid'");
+
                 $post_canshu = 1;
                 $marea_id = $area_id;
                 // 删除system_map表中指定mid的数据
