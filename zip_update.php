@@ -62,7 +62,7 @@ if (isset($download) && $download == 1) {
         echo "文件不存在。<br/>";
     }
 } else {
-    $excludeFiles = ['favicon.php', 'xunxian.zip','my_db.php']; // 排除的文件
+    $excludeFiles = ['favicon.php', 'xunxian.zip','my_db.php','README.md']; // 排除的文件
     $excludeDirs = ['.git', '.well-known', 'ache', 'cache', 'css', 'images', 'js','out_data','in_data']; // 排除的文件夹
     compressToZip($excludeFiles, $excludeDirs);
 }
