@@ -32,7 +32,7 @@ if ($firstDotPosition !== false) {
             $cacheKey = 'global::'.$attr.'::'.'player::'.$sid.'::'.$oid."::".$mid.'::';
             break;
         case 'm':
-            $cacheKey = 'm_type::'.$oid.'::'.'m_value::'.$mid.'m_j::'.$jid.'::'.$attr;
+            $cacheKey = 'player::'.$sid.'::'.'m_j::'.$jid.'::'.$attr;
             break;
     }
     if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'||$attr1 =='ut'||$attr1=='ot'){
@@ -79,7 +79,7 @@ if ($firstDotPosition !== false) {
             $cacheKey = 'global::'.$attr.'::'.'player::'.$sid.'::'.$oid."::".$mid.'::';
             break;
         case 'm':
-            $cacheKey = 'm_type::'.$oid.'::'.'m_value::'.$mid.'m_j::'.$jid.'::'.$attr;
+            $cacheKey = 'player::'.$sid.'::'.'m_j::'.$jid.'::'.$attr;
             break;
     }
     if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'||$attr1 =='ut'||$attr1=='ot'){
@@ -119,7 +119,7 @@ if ($firstDotPosition !== false) {
             $cacheKey = 'global::'.$attr.'::'.'player::'.$sid.'::'.$oid."::".$mid.'::';
             break;
         case 'm':
-            $cacheKey = 'm_type::'.$oid.'::'.'m_value::'.$mid.'m_j::'.$jid.'::'.$attr;
+            $cacheKey = 'player::'.$sid.'::'.'m_j::'.$jid.'::'.$attr;
             break;
     }
     if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'||$attr1 =='ut'||$attr1=='ot'){

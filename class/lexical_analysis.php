@@ -476,8 +476,7 @@ function process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, $context,$n
     $p_one = $p_one?:0;
     $sql = "insert into game2(hurt_hp,sid,gid,pid,round,type)values('-$hurt_cut','$sid','$attack_gid','$p_one','$next_round','1')";
     $dblj->exec($sql);
-    $j_umsg = \lexical_analysis\process_string($j_umsg, $sid, $context, $attack_gid,1);
-    
+    $j_umsg = \lexical_analysis\process_string($j_umsg, $sid, $context, $attack_gid,$jid);
     $j_umsg = str_replace(["'", "\""], '', $j_umsg);
     $sql = "UPDATE game2 SET fight_umsg = ? WHERE round = ? and sid = ? and pid = ? and gid = ?";
     $stmt = $dblj->prepare($sql);

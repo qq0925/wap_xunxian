@@ -262,17 +262,13 @@ if($round ==0&&$cmd =='pve_fight'){
             $drop_money = \lexical_analysis\process_string($drop_money,$sid);
             }
             if($drop_items){
-            
-            $drop_item = explode(',',$drop_items);
-            $drop_item_count = count($drop_item);
+            $items_para = json_decode($drop_items, true);
             if($drop_item_type ==1){
             $drop_add_map_item = [];
-            for($j=0;$j<$drop_item_count;$j++){
-                $drop_para = explode('|',$drop_item[$j]);
-                $drop_id = $drop_para[0];
+            if($items_para){
+            foreach($items_para as $drop_id=>$drop_count){
                 $drop_item_name = \player\getitem($drop_id,$dblj)->iname;
                 $drop_item_name = \lexical_analysis\color_string($drop_item_name);
-                $drop_count = $drop_para[1];
                 $drop_count = \lexical_analysis\process_string($drop_count,$sid);
                 $drop_count = @eval("return $drop_count;");
                     // 更新地图掉落物品字符串
@@ -283,6 +279,7 @@ if($round ==0&&$cmd =='pve_fight'){
                         $item_counts[$drop_item_name] = $drop_count;
                     }
             }
+            }
             if($drop_add_map_item){
                 // 拼接掉落物品字符串
             $drop_add_map_item_str = implode(',', $drop_add_map_item);
@@ -292,11 +289,8 @@ if($round ==0&&$cmd =='pve_fight'){
             $stmt->execute([$alive_id,$drop_add_map_item_str,$sid,$nowdate,$drop_map_id]);
             }
             }else{
-            for($j=0;$j<$drop_item_count;$j++){
-                $drop_para = explode('|',$drop_item[$j]);
-                $drop_id = $drop_para[0];
-                
-                $drop_count = $drop_para[1];
+            if($items_para){
+            foreach ($items_para as $drop_id=>$drop_count){
                 $drop_count = \lexical_analysis\process_string($drop_count,$sid);
                 $drop_count = @eval("return $drop_count;");
                 $drop_weight = \player\getitem($drop_id,$dblj)->iweight;
@@ -333,6 +327,7 @@ if($round ==0&&$cmd =='pve_fight'){
                         $item_counts[$drop_item_name] = -$drop_count;
                     }
                 }
+            }
             }
             }
             }

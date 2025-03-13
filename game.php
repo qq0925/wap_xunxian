@@ -1000,11 +1000,66 @@ echo $refresh_html;
             }elseif ($game_status=="3") {
                 $game_status_string = "公测";
             }
-            $sql = "UPDATE gm_game_basic SET game_name = '$game_name', game_desc = '$game_desc', promotion_exp = '$promotion_exp',
-            promotion_cond = '$promotion_cond', mod_promotion_exp = '$mod_promotion_exp', mod_promotion_cond = '$mod_promotion_cond', 
-            clan_promotion_exp = '$clan_promotion_exp', clan_promotion_cond = '$clan_promotion_cond', game_status = '$game_status',game_status_string = '$game_status_string',pet_max_count = '$pet_max_count',team_max_count = '$team_max_count'";
-            $cxjg = $dblj->exec($sql);
-            echo '修改成功<br/>';
+
+            $promotion_exp_check = $promotion_exp !== '' 
+        ? \lexical_analysis\process_string($promotion_exp, $sid, $oid, $mid, null, null, "check_cond") 
+        : 1;
+            try{
+                $formula_error = false;
+                @$ret = eval("return $promotion_exp_check;");
+            }
+            catch (ParseError $e){
+                $formula_error = true;
+                print("升级公式语法错误: ". $e->getMessage()."<br/>");
+            }
+            $promotion_cond_check = $promotion_cond !== '' 
+        ? \lexical_analysis\process_string($promotion_cond, $sid, $oid, $mid, null, null, "check_cond") 
+        : 1;
+            try{
+                @$ret = eval("return $promotion_cond_check;");
+            }
+            catch (ParseError $e){
+                $formula_error = true;
+                print("升级条件语法错误: ". $e->getMessage()."<br/>");
+            }
+
+            if (!$formula_error) {
+                $sql = "UPDATE gm_game_basic SET 
+                    game_name = :game_name, 
+                    game_desc = :game_desc, 
+                    promotion_exp = :promotion_exp,
+                    promotion_cond = :promotion_cond, 
+                    mod_promotion_exp = :mod_promotion_exp, 
+                    mod_promotion_cond = :mod_promotion_cond, 
+                    clan_promotion_exp = :clan_promotion_exp, 
+                    clan_promotion_cond = :clan_promotion_cond, 
+                    game_status = :game_status,
+                    game_status_string = :game_status_string,
+                    pet_max_count = :pet_max_count,
+                    team_max_count = :team_max_count";
+                
+                $stmt = $dblj->prepare($sql);
+                
+                // 绑定参数
+                $stmt->bindParam(':game_name', $game_name);
+                $stmt->bindParam(':game_desc', $game_desc);
+                $stmt->bindParam(':promotion_exp', $promotion_exp);
+                $stmt->bindParam(':promotion_cond', $promotion_cond);
+                $stmt->bindParam(':mod_promotion_exp', $mod_promotion_exp);
+                $stmt->bindParam(':mod_promotion_cond', $mod_promotion_cond);
+                $stmt->bindParam(':clan_promotion_exp', $clan_promotion_exp);
+                $stmt->bindParam(':clan_promotion_cond', $clan_promotion_cond);
+                $stmt->bindParam(':game_status', $game_status);
+                $stmt->bindParam(':game_status_string', $game_status_string);
+                $stmt->bindParam(':pet_max_count', $pet_max_count);
+                $stmt->bindParam(':team_max_count', $team_max_count);
+                
+                // 执行更新
+                $cxjg = $stmt->execute();
+                echo '修改成功<br/>';
+            } else {
+                echo '由于公式错误，未执行数据库更新<br/>';
+            }
             }
             $ym ='gm/gamebasic_info.php';
             break;
