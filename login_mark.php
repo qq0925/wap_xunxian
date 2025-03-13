@@ -9,7 +9,7 @@ header("Expires: Sat, 1 Jan 2000 00:00:00 GMT");
 
 $encode = new \encode\encode();//创建一个名为 $encode 的新对象，并使用命名空间 \encode\encode() 实例化该对象。
 $dblj = DB::pdo();
-if(!$gm_post){
+if(!isset($gm_post)){
 $gm_post = new \gm\gm();
 $gm_post = \gm\gm_post($dblj);
 }

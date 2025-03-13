@@ -217,7 +217,7 @@ $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $gomyequip = $encode->encode("cmd=player_equip&ucmd=$cmid&sid=$sid");
 
-if ($currentPage > 2 && $currentPage == $totalPages) {
+if ($currentPage > 2 && $currentPage <= $totalPages) {
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $main_page = $encode->encode("cmd=item_html&ucmd=$cmid&canshu=$canshu&kw=$kw&list_page=1&sid=$sid");

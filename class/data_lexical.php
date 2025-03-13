@@ -763,6 +763,7 @@ $sid = $old_sid;
                 $result = $db->query($sql);
                 $row = $result->fetch_assoc();
                 $attr_name = $row['name'];
+                $attr_name = \lexical_analysis\color_string($attr_name);
                 $attr_show = $row['if_show'];
                 $ele_1_2 = 'u'.$ele_1_2;
                 // 检查字段是否存在

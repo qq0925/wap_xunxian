@@ -376,7 +376,7 @@ for ($i = 1; $i <= $map_x; $i++) {
             if($link_event){
                 foreach ($link_event as $link_one){
                     $dblj->exec("DELETE from system_event_evs_self where belong = '$link_one'");
-                    $dblj->exec("DELETE from system_event_evs where id = '$link_one'");
+                    $dblj->exec("DELETE from system_event_self where id = '$link_one'");
                 }
             }
             

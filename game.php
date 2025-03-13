@@ -3,8 +3,8 @@ session_start();
 //ob_start();
 $start_time = microtime(true);
 set_time_limit(0);
-//error_reporting(0);
-//ini_set('display_errors', '0');
+error_reporting(0);
+ini_set('display_errors', '0');
 require 'class/player.php';
 require 'class/encode.php';
 require 'class/gm.php';
@@ -1307,7 +1307,7 @@ echo $refresh_html;
                     break;
                 case '5':
                     $update_column = "m".$gm_id;
-                    $sql = "ALTER TABLE system_map ALTER COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL;";
+                    $sql = "ALTER TABLE system_map MODIFY COLUMN `$update_column` $modify_type DEFAULT '$gm_default_value' NOT NULL ;";
                     break;
                 case '6':
                     $update_column = "j".$gm_id;
@@ -1718,7 +1718,7 @@ echo $refresh_html;
                 if($link_event){
                     foreach ($link_event as $link_one){
                         $dblj->exec("DELETE from system_event_evs_self where belong = '$link_one'");
-                        $dblj->exec("DELETE from system_event_evs where id = '$link_one'");
+                        $dblj->exec("DELETE from system_event_self where id = '$link_one'");
                     }
                 }
                 

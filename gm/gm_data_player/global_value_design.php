@@ -52,7 +52,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $change_html .=<<<HTML
 <form method="post">
 ID:<input name="gid" placeholder="请输入gid" type="text" maxlength="50"/><br/>
-值:<textarea name="gvalue" placeholder="请输入值" type="text" maxlength="50" style="height: 63px; width: 229px;"></textarea><br/>
+值:<textarea name="gvalue" placeholder="请输入值" type="text" style="height: 63px; width: 229px;"></textarea><br/>
 <input name="submit" type="submit" title="确定" value="添加"></input></form>
 ---<br/>
 HTML;
