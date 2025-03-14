@@ -55,6 +55,80 @@ $updateStmt->execute([$newJson,$npc_id]);
 
 
 if($canshu ==1){
+
+if($change_basic){
+    $update_exp = $_POST['exp'];
+    $update_money = $_POST['money'];
+    $update_drop_type = $_POST['drop_type'];
+    
+    // 验证输入数据
+    $formula_error = false;
+    
+    // 验证经验公式
+    try {
+        // 执行简单测试以检查公式语法
+        $promotion_exp_check = $update_exp !== '' 
+        ? \lexical_analysis\process_string($update_exp, $sid, $oid, $mid, null, null, "check_cond") 
+        : 1;
+        @$ret = eval("return $promotion_exp_check;");
+    } catch (ParseError $e) {
+        $formula_error = true;
+        echo "经验掉落公式语法错误: " . $e->getMessage() . "<br/>";
+    }
+    
+    // 验证金钱公式
+    try {
+        $promotion_money_check = $update_money !== '' 
+        ? \lexical_analysis\process_string($update_money, $sid, $oid, $mid, null, null, "check_cond") 
+        : 1;
+        // 执行简单测试以检查公式语法
+        @$ret = eval("return $promotion_money_check;");
+    } catch (ParseError $e) {
+        $formula_error = true;
+        echo "金钱掉落公式语法错误: " . $e->getMessage() . "<br/>";
+    }
+    
+    // 如果没有公式错误，执行更新
+    if (!$formula_error) {
+        try {
+            // 使用预处理语句更新数据库
+            $sql = "UPDATE system_npc SET 
+                    ndrop_exp = :drop_exp, 
+                    ndrop_money = :drop_money,
+                    ndrop_item_type = :drop_type
+                    WHERE nid = :npc_id";
+            
+            $stmt = $dblj->prepare($sql);
+            
+            // 绑定参数
+            $stmt->bindParam(':drop_exp', $update_exp);
+            $stmt->bindParam(':drop_money', $update_money);
+            $stmt->bindParam(':drop_type', $update_drop_type, PDO::PARAM_INT);
+            $stmt->bindParam(':npc_id', $npc_id);
+            
+            // 执行更新
+            $stmt->execute();
+            
+            echo "NPC掉落设置已成功更新<br/>";
+            
+            // 刷新数据以显示更新后的值
+            $sql = "SELECT * FROM system_npc WHERE nid = :npc_id";
+            $stmt = $dblj->prepare($sql);
+            $stmt->bindParam(':npc_id', $npc_id, PDO::PARAM_STR);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $npc_drop_exp = $row['ndrop_exp'];
+            $npc_drop_money = $row['ndrop_money'];
+            $npc_drop_type = $row['ndrop_item_type'];
+            $select_para = $npc_drop_type == 1 ? "selected" : "";
+        } catch (PDOException $e) {
+            echo "数据库更新错误: " . $e->getMessage() . "<br/>";
+        }
+    } else {
+        echo "由于公式错误，未执行数据库更新<br/>";
+    }
+}
+
 $area_main = $encode->encode("cmd=gm_npc_second&npc_id=$npc_id&sid=$sid");
 $drop_item_modify = $encode->encode("cmd=gm_type_npc&gm_post_canshu=7&canshu=2&npc_id=$npc_id&sid=$sid");
 $sql = "SELECT * FROM system_npc WHERE nid = :npc_id";
@@ -90,11 +164,6 @@ NPC“{$npc_name}”死后掉落定义<br/>
 <a href="?cmd=$area_main">返回上级</a><br/>
 HTML;
 }elseif ($canshu ==2) {
-
-if($_POST){
-    $dblj->exec("update system_npc set ndrop_item_type = '$drop_type' where nid = '$npc_id'");
-}
-
 
 $area_main = $encode->encode("cmd=gm_type_npc&gm_post_canshu=7&canshu=1&npc_id=$npc_id&sid=$sid");
 $sql = "SELECT * FROM system_npc WHERE nid = :npc_id";
