@@ -227,6 +227,9 @@ $value = $value?$value:$func_name;
         case '89':
             $shop_core_url = shop_core_list($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
             return $shop_core_url;
+        case '90':
+            $item_mosaic_url = item_mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid);
+            return $item_mosaic_url;
         default:
             // code...
             break;
@@ -2311,6 +2314,57 @@ HTML;
     }
 if($iembed_count>0 &&$iembed_count > $equip_mosaic_count){
     $equip_mosaic_into = $encode->encode("cmd=equip_html&canshu=into_choose&equip_true_id=$mid&ucmd=$cmid&sid=$sid");
+    $equip_html .=<<<HTML
+----------<br/>
+<a href="?cmd=$equip_mosaic_into">镶嵌物品</a><br/>
+HTML;
+}
+
+
+    $equip_html .=<<<HTML
+----------<br/>
+HTML;
+    return $equip_html;
+}
+
+function item_mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
+    
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $clj[] = $cmd;
+    //刷新功能实现
+    global $encode;
+
+    $sql = "select iembed_count from system_item_module where iid = (select iid from system_item where sid = '$sid' and item_true_id = '$mid')";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    $iembed_count = $ret['iembed_count']?:0;
+    $equip_html=<<<HTML
+可镶宝数:{$iembed_count}<br/>
+HTML;
+
+    $sql = "select equip_mosaic from player_equip_mosaic where equip_id ='$mid'";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    $equip_mosaics = $ret['equip_mosaic'];
+if($equip_mosaics){
+    $equip_html .=<<<HTML
+已镶嵌物品:<br/>
+HTML;
+    $equip_mosaic_para = explode('|',$equip_mosaics);
+    $equip_mosaic_count = count($equip_mosaic_para);
+    for($i=1;$i<$equip_mosaic_count +1;$i++){
+        $equip_mosaic_one = $equip_mosaic_para[$i-1];
+        $equip_mosaic_name = \player\getitem($equip_mosaic_one,$dblj)->iname;
+        $equip_mosaic_name = \lexical_analysis\color_string($equip_mosaic_name);
+        $equip_mosaic_diss = $encode->encode("cmd=equip_html&page=item&equip_true_id=$mid&diss_mosaic_id=$equip_mosaic_one&ucmd=$cmid&sid=$sid");
+    $equip_html .=<<<HTML
+{$i}:{$equip_mosaic_name}|<a href="?cmd=$equip_mosaic_diss">卸下</a><br/>
+HTML;
+    }
+    }
+if($iembed_count>0 &&$iembed_count > $equip_mosaic_count){
+    $equip_mosaic_into = $encode->encode("cmd=equip_html&page=item&canshu=into_choose&equip_true_id=$mid&ucmd=$cmid&sid=$sid");
     $equip_html .=<<<HTML
 ----------<br/>
 <a href="?cmd=$equip_mosaic_into">镶嵌物品</a><br/>

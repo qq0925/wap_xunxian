@@ -558,11 +558,11 @@ $old_sid = $sid;
 if($data){
 foreach ($data as $ele_1 => $ele_2) {
     // 找到第一个等号的位置
-$sid = $old_sid;
+        $sid = $old_sid;
         if($can_redis == 1){
         $check_cache = \gm\check_redis($db,$ele_1,$sid,$oid,$mid,$jid,$type,$para);
         }
-        //$parts = explode(".", $ele_1);
+
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
             $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
@@ -588,6 +588,7 @@ $sid = $old_sid;
             }else{
                 $echo_type = "other";
             }
+
         $SecondEqualsPos = strpos($ele_1, '.');
         if ($SecondEqualsPos !== false){
         $ele_1_1 = substr($ele_1, 0, $SecondEqualsPos);
@@ -595,7 +596,6 @@ $sid = $old_sid;
 
         $ele_1_2 =lexical_analysis\process_string($ele_1_2,$sid,$oid,$mid);
         $ele_1_2 = str_replace('\'', '', $ele_1_2);
-        //@$ele_1_2 = eval("return $ele_1_2;");
 
         $ThirdEqualsPos = strpos($ele_1_2, '.');
         if ($ThirdEqualsPos !== false){
@@ -622,10 +622,11 @@ $sid = $old_sid;
             $redis->del($check_cache);
             }
         }
+
         switch ($ele_1_1) {
             case 'u':
                 if($ele_1_3 =='icc'){
-                $last_para = $ele_1_4.'|'.$ele_2;
+                $last_para = json_encode(array($ele_1_4 => $ele_2));
                 $ret = itemchanging($last_para,$sid,$oid,$mid,$para);
                 }else{
                 $sql = "select name,if_show from gm_game_attr where value_type =1 and id = '$ele_1_2'";

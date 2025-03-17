@@ -67,6 +67,7 @@ $items = json_decode($r_items, true);
 if($items){
 foreach ($items as $key => $value) {
     $key = urlencode($key);
+    $show_value = $value;
     $value = urlencode($value);
     $sql = "SELECT iname from system_item_module where iid = '$key'";
     $stmt = $dblj->query($sql);
@@ -75,7 +76,7 @@ foreach ($items as $key => $value) {
     $item_change = $encode->encode("cmd=game_event_itemchange_self&item_id=$key&item_name=$item_name&item_count=$value&event_id=$event_id&step_id=$step_id&sid=$sid");
     $item_remove = $encode->encode("cmd=game_event_itemchange_self&item_id=$key&event_id=$event_id&step_id=$step_id&canshu=remove&sid=$sid");
     $item_list .=<<<HTML
-<a href="?cmd=$item_change">{$item_name}({$value})</a><a href="?cmd=$item_remove">移除</a><br/>
+<a href="?cmd=$item_change">{$item_name}({$show_value})</a><a href="?cmd=$item_remove">移除</a><br/>
 HTML;
     
 }

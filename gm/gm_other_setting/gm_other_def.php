@@ -12,6 +12,15 @@ if (file_exists($css_file_path)) {
     // 读取文件内容并赋值给变量
     $gm_css_text = htmlspecialchars(file_get_contents($css_file_path));
 }
+
+// 构建上级目录的同级 js 文件夹路径
+$js_file_path = $current_dir . '/../../js/global_js.js';
+if (file_exists($js_file_path)) {
+    // 读取文件内容并赋值给变量
+    $gm_js_text = htmlspecialchars(file_get_contents($js_file_path));
+}
+
+
 if(!empty($_POST)){
 foreach ($_POST as $key => $value) {
     switch ($key) {
@@ -118,6 +127,21 @@ foreach ($_POST as $key => $value) {
                 $gm_css_text = file_get_contents($css_file_path);
             }
             break;
+        case 'gm_js_text':
+            // 获取提交的js内容
+            $gm_js_text = $_POST['gm_js_text'] ?? '';
+            // 写入文件
+            if (file_put_contents($js_file_path, $gm_js_text) !== false) {
+                $message = "js文件已成功更新。";
+            } else {
+                $message = "更新js文件时出错。";
+            }
+            
+            if (file_exists($js_file_path)) {
+                // 读取文件内容并赋值给变量
+                $gm_js_text = file_get_contents($js_file_path);
+            }
+            break;
     }
     }
 }
@@ -222,6 +246,11 @@ $other_html = <<<HTML
 css样式编写:<br/>
 <form action="?cmd=$other_set" method="POST">
 <textarea name="gm_css_text" maxlength="-1" rows="8" cols="40" >{$gm_css_text}</textarea>
+<input name="submit" type="submit" title="保存" value="保存" >
+</form>
+js样式编写:<br/>
+<form action="?cmd=$other_set" method="POST">
+<textarea name="gm_js_text" maxlength="-1" rows="8" cols="40" >{$gm_js_text}</textarea>
 <input name="submit" type="submit" title="保存" value="保存" >
 </form>
 <a href="?cmd=$last_page">返回上级</a><br/><br/>

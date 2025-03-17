@@ -4147,6 +4147,7 @@ echo $refresh_html;
     
 <footer>
     <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="js/global_js.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const images = document.querySelectorAll('img');

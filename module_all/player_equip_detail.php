@@ -35,17 +35,22 @@ $mosaic_id = $mosaic_list[$i-1]['iid'];
 $mosaic_true_id = $mosaic_list[$i-1]['item_true_id'];
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$gotomosaic = $encode->encode("cmd=equip_html&ucmd=$cmid&equip_id=$equip_id&equip_true_id=$equip_true_id&insert_mosaic=$mosaic_id&insert_true_mosaic=$mosaic_true_id&sid=$sid");
+$gotomosaic = $encode->encode("cmd=equip_html&page=$page&ucmd=$cmid&equip_id=$equip_id&equip_true_id=$equip_true_id&insert_mosaic=$mosaic_id&insert_true_mosaic=$mosaic_true_id&sid=$sid");
 
 $mosaic_list_html .=<<<HTML
 {$i}.{$mosaic_name}x{$mosaic_count}|<a href="?cmd=$gotomosaic">镶嵌</a><br/>
 HTML;
 }
 
-
+if($page == 'item'){
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$equip_html = $encode->encode("cmd=iteminfo_new&item_true_id=$equip_true_id&ucmd=$cmid&sid=$sid");
+}else{
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $equip_html = $encode->encode("cmd=equip_html&equip_true_id=$equip_true_id&ucmd=$cmid&sid=$sid");
+}
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
@@ -312,16 +317,17 @@ HTML;
 $gm_module = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=14&sid=$sid");
 
 
-if($pet_id){
+if($page =='item'){
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$equip_html = $encode->encode("cmd=player_petequip&pet_id=$pet_id&ucmd=$cmid&sid=$sid");
+$equip_html = $encode->encode("cmd=iteminfo_new&item_true_id=$mid&ucmd=$cmid&sid=$sid");
+$ret_text = "<a href='?cmd=$equip_html'>返回物品</a><br/>";
 }else{
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $equip_html = $encode->encode("cmd=player_equip&ucmd=$cmid&sid=$sid");
+$ret_text = "<a href='?cmd=$equip_html'>返回列表</a><br/>";
 }
-
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 
@@ -341,7 +347,7 @@ $all = <<<HTML
 $game_main
 $gm_item_design
 $gm_html
-<a href="?cmd=$equip_html">返回列表</a><br/>
+$ret_text
 <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
 }

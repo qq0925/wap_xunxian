@@ -143,7 +143,7 @@ g：代表公共数据
 表达式变量嵌套一层的功能如：{u.skills.v(m.id).lvl}，v(...)表示取括号内变量的值作为外层变量名称的一部分
 设置和更改值时可以支持变量如：u.v(u.input.id) = 1
 
-！！！可以使用{u.skills.skill_id.name}获得人物的某个技能的属性，其中skill_id为某个技能id，name为属性名称，如{u.skills.j1.lvl,o.skills.j2.lvl}
+可以使用{u.skills.skill_id.name}获得人物的某个技能的属性，其中skill_id为某个技能id，name为属性名称，如{u.skills.j1.lvl}
 ！！！可以使用{u.adopt_owner.xx}获得宠物的主人的某个属性，其中xx为属性名称,如{u.adopt_owner.lvl},{o.adopt_owner.skills.j1.lvl}
 ！！！可以使用u.skills.skill_id.name=***设置人物的技能属性，其中skill_id为某个技能id，name为属性名称，如u.skills.j1.lvl=50
 ！！！可以使用u.adopt_owner.xx设置宠物的主人的某个属性，其中xx为属性名称如u.adopt_owner.hp=100
@@ -208,7 +208,7 @@ t=tasks
 s=scene
 n=npc
 i=item
-j=jineng=skills
+j=skills
 
 名称:equips.b.name
 词意:获得用户穿戴武器名称
@@ -285,6 +285,10 @@ A??C，通过这种写法等同于isset(A)?A:C
 比如：有个公共变量test值为s1，那么就可以f(g.test).xx取得s1地图的xx属性，这里的s是标识符。
 或者可以直接f(s1).xx也可以取得。
 类似的标识符还有：a(区域)，i(物品)，n(NPC),如果是数字，则会判断玩家类型（自己和其他玩家）。
+
+11、eval()复合运算函数
+{eval(1+2)}，{eval(v(u.lvl)+100)}
+特别的：eval默认返回一个取整值，如果要保留小数运算，请使用{evald()}
 
 
 <h1>便捷功能</h1>

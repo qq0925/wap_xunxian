@@ -954,4 +954,13 @@ AFTER nwin_event_id ;";
         $sql = "insert into system_function (belong,id,name,link_function,default_value) values (14,88,'装备页面镶嵌功能',88,'装备页面镶嵌功能')";
         $dblj->exec($sql);
     }
+    
+    // 检查某功能字段是否存在
+    $result = $dblj->query("select id from system_function where id = 90");
+    if ($result->rowCount() == 0) {
+        // 表不存在，创建表
+        $sql = "insert into system_function (belong,id,name,link_function,default_value) values (4,90,'物品页面镶嵌功能',90,'物品页面镶嵌功能')";
+        $dblj->exec($sql);
+    }
+    
 ?>
