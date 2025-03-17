@@ -563,17 +563,25 @@ function getSubstringBetweenDots($str, $startDotIndex = 0, $endDotIndex = null) 
 //---------分割线----------//
 function evaluate_expression($expr, $db, $sid,$oid,$mid,$jid,$type,$para=null){
 $expr = preg_replace_callback('/\{eval\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
-    // /\{eval\(([^)]+)\)\}/
+
     $eval_expr = $matches[1]; // 获取 eval 中的表达式
     
     $eval_result = @eval("return $eval_expr;"); // 计算 eval 表达式的结果
-    //var_dump($eval_result);
 
     if(is_float($eval_result) && !is_string($eval_result)){
         return (int)$eval_result;
     }else{
     return $eval_result; // 返回计算结果
     }
+}, $expr);
+
+$expr = preg_replace_callback('/\{evald\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
+
+    $eval_expr = $matches[1]; // 获取 evald 中的表达式
+
+    $eval_result = @eval("return $eval_expr;"); // 计算 evald 表达式的结果
+
+    return $eval_result; // 返回计算结果
 }, $expr);
 
 
@@ -1133,9 +1141,31 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $result = $stmt->get_result();
                     $row = $result->fetch_assoc();
                     $op = $row["jlvl"];
-                    if(is_null($op)){
-                        //$op = "\"\"";
+                    }elseif(strpos($attr2, "skills.") === 0){
+                    $attr3 = substr($attr2, 7); 
+                    $jid = $attr3;
+                    
+                    $para = explode(".",$attr3);
+                    $attr_skill_id = substr($para[0],1);
+                    $attr_skill_attr = "j".$para[1];
+                    if($attr_skill_attr!='jlvl'){
+                    $sql = "SELECT $attr_skill_attr FROM system_skill WHERE jid = ?";
+                    // 使用预处理语句
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s",$attr_skill_id);
+                    }else{
+                    $sql = "SELECT jlvl FROM system_skill_user WHERE jid = ? and jsid = ?";
+                    // 使用预处理语句
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("ss",$attr_skill_id,$sid);
                     }
+                    // 执行查询
+                    $stmt->execute();
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $op = $row[$attr_skill_attr];
+                    
                     }elseif(strpos($attr2, "enemys.") === 0){
                     $attr3 = substr($attr2, 7); // 提取 "enemys." 后面的部分
                     $jid = $attr3;

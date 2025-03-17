@@ -1081,6 +1081,20 @@ function skillschanging($input, $sid, $type, $oid = null, $mid = null, $para = n
                         $deleteStmt->bind_param("is", $pair, $sid);
                         $deleteResult = $deleteStmt->execute();
 
+                        $oldValue = '1|' . $pair; // 拼接旧值
+                        // 准备预处理语句
+                        $stmt = $db->prepare("
+                            UPDATE system_fight_quick 
+                            SET quick_value = '' 
+                            WHERE sid = ? 
+                            AND quick_value = ?
+                        ");
+                        
+                        // 绑定参数（假设 sid 是整型）
+                        $stmt->bind_param('ss', $sid, $oldValue);
+                        
+                        // 执行更新
+                        $result = $stmt->execute();
                         if ($deleteResult) {
                             echo "废除了{$jname}<br/>";
                         } else {

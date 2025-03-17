@@ -12,7 +12,7 @@ HTML;
 }
     
 // 查询表结构信息
-$stmt = $dblj->query("select DISTINCT name from system_addition_attr");
+$stmt = $dblj->query("select DISTINCT name from system_addition_attr where sid !='' and oid =''");
 // 获取字段名称
 $fieldNames = $stmt->fetchAll(PDO::FETCH_COLUMN);
     
