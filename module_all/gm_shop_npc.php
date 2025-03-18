@@ -1,5 +1,5 @@
 <?php
-include_once 'class/events_steps_change.php';
+
 $parents_page = $currentFilePath;
 if($canshu == 'buy'){
     if($count >0){
@@ -27,6 +27,7 @@ if($canshu == 'buy'){
         $parents_cmd = 'gm_shop_npc';
         $event_id = \gm\get_self_event($dblj,$nid,'npc_shop');
         if($event_id){
+        include_once 'class/events_steps_change.php';
         events_steps_change($event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/gm_shop_npc.php','npc_scene',$mid,$para);
         }
         $player = \player\getplayer($sid,$dblj);
