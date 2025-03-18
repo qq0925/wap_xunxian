@@ -3,8 +3,8 @@ session_start();
 //ob_start();
 $start_time = microtime(true);
 set_time_limit(0);
-error_reporting(0);
-ini_set('display_errors', '0');
+// error_reporting(0);
+// ini_set('display_errors', '0');
 require 'class/player.php';
 require 'class/encode.php';
 require 'class/gm.php';
@@ -4039,7 +4039,7 @@ HTML;
             }
             }
             $getgameconfig = \player\getgameconfig($dblj);
-            if ($getgameconfig->game_temp_notice_time != 0) {
+            if ($getgameconfig->game_temp_notice_time > 0) {
                 $temp_notice = $getgameconfig->game_temp_notice;
                 $noticeContent = <<<HTML
                 <font color='red'>[临时公告]：{$temp_notice}</font><br/>
