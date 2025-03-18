@@ -47,11 +47,12 @@ $newJson = json_encode($data,true);
 }else{
 $newJson = '';
 }
+if($canshu ==2){
 $updateSql = "UPDATE system_npc SET ndrop_item = ? WHERE nid = ?";
 $updateStmt = $dblj->prepare($updateSql);
 $updateStmt->execute([$newJson,$npc_id]);
 }
-
+}
 
 
 if($canshu ==1){

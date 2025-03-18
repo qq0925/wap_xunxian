@@ -13,11 +13,17 @@ class PhpRunner {
         $this->lockFile = __DIR__ . '/daemon_' . $taskType . '.lock'; // 文件锁
         $this->logFile = __DIR__ . '/daemon_' . $taskType . '.log';   // 日志文件
         $this->phpBinary = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? 'php.exe' : 'php74'; // 自动选择 PHP 执行命令
+        
+        // 确保日志文件存在并包含UTF-8 BOM头（解决Windows中文乱码）
+        if (!file_exists($this->logFile)) {
+            file_put_contents($this->logFile, "\xEF\xBB\xBF"); // UTF-8 BOM头
+        }
     }
     
     // 日志记录函数
     private function log($message) {
         $date = date('Y-m-d H:i:s');
+        // 确保写入UTF-8编码
         file_put_contents($this->logFile, "[$date] $message\n", FILE_APPEND);
     }
 
@@ -76,14 +82,21 @@ class PhpRunner {
         // 如果是 Windows 平台
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $this->log("使用Windows命令启动进程");
-            // 创建一个简单的启动器脚本
-            $batchFile = __DIR__ . "/run_{$this->taskType}.bat";
-            $phpScript = "\"" . realpath($scriptPath) . "\"";
-            $batchContent = "@echo off\r\n";
-            $batchContent .= "{$this->phpBinary} {$phpScript}\r\n";
-            file_put_contents($batchFile, $batchContent);
             
-            $cmd = "start /B {$batchFile}";
+            // 创建一个VBS脚本来在后台运行PHP
+            $vbsFile = __DIR__ . "/run_{$this->taskType}.vbs";
+            $realScriptPath = realpath($scriptPath);
+            $phpPath = realpath($this->phpBinary) ?: $this->phpBinary;
+            
+            // 创建VBS脚本内容 - 这种方式能够在Windows下保持长期运行
+            $vbsContent = "Set WshShell = CreateObject(\"WScript.Shell\")\r\n";
+            $vbsContent .= "WshShell.Run \"\"\"$phpPath\"\" \"\"$realScriptPath\"\"\", 0, False\r\n";
+            
+            file_put_contents($vbsFile, $vbsContent);
+            $this->log("创建VBS脚本: $vbsFile");
+            
+            // 使用WScript执行VBS脚本
+            $cmd = "cscript //NoLogo \"$vbsFile\"";
             $this->log("执行命令: $cmd");
             
             $output = array();
@@ -93,19 +106,19 @@ class PhpRunner {
             if ($returnVar === 0) {
                 // 等待一小段时间让进程启动
                 sleep(2);
-                // 获取新启动的进程PID
-                $processName = basename($scriptPath);
-                $this->log("查找进程: $processName");
-                $cmd = "tasklist /FI \"IMAGENAME eq php.exe\" /FO CSV";
-                $this->log("执行命令: $cmd");
-                $output = shell_exec($cmd);
-                $this->log("进程列表: $output");
                 
-                // 手动写入固定PID（临时解决方案）
-                $pid = rand(10000, 99999); // 随机生成一个大数作为伪PID
+                // Windows下无法可靠地获取PID，使用固定的伪PID
+                $pid = rand(10000, 99999);
                 file_put_contents($this->pidFile, $pid);
-                $this->log("保存PID文件，值为: $pid");
-                echo "守护进程已启动 (PID: $pid)<br/>";
+                $this->log("保存伪PID文件，值为: $pid (Windows环境下仅用于状态指示)");
+                
+                // 写入一个标记文件表示定时器类型
+                $markerFile = __DIR__ . "/daemon_{$this->taskType}_running.marker";
+                file_put_contents($markerFile, date('Y-m-d H:i:s'));
+                $this->log("创建标记文件: $markerFile");
+                
+                echo "守护进程已启动 (Windows模式)<br/>";
+                echo "<div style='color:blue'>提示: Windows环境下无法获取实际PID，系统使用标记文件判断运行状态</div>";
             } else {
                 // 启动失败，释放锁
                 flock($lock, LOCK_UN);
@@ -113,7 +126,7 @@ class PhpRunner {
                 @unlink($this->lockFile);
                 
                 $this->log("启动失败！Windows命令执行错误，返回值: $returnVar");
-                echo "启动失败！windows环境限制，建议使用linux环境！<br/>";
+                echo "启动失败！Windows环境下命令执行错误<br/>";
                 return;
             }
         } else {
@@ -182,10 +195,23 @@ class PhpRunner {
 
     // 检查守护进程是否运行
     public function isDaemonRunning() {
-        // 特殊处理Windows环境 - 只要PID文件存在就认为进程在运行
+        // 特殊处理Windows环境 - 检查PID文件和标记文件
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $isRunning = file_exists($this->pidFile);
-            $this->log("Windows模式下检查PID文件是否存在: " . ($isRunning ? "是" : "否"));
+            $markerFile = __DIR__ . "/daemon_{$this->taskType}_running.marker";
+            $isRunning = file_exists($this->pidFile) && file_exists($markerFile);
+            
+            // 检查标记文件的时间戳是否过期 (过期时间设为60分钟)
+            if ($isRunning && file_exists($markerFile)) {
+                $markerTime = filemtime($markerFile);
+                if (time() - $markerTime > 3600) {
+                    $this->log("标记文件已过期，认为进程已停止");
+                    @unlink($this->pidFile);
+                    @unlink($markerFile);
+                    $isRunning = false;
+                }
+            }
+            
+            $this->log("Windows模式下检查运行状态: " . ($isRunning ? "是" : "否"));
             return $isRunning;
         }
         
@@ -222,6 +248,13 @@ class PhpRunner {
             $this->log("已删除锁文件: {$this->lockFile}");
         }
         
+        // 清理Windows特有的标记文件
+        $markerFile = __DIR__ . "/daemon_{$this->taskType}_running.marker";
+        if (file_exists($markerFile)) {
+            @unlink($markerFile);
+            $this->log("已删除标记文件: {$markerFile}");
+        }
+        
         echo "已清理所有锁文件，可以重新尝试启动了<br/>";
     }
 
@@ -239,17 +272,36 @@ class PhpRunner {
             return;
         }
 
-        $pid = (int) file_get_contents($this->pidFile);
-        $this->log("读取到PID: $pid");
-        
-        // 在 Windows 上使用 taskkill 终止进程
+        // 在 Windows 上特殊处理
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $this->log("Windows环境下不尝试实际终止进程，直接删除PID文件");
+            $this->log("Windows环境下尝试停止进程");
+            
+            // 在Windows下，我们可以创建一个停止信号文件
+            $stopFile = __DIR__ . "/stop_{$this->taskType}.signal";
+            file_put_contents($stopFile, date('Y-m-d H:i:s'));
+            $this->log("创建停止信号文件: $stopFile");
+            
+            // 清理所有相关文件
             @unlink($this->pidFile);
-            $this->cleanLock(); // 确保清理锁文件
-            echo "守护进程已停止<br/>";
+            $this->cleanLock();
+            
+            // 清理标记文件
+            $markerFile = __DIR__ . "/daemon_{$this->taskType}_running.marker";
+            if (file_exists($markerFile)) {
+                @unlink($markerFile);
+                $this->log("已删除标记文件: {$markerFile}");
+            }
+            
+            // 尝试终止与脚本关联的所有PHP进程（可选，取决于环境）
+            // 此处仅创建一个停止信号文件，实际脚本需要定期检查此文件以决定是否退出
+            
+            echo "守护进程已停止 (Windows模式)<br/>";
+            echo "<div style='color:blue'>提示: Windows环境下进程可能需要一段时间才能完全退出</div>";
             return;
         }
+        
+        $pid = (int) file_get_contents($this->pidFile);
+        $this->log("读取到PID: $pid");
         
         // Linux环境下的停止流程
         $this->log("尝试发送SIGTERM信号至进程 $pid");
@@ -306,6 +358,10 @@ if ($action === 'hstart') {
     $hourRunner->cleanLocks();
 }
 
+// 获取系统环境信息
+$isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+$osInfo = $isWindows ? 'Windows' : 'Linux/Unix';
+
 // 分别获取两个守护进程的状态
 $mstatus = $minuteRunner->isDaemonRunning() ? 
     '<span style="color:green">运行中</span>' : 
@@ -317,6 +373,8 @@ $hstatus = $hourRunner->isDaemonRunning() ?
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 echo <<<HTML
 <h3>定时任务控制面板</h3>
+<p>当前系统环境: <b>{$osInfo}</b></p>
+
 当前系统分钟定时器状态: {$mstatus}
 <form method="post">
     <button type="submit" name="action" value="mstart">启动</button>
@@ -340,9 +398,25 @@ echo <<<HTML
 </p>
 
 <p>
-<b>提示</b>: 如果看到"另一个进程正在运行，退出"的错误，请点击"清理锁"按钮，然后重新启动定时器。
+<b>提示</b>: 如果看到"另一个进程正在运行，退出"的错误，请点击"清理锁"按钮，然后重新启动定时器。<br/>
+<b>提示</b>: 如果一直启动失败，请在终端键入pkill php杀死所有php进程而后启动php。
 </p>
 
-<a href="game.php?cmd=$gm_main">返回设计大厅</a><br/>
 HTML;
+
+if ($isWindows) {
+    echo <<<HTML
+<div style="border:1px solid #ccc; padding:10px; margin-top:10px; background-color:#f8f8f8;">
+<h4>Windows环境提示</h4>
+<p>
+1. Windows环境下，定时器使用VBS脚本在后台运行PHP进程<br>
+2. 定时器状态通过特殊的标记文件判断，而非实际进程状态<br>
+3. 如需定时器在服务器重启后自动运行，建议将启动命令添加到计划任务中<br>
+4. Windows环境下系统日志文件使用UTF-8编码。
+</p>
+</div>
+HTML;
+}
+
+echo '<a href="game.php?cmd=' . $gm_main . '">返回设计大厅</a><br/>';
 ?>
