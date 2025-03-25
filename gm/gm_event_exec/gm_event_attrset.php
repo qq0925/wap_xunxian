@@ -84,7 +84,9 @@ HTML;
 }
 }
 $index_attr_add = $encode->encode("cmd=game_event_attrset_2&step_belong_id=$step_belong_id&step_id=$step_id&canshu=add&sid=$sid");
+$data_in = $encode->encode("cmd=game_event_attrset_2&step_belong_id=$step_belong_id&step_id=$step_id&canshu=in&sid=$sid");
 $gm_html =<<<HTML
+<a href="?cmd=$data_in">批量导入属性</a><br/>
 <p>定义事件步骤的设置属性<br/>
 $attr_html
 <a href="?cmd=$index_attr_add">增加属性</a><br/>

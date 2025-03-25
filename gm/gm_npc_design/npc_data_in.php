@@ -20,6 +20,11 @@ $sheet->setCellValue('J1', '攻击');
 $sheet->setCellValue('K1', '防御');
 $sheet->setCellValue('L1', '出招速度');
 $sheet->setCellValue('M1', '是否可杀');
+$sheet->setCellValue('N1', '掉落经验表达式');
+$sheet->setCellValue('O1', '掉落金钱表达式');
+$sheet->setCellValue('P1', '掉落物品（json）');
+$sheet->setCellValue('Q1', '掉落物品类型');
+
 // 生成并保存Excel文件
 $excelFileName = 'in_data/npc_import_template_' . $qy_name . '.xlsx';
 $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
@@ -39,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     $processedRows = 0;
 
     // SQL语句，插入操作
-    $insert_sql = "INSERT INTO system_npc (nname, nsex, nnick_name, ndesc, nlvl, nhp, nmaxhp, nmp, nmaxmp, ngj, nfy, nspeed, nkill, narea_name, narea_id) 
-                VALUES (:npc_name, :npc_sex, :npc_nick_name, :npc_desc, :npc_lvl, :npc_hp, :npc_maxhp, :npc_mp, :npc_maxmp, :npc_gj, :npc_fy, :npc_speed, :npc_kill, :npc_area_name, :npc_area_id)";
+    $insert_sql = "INSERT INTO system_npc (nname, nsex, nnick_name, ndesc, nlvl, nhp, nmaxhp, nmp, nmaxmp, ngj, nfy, nspeed, nkill, narea_name, narea_id,ndrop_exp，ndrop_money,ndrop_item,ndrop_item_type) 
+                VALUES (:npc_name, :npc_sex, :npc_nick_name, :npc_desc, :npc_lvl, :npc_hp, :npc_maxhp, :npc_mp, :npc_maxmp, :npc_gj, :npc_fy, :npc_speed, :npc_kill, :npc_area_name, :npc_area_id,:npc_drop_exp,:npc_drop_money,:npc_drop_item,:npc_drop_item_type)";
     $stmt = $dblj->prepare($insert_sql);
 
     for ($row = 2; $row <= $highestRow; $row++) {
@@ -65,7 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
         $npc_fy = $sheet->getCell('K' . $row)->getValue();  // 防御
         $npc_speed = $sheet->getCell('L' . $row)->getValue();  // 出招速度
         $npc_kill = $sheet->getCell('M' . $row)->getValue();  // 是否可杀
-
+        $npc_drop_exp = $sheet->getCell('N' . $row)->getValue();  // 掉落经验
+        $npc_drop_money = $sheet->getCell('O' . $row)->getValue();  // 掉落金钱
+        $npc_drop_item = $sheet->getCell('P' . $row)->getValue();  // 掉落物品
+        $npc_drop_item_type = $sheet->getCell('Q' . $row)->getValue();  // 掉落物品类型
         // 设置默认值和类型转换
         $npc_sex = !empty($npc_sex) ? $npc_sex : '男';
         $npc_lvl = !empty($npc_lvl) ? intval($npc_lvl) : 1;
@@ -97,7 +105,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
         $stmt->bindParam(':npc_kill', $npc_kill);
         $stmt->bindParam(':npc_area_name', $npc_area_name);
         $stmt->bindParam(':npc_area_id', $npc_area_id);
-
+        $stmt->bindParam(':npc_drop_exp', $npc_drop_exp);
+        $stmt->bindParam(':npc_drop_money', $npc_drop_money);
+        $stmt->bindParam(':npc_drop_item', $npc_drop_item);
+        $stmt->bindParam(':npc_drop_item_type', $npc_drop_item_type);
         try {
             $stmt->execute();
         } catch (PDOException $e) {
