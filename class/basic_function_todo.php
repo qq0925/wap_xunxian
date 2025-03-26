@@ -1732,10 +1732,10 @@ HTML;
     $cut_arr = \player\getfighthm($sid, $gid, 0, $round,$dblj,'2','1');
     $cut_hp = $cut_arr['total_cut_hp'];
     $cut_mp = $cut_arr['total_cut_mp'];
-    $cut_hp = $cut_hp >0?"+".$cut_hp:$cut_hp;
-    $cut_mp = $cut_mp >0?"+".$cut_mp:$cut_mp;
-    $cut_hp = $cut_hp ==0?'':$cut_hp;
-    $cut_mp = $cut_mp ==0?'':$cut_mp;
+    $cut_hp = ($cut_hp === null) ? '' : ((strcasecmp($cut_hp, '0') > 0) ? "+".$cut_hp : $cut_hp);
+    $cut_mp = ($cut_mp === null) ? '' : ((strcasecmp($cut_mp, '0') > 0) ? "+".$cut_mp : $cut_mp);
+    $cut_hp = (strcasecmp($cut_hp, '0') == 0) ? '' : $cut_hp;
+    $cut_mp = (strcasecmp($cut_mp, '0') == 0) ? '' : $cut_mp;
     $player_text =<<<HTML
 [{$player_name}]:<br/>
 {$attr_hp_name}：({$player_hp}/{$player_maxhp}){$cut_hp}<br/>
@@ -1760,14 +1760,12 @@ HTML;
     $pcut_hp = $pcut_arr['total_cut_hp'];
     $pcut_mp = $pcut_arr['total_cut_mp'];
 
-
-
-    $pcut_hp = $pcut_hp >0?"+".$pcut_hp:$pcut_hp;
-    $pcut_mp = $pcut_mp >0?"+".$pcut_mp:$pcut_mp;
-    $pcut_hp = $pcut_hp ==0?'':$pcut_hp;
-    $pcut_mp = $pcut_mp ==0?'':$pcut_mp;
+    $pcut_hp = ($pcut_hp === null) ? '' : ((strcasecmp($pcut_hp, '0') > 0) ? "+".$pcut_hp : $pcut_hp);
+    $pcut_mp = ($pcut_mp === null) ? '' : ((strcasecmp($pcut_mp, '0') > 0) ? "+".$pcut_mp : $pcut_mp);
+    $pcut_hp = (strcasecmp($pcut_hp, '0') == 0) ? '' : $pcut_hp;
+    $pcut_mp = (strcasecmp($pcut_mp, '0') == 0) ? '' : $pcut_mp;
     
-    if($pet_hp <=0){
+    if(strcasecmp($pet_hp, '0') <= 0){
     $player_text .=<<<HTML
 <br/>[{$pet_name}]已经战死！
 HTML;
@@ -1795,23 +1793,26 @@ function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
     $monster_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $enemy_text = '';
     for($i=0;$i<@count($monster_list);$i++){
     $monster_id_root = $monster_list[$i]['nid'];
     $monster_id = $monster_list[$i]['ngid'];
     $monster_nowmid = $monster_list[$i]['nmid'];
+    $cut_hp = '';
+    $cut_mp = '';
     if($cmd =="pve_fighting"){
     $round = \player\getnowround($sid,$dblj);
     $preround = $round - 1;
     // 构建 SQL 查询语句
     $sql = "SELECT 
         (SELECT now_hp FROM system_fight_state 
-         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :current_round) -
+         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :current_round) as current_hp,
         (SELECT now_hp FROM system_fight_state 
-         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :previous_round) AS hp_diff,
+         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :previous_round) as previous_hp,
         (SELECT now_mp FROM system_fight_state 
-         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :current_round) -
+         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :current_round) as current_mp,
         (SELECT now_mp FROM system_fight_state 
-         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :previous_round) AS mp_diff";
+         WHERE sid = :sid AND gid = :gid AND type = 3 AND round = :previous_round) as previous_mp";
     $stmt = $dblj->prepare($sql);
     $stmt->execute([
         'sid' => $sid,
@@ -1820,11 +1821,28 @@ function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
         'previous_round' => $preround  // previous round
     ]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $hurt_hp = $row["hp_diff"]?:'';
-    $hurt_mp = $row['mp_diff']?:'';
+    
+    // 安全处理大数字的差值计算
+    $current_hp = $row['current_hp'] ?? '0';
+    $previous_hp = $row['previous_hp'] ?? '0';
+    $current_mp = $row['current_mp'] ?? '0';
+    $previous_mp = $row['previous_mp'] ?? '0';
+    // 使用bc数学函数处理大数值差
+    if(function_exists('bcsub')) {
+        $hurt_hp = bcsub($current_hp, $previous_hp, 0);
+        $hurt_mp = bcsub($current_mp, $previous_mp, 0);
+    } else {
+        // 兼容性处理，如果没有bc函数
+        $hurt_hp = strval($current_hp - $previous_hp);
+        $hurt_mp = strval($current_mp - $previous_mp);
+    }
+    
     if($hurt_hp){
-    $cut_hp = $hurt_hp >0?"+".$hurt_hp:$hurt_hp;
-    $cut_mp = $hurt_mp >0?"+".$hurt_mp:$hurt_mp;
+        $cut_hp = (strcasecmp($hurt_hp, '0') > 0) ? "+".$hurt_hp : $hurt_hp;
+        $cut_mp = (strcasecmp($hurt_mp, '0') > 0) ? "+".$hurt_mp : $hurt_mp;
+        // 如果值为0，就不显示
+        $cut_hp = (strcasecmp($cut_hp, '0') == 0) ? '' : $cut_hp;
+        $cut_mp = (strcasecmp($cut_mp, '0') == 0) ? '' : $cut_mp;
     }
     }
     $sql = "SELECT * from system_npc_midguaiwu where nsid = :sid and ngid = :ngid";
@@ -1838,7 +1856,7 @@ function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $monster_maxhp = $row['nmaxhp'];
     $monster_mp = $row['nmp'];
     $monster_maxmp = $row['nmaxmp'];
-    if($monster_hp <=0){
+    if(strcasecmp($monster_hp, '0') <= 0){
     $enemy_text .=<<<HTML
 [{$monster_name}]已经战死！<br/>
 HTML;

@@ -147,9 +147,8 @@ function handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round) {
     $j_deplete_attr = $skill_data['j_deplete_attr'];
     
     // 计算消耗值
-    $hurt_m_cut = !is_numeric($j_deplete_exp)
-        ? (int)floor(eval("return " . process_string($j_deplete_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null) . ";"))
-        : (int)floor($j_deplete_exp);
+    $deplete_exp_processed = process_string($j_deplete_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null);
+    $hurt_m_cut = (int)floor(eval("return $deplete_exp_processed;"));
 
     // 检查属性消耗
     $u_skill_attr = "u" . $j_deplete_attr;
@@ -172,19 +171,16 @@ function handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round) {
     $jname = $skill_data['j_name'];
 
     // 计算技能经验
-    $j_point_exp = !is_numeric($j_add_point_exp)
-        ? (int)floor(eval("return " . process_string($j_add_point_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null) . ";"))
-        : (int)floor($j_add_point_exp);
+    $add_point_exp_processed = process_string($j_add_point_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null);
+    $j_point_exp = (int)floor(eval("return $add_point_exp_processed;"));
 
     // 计算升级所需经验
-    $j_promotion_add = !is_numeric($j_promotion)
-        ? (int)floor(eval("return " . process_string($j_promotion, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null) . ";"))
-        : (int)floor($j_promotion);
+    $promotion_processed = process_string($j_promotion, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null);
+    $j_promotion_add = (int)floor(eval("return $promotion_processed;"));
 
     // 计算升级条件
-    $j_promotion_cond_add = !is_numeric($j_promotion_cond)
-        ? (int)floor(eval("return " . process_string($j_promotion_cond, $sid, 'npc_monster', $ngid[0], $jid, 'fight', 1) . ";"))
-        : (int)floor($j_promotion_cond);
+    $promotion_cond_processed = process_string($j_promotion_cond, $sid, 'npc_monster', $ngid[0], $jid, 'fight', 1);
+    $j_promotion_cond_add = (int)floor(eval("return $promotion_cond_processed;"));
 
     // 处理技能升级
     if ($j_promotion_cond_add) {
@@ -252,10 +248,10 @@ function handle_members_attack($gid, $sid, $members, $dblj, $skill_id, $db, $nex
     $hurt_exp = $skill['j_hurt_exp'];
     $deplete_exp = $skill['j_deplete_exp'];
     $deplete_attr = $skill['j_deplete_attr'];
+    
     // 计算消耗值
-    $hurt_m_cut = !is_numeric($deplete_exp)
-        ? (int)floor(eval("return " . process_string_2($deplete_exp, $gid, 'monstertouser', $sid, $skill_id) . ";"))
-        : (int)floor($deplete_exp);
+    $deplete_exp_processed = process_string_2($deplete_exp, $gid, 'monstertouser', $sid, $skill_id);
+    $hurt_m_cut = (int)floor(eval("return $deplete_exp_processed;"));
 
     // 检查属性消耗
     $n_skill_attr = "n" . $deplete_attr;
@@ -340,7 +336,6 @@ function handle_monster_attack($monster_id,$sid, $members, $dblj, $db,$next_roun
 }
 
 
-
 //处理怪物攻击
 function handle_pet_attack($monster_id,$pid, $sid, $dblj, $db,$next_round) {
         $sql = "SELECT nskills FROM system_pet_scene WHERE npid = '$pid' AND nhp > 0";
@@ -360,8 +355,6 @@ function handle_pet_attack($monster_id,$pid, $sid, $dblj, $db,$next_round) {
             }
         handle_pet_members_attack($monster_id,$pid, $sid, $dblj, $skill_id,$db,$next_round);
 }
-
-
 
 
 //处理宠物技能攻击
@@ -390,9 +383,9 @@ function handle_pet_members_attack($ngid, $p_one, $sid, $dblj,$skill_id, $db, $n
     $deplete_attr = $skill['j_deplete_attr'];
     
     // 计算消耗值
-    $hurt_m_cut = !is_numeric($deplete_exp)
-        ? (int)floor(eval("return " . process_string_3($deplete_exp,$p_one,'pet_fight',  $ngid[0], $skill_id) . ";"))
-        : (int)floor($deplete_exp);
+    $deplete_exp_processed = process_string_3($deplete_exp, $p_one, 'pet_fight', $ngid[0], $skill_id);
+    $hurt_m_cut = (int)floor(eval("return $deplete_exp_processed;"));
+    
     // 检查属性消耗
     $n_skill_attr = "n" . $deplete_attr;
     $n_attr = \player\getpet_once($sid,$dblj,$p_one)[$n_skill_attr];
@@ -426,13 +419,23 @@ function handle_pet_members_attack($ngid, $p_one, $sid, $dblj,$skill_id, $db, $n
     // 处理每个目标的攻击
     foreach ($targets as $attack_gid) {
         // 计算伤害
-        $hurt_cut = process_string_3($hurt_exp, $p_one, 'pet_fight', $attack_gid, $skill_id, 'fight');
-        $hurt_cut = (int)floor(@eval("return $hurt_cut;"));
+        $hurt_exp_processed = process_string_3($hurt_exp, $p_one, 'pet_fight', $attack_gid, $skill_id, 'fight');
+        $hurt_cut = (int)floor(eval("return $hurt_exp_processed;"));
         $hurt_cut = max(1, $hurt_cut);  // 确保最小伤害为1
         
+        // 获取当前HP
+        $selectSql = "SELECT nhp FROM system_npc_midguaiwu WHERE ngid = ?";
+        $selectStmt = $dblj->prepare($selectSql);
+        $selectStmt->execute([$attack_gid]);
+        $currentHp = $selectStmt->fetchColumn();
+        
+        // 使用bcmath计算新的HP值
+        $newHp = bcsub($currentHp, $hurt_cut, 0);  // 精度设置为0，只保留整数
+        
         // 更新怪物生命值
-        $sql = "UPDATE system_npc_midguaiwu SET nhp = nhp - {$hurt_cut}, nsid = '$sid' WHERE ngid = '$attack_gid'";
-        $dblj->exec($sql);
+        $sql = "UPDATE system_npc_midguaiwu SET nhp = ?, nsid = ? WHERE ngid = ?";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute([$newHp, $sid, $attack_gid]);
 
         // 记录战斗日志
         $sql = "INSERT INTO game2(hurt_hp, sid, gid, pid, round, type) 
@@ -448,7 +451,6 @@ function handle_pet_members_attack($ngid, $p_one, $sid, $dblj,$skill_id, $db, $n
         $stmt->execute([$battle_msg, $next_round, $sid, $p_one, $attack_gid]);
     }
 }
-
 
 // 处理事件
 function process_event($j_event_use_id, $sid, $dblj, $attack_gid) {
@@ -470,9 +472,20 @@ function process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, $context,$n
     $hurt_cut = (int)floor($hurt_cut);
     $hurt_cut = $hurt_cut <= 0 ? 1 : $hurt_cut;
 
-    $sql = "UPDATE system_npc_midguaiwu SET nhp = nhp - ?, nsid = ? WHERE ngid = ?";
+    // 首先获取当前的nhp值
+    $selectSql = "SELECT nhp FROM system_npc_midguaiwu WHERE ngid = ?";
+    $selectStmt = $dblj->prepare($selectSql);
+    $selectStmt->execute([$attack_gid]);
+    $currentHp = $selectStmt->fetchColumn();
+
+    // 使用bcmath函数计算新的hp值，安全处理大数字
+    $newHp = bcsub($currentHp, $hurt_cut, 0); // 0表示不要小数
+        
+    // 更新数据库
+    $sql = "UPDATE system_npc_midguaiwu SET nhp = ?, nsid = ? WHERE ngid = ?";
     $stmt = $dblj->prepare($sql);
-    $stmt->execute([$hurt_cut, $sid, $attack_gid]);
+    $stmt->execute([$newHp, $sid, $attack_gid]);
+
     $p_one = $p_one?:0;
     $sql = "insert into game2(hurt_hp,sid,gid,pid,round,type)values('-$hurt_cut','$sid','$attack_gid','$p_one','$next_round','1')";
     $dblj->exec($sql);
@@ -496,13 +509,31 @@ function process_monster_damage($hurt_exp, $effect_comment, $jid, $gid, $dblj, $
     
     // 更新目标生命值
     if ($is_pet) {
-        $update_sql = "UPDATE system_pet_scene SET nhp = nhp - ? WHERE npid = ?";
+        // 首先获取当前生命值
+        $select_sql = "SELECT nhp FROM system_pet_scene WHERE npid = ?";
+        $stmt = $dblj->prepare($select_sql);
+        $stmt->execute([$member_id]);
+        $current_hp = $stmt->fetchColumn();
+        
+        // 使用bcmath计算新的生命值
+        $new_hp = bcsub($current_hp, $hurt_cut, 0);
+        
+        $update_sql = "UPDATE system_pet_scene SET nhp = ? WHERE npid = ?";
         $stmt = $dblj->prepare($update_sql);
-        $stmt->execute([$hurt_cut, $member_id]);
+        $stmt->execute([$new_hp, $member_id]);
     } else {
-        $update_sql = "UPDATE game1 SET uhp = uhp - ? WHERE sid = ?";
+        // 首先获取当前生命值
+        $select_sql = "SELECT uhp FROM game1 WHERE sid = ?";
+        $stmt = $dblj->prepare($select_sql);
+        $stmt->execute([$member_id]);
+        $current_hp = $stmt->fetchColumn();
+        
+        // 使用bcmath计算新的生命值
+        $new_hp = bcsub($current_hp, $hurt_cut, 0);
+        
+        $update_sql = "UPDATE game1 SET uhp = ? WHERE sid = ?";
         $stmt = $dblj->prepare($update_sql);
-        $stmt->execute([$hurt_cut, $member_id]);
+        $stmt->execute([$new_hp, $member_id]);
     }
     
     // 记录伤害日志
@@ -521,7 +552,6 @@ function process_monster_damage($hurt_exp, $effect_comment, $jid, $gid, $dblj, $
     ]);
     
     // 处理战斗消息
-    
     $j_omsg = process_string_2($effect_comment, $gid, $target_type, $member_id, $jid);
     $j_omsg = str_replace(["'", "\""], '', $j_omsg);
     // 更新战斗消息
@@ -1681,13 +1711,16 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
                         case 'cut_hp':
+                        // 引入 BCMath 工具函数
+                        require_once 'bcmath_utils.php';
+                        
                         $round = \player\getnowround($sid,$dblj,$db);
                         // 构建 SQL 查询语句
                         $sql = "SELECT 
                                     (SELECT now_hp FROM system_fight_state 
-                                     WHERE sid = ? AND type = 1 AND round = ?) - 
+                                     WHERE sid = ? AND type = 1 AND round = ?) AS current_hp, 
                                     (SELECT now_hp FROM system_fight_state 
-                                     WHERE sid = ? AND type = 1 AND round = ?) AS diff";
+                                     WHERE sid = ? AND type = 1 AND round = ?) AS previous_hp";
                         $preround = $round - 1;
                         $stmt = $db->prepare($sql);
                         $stmt->bind_param("sisi", $sid,$round,$sid,$preround);
@@ -1706,8 +1739,14 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         // 关闭第一个查询的结果集
                         $stmt->close();
                         
-                        // 获取总和并处理结果
-                        $op = $row["diff"];
+                        // 使用 BCMath 工具函数计算大数差值
+                        if (isset($row['current_hp']) && isset($row['previous_hp'])) {
+                            // 使用 bc_sub 计算差值
+                            $op = bc_sub($row['current_hp'], $row['previous_hp']);
+                        } else {
+                            $op = "0";
+                        }
+                        
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
                         case 'hurt_mp':
@@ -1734,13 +1773,16 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
                         case 'cut_mp':
+                        // 引入 BCMath 工具函数
+                        require_once 'bcmath_utils.php';
+                        
                         $round = \player\getnowround($sid,$dblj,$db);
                         // 构建 SQL 查询语句
                         $sql = "SELECT 
                                     (SELECT now_mp FROM system_fight_state 
-                                     WHERE sid = ? AND type = 1 AND round = ?) - 
+                                     WHERE sid = ? AND type = 1 AND round = ?) AS current_mp, 
                                     (SELECT now_mp FROM system_fight_state 
-                                     WHERE sid = ? AND type = 1 AND round = ?) AS diff";
+                                     WHERE sid = ? AND type = 1 AND round = ?) AS previous_mp";
                         $preround = $round - 1;
                         $stmt = $db->prepare($sql);
                         $stmt->bind_param("sisi", $sid,$round,$sid,$preround);
@@ -1759,8 +1801,14 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         // 关闭第一个查询的结果集
                         $stmt->close();
                         
-                        // 获取总和并处理结果
-                        $op = $row["diff"];
+                        // 使用 BCMath 工具函数计算大数差值
+                        if (isset($row['current_mp']) && isset($row['previous_mp'])) {
+                            // 使用 bc_sub 计算差值
+                            $op = bc_sub($row['current_mp'], $row['previous_mp']);
+                        } else {
+                            $op = "0";
+                        }
+                        
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;
                         case 'busy':
@@ -3252,9 +3300,7 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 $attr2 = substr($match, $firstDotPosition + 1);
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
-                if(is_numeric($op)){
-                    $op = convertNumber($op);
-                }
+                $op = convertNumber($op);
                 if($op =='' || $op == "" || $op ==null){
                     $op = '0';
                 }
@@ -3319,27 +3365,70 @@ $input = preg_replace_callback('/#"(.*?)"/', function ($matches) use ($sid, $oid
 }
 
 function convertNumber($op) {
-    // 转换成整数以避免浮点数问题
-    $op = intval($op);
+    // 引入 BCMath 工具函数
+    require_once 'bcmath_utils.php';
     
-    // 计算亿和万的部分
-    $yi = floor($op / 100000000); // 亿
-    $wan = floor(($op % 100000000) / 10000); // 万
-    $ge = $op % 10000; // 个位
-
-    // 构建结果字符串
+    // 确保数字是字符串格式以支持超大数
+    $op = bc_format($op);
+    
+    // 如果是0，直接返回
+    if (bccomp($op, '0', 0) === 0) {
+        return '0';
+    }
+    
+    // 中国传统计数单位 (4位一级)
+    $units = ['', '万', '亿', '兆', '京', '垓', '秭', '穰', '沟', '涧', '正', '载'];
+    
+    // 构建单位值数组（4位进制：个、万、亿、兆...）
+    $unitValues = ['1'];
+    for ($i = 1; $i < count($units); $i++) {
+        $unitValues[$i] = bc_mul($unitValues[$i-1], '10000');
+    }
+    
+    // 初始化结果
     $result = '';
-    if ($yi > 0) {
-        $result .= $yi . '亿';
+    
+    // 从最大单位开始处理
+    for ($i = count($units) - 1; $i >= 0; $i--) {
+        if (bccomp($op, $unitValues[$i], 0) >= 0) {
+            // 当前单位的数值
+            $currentVal = bcdiv($op, $unitValues[$i], 0);
+            $op = bcmod($op, $unitValues[$i]);
+            
+            // 处理当前单位下的数值（可能是1-9999的数）
+            if (bccomp($currentVal, '0', 0) > 0) {
+                // 如果不是个位，且数值小于1000，并且结果非空，添加零
+                if ($i > 0 && bccomp($currentVal, '1000', 0) < 0 && !empty($result)) {
+                    $result .= '零';
+                }
+                
+                // 只在亿、兆等更大单位时考虑内部"万"的处理
+                if ($i >= 2 && bccomp($currentVal, '10000', 0) >= 0) {
+                    $wan = bcdiv($currentVal, '10000', 0);
+                    $rest = bcmod($currentVal, '10000');
+                    
+                    if (bccomp($wan, '0', 0) > 0) {
+                        $result .= $wan . '万';
+                    }
+                    
+                    if (bccomp($rest, '0', 0) > 0) {
+                        if (bccomp($rest, '1000', 0) < 0) {
+                            $result .= '零' . $rest;
+                        } else {
+                            $result .= $rest;
+                        }
+                    }
+                } else {
+                    $result .= $currentVal;
+                }
+                
+                // 添加单位
+                $result .= $units[$i];
+            }
+        }
     }
-    if ($wan > 0) {
-        $result .= $wan . '万';
-    }
-    if ($ge > 0) {
-        $result .= $ge;
-    }
-
-    return $result;
+    
+    return $result ?: '0';
 }
 
 

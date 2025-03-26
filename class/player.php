@@ -144,6 +144,40 @@ function getplayer($sid,$dblj,$uid=null){
     return $player;
 }
 
+function getplayer_db($sid, $db, $uid=null) {
+    if(!$db) {
+        $db = DB::conn();
+    }
+    
+    if($uid) {
+        $sql = "SELECT sid FROM game1 WHERE uid=?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('s', $uid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $ret = $result->fetch_assoc();
+        $sid = $ret['sid'];
+    }
+    
+    $player = new player();
+    $sql = "SELECT * FROM game1 WHERE sid=?";
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param('s', $sid);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    
+    // 将结果赋值给player对象
+    foreach($row as $key => $value) {
+        if(property_exists($player, $key)) {
+            $player->$key = $value;
+        }
+    }
+    
+    return $player;
+}
+
+
 function getplayer_apply($sid,$dblj){
     $sql="select apply_clan_id from player_clan_apply where apply_sid = '$sid'";
     $cxjg = $dblj->query($sql);
@@ -211,74 +245,87 @@ function update_message_sql($sid,$dblj,$input,$view_type=null){
 }
 
 function update_fight_msg($sid,$pid,$gid,$round,$type,$dblj){
-
-$checkStmt = $dblj->prepare("
-    SELECT 1
-    FROM system_fight_state 
-    WHERE sid = :sid
-      AND pid = :pid
-      AND gid = :gid
-      AND round = :round
-      AND type = :type
-    LIMIT 1
-");
-
-// 绑定检查参数
-$checkStmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
-$checkStmt->bindParam(':pid', $pid, \PDO::PARAM_STR);
-$checkStmt->bindParam(':gid', $gid, \PDO::PARAM_STR);
-$checkStmt->bindParam(':round', $round, \PDO::PARAM_INT);
-$checkStmt->bindParam(':type', $type, \PDO::PARAM_INT);
-
-$checkStmt->execute();
-
-
-if($checkStmt->rowCount() === 0) {
-switch($type){
-    case '1':
-        $sql = "SELECT uhp,ump from game1 where sid = '$sid'";
-        $cxjg = $dblj->query($sql);
-        $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
-        $update_hp = $ret['uhp'];
-        $update_mp = $ret['ump'];
-        break;
-    case '2':
-        $sql = "SELECT nhp,nmp from system_pet_scene where nsid = '$sid' and npid = '$pid'";
-        $cxjg = $dblj->query($sql);
-        $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
-        $update_hp = $ret['nhp'];
-        $update_mp = $ret['nmp'];
-        break;
-    case '3':
-        $sql = "SELECT nhp,nmp from system_npc_midguaiwu where nsid = '$sid' and ngid = '$gid'";
-        $cxjg = $dblj->query($sql);
-        $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
-        $update_hp = $ret['nhp'];
-        $update_mp = $ret['nmp'];
-        break;
-}
-
-    $insertStmt = $dblj->prepare("
-        INSERT INTO system_fight_state(
-            sid, pid, gid, round, 
-            type, now_hp, now_mp
-        ) VALUES (
-            :sid, :pid, :gid, :round, 
-            :type, :now_hp, :now_mp
-        )
+    $checkStmt = $dblj->prepare("
+        SELECT 1
+        FROM system_fight_state 
+        WHERE sid = :sid
+          AND pid = :pid
+          AND gid = :gid
+          AND round = :round
+          AND type = :type
+        LIMIT 1
     ");
-    
-    // 绑定插入参数（与检查参数相同）
-    $insertStmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
-    $insertStmt->bindParam(':pid', $pid, \PDO::PARAM_STR);
-    $insertStmt->bindParam(':gid', $gid, \PDO::PARAM_STR);
-    $insertStmt->bindParam(':round', $round, \PDO::PARAM_INT);
-    $insertStmt->bindParam(':type', $type, \PDO::PARAM_INT);
-    $insertStmt->bindParam(':now_hp', $update_hp, \PDO::PARAM_INT);
-    $insertStmt->bindParam(':now_mp', $update_mp, \PDO::PARAM_INT);
-    
-    $insertStmt->execute();
-}
+
+    // 绑定检查参数
+    $checkStmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
+    $checkStmt->bindParam(':pid', $pid, \PDO::PARAM_STR);
+    $checkStmt->bindParam(':gid', $gid, \PDO::PARAM_STR);
+    $checkStmt->bindParam(':round', $round, \PDO::PARAM_INT);
+    $checkStmt->bindParam(':type', $type, \PDO::PARAM_INT);
+
+    $checkStmt->execute();
+
+    if($checkStmt->rowCount() === 0) {
+        $update_hp = '0';
+        $update_mp = '0';
+        
+        switch($type){
+            case '1':
+                $sql = "SELECT uhp,ump from game1 where sid = :sid";
+                $stmt = $dblj->prepare($sql);
+                $stmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
+                $stmt->execute();
+                $ret = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $update_hp = $ret['uhp'] ?? '0';
+                $update_mp = $ret['ump'] ?? '0';
+                break;
+            case '2':
+                $sql = "SELECT nhp,nmp from system_pet_scene where nsid = :sid and npid = :pid";
+                $stmt = $dblj->prepare($sql);
+                $stmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
+                $stmt->bindParam(':pid', $pid, \PDO::PARAM_STR);
+                $stmt->execute();
+                $ret = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $update_hp = $ret['nhp'] ?? '0';
+                $update_mp = $ret['nmp'] ?? '0';
+                break;
+            case '3':
+                $sql = "SELECT nhp,nmp from system_npc_midguaiwu where nsid = :sid and ngid = :gid";
+                $stmt = $dblj->prepare($sql);
+                $stmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
+                $stmt->bindParam(':gid', $gid, \PDO::PARAM_STR);
+                $stmt->execute();
+                $ret = $stmt->fetch(\PDO::FETCH_ASSOC);
+                $update_hp = $ret['nhp'] ?? '0';
+                $update_mp = $ret['nmp'] ?? '0';
+                break;
+        }
+
+        // 确保数值为字符串，以支持超大数
+        $update_hp = (string)$update_hp;
+        $update_mp = (string)$update_mp;
+
+        $insertStmt = $dblj->prepare("
+            INSERT INTO system_fight_state(
+                sid, pid, gid, round, 
+                type, now_hp, now_mp
+            ) VALUES (
+                :sid, :pid, :gid, :round, 
+                :type, :now_hp, :now_mp
+            )
+        ");
+        
+        // 绑定插入参数，使用PDO::PARAM_STR确保字符串处理超大数
+        $insertStmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
+        $insertStmt->bindParam(':pid', $pid, \PDO::PARAM_STR);
+        $insertStmt->bindParam(':gid', $gid, \PDO::PARAM_STR);
+        $insertStmt->bindParam(':round', $round, \PDO::PARAM_INT);
+        $insertStmt->bindParam(':type', $type, \PDO::PARAM_INT);
+        $insertStmt->bindParam(':now_hp', $update_hp, \PDO::PARAM_STR); // 改为PARAM_STR
+        $insertStmt->bindParam(':now_mp', $update_mp, \PDO::PARAM_STR); // 改为PARAM_STR
+        
+        $insertStmt->execute();
+    }
 }
 
 function put_system_message_sql($uid,$dblj){
@@ -379,32 +426,48 @@ return $row;
 }
 
 
-function update_item_burthen($sid,$dblj){
-    $query = "SELECT iid, icount FROM system_item WHERE sid = :sid";
-    $stmt = $dblj->prepare($query);
-    $stmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
-    $stmt->execute();
-    
-    $value = 0;
-    
-    while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-        $iid = $row['iid'];
-        $icount = $row['icount'];
-        
-        // 获取system_item_module表中等于iid的iweight值
-        $subQuery = "SELECT iweight FROM system_item_module WHERE iid = :iid";
-        $subStmt = $dblj->prepare($subQuery);
-        $subStmt->bindParam(':iid', $iid, \PDO::PARAM_INT);
-        $subStmt->execute();
-        
-        if ($subRow = $subStmt->fetch(\PDO::FETCH_ASSOC)) {
-            $iweight = $subRow['iweight'];
-            $value += $iweight * $icount;
-        }
-    }
-    return $value;
-}
 
+// ... existing code ...
+
+/**
+ * 更新物品总重量
+ * @param string $sid 系统ID
+ * @param PDO $dblj 数据库连接
+ * @return string 总重量
+ * @throws Exception 当数据库操作失败时抛出异常
+ */
+function update_item_burthen($sid, $dblj) {
+        // 设置bcmath精度
+        bcscale(0);
+        
+        // 查询物品ID和数量
+        $query = "SELECT iid, icount FROM system_item WHERE sid = :sid";
+        $stmt = $dblj->prepare($query);
+        $stmt->bindParam(':sid', $sid, \PDO::PARAM_STR);
+        $stmt->execute();
+        
+        $totalWeight = '0';
+        
+        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $itemId = $row['iid'];
+            $itemCount = $row['icount'];
+            
+            // 获取物品重量
+            $subQuery = "SELECT iweight FROM system_item_module WHERE iid = :iid";
+            $subStmt = $dblj->prepare($subQuery);
+            $subStmt->bindParam(':iid', $itemId, \PDO::PARAM_INT);
+            $subStmt->execute();
+            
+            if ($subRow = $subStmt->fetch(\PDO::FETCH_ASSOC)) {
+                $itemWeight = $subRow['iweight'];
+                // 计算当前物品的总重量并加到总重量中
+                $itemTotalWeight = bcmul($itemWeight, $itemCount);
+                $totalWeight = bcadd($totalWeight, $itemTotalWeight);
+            }
+        }
+        
+        return $totalWeight;
+}
 
 function getsystem($dblj){
 $system = new gamesystem();
@@ -1475,36 +1538,165 @@ function addcwsx($sx,$gaibian,$petid,$sid,$dblj){
     $ret = $dblj->exec($sql);
 }
 
+bcscale(0);
+
+function safebc_check($value) {
+    // 更严格地检查值是否为有效的数字或数字字符串
+    // 去除空格并处理可能的null值
+    if ($value === null) {
+        return '0';
+    }
+    
+    // 如果是数组或对象，返回0
+    if (is_array($value) || is_object($value)) {
+        return '0';
+    }
+    
+    // 处理字符串值，清除任何可能导致BCMath出错的字符
+    if (is_string($value)) {
+        // 去除所有非数字、小数点和符号字符
+        $value = trim($value);
+        // 检查是否为数字格式字符串
+        if (preg_match('/^[-+]?[0-9]*\.?[0-9]+$/', $value)) {
+            return (string)$value;
+        }
+        return '0';
+    }
+    
+    // 如果是数字类型，直接转换成字符串返回
+    if (is_numeric($value)) {
+        return (string)$value;
+    }
+    
+    // 默认返回0
+    return '0';
+}
+
+function safebc_add($left, $right) {
+    $left = safebc_check($left);
+    $right = safebc_check($right);
+    return bcadd($left, $right, 0);
+}
+
+function safebc_mul($left, $right) {
+    $left = safebc_check($left);
+    $right = safebc_check($right);
+    return bcmul($left, $right, 0);
+}
+
+// 新增一个安全的bccomp函数封装
+function safebc_comp($left, $right, $scale = 0) {
+    $left = safebc_check($left);
+    $right = safebc_check($right);
+    return bccomp($left, $right, $scale);
+}
+
+// 新增一个安全的bcsub函数封装
+function safebc_sub($left, $right, $scale = 0) {
+    $left = safebc_check($left);
+    $right = safebc_check($right);
+    return bcsub($left, $right, $scale);
+}
+
+
 
 function addplayersx($sx,$gaibian,$sid,$dblj,$db=null){
+    // 检查数据库连接
+    if($db) {
+        $player = getplayer_db($sid, $db);
+    } else {
+        $player = getplayer($sid, $dblj);
+    }
+    
     switch($sx){
         case 'uhp':
-            $umaxhp = getplayer($sid,$dblj)->umaxhp;
-            $uhp = getplayer($sid,$dblj)->uhp;
-            if(($gaibian + $uhp) >$umaxhp){
-            $sql = "update game1 set uhp = $umaxhp WHERE sid='$sid'";//增加玩家属性
-            }else{
-            $sql = "update game1 set uhp = uhp + '$gaibian' WHERE sid='$sid'";//增加玩家属性
+            $umaxhp = $player->umaxhp;
+            $uhp = $player->uhp;
+            
+            // 使用BCMath确保精确计算
+            $gaibian = safebc_check($gaibian);
+            $uhp = safebc_check($uhp);
+            $umaxhp = safebc_check($umaxhp);
+            
+            // 在PHP中计算新值
+            $new_hp = safebc_add($uhp, $gaibian);
+            
+            // 检查是否超过最大值
+            if(safebc_comp($new_hp, $umaxhp) > 0) {
+                $new_hp = $umaxhp;
+            }
+            
+            // 构建安全的SQL，直接设置新值而不是让数据库进行计算
+            $sql = "UPDATE game1 SET uhp = ? WHERE sid = ?";
+            
+            if(!$db) {
+                $stmt = $dblj->prepare($sql);
+                $stmt->execute([$new_hp, $sid]);
+                $ret = $stmt->rowCount();
+            } else {
+                $stmt = $db->prepare($sql);
+                $stmt->bind_param('ss', $new_hp, $sid);
+                $stmt->execute();
+                $ret = $stmt->affected_rows;
             }
             break;
+            
         case 'ump':
-            $umaxmp = getplayer($sid,$dblj)->umaxmp;
-            $ump = getplayer($sid,$dblj)->ump;
-            if(($gaibian + $ump) >$umaxmp){
-            $sql = "update game1 set ump = $umaxmp WHERE sid='$sid'";//增加玩家属性
-            }else{
-            $sql = "update game1 set ump = ump + '$gaibian' WHERE sid='$sid'";//增加玩家属性
+            $umaxmp = $player->umaxmp;
+            $ump = $player->ump;
+            
+            // 使用BCMath确保精确计算
+            $gaibian = safebc_check($gaibian);
+            $ump = safebc_check($ump);
+            $umaxmp = safebc_check($umaxmp);
+            
+            // 在PHP中计算新值
+            $new_mp = safebc_add($ump, $gaibian);
+            
+            // 检查是否超过最大值
+            if(safebc_comp($new_mp, $umaxmp) > 0) {
+                $new_mp = $umaxmp;
+            }
+            
+            // 构建安全的SQL，直接设置新值而不是让数据库进行计算
+            $sql = "UPDATE game1 SET ump = ? WHERE sid = ?";
+            
+            if(!$db) {
+                $stmt = $dblj->prepare($sql);
+                $stmt->execute([$new_mp, $sid]);
+                $ret = $stmt->rowCount();
+            } else {
+                $stmt = $db->prepare($sql);
+                $stmt->bind_param('ss', $new_mp, $sid);
+                $stmt->execute();
+                $ret = $stmt->affected_rows;
             }
             break;
+            
         default:
-            $sql = "update game1 set $sx = $sx + '$gaibian' WHERE sid='$sid'";//增加玩家属性
+            // 获取当前属性值
+            $current_value = safebc_check($player->$sx ?? '0');
+            $gaibian = safebc_check($gaibian);
+            
+            // 在PHP中计算新值
+            $new_value = safebc_add($current_value, $gaibian);
+            
+            // 构建安全的SQL，直接设置新值而不是让数据库进行计算
+            $sql = "UPDATE game1 SET $sx = ? WHERE sid = ?";
+            
+            if(!$db) {
+                $stmt = $dblj->prepare($sql);
+                $stmt->execute([$new_value, $sid]);
+                $ret = $stmt->rowCount();
+            } else {
+                $stmt = $db->prepare($sql);
+                $stmt->bind_param('ss', $new_value, $sid);
+                $stmt->execute();
+                $ret = $stmt->affected_rows;
+            }
             break;
     }
-    if(!$db){
-    $ret = $dblj->exec($sql);
-    }else{
-    $ret = $db->query($sql);
-    }
+    
     if($ret){
         return true;
     }else{
@@ -1994,14 +2186,12 @@ function getfighthm($sid, $gid, $pid, $round, $dblj,$type1, $type2) {
     $stmt_game3->execute();
     $result_game3 = $stmt_game3->fetch(\PDO::FETCH_ASSOC);
     
-    // 返回结果
+    // 返回结果，对大数值进行安全处理
     return [
-        'total_cut_hp' => $result_game2['total_cut_hp'] ?? 0, // 如果没有结果，返回 0
-        'total_cut_mp' => $result_game3['total_cut_mp'] ?? 0  // 如果没有结果，返回 0
+        'total_cut_hp' => $result_game2['total_cut_hp'] ?? '0', // 如果没有结果，返回字符串'0'而不是数字0
+        'total_cut_mp' => $result_game3['total_cut_mp'] ?? '0'  // 如果没有结果，返回字符串'0'而不是数字0
     ];
 }
-
-
 
 
 function getpet_fight($sid,$dblj,$para=null){

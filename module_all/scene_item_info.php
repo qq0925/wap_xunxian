@@ -161,7 +161,7 @@ if($player->uis_designer ==1){
     $modify_count = $encode->encode("cmd=iteminfo_new&item_id=$itemid&uid=$uid&canshu=$canshu&list_page=$list_page&item_true_id=$item_true_id&sid=$sid");
     $gm_count_html = <<<HTML
     <form action="?cmd=$modify_count" method="post">
-    数量：<input name="change_count" type="TEXT" value="{$itemcount}" size="5" maxlength="8">
+    数量：<input name="change_count" type="TEXT" value="{$itemcount}" size="5">
     <input type="submit" value="修改">
     </form>
 HTML;
