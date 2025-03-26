@@ -1263,8 +1263,10 @@ echo $refresh_html;
                 case '数值型':
                     if($max_length_type=='0'){
                         $modify_type = 'INT(11)';
-                    }else{
+                    }elseif($max_length_type=='1'){
                         $modify_type = 'BIGINT(20)';
+                    }else{
+                        $modify_type = 'DECIMAL(65,0)';
                     }
                     break;
                 case '字符串型':
@@ -1338,6 +1340,9 @@ echo $refresh_html;
                         if($int_long == 1){
                         $add_type = "BIGINT(20) DEFAULT '{$gm_default_value}'";
                         $long_type = 1;
+                        }elseif($int_long == 2){
+                        $long_type = 2;
+                        $add_type = "DECIMAL(65,0) DEFAULT '{$gm_default_value}'";
                         }else{
                         $add_type = "INT(11) DEFAULT '{$gm_default_value}'";
                         }

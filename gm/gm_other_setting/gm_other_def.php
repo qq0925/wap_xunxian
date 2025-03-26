@@ -159,6 +159,7 @@ $selectedOption_9 = ($game_config->scene_chat_time == "1") ? 'selected' : '';
 $selectedOption_10 = ($game_config->fight_mod == "1") ? 'selected' : '';
 $selectedOption_11 = ($game_config->fight_mod == "2") ? 'selected' : '';
 $selectedOption_12 = ($game_config->int_long == "1") ? 'selected' : '';
+$selectedOption_13 = ($game_config->int_long == "2") ? 'selected' : '';
 $other_html = <<<HTML
 [杂项设置]<br/><br/>
 <form action="?cmd=$other_set" method="POST">
@@ -177,7 +178,7 @@ $other_html = <<<HTML
 <input type="submit" value="保存"/>
 </form>
 <form action="?cmd=$other_set" method="POST">
-整数型默认长度：<select name="int_long"><option value =0>11位数</option><option value =1 {$selectedOption_12}>20位数</option></select> <input name="submit" type="submit" title="保存" value="保存" />
+整数型默认长度：<select name="int_long"><option value =0>11位数</option><option value =1 {$selectedOption_12}>20位数</option><option value =2 {$selectedOption_13}>65位数</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
 <form action="?cmd=$other_set" method="POST">
 刷新频率(0为不限制)：<input type="tel" name="flush_limit" size="5" value="{$game_config->flush_limit}">ms

@@ -562,24 +562,26 @@ function getSubstringBetweenDots($str, $startDotIndex = 0, $endDotIndex = null) 
 
 //---------分割线----------//
 function evaluate_expression($expr, $db, $sid,$oid,$mid,$jid,$type,$para=null){
+include_once 'class/lexical_analysis_test.php';
 $expr = preg_replace_callback('/\{eval\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
 
     $eval_expr = $matches[1]; // 获取 eval 中的表达式
-    
-    $eval_result = @eval("return $eval_expr;"); // 计算 eval 表达式的结果
-
-    if(is_float($eval_result) && !is_string($eval_result)){
-        return (int)$eval_result;
-    }else{
-    return $eval_result; // 返回计算结果
-    }
+    $variables = [
+        'calc_type' => 'int'
+    ];
+    $eval_result = calculateBigNumberExpression($eval_expr,$variables,0);
+    //$eval_result = @eval("return $eval_result;"); // 计算 eval 表达式的结果
+    return $eval_result;
 }, $expr);
 
 $expr = preg_replace_callback('/\{evald\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
 
     $eval_expr = $matches[1]; // 获取 evald 中的表达式
 
-    $eval_result = @eval("return $eval_expr;"); // 计算 evald 表达式的结果
+    $variables = [
+        'calc_type' => ''
+    ];
+    $eval_result = calculateBigNumberExpression($eval_expr,$variables,3);
 
     return $eval_result; // 返回计算结果
 }, $expr);

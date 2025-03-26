@@ -1,1993 +1,1098 @@
 <?php
-// $start_time = microtime(true);
-
-class LexicalAnalyzer {
-    private string $input;
-    private int $position;
-    private int $length;
-    private array $validObjects = ['u', 'o', 'e', 'c', 'm', 'g' , 'r'];
-    private $db;
-    private $sid;
-    private $oid;
-    private $mid;
-    private $jid;
-    private $type;
-    private $para;
-    private $redis;
-
-    public function __construct(string $input, $db = null, $sid = null, $oid = null, $mid = null, $jid = null, $type = null, $para = null, $redis = null) {
-        $this->input = $input;
-        $this->position = 0;
-        $this->length = strlen($input);
-        $this->db = $db;
-        $this->sid = $sid;
-        $this->oid = $oid;
-        $this->mid = $mid;
-        $this->jid = $jid;
-        $this->type = $type;
-        $this->para = $para;
-        $this->redis = $redis;
-    }
-
-    public function analyze(): array {
-        $tokens = [];
-        
-        while ($this->position < $this->length) {
-            $currentChar = $this->input[$this->position];
-            
-            if ($currentChar === '{') {
-                $this->position++; // 跳过 '{'
-                $content = '';
-                $nestedLevel = 0;
-                
-                while ($this->position < $this->length) {
-                    $char = $this->input[$this->position];
-                    if ($char === '{') {
-                        $nestedLevel++;
-                    } else if ($char === '}') {
-                        if ($nestedLevel === 0) {
-                            break;
-                        }
-                        $nestedLevel--;
-                    }
-                    $content .= $char;
-                    $this->position++;
-                }
-                
-                if ($this->position < $this->length && $this->input[$this->position] === '}') {
-                    $this->position++; // 跳过 '}'
-                    $tokens[] = ['type' => 'EXPRESSION', 'value' => $content];
-                }
-            }
-            else {
-                // 收集普通文本
-                $text = '';
-                while ($this->position < $this->length && 
-                       $this->input[$this->position] !== '{') {
-                    $text .= $this->input[$this->position];
-                    $this->position++;
-                }
-                if ($text !== '') {
-                    $tokens[] = ['type' => 'TEXT', 'value' => $text];
-                }
-            }
-        }
-        
-        return $tokens;
-    }
-
-    public function parse(): string {
-        $tokens = $this->analyze();
-        $result = '';
-        
-        foreach ($tokens as $token) {
-            if ($token['type'] === 'TEXT') {
-                $result .= $token['value'];
-            } else if ($token['type'] === 'EXPRESSION') {
-                $value = $this->evaluateExpression($token['value']);
-                $result .= $value;
-            }
-        }
-        
-        return $result;
-    }
-
-    private function evaluateExpression(string $expression): string {
-        //echo "解析 '{$expression}' 开始：<br/>";
-        
-        // 首先处理 eval() 函数
-        if (preg_match('/^eval\((.*?)\)$/', $expression, $matches)) {
-            $evalContent = $matches[1];
-            //echo "- 发现eval()函数，内容: {$evalContent}<br/>";
-            
-            // 将所有 {xxx} 转换为 v(xxx)
-            $evalContent = preg_replace('/\{([^}]+)\}/', 'v($1)', $evalContent);
-            //echo "- 转换花括号后: {$evalContent}<br/>";
-            
-            // 处理所有的 v() 函数
-            while (preg_match('/v\((.*?)\)/', $evalContent, $vMatches)) {
-                $fullMatch = $vMatches[0];
-                $innerContent = $vMatches[1];
-                
-                //echo "- 处理v()函数: {$fullMatch}<br/>";
-                $evaluated = $this->processVFunction($innerContent);
-                //echo "- v()函数结果: {$evaluated}<br/>";
-                
-                // 检查结果是否是一个新的表达式
-                if (preg_match('/^\{(.*)\}$/', $evaluated, $expMatches)) {
-                    // 如果是表达式，递归解析它
-                    $newExpression = $expMatches[1];
-                    //echo "- 发现新表达式: {$newExpression}<br/>";
-                    $evaluated = $this->evaluateExpression($newExpression);
-                    //echo "- 新表达式解析结果: {$evaluated}<br/>";
-                }
-                
-                // 如果结果不是数字，用引号包裹
-                if (!is_numeric($evaluated)) {
-                    $evaluated = '"' . addslashes($evaluated) . '"';
-                }
-                
-                $evalContent = str_replace($fullMatch, $evaluated, $evalContent);
-                //echo "- 替换后的表达式: {$evalContent}<br/>";
-            }
-            
-            // 检查是否是纯数学表达式或条件表达式
-            if (preg_match('/^[\d\s\+\-\*\/\(\)\.]+$/', $evalContent) || 
-                strpos($evalContent, '?') !== false) {  // 添加对三元运算符的支持
-                // 计算表达式
-                try {
-                    $result = eval("return " . $evalContent . ";");
-                    //echo "- eval计算结果: {$result}<br/><br/>";
-                    return (string)$result;
-                } catch (Exception $e) {
-                    //echo "- eval计算错误: {$e->getMessage()}<br/><br/>";
-                    return "0";
-                }
-            } else {
-                // 检查是否是带引号的字符串
-                if (preg_match('/^".*"$/', $evalContent)) {
-                    // 带引号的字符串，去掉引号返回
-                    $result = trim($evalContent, '"');
-                    //echo "- 字符串表达式结果: {$result}<br/><br/>";
-                    return $result;
-                } else {
-                    // 不带引号的非数学表达式返回0
-                    //echo "- 无效表达式结果: 0<br/><br/>";
-                    return "0";
-                }
-            }
-        }
-        
-        // 处理普通的 v() 调用
-        while (preg_match('/v\((.*?)\)/', $expression, $matches)) {
-            $fullMatch = $matches[0];
-            $innerContent = $matches[1];
-            
-            //echo "- 发现v()函数: {$fullMatch}<br/>";
-            
-            // 递归处理内部表达式
-            $evaluated = $this->processVFunction($innerContent);
-            //echo "- v()函数处理结果: {$evaluated}<br/>";
-            
-            // 替换原始表达式中的v()部分，保持外部的花括号
-            $expression = str_replace($fullMatch, $evaluated, $expression);
-            //echo "- 替换后的表达式: {$expression}<br/>";
-        }
-
-        // 检查是否是对象属性访问格式，允许更多的字符
-        if (preg_match('/^[a-zA-Z]+\.[-a-zA-Z0-9_:. ]+$/', $expression)) {
-            $result = $this->getVariableValue($expression);
-            //echo "- 最终结果: {$result}<br/><br/>";
-            return $result;
-        }
-
-        // 如果不是对象属性访问格式，返回0
-        //echo "- 最终结果: 0<br/><br/>";
-        return "0";
-    }
-
-    private function processVFunction(string $content): string {
-        $parts = explode('.', $content);
-        
-        // 如果只有一个部分，检查是否是有效对象类型
-        if (count($parts) <= 1) {
-            return "0";  // 单个部分都视为无效
-        }
-
-        // 检查第一个部分是否是有效对象类型
-        if (!in_array($parts[0], $this->validObjects)) {
-            return "0";
-        }
-
-        // 获取变量值
-        return $this->getVariableValue($content);
-    }
-
-    private function getVariableValue(string $path): string {
-        $parts = explode('.', $path);
-        if (count($parts) < 2 || !in_array($parts[0], $this->validObjects)) {
-            return "0";
-        }
-
-        // 使用 process_attribute 处理属性
-        $result = process_attribute(
-            $parts[0],          // attr1
-            $parts[1],          // attr2
-            $this->sid,         // sid
-            $this->oid,         // oid
-            $this->mid,         // mid
-            $this->jid,         // jid
-            $this->type,        // type
-            $this->db,          // db
-            $this->para,        // para
-            $this->redis       // redis
-        );
-
-        // 如果是 e 类型且返回的是 eval 表达式，需要继续解析
-        if ($parts[0] === 'e' && preg_match('/^\{eval\((.*?)\)\}$/', $result, $matches)) {
-            //echo "- 发现eval表达式，继续解析<br/>";
-            return $this->evaluateExpression('eval(' . $matches[1] . ')');
-        }
-
-        return (string)$result;
-    }
-}
-
-function process_string($main_value, $sid, $oid=null, $mid=null, $jid=null, $type=null, $para = null) {
-    // 创建数据库连接
-    $db = new mysqli("localhost", "xunxian", "123456", "xunxian");
-    if ($db->connect_error) {
-        die("连接失败: " . $db->connect_error);
-    }
-
-    // 创建Redis连接
-    $redis = new Redis();
-    try {
-        $redis->connect('127.0.0.1', 6379);
-    } catch (Exception $e) {
-        die("Redis连接失败: " . $e->getMessage());
-    }
-
-    // 创建解析器实例
-    $analyzer = new LexicalAnalyzer(
-        $main_value,    // input
-        $db,            // db
-        $sid,           // sid
-        $oid,           // oid
-        $mid,           // mid
-        $jid,           // jid
-        $type,          // type
-        $para,          // para
-        $redis          // 添加redis实例
-    );
-
-    // 解析字符串
-    $result = $analyzer->parse();
-
-    // 关闭连接
-    $db->close();
-    $redis->close();
-
-    return $result;
-}
-
-// 修改测试代码
-function test() {
-    $testCases = [
-        "简单计算：{eval(1+2+3)}",
-        "变量计算：{eval(v(u.level)*5)}",
-        "复杂计算：{eval(v(u.level)*2+10/2)}",
-        "嵌套花括号：{eval({u.level}*5)}",
-        "多个变量：{eval({u.level}+{c.minute})}",
-        "无效表达式：{eval(abc)}",
-        "原始表达式：1+2+3",
-        "原始变量：{u.level}*5",
-        "现在是{c.time}，今天是星期{c.day}",
-        "当前在线人数：{c.online_user_count}人",
-        "测试e：{eval(v(e.test_name))}",
-        '{e.time_name}好！
-        {e.greeting_text}',
-        "随机100：{r.100}",
-        "随机c.time(从右往左计算):{r.c.time}",
-        "随机c.time：{r.v(c.time)}"
+/**
+ * 增强版超大数字表达式解析器
+ * 支持 +, -, *, /, %, ^, (, ), 比较运算符, 逻辑运算符, 变量, 函数调用等运算
+ * 使用 bcmath 库进行计算
+ */
+class BigNumberExpressionParser {
+    private $expression;
+    private $position;
+    private $currentToken;
+    private $variables = [];
+    private $precision = 10; // 默认精度
+    
+    // 可用数学函数映射
+    private $functions = [
+        'sqrt' => 'bcsqrt',
+        'abs' => 'bcabs',
+        'max' => 'bcmax',
+        'min' => 'bcmin',
+        'pow' => 'bcpow',
+        'mod' => 'bcmod',
+        'round' => 'bcround',
+        'floor' => 'bcfloor',
+        'ceil' => 'bcceil',
     ];
-
-    echo "详细解析过程：<br/><br/>";
     
-    foreach ($testCases as $case) {
-        echo "原始句子: {$case}<br/>";
-        $result = process_string(
-            $case,          // main_value
-            'sid_value',    // sid
-            'oid_value',    // oid
-            'mid_value',    // mid
-            'jid_value',    // jid
-            'type_value',   // type
-            null            // para
-        );
-        echo "解析结果: {$result}<br/><br/>";
+    public function __construct($expression, $precision = 10) {
+        // 移除所有空格
+        $this->expression = preg_replace('/\s+/', '', $expression);
+        $this->position = 0;
+        $this->currentToken = null;
+        $this->precision = $precision;
+        $this->getNextToken();
     }
-}
-
-function process_attribute($attr1, $attr2, $sid, $oid, $mid, $jid, $type, $db, $para, $redis = null) {
-    // 生成缓存键
-    $cache_key = "attr_{$attr1}_{$attr2}_{$sid}_{$oid}_{$mid}_{$jid}_{$type}";
     
-    // 如果Redis可用，先尝试从缓存获取
-    if ($redis) {
-        $cached_value = $redis->get($cache_key);
-        if ($cached_value !== false) {
-            return $cached_value;
+    /**
+     * 设置变量值
+     */
+    public function setVariable($name, $value) {
+        $this->variables[$name] = $value;
+        return $this;
+    }
+    
+    /**
+     * 设置精度
+     */
+    public function setPrecision($precision) {
+        $this->precision = $precision;
+        return $this;
+    }
+    
+    /**
+     * 词法分析：获取下一个标记
+     */
+    private function getNextToken() {
+        // 如果到达表达式末尾
+        if ($this->position >= strlen($this->expression)) {
+            $this->currentToken = null;
+            return;
         }
-    }
-    switch ($attr1) {
-        case 'u':
-            switch($oid){
-            case 'mosaic_equip':
-            $attr3 = 'i'.$attr2;
-            $sql = "SELECT $attr3 FROM system_item_module WHERE iid = ?";
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s", $sid);
-            $stmt->execute();
-            $result = $stmt->get_result();
+        
+        $char = $this->expression[$this->position];
+        
+        // 检查双字符运算符 ?? (空合并运算符)
+        if ($char === '?' && $this->position + 1 < strlen($this->expression) && 
+            $this->expression[$this->position + 1] === '?') {
+            $this->currentToken = ['type' => 'OPERATOR', 'value' => '??'];
+            $this->position += 2;
+            return;
+        }
+        
+        // 如果是字符串（单引号或双引号）
+        if ($char === "'" || $char === '"') {
+            $quote = $char;
+            $string = '';
+            $this->position++; // 跳过开始的引号
             
-            if (!$result) {
-                die('查询失败: ' . $db->error);
+            while ($this->position < strlen($this->expression) && $this->expression[$this->position] !== $quote) {
+                // 处理转义字符
+                if ($this->expression[$this->position] === '\\' && $this->position + 1 < strlen($this->expression)) {
+                    $this->position++;
+                    $string .= $this->expression[$this->position];
+                } else {
+                    $string .= $this->expression[$this->position];
+                }
+                $this->position++;
             }
-            $row = $result->fetch_assoc();
-            $row_result = $row[$attr3];
-            $op = nl2br($row_result);
-                break;
+            
+            // 跳过结束的引号
+            if ($this->position < strlen($this->expression)) {
+                $this->position++;
+            }
+            
+            $this->currentToken = ['type' => 'STRING', 'value' => $string];
+            return;
+        }
+        
+        // 如果是数字，提取完整数字
+        if (ctype_digit($char) || $char === '.') {
+            $number = '';
+            while ($this->position < strlen($this->expression) && 
+                  (ctype_digit($this->expression[$this->position]) || $this->expression[$this->position] === '.')) {
+                $number .= $this->expression[$this->position];
+                $this->position++;
+            }
+            $this->currentToken = ['type' => 'NUMBER', 'value' => $number];
+            return;
+        }
+        
+        // 如果是字母，可能是变量或函数
+        if (ctype_alpha($char) || $char === '_') {
+            $identifier = '';
+            while ($this->position < strlen($this->expression) && 
+                  (ctype_alnum($this->expression[$this->position]) || $this->expression[$this->position] === '_')) {
+                $identifier .= $this->expression[$this->position];
+                $this->position++;
+            }
+            
+            // 检查是否是特殊关键字
+            if (strtolower($identifier) === 'null') {
+                $this->currentToken = ['type' => 'NULL', 'value' => 'null'];
+                return;
+            }
+            
+            // 检查是否是函数调用
+            if ($this->position < strlen($this->expression) && $this->expression[$this->position] === '(') {
+                $this->currentToken = ['type' => 'FUNCTION', 'value' => $identifier];
+            } else {
+                $this->currentToken = ['type' => 'VARIABLE', 'value' => $identifier];
+            }
+            return;
+        }
+        
+        // 检查比较运算符和逻辑运算符
+        if ($char === '=' || $char === '!' || $char === '<' || $char === '>' || $char === '&' || $char === '|') {
+            $operator = $char;
+            $this->position++;
+            
+            // 处理双字符运算符
+            if ($this->position < strlen($this->expression)) {
+                $nextChar = $this->expression[$this->position];
+                if (($char === '=' && $nextChar === '=') ||
+                    ($char === '!' && $nextChar === '=') ||
+                    ($char === '<' && $nextChar === '=') ||
+                    ($char === '>' && $nextChar === '=') ||
+                    ($char === '&' && $nextChar === '&') ||
+                    ($char === '|' && $nextChar === '|')) {
+                    $operator .= $nextChar;
+                    $this->position++;
+                }
+            }
+            
+            $this->currentToken = ['type' => 'OPERATOR', 'value' => $operator];
+            return;
+        }
+        
+        // 检查三字符运算符
+        if ($char === '=' && $this->position + 1 < strlen($this->expression) && 
+            $this->expression[$this->position + 1] === '=' && 
+            $this->position + 2 < strlen($this->expression) && 
+            $this->expression[$this->position + 2] === '=') {
+            $this->currentToken = ['type' => 'OPERATOR', 'value' => '==='];
+            $this->position += 3;
+            return;
+        }
+        
+        if ($char === '!' && $this->position + 1 < strlen($this->expression) && 
+            $this->expression[$this->position + 1] === '=' && 
+            $this->position + 2 < strlen($this->expression) && 
+            $this->expression[$this->position + 2] === '=') {
+            $this->currentToken = ['type' => 'OPERATOR', 'value' => '!=='];
+            $this->position += 3;
+            return;
+        }
+        
+        // 如果是其他操作符
+        switch ($char) {
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+            case '%':
+            case '^':
+            case '(':
+            case ')':
+            case ',':
+            case ';':
+            case '?':
+            case ':':
+                $this->currentToken = ['type' => 'OPERATOR', 'value' => $char];
+                $this->position++;
+                return;
             default:
-            if (strpos($attr2, "env.") === 0) {
-            $attr3 = substr($attr2, 4); // 提取 "env." 后面的部分
-            switch($attr3){
-                case 'user_count':
-                // 构建 SQL 查询语句
-                $sql = "SELECT COUNT(*) as count FROM game1 WHERE sfzx=1 and nowmid IN (SELECT nowmid FROM game1 WHERE sid = ?) and uis_sailing = 0";
-                
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $op = $row["count"];
-                break;
-                case 'npc_count':
-                $sql = "SELECT mnpc_now FROM system_map WHERE mid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                // 处理结果
-                $totalNpcCount = 0;
-                
-                while ($row = $result->fetch_assoc()) {
-                    $mnpc = $row["mnpc_now"];
-                    $npcs = explode(",", $mnpc); // 拆分成每个npc项
-                    foreach ($npcs as $npc) {
-                        $npc_show_cond = urldecode(explode("|", $npc)[2]);
-                        $show_cond = checkTriggerCondition($npc_show_cond,$dblj,$sid);
-                        if(is_null($show_cond)){
-                        $show_cond = true;
-                        }
-                        if($show_cond){
-                        list(, $npcCount) = explode("|", $npc);
-                        $totalNpcCount += (int)$npcCount; // 将每个npc的数量累加
-                        }
-                        
-                    }
-                }
-                
-                $op = $totalNpcCount;
-                break;
-                case 'alive_npc_count':
-                $sql = "SELECT COUNT(*) as count FROM system_npc_scene WHERE nmid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                // 处理结果
-                $op = $row['count'];
-                break;
-                case 'monster_count':
-                $sql = "SELECT COUNT(*) as count FROM system_npc_midguaiwu WHERE nsid = '' and nmid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                // 处理结果
-                $op = $row["count"];
-                break;
-                case 'pet_count':
-                $sql = "SELECT COUNT(*) as count FROM system_pet_scene WHERE nmid = (SELECT nowmid FROM game1 WHERE sid = ?) and nstate = 1";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                // 处理结果
-                $op = $row["count"];
-                break;
-                case 'item_count':
-                $sql = "SELECT mitem_now FROM system_map WHERE mid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                // 处理结果
-                $totalItemCount = 0;
-                while ($row = $result->fetch_assoc()) {
-                    $mitem = $row["mitem_now"];
-                    $items = explode(",", $mitem); // 拆分成每个item项
-                    foreach ($items as $item) {
-                        list(, $itemCount) = explode("|", $item);
-                        $totalItemCount += (int)$itemCount; // 将每个item的数量累加
-                    }
-                }
-                
-                $sql = "SELECT drop_item_data FROM system_npc_drop_list WHERE drop_mid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                // 处理结果
-                while ($row = $result->fetch_assoc()) {
-                    $mitem = $row["drop_item_data"];
-                    $items = explode(",", $mitem); // 拆分成每个item项
-                    foreach ($items as $item) {
-                        list(, $itemCount) = explode("|", $item);
-                        $totalItemCount += (int)$itemCount; // 将每个item的数量累加
-                    }
-                }
-                
-                $op = $totalItemCount;
-                break;
-                case 'justmid':
-                // 构建 SQL 查询语句
-                $sql = "SELECT justmid FROM game1 WHERE sid = ?";
-                
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $op = $row["justmid"];
-                break;
-                case 'nowmid':
-                // 构建 SQL 查询语句
-                $sql = "SELECT nowmid FROM game1 WHERE sid = ?";
-                
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $op = $row["nowmid"];
-                break;
-                case 'name':
-                // 构建 SQL 查询语句
-                $sql = "SELECT mname from system_map where mid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $op = $row["mname"];
-                $sql = "SELECT uis_sailing from game1 where sid = ?";
-                
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s", $sid);
-                
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $is_sailing = $row["uis_sailing"];
-                if($is_sailing ==1){
-                $op = "茫茫大海";
-                }
-                break;
-            }
-            }
-            elseif(strpos($attr2, "land.") === 0){
-            $attr3 = 'land_'.substr($attr2, 5);
-            // 构建 SQL 查询语句
-            $sql = "SELECT $attr3 FROM system_player_land WHERE sid = ?";
-            
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s", $sid);
-            
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $op = $row[$attr3];
-            }
-            elseif(strpos($attr2, "boat.") === 0){
-            $attr3 = 'boat_'.substr($attr2, 5);
-            // 构建 SQL 查询语句
-            $sql = "SELECT $attr3 FROM system_player_boat WHERE sid = ?";
-            
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s", $sid);
-            
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $op = $row[$attr3];
-            }
-            elseif(strpos($attr2, "craft.") === 0){
-            $attr3 = 'aircraft_'.substr($attr2, 6);
-            // 构建 SQL 查询语句
-            $sql = "SELECT $attr3 FROM system_player_aircraft WHERE sid = ?";
-            
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s", $sid);
-            
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $op = $row[$attr3];
-            }
-            elseif(strpos($attr2, "input.") === 0){
-            $attr3 = substr($attr2, 6); // 提取 "input." 后面的部分
-            // 构建 SQL 查询语句
-            $sql = "SELECT value FROM system_player_inputs WHERE sid = ? and id = ?";
-            
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("ss", $sid,$attr3);
-            
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $op = $row['value'];
-            }
-            elseif(strpos($attr2, "refresh_time") === 0){
-            $sql = "SELECT mgtime,mrefresh_time FROM system_map WHERE mid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-            
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s", $sid);
-            
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $nowdate = date('Y-m-d H:i:s');
-            $mid_time = $row["mgtime"];
-            $mid_refresh_time = $row['mrefresh_time'];
-            $op= $mid_refresh_time - floor((strtotime($nowdate)-strtotime($mid_time))/60);//获取刷新分钟剩余
-            }elseif(strpos($attr2, "team_member_count") === 0){
-            $sql = "SELECT team_member FROM system_team_user WHERE team_member in (SELECT uid FROM game1 WHERE sid = ?)";
-            
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s", $sid);
-            
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $team_member = $row["team_member"];
-            $op= @count(explode(',',$team_member));
-            }elseif(strpos($attr2, "team_members") === 0){
-            $attr3 = substr($attr2, 13); // 提取 "team_members." 后面的部分
-            $para = explode(".",$attr3);
-            $order = $para[0];
-            $attr_player = "u".$para[1];
-            $sql = "
-SELECT g1.*
-FROM game1 g1
-JOIN system_team_user stu ON FIND_IN_SET(g1.uid, stu.team_member) > 0
-WHERE EXISTS (
-SELECT uid
-FROM game1
-WHERE sid = ?
-)
-ORDER BY FIND_IN_SET(g1.uid, stu.team_member);
-";
-            
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s", $sid);
-            
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            // 移动指针到第 $order+1 行
-            for ($i = 0; $i < $order; $i++) {
-                $row = $result->fetch_assoc();
-            }
-            $op = $row[$attr_player];
-
-            
-            }elseif(strpos($attr2, "tasks.") === 0){
-            $attr3 = substr($attr2, 6); // 提取 "tasks." 后面的部分
-            if (strpos($attr3, "count") === 0){
-            $sql = "select * from system_task_user WHERE sid='$sid' AND tstate !=2";
-            $cxjg = $db->query($sql);
-            $wtjrw = $cxjg->fetch_all(MYSQLI_ASSOC);
-            $op = count($wtjrw);
-            }elseif (strpos($attr3, 't') === 0) {
-            $attr3 = substr($attr3, 1); // 去掉开头的 "t"
-            $tid = $attr3;
-            $sql = "SELECT ttype from system_task where tid = ?";
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s", $tid);
-            // 执行查询
-            $stmt->execute();
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $ttype = $row["ttype"];
-            $sql = "SELECT tstate FROM system_task_user WHERE tid =  ? and sid = ?";
-            
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("ss", $tid,$sid);
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $op = $row["tstate"];
-            }
-            
-            if($ttype ==3){
-            $op = 2;
-            }
-            
-            }elseif(strpos($attr2, "ic.") === 0){
-            $attr3 = substr($attr2, 3); // 提取 "ic." 后面的部分
-            if (strpos($attr3, 'i') === 0) {
-                $attr3 = substr($attr3, 1); // 去掉开头的 "i"
-            }
-            $iid = $attr3;
-            $sql = "SELECT icount FROM system_item WHERE iid =  ? and sid = ?";
-            
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("ss", $iid,$sid);
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $op = $row["icount"];
-            }elseif(strpos($attr2, "jv.") === 0){
-            $attr3 = substr($attr2, 3); // 提取 "jv." 后面的部分
-            if (strpos($attr3, 'j') === 0) {
-                $attr3 = substr($attr3, 1); // 去掉开头的 "j"
-            }
-            $jid = $attr3;
-            $sql = "SELECT jlvl FROM system_skill_user WHERE jid =  ? and jsid = ?";
-            
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("ss", $jid,$sid);
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $op = $row["jlvl"];
-            }elseif(strpos($attr2, "enemys.") === 0){
-            $attr3 = substr($attr2, 7); // 提取 "enemys." 后面的部分
-            $jid = $attr3;
-            if($attr3 =="count"){
-            $sql = "SELECT count(*) as enemys_count FROM system_npc_midguaiwu WHERE nsid = ?";
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s",$sid);
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $op = $row["enemys_count"];
-            }else{
-            $para = explode(".",$attr3);
-            $order = $para[0];
-            $attr_guai = "n".$para[1];
-            $sql = "SELECT $attr_guai FROM system_npc_midguaiwu WHERE nsid = ?";
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s",$sid);
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            // 移动指针到第 $order+1 行
-            for ($i = 0; $i < $order; $i++) {
-                $row = $result->fetch_assoc();
-            }
-            $op = $row[$attr_guai];
-            }
-            }elseif(strpos($attr2, "alive_enemys.") === 0){
-            $attr3 = substr($attr2, 13); // 提取 "alive_enemys." 后面的部分
-            $jid = $attr3;
-            if($attr3 =="count"){
-            $sql = "SELECT count(*) as alive_enemys_count FROM system_npc_midguaiwu WHERE nhp > 0 and nsid = ?";
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s",$sid);
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $op = $row["alive_enemys_count"];
-            }else{
-            $para = explode(".",$attr3);
-            $order = $para[0];
-            $attr_guai = "n".$para[1];
-            $sql = "SELECT $attr_guai FROM system_npc_midguaiwu WHERE nhp > 0 and nsid = ?";
-            // 使用预处理语句
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s",$sid);
-            // 执行查询
-            $stmt->execute();
-            
-            // 获取查询结果
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            // 移动指针到第 $order+1 行
-            for ($i = 0; $i < $order; $i++) {
-                $row = $result->fetch_assoc();
-            }
-            $op = $row[$attr_guai];
-            }
-            }elseif(strpos($attr2, "equips.") === 0){
-            $attr3 = substr($attr2, 7); // 提取 "equips." 后面的部分
-            if (strpos($attr3, 'b.') === 0) {
-                $attr4 = substr($attr3, 2); // 提取 "b." 后面的部分
-                $bid = $attr4;
-                $sql = "SELECT eq_true_id FROM system_equip_user WHERE eq_type =  1 and eqsid = ? and eqpid = 0";
-            
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s",$sid);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $op = $row["eq_true_id"];
-                if (strpos($attr4, 'embed.') === 0){
-                //镶物属性相关
-                $attr5 = substr($attr4, 6); // 提取 "embed." 后面的部分
-                if(preg_match('/^(\d+\.)?(.*)/', $attr5, $matches)){
-                $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
-                $mosaic_pos = rtrim($prefix, ".");
-                
-                $attr6 = $matches[2]; // 匹配到的剩余部分
-                }
-                $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$op'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $mosaic_list = $row['equip_mosaic'];
-                $mosaic_para = explode('|',$mosaic_list);
-                if(!$mosaic_para[$mosaic_pos]){
-                    //$op = "\"\"";
-                }else{
-                $mosaic_id = $mosaic_para[$mosaic_pos];
-                $xid = "i".$attr6;
-                $sql = "SELECT $xid FROM system_item_module WHERE iid = '$mosaic_id'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                if ($row === null||$row =='') {
-                    //$op = "\"\""; // 或其他默认值
-                }else{
-                    $op = nl2br($row[$xid]);
-                }
-                }
-                //镶物属性相关
-                
-                
-                }else{
-                $bid = "i".$bid;
-                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$op')";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                if($attr4 =="count"){
-                    $op = $op?1:0;
-                }elseif($attr4 =="embed_count"){
-                $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$op'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                if($row){
-                $op = count(explode('|',$row['equip_mosaic']));
-                }else{
-                //$op = "\"\"";
-                }
-                }else{
-                if ($row === null||$row =='') {
-                    //$op = "\"\""; // 或其他默认值
-                }else{
-                    $op = nl2br($row[$bid]);
-                }
-                }
-                }
-                }elseif(preg_match('/^(\d+\.)?(.*)/', $attr3, $matches)){
-                $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
-                $equiped_pos = rtrim($prefix, ".");
-                $attr4 = $matches[2]; // 匹配到的剩余部分
-                // SQL 查询语句
-                $sql = "SELECT id FROM system_equip_def WHERE type = 2 ORDER BY id";
-                
-                // 执行查询并检查是否有结果
-                $result = $db->query($sql);
-                
-                if ($result->num_rows > 0) {
-                    // 初始化数组
-                    $idArray = array();
-                
-                    // 将查询结果存入数组
-                    while ($row = $result->fetch_assoc()) {
-                        $idArray[] = $row["id"];
-                    }
-                }
-                $equiped_pos = $idArray[$equiped_pos];
-
-                $fid = $attr4;
-                $sql = "SELECT eq_true_id FROM system_equip_user WHERE eq_type =  2 and equiped_pos_id = ? and eqsid = ? and eqpid = 0";
-            
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("ss",$equiped_pos,$sid);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $op = $row["eq_true_id"];
-
-                if (strpos($attr4, 'embed.') === 0){
-                $attr5 = substr($attr4, 6); // 提取 "embed." 后面的部分
-                if(preg_match('/^(\d+\.)?(.*)/', $attr5, $matches)){
-                $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
-                $mosaic_pos = rtrim($prefix, ".");
-                
-                $attr6 = $matches[2]; // 匹配到的剩余部分
-                }
-                $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$op'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $mosaic_list = $row['equip_mosaic'];
-                $mosaic_para = explode('|',$mosaic_list);
-                if(!$mosaic_para[$mosaic_pos]){
-                    //$op = "\"\"";
-                }else{
-                $mosaic_id = $mosaic_para[$mosaic_pos];
-                $xid = "i".$attr6;
-                $sql = "SELECT * FROM system_item_module WHERE iid = '$mosaic_id'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                if ($row === null||$row =='') {
-                    //$op = "\"\""; // 或其他默认值
-                }else{
-                    $op = nl2br($row[$xid]);
-                }
-                }
-                //镶物属性相关
-                }else{
-                $fid = "i".$fid;
-                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$op')";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                if($attr4 =="count"){
-                    $op = $op?1:0;
-                }elseif($attr4 =="embed_count"){
-                $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$op'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                if($row){
-                $op = count(explode('|',$row['equip_mosaic']));
-                }else{
-                //$op = "\"\"";
-                }
-                }else{
-                if ($row === null||$row =='') {
-                    //$op = "\"\""; // 或其他默认值
-                }else{
-                    $op = nl2br($row[$fid]);
-                }
-                }
-                }
-            }
-            }elseif(strpos($attr2, "callout_adopt.") === 0){
-            $attr3 = substr($attr2, 14); // 提取 "callout_adopt." 后面的部分
-            if (strpos($attr3, 'count') === 0) {
-                $sql = "SELECT COUNT(*) as total_callout FROM system_pet_scene WHERE nstate =  1 and nsid = ?";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s",$sid);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $op = $row["total_callout"];
-            }
-            elseif(preg_match('/^(\d+\.)?(.*)/', $attr3, $matches)){
-                $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
-                $pet_pos = rtrim($prefix, ".");
-                $attr4 = $matches[2]; // 匹配到的剩余部分
-                // SQL 查询语句
-                $sql = "SELECT npid FROM system_pet_scene WHERE nsid = ? ORDER BY npid";
-
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param("s",$sid);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-
-                if ($result->num_rows > 0) {
-                    // 初始化数组
-                    $idArray = array();
-                
-                    // 将查询结果存入数组
-                    while ($row = $result->fetch_assoc()) {
-                        $idArray[] = $row["npid"];
-                    }
-                }
-                $pet_pos = $idArray[$pet_pos];
-
-                $fid = $attr4;
-                
-                if (strpos($attr4, 'cut_hp') === 0){
-                $attr5 = substr($attr4, 6); // 提取 "embed." 后面的部分
-                if(preg_match('/^(\d+\.)?(.*)/', $attr5, $matches)){
-                $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
-                $mosaic_pos = rtrim($prefix, ".");
-                
-                $attr6 = $matches[2]; // 匹配到的剩余部分
-                }
-                $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$op'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $mosaic_list = $row['equip_mosaic'];
-                $mosaic_para = explode('|',$mosaic_list);
-                if(!$mosaic_para[$mosaic_pos]){
-                    //$op = "\"\"";
-                }else{
-                $mosaic_id = $mosaic_para[$mosaic_pos];
-                $xid = "i".$attr6;
-                $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mosaic_id')";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $op = nl2br($row[$xid]);
-                }
-                //镶物属性相关
-                }else{
-                $pid = "p".$fid;
-                $sql = "SELECT * FROM system_pet_player WHERE pid = '$pet_pos'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $op = nl2br($row[$pid]);
-                }
-            }
-            }else{
-            $attr3 = $attr1.$attr2;
-            $attr3 = str_replace('.', '', $attr3);
-            $sql = "SHOW COLUMNS FROM game1 LIKE '$attr3'";
-            $result = $db->query($sql);
-            if($result->num_rows >0){
-            $sql = "SELECT * FROM game1 WHERE sid = ?";
-            }else{
-            $sql = "SELECT * FROM system_addition_attr WHERE sid = ? and name = '$attr3'";
-            $attr_type = 1;
-            }
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param("s", $sid);
-            $stmt->execute();
-            $result_2 = $stmt->get_result();
-            if (!$result_2) {
-                
-                die('查询失败: ' . $db->error);
-            }
-            $row = $result_2->fetch_assoc();
-            if($attr_type !=1){
-            $op = nl2br($row[$attr3]);
-            }else{
-            $op = nl2br($row['value']);
-                }
-            }
-            break;
-            }
-            break;
-        case 'o':
-            switch($oid){
-                case 'scene':
-                    // 匹配字符串格式 exit_x.xx，不限制.xx的具体值
-                    // 匹配字符串格式 exit_x.xx
-                    if (preg_match('/exit_([nswe])\.(.+)/', $attr2, $matches)) {
-                        $exitType = $matches[1];  // 匹配到的x (n, s, w, e)
-                        $xxValue = 'm' . $matches[2];   // 匹配到的.xx的值加上'm'前缀
-                        // 将x映射到对应的字段
-                        $fieldMapping = [
-                            'n' => 'mup',
-                            's' => 'mdown',
-                            'w' => 'mleft',
-                            'e' => 'mright',
-                        ];
-                        
-                        $field = $fieldMapping[$exitType];  // 获取对应字段名称
-                    
-                        // 查询system_map表，获取对应字段（up, down, left, right）对应的mid
-                        $sql = "SELECT $field FROM system_map WHERE mid = ?";
-                        $stmt = $db->prepare($sql);
-                        $stmt->bind_param('i', $mid);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        
-                        if ($result && $row = $result->fetch_assoc()) {
-                            $targetMid = $row[$field];
-                    
-                            // 根据targetMid获取.xx字段的值
-                            $sql2 = "SELECT $xxValue FROM system_map WHERE mid = ?";
-                            $stmt2 = $db->prepare($sql2);
-                            $stmt2->bind_param('i', $targetMid);
-                            $stmt2->execute();
-                            $result2 = $stmt2->get_result();
-                    
-                            if ($result2 && $row2 = $result2->fetch_assoc()) {
-                                if($xxValue =='mid'){
-                                $op = 's'.$row2[$xxValue];
-                                }else{
-                                $op = $row2[$xxValue];
-                                }
-                            }
-                        }
-                    }
-                    else{
-                    $attr3 = 'm'.$attr2;
-                    $sql = "SELECT * FROM system_map WHERE mid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    $op = nl2br($row[$attr3]);
-                        }
-                    break;
-                case 'pet':
-                    if ($attr2 == "skills_cmmt") {
-                        
-                        $sql = "SELECT * FROM system_skill_user WHERE jpid = ?";
-                        $stmt = $db->prepare($sql);
-                        $stmt->bind_param("s", $mid);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        
-                        while($row = $result->fetch_assoc()){
-                        
-                            $skill_id = $row['jid'];
-                            $skill_lvl = $row['jlvl'];
-                            $sql2 = "SELECT * FROM system_skill WHERE jid = ?";
-                            $stmt2 = $db->prepare($sql2);
-                            $stmt2->bind_param("s", $skill_id);
-                            $stmt2->execute();
-                            $result2 = $stmt2->get_result();
-                            $row2 = $result2->fetch_assoc();
-                            $row_result .= "，" . $row2['jname'] ."(". "{$skill_lvl}".")";
-                            
-                            $skill_final = ltrim($row_result, "，");
-                            if(!$skill_final){
-                                $op = "无";
-                            }else{
-                                $op = $skill_final;
-                            }
-                        }
-                    }elseif($attr2 == "equips_cmmt") {
-$sql = "SELECT * FROM system_equip_def WHERE type = '1'";
-$cxjg = $db->query($sql);
-$ret = $cxjg ? $cxjg->fetch_all(MYSQLI_ASSOC) : [];
-
-$equipbid = null;
-foreach ($ret as $row) {
-$equiptypeid = $row['id'];
-$equiptypename = $row['name'];
-$sql = "SELECT * FROM system_equip_user WHERE eq_type = 1 AND equiped_pos_id = '$equiptypeid' AND eqsid = '$sid' AND eqpid = '$mid'";
-$cxjg = $db->query($sql);
-if ($cxjg) {
-    $row = $cxjg->fetch_assoc();
-    if ($row) {
-        $equipbid = $row['eq_true_id'];
-        break;
+                throw new Exception("无法识别的字符: $char 在位置 {$this->position}");
+        }
     }
-}
-}
-
-if ($equipbid) {
-$sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$equipbid')";
-$cxjg = $db->query($sql);
-if ($cxjg) {
-    $row = $cxjg->fetch_assoc();
-    if ($row) {
-        $equipbname = \lexical_analysis\color_string($row['iname']);
-        $equipbhtml = $equipbname . ",";
+    
+    /**
+     * 语法分析入口
+     */
+    public function parse() {
+        return $this->parseExpression();
     }
-}
-}
-
-$sql = "SELECT * FROM system_equip_def WHERE type = 2";
-$cxjg = $db->query($sql);
-$ret = $cxjg ? $cxjg->fetch_all(MYSQLI_ASSOC) : [];
-
-$equipfhtml = '';
-foreach ($ret as $row) {
-$equiptypeid = $row['id'];
-$equiptypename = $row['name'];
-$sql = "SELECT * FROM system_equip_user WHERE eq_type = 2 AND equiped_pos_id = '$equiptypeid' AND eqsid = '$sid' AND eqpid = '$mid'";
-$cxjg = $db->query($sql);
-if ($cxjg) {
-    $row = $cxjg->fetch_assoc();
-    if ($row) {
-        $equipfid = $row['eq_true_id'];
-        if ($equipfid) {
-            $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$equipfid')";
-            $cxjg = $db->query($sql);
-            if ($cxjg) {
-                $row = $cxjg->fetch_assoc();
-                if ($row) {
-                    $equipfname = \lexical_analysis\color_string($row['iname']);
-                }
+    
+    /**
+     * 处理条件表达式 (a ? b : c) 和 (a ?: b)
+     */
+    private function parseExpression() {
+        $expr = $this->parseNullCoalesce();
+        
+        if ($this->currentToken !== null && 
+            $this->currentToken['type'] === 'OPERATOR' && 
+            $this->currentToken['value'] === '?') {
+            $this->getNextToken();
+            
+            // 检查是否是简写形式的三元运算符 (a ?: b)
+            if ($this->currentToken !== null && 
+                $this->currentToken['type'] === 'OPERATOR' && 
+                $this->currentToken['value'] === ':') {
+                $this->getNextToken();
+                $falseExpr = $this->parseExpression();
+                
+                // 简写形式相当于 $expr ? $expr : $falseExpr
+                return ['type' => 'CONDITIONAL', 'condition' => $expr, 'true' => $expr, 'false' => $falseExpr];
+            }
+            
+            // 标准三元运算符 (a ? b : c)
+            $trueExpr = $this->parseExpression();
+            
+            if ($this->currentToken === null || 
+                $this->currentToken['type'] !== 'OPERATOR' || 
+                $this->currentToken['value'] !== ':') {
+                throw new Exception("三元运算符缺少冒号");
+            }
+            
+            $this->getNextToken();
+            $falseExpr = $this->parseExpression();
+            
+            return ['type' => 'CONDITIONAL', 'condition' => $expr, 'true' => $trueExpr, 'false' => $falseExpr];
+        }
+        
+        return $expr;
+    }
+    
+    /**
+     * 处理空合并运算符 (??)
+     */
+    private function parseNullCoalesce() {
+        $left = $this->parseLogicalOr();
+        
+        if ($this->currentToken !== null && 
+            $this->currentToken['type'] === 'OPERATOR' && 
+            $this->currentToken['value'] === '??') {
+            $this->getNextToken();
+            $right = $this->parseNullCoalesce(); // 允许链式操作 a ?? b ?? c
+            
+            return ['type' => 'NULL_COALESCE', 'left' => $left, 'right' => $right];
+        }
+        
+        return $left;
+    }
+    
+    /**
+     * 处理逻辑或运算
+     */
+    private function parseLogicalOr() {
+        $left = $this->parseLogicalAnd();
+        
+        while ($this->currentToken !== null && 
+               $this->currentToken['type'] === 'OPERATOR' && 
+               ($this->currentToken['value'] === '||' || $this->currentToken['value'] === '|')) {
+            $operator = $this->currentToken['value'];
+            $this->getNextToken();
+            $right = $this->parseLogicalAnd();
+            
+            $left = ['type' => 'LOGICAL_OR', 'left' => $left, 'right' => $right];
+        }
+        
+        return $left;
+    }
+    
+    /**
+     * 处理逻辑与运算
+     */
+    private function parseLogicalAnd() {
+        $left = $this->parseComparison();
+        
+        while ($this->currentToken !== null && 
+               $this->currentToken['type'] === 'OPERATOR' && 
+               ($this->currentToken['value'] === '&&' || $this->currentToken['value'] === '&')) {
+            $operator = $this->currentToken['value'];
+            $this->getNextToken();
+            $right = $this->parseComparison();
+            
+            $left = ['type' => 'LOGICAL_AND', 'left' => $left, 'right' => $right];
+        }
+        
+        return $left;
+    }
+    
+    /**
+     * 处理比较运算
+     */
+    private function parseComparison() {
+        $left = $this->parseAdditive();
+        
+        if ($this->currentToken !== null && 
+            $this->currentToken['type'] === 'OPERATOR' && 
+            in_array($this->currentToken['value'], ['==', '!=', '===', '!==', '<', '>', '<=', '>='])) {
+            $operator = $this->currentToken['value'];
+            $this->getNextToken();
+            $right = $this->parseAdditive();
+            
+            return ['type' => 'COMPARISON', 'operator' => $operator, 'left' => $left, 'right' => $right];
+        }
+        
+        return $left;
+    }
+    
+    /**
+     * 处理加减法
+     */
+    private function parseAdditive() {
+        $left = $this->parseMultiplicative();
+        
+        while ($this->currentToken !== null && 
+               $this->currentToken['type'] === 'OPERATOR' && 
+               ($this->currentToken['value'] === '+' || $this->currentToken['value'] === '-')) {
+            $operator = $this->currentToken['value'];
+            $this->getNextToken();
+            $right = $this->parseMultiplicative();
+            
+            if ($operator === '+') {
+                $left = ['type' => 'ADDITION', 'left' => $left, 'right' => $right];
+            } else {
+                $left = ['type' => 'SUBTRACTION', 'left' => $left, 'right' => $right];
             }
         }
-        $equipfhtml .= $equipfname . ",";
+        
+        return $left;
     }
-}
-}
-
-$equipbhtml = rtrim($equipbhtml,',');
-$equipfhtml = rtrim($equipfhtml,',');
-$bagequiphtml = $equipbhtml.",".$equipfhtml;
-$bagequiphtml = rtrim($bagequiphtml,',');
-
-if(!$bagequiphtml){
-$op = "无";
-}else{
-$op = $bagequiphtml;
-}
-                    }else{
-                    $attr3 = 'n'.$attr2;
-                    $sql = "SELECT * FROM system_pet_scene WHERE npid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    $op = nl2br($row[$attr3]);
-                    if ($attr2 == "is_adopt") {
-                        $op = $row['ncan_shouyang'];
-                    } 
+    
+    /**
+     * 处理乘除法和取模
+     */
+    private function parseMultiplicative() {
+        $left = $this->parsePower();
+        
+        while ($this->currentToken !== null && 
+               $this->currentToken['type'] === 'OPERATOR' && 
+               ($this->currentToken['value'] === '*' || $this->currentToken['value'] === '/' || $this->currentToken['value'] === '%')) {
+            $operator = $this->currentToken['value'];
+            $this->getNextToken();
+            $right = $this->parsePower();
+            
+            if ($operator === '*') {
+                $left = ['type' => 'MULTIPLICATION', 'left' => $left, 'right' => $right];
+            } else if ($operator === '/') {
+                $left = ['type' => 'DIVISION', 'left' => $left, 'right' => $right];
+            } else {
+                $left = ['type' => 'MODULO', 'left' => $left, 'right' => $right];
+            }
+        }
+        
+        return $left;
+    }
+    
+    /**
+     * 处理指数运算
+     */
+    private function parsePower() {
+        $left = $this->parseUnary();
+        
+        if ($this->currentToken !== null && 
+            $this->currentToken['type'] === 'OPERATOR' && 
+            $this->currentToken['value'] === '^') {
+            $this->getNextToken();
+            $right = $this->parsePower();
+            return ['type' => 'POWER', 'left' => $left, 'right' => $right];
+        }
+        
+        return $left;
+    }
+    
+    /**
+     * 处理一元运算符
+     */
+    private function parseUnary() {
+        if ($this->currentToken !== null && 
+            $this->currentToken['type'] === 'OPERATOR' && 
+            ($this->currentToken['value'] === '+' || $this->currentToken['value'] === '-' || $this->currentToken['value'] === '!')) {
+            $operator = $this->currentToken['value'];
+            $this->getNextToken();
+            $expression = $this->parseUnary();
+            
+            if ($operator === '-') {
+                return ['type' => 'NEGATION', 'expression' => $expression];
+            } else if ($operator === '!') {
+                return ['type' => 'LOGICAL_NOT', 'expression' => $expression];
+            }
+            // 一元加法不做任何改变
+            return $expression;
+        }
+        
+        return $this->parsePrimary();
+    }
+    
+    /**
+     * 处理基本元素（数字、变量、函数调用和括号）
+     */
+    private function parsePrimary() {
+        if ($this->currentToken === null) {
+            throw new Exception("表达式不完整");
+        }
+        
+        if ($this->currentToken['type'] === 'NUMBER') {
+            $value = $this->currentToken['value'];
+            $this->getNextToken();
+            return ['type' => 'NUMBER', 'value' => $value];
+        }
+        
+        if ($this->currentToken['type'] === 'STRING') {
+            $value = $this->currentToken['value'];
+            $this->getNextToken();
+            return ['type' => 'STRING', 'value' => $value];
+        }
+        
+        if ($this->currentToken['type'] === 'NULL') {
+            $this->getNextToken();
+            return ['type' => 'NULL', 'value' => null];
+        }
+        
+        if ($this->currentToken['type'] === 'VARIABLE') {
+            $name = $this->currentToken['value'];
+            $this->getNextToken();
+            return ['type' => 'VARIABLE', 'name' => $name];
+        }
+        
+        if ($this->currentToken['type'] === 'FUNCTION') {
+            $name = $this->currentToken['value'];
+            $this->getNextToken();
+            
+            // 函数后面必须跟着左括号
+            if ($this->currentToken === null || 
+                $this->currentToken['type'] !== 'OPERATOR' || 
+                $this->currentToken['value'] !== '(') {
+                throw new Exception("函数 '$name' 后缺少左括号");
+            }
+            
+            $this->getNextToken();
+            $args = [];
+            
+            // 解析参数列表
+            if ($this->currentToken !== null && 
+                ($this->currentToken['type'] !== 'OPERATOR' || $this->currentToken['value'] !== ')')) {
+                
+                // 解析第一个参数
+                $args[] = $this->parseExpression();
+                
+                // 解析剩余的参数
+                while ($this->currentToken !== null && 
+                       $this->currentToken['type'] === 'OPERATOR' && 
+                       $this->currentToken['value'] === ',') {
+                    $this->getNextToken();
+                    $args[] = $this->parseExpression();
+                }
+            }
+            
+            // 参数列表后必须跟着右括号
+            if ($this->currentToken === null || 
+                $this->currentToken['type'] !== 'OPERATOR' || 
+                $this->currentToken['value'] !== ')') {
+                throw new Exception("函数 '$name' 缺少右括号");
+            }
+            
+            $this->getNextToken();
+            return ['type' => 'FUNCTION_CALL', 'name' => $name, 'arguments' => $args];
+        }
+        
+        if ($this->currentToken['type'] === 'OPERATOR' && $this->currentToken['value'] === '(') {
+            $this->getNextToken();
+            $expression = $this->parseExpression();
+            
+            if ($this->currentToken === null || 
+                $this->currentToken['type'] !== 'OPERATOR' || 
+                $this->currentToken['value'] !== ')') {
+                throw new Exception("缺少右括号");
+            }
+            
+            $this->getNextToken();
+            return $expression;
+        }
+        
+        throw new Exception("意外的标记: " . json_encode($this->currentToken));
+    }
+    
+    /**
+     * 使用 bcmath 库的安全封装方法，确保参数是有效的数字字符串
+     */
+    private function safeBccomp($left, $right) {
+        // 确保两个操作数都是有效数字，否则返回PHP标准比较结果
+        if (!is_numeric($left) || !is_numeric($right)) {
+            // 非数字值使用PHP标准比较
+            if ($left == $right) return 0;
+            return ($left < $right) ? -1 : 1;
+        }
+        
+        // 格式化为数字字符串
+        $left = (string)$left;
+        $right = (string)$right;
+        
+        return bccomp($left, $right);
+    }
+    
+    /**
+     * 其他bcmath函数的安全封装
+     */
+    private function safeBcadd($left, $right) {
+        if (!is_numeric($left) || !is_numeric($right)) {
+            // 如果不是数字，尝试转换为数字
+            $left = is_numeric($left) ? $left : 0;
+            $right = is_numeric($right) ? $right : 0;
+        }
+        return bcadd((string)$left, (string)$right);
+    }
+    
+    private function safeBcsub($left, $right) {
+        if (!is_numeric($left) || !is_numeric($right)) {
+            $left = is_numeric($left) ? $left : 0;
+            $right = is_numeric($right) ? $right : 0;
+        }
+        return bcsub((string)$left, (string)$right);
+    }
+    
+    private function safeBcmul($left, $right) {
+        if (!is_numeric($left) || !is_numeric($right)) {
+            $left = is_numeric($left) ? $left : 0;
+            $right = is_numeric($right) ? $right : 0;
+        }
+        return bcmul((string)$left, (string)$right);
+    }
+    
+    private function safeBcdiv($left, $right) {
+        if (!is_numeric($left) || !is_numeric($right)) {
+            $left = is_numeric($left) ? $left : 0;
+            $right = is_numeric($right) ? $right : 1; // 避免除以0
+        }
+        if ($this->safeBccomp($right, '0') === 0) {
+            throw new Exception("除数不能为零");
+        }
+        return bcdiv((string)$left, (string)$right);
+    }
+    
+    private function safeBcmod($left, $right) {
+        if (!is_numeric($left) || !is_numeric($right)) {
+            $left = is_numeric($left) ? $left : 0;
+            $right = is_numeric($right) ? $right : 1; // 避免除以0
+        }
+        if ($this->safeBccomp($right, '0') === 0) {
+            throw new Exception("模运算的除数不能为零");
+        }
+        return bcmod((string)$left, (string)$right);
+    }
+    
+    private function safeBcpow($left, $right) {
+        if (!is_numeric($left) || !is_numeric($right)) {
+            $left = is_numeric($left) ? $left : 0;
+            $right = is_numeric($right) ? $right : 0;
+        }
+        return bcpow((string)$left, (string)$right);
+    }
+    
+    /**
+     * 使用 bcmath 库求值表达式树
+     */
+    public function evaluate($node) {
+        // 设置 bcmath 精度
+        bcscale($this->precision);
+        
+        switch ($node['type']) {
+            case 'NUMBER':
+                return $node['value'];
+                
+            case 'STRING':
+                return $node['value'];
+                
+            case 'NULL':
+                return null;
+                
+            case 'VARIABLE':
+                if (!isset($this->variables[$node['name']])) {
+                    throw new Exception("未定义的变量: " . $node['name']);
+                }
+                return $this->variables[$node['name']];
+                
+            case 'ADDITION':
+                $left = $this->evaluate($node['left']);
+                $right = $this->evaluate($node['right']);
+                return $this->safeBcadd($left, $right);
+                
+            case 'SUBTRACTION':
+                $left = $this->evaluate($node['left']);
+                $right = $this->evaluate($node['right']);
+                return $this->safeBcsub($left, $right);
+                
+            case 'MULTIPLICATION':
+                $left = $this->evaluate($node['left']);
+                $right = $this->evaluate($node['right']);
+                return $this->safeBcmul($left, $right);
+                
+            case 'DIVISION':
+                $left = $this->evaluate($node['left']);
+                $right = $this->evaluate($node['right']);
+                return $this->safeBcdiv($left, $right);
+                
+            case 'MODULO':
+                $left = $this->evaluate($node['left']);
+                $right = $this->evaluate($node['right']);
+                return $this->safeBcmod($left, $right);
+                
+            case 'POWER':
+                $left = $this->evaluate($node['left']);
+                $right = $this->evaluate($node['right']);
+                return $this->safeBcpow($left, $right);
+                
+            case 'NEGATION':
+                $value = $this->evaluate($node['expression']);
+                if (!is_numeric($value)) {
+                    return 0; // 非数字值取反为0
+                }
+                return $this->safeBcmul($value, '-1');
+                
+            case 'LOGICAL_NOT':
+                $value = $this->evaluate($node['expression']);
+                if ($value === null || $value === '' || !is_numeric($value)) {
+                    $valueResult = !($value === null || $value === '');
+                } else {
+                    $valueResult = ($this->safeBccomp($value, '0') !== 0);
+                }
+                return $valueResult ? '0' : '1';
+                
+            case 'LOGICAL_AND':
+                $left = $this->evaluate($node['left']);
+                // 短路求值
+                if ($left === null || $left === '' || !is_numeric($left)) {
+                    // 非数字值按PHP规则处理：null/空字符串为false，其他非数字字符串为true
+                    $leftResult = !($left === null || $left === '');
+                } else {
+                    $leftResult = ($this->safeBccomp($left, '0') !== 0);
+                }
+                
+                if (!$leftResult) {
+                    return '0';
+                }
+                
+                $right = $this->evaluate($node['right']);
+                if ($right === null || $right === '' || !is_numeric($right)) {
+                    $rightResult = !($right === null || $right === '');
+                } else {
+                    $rightResult = ($this->safeBccomp($right, '0') !== 0);
+                }
+                
+                return $rightResult ? '1' : '0';
+                
+            case 'LOGICAL_OR':
+                $left = $this->evaluate($node['left']);
+                // 短路求值
+                if ($left === null || $left === '' || !is_numeric($left)) {
+                    $leftResult = !($left === null || $left === '');
+                } else {
+                    $leftResult = ($this->safeBccomp($left, '0') !== 0);
+                }
+                
+                if ($leftResult) {
+                    return '1';
+                }
+                
+                $right = $this->evaluate($node['right']);
+                if ($right === null || $right === '' || !is_numeric($right)) {
+                    $rightResult = !($right === null || $right === '');
+                } else {
+                    $rightResult = ($this->safeBccomp($right, '0') !== 0);
+                }
+                
+                return $rightResult ? '1' : '0';
+                
+            case 'COMPARISON':
+                $left = $this->evaluate($node['left']);
+                $right = $this->evaluate($node['right']);
+                $result = null;
+                
+                switch ($node['operator']) {
+                    case '==':
+                        if (is_numeric($left) && is_numeric($right)) {
+                            $result = $this->safeBccomp($left, $right) === 0 ? '1' : '0';
+                        } else {
+                            $result = ($left == $right) ? '1' : '0';
                         }
-                    break;
-                case 'npc':
-                    $attr3 = 'n'.$attr2;
-                    if (is_numeric($mid)){
-                    $sql = "SELECT * FROM system_npc WHERE nid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $mid);
-                    }else{
-                    $data_mid = explode("|",$mid);
-                    $mid2 = $data_mid[1];
-                    $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $mid2);
-                    }
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if ($attr2 == "skills_cmmt") {
-                        $skills_cmmt = $row['nskills'];
-                        $skill_cmmt = explode(',', $skills_cmmt);
-                        if ($skills_cmmt) {
-                            foreach ($skill_cmmt as $skill_cmmt_detail) {
-                                $skill_para = explode('|', $skill_cmmt_detail);
-                                $skill_id = $skill_para[0];
-                                $skill_lvl = $skill_para[1];
-                                $sql = "SELECT * FROM system_skill WHERE jid = ?";
-                                $stmt = $db->prepare($sql);
-                                $stmt->bind_param("s", $skill_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $row = $result->fetch_assoc();
-                                $row_result .= "，" . $row['jname'] ."(". "{$skill_lvl}".")";
-                            }
-                            $row_result = ltrim($row_result, "，");
+                        break;
+                    case '===':
+                        if (is_numeric($left) && is_numeric($right)) {
+                            $result = $this->safeBccomp($left, $right) === 0 ? '1' : '0';
+                        } else {
+                            $result = ($left === $right) ? '1' : '0';
                         }
-                    } elseif ($attr2 == "equips_cmmt") {
-                        $equips_cmmt = $row['nequips'];
-                        $equip_cmmt = explode(',', $equips_cmmt);
-                        if ($equips_cmmt) {
-                            foreach ($equip_cmmt as $equips_cmmt_para) {
-                                $equips_cmmt_id = explode('_',$equips_cmmt_para)[2];
-                                $sql = "SELECT * FROM system_item_module WHERE iid = ?";
-                                $stmt = $db->prepare($sql);
-                                $stmt->bind_param("s", $equips_cmmt_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $row = $result->fetch_assoc();
-                                $row_result .= "，" . $row['iname'];
-                            }
-                            $row_result = ltrim($row_result, "，");
+                        break;
+                    case '!=':
+                        if (is_numeric($left) && is_numeric($right)) {
+                            $result = $this->safeBccomp($left, $right) !== 0 ? '1' : '0';
+                        } else {
+                            $result = ($left != $right) ? '1' : '0';
                         }
-                    } elseif ($attr2 == "is_adopt") {
-                        $row_result = $row['ncan_shouyang'];
+                        break;
+                    case '!==':
+                        if (is_numeric($left) && is_numeric($right)) {
+                            $result = $this->safeBccomp($left, $right) !== 0 ? '1' : '0';
+                        } else {
+                            $result = ($left !== $right) ? '1' : '0';
+                        }
+                        break;
+                    case '<':
+                        if (is_numeric($left) && is_numeric($right)) {
+                            $result = $this->safeBccomp($left, $right) < 0 ? '1' : '0';
+                        } else {
+                            $result = ($left < $right) ? '1' : '0';
+                        }
+                        break;
+                    case '>':
+                        if (is_numeric($left) && is_numeric($right)) {
+                            $result = $this->safeBccomp($left, $right) > 0 ? '1' : '0';
+                        } else {
+                            $result = ($left > $right) ? '1' : '0';
+                        }
+                        break;
+                    case '<=':
+                        if (is_numeric($left) && is_numeric($right)) {
+                            $result = $this->safeBccomp($left, $right) <= 0 ? '1' : '0';
+                        } else {
+                            $result = ($left <= $right) ? '1' : '0';
+                        }
+                        break;
+                    case '>=':
+                        if (is_numeric($left) && is_numeric($right)) {
+                            $result = $this->safeBccomp($left, $right) >= 0 ? '1' : '0';
+                        } else {
+                            $result = ($left >= $right) ? '1' : '0';
+                        }
+                        break;
+                    default:
+                        throw new Exception("不支持的比较运算符: " . $node['operator']);
+                }
+                
+                return $result;
+                
+            case 'CONDITIONAL':
+                $condition = $this->evaluate($node['condition']);
+                // 检查条件是否为true（非零、非空）
+                // 注意：我们将0、'0'、空字符串视为false
+                $isTrue = false;
+                
+                if ($condition !== null && $condition !== '') {
+                    if (is_numeric($condition)) {
+                        $isTrue = ($this->safeBccomp($condition, '0') !== 0);
                     } else {
-                        $row_result = $row[$attr3];
-}
-                    $op = nl2br($row_result);
-                    break;
-                case 'npc_monster':
-                    $attr3 = 'n'.$attr2;
-                    $sql = "SELECT * FROM system_npc_midguaiwu WHERE ngid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
+                        // 非数字值，如字符串，都视为true（除了空字符串）
+                        $isTrue = true;
                     }
-                    $row = $result->fetch_assoc();
-                    if ($attr2 == "skills_cmmt") {
-                        $skills_cmmt = $row['nskills'];
-                        $skill_cmmt = explode(',', $skills_cmmt);
-                        if ($skills_cmmt) {
-                            foreach ($skill_cmmt as $skill_cmmt_detail) {
-                                $skill_para = explode('|', $skill_cmmt_detail);
-                                $skill_id = $skill_para[0];
-                                $skill_lvl = $skill_para[1];
-                                $sql = "SELECT * FROM system_skill WHERE jid = ?";
-                                $stmt = $db->prepare($sql);
-                                $stmt->bind_param("s", $skill_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $row = $result->fetch_assoc();
-                                $row_result .= "，" . $row['jname'] ."(". "{$skill_lvl}".")";
-                            }
-                            $row_result = ltrim($row_result, "，");
-                        }
-                    } elseif ($attr2 == "equips_cmmt") {
-                        $equips_cmmt = $row['nequips'];
-                        $equip_cmmt = explode(',', $equips_cmmt);
-                        if ($equips_cmmt) {
-                            foreach ($equip_cmmt as $equips_cmmt_para) {
-                                $equips_cmmt_id = explode('_',$equips_cmmt_para)[2];
-                                $sql = "SELECT * FROM system_item_module WHERE iid = ?";
-                                $stmt = $db->prepare($sql);
-                                $stmt->bind_param("s", $equips_cmmt_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $row = $result->fetch_assoc();
-                                $row_result .= "，" . $row['iname'];
-                            }
-                            $row_result = ltrim($row_result, "，");
-                        }
-                    } else {
-                        $row_result = $row[$attr3];
-}
-                    $op = nl2br($row_result);
-                    break;
-                case 'npc_scene':
-                    $attr3 = 'n'.$attr2;
-                    $sql = "SELECT * FROM system_npc_scene WHERE ncid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if ($attr2 == "skills_cmmt") {
-                        $skills_cmmt = $row['nskills'];
-                        $skill_cmmt = explode(',', $skills_cmmt);
-                        if ($skills_cmmt) {
-                            foreach ($skill_cmmt as $skill_cmmt_detail) {
-                                $skill_para = explode('|', $skill_cmmt_detail);
-                                $skill_id = $skill_para[0];
-                                $skill_lvl = $skill_para[1];
-                                $sql = "SELECT * FROM system_skill WHERE jid = ?";
-                                $stmt = $db->prepare($sql);
-                                $stmt->bind_param("s", $skill_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $row = $result->fetch_assoc();
-                                $row_result .= "，" . $row['jname'] ."(". "{$skill_lvl}".")";
-                            }
-                            $row_result = ltrim($row_result, "，");
-                        }
-                    } elseif ($attr2 == "equips_cmmt") {
-                        $equips_cmmt = $row['nequips'];
-                        $equip_cmmt = explode(',', $equips_cmmt);
-                        if ($equips_cmmt) {
-                            foreach ($equip_cmmt as $equips_cmmt_para) {
-                                $equips_cmmt_id = explode('_',$equips_cmmt_para)[2];
-                                $sql = "SELECT * FROM system_item_module WHERE iid = ?";
-                                $stmt = $db->prepare($sql);
-                                $stmt->bind_param("s", $equips_cmmt_id);
-                                $stmt->execute();
-                                $result = $stmt->get_result();
-                                $row = $result->fetch_assoc();
-                                $row_result .= "，" . $row['iname'];
-                            }
-                            $row_result = ltrim($row_result, "，");
-                        }
-                    } elseif ($attr2 == "is_adopt") {
-                        $row_result = $row['ncan_shouyang'];
-                    }  else {
-                        $row_result = $row[$attr3];
-}
-                    $op = nl2br($row_result);
-                    break;
-                case 'item':
-                    $attr3 = 'i'.$attr2;
-                    if($attr3 =="icount"||$attr3 =="iroot"){
-                        $sql = "SELECT * FROM system_item WHERE item_true_id = ? and sid = ?";
-                        $stmt = $db->prepare($sql);
-                        $stmt->bind_param("ss", $mid,$sid);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        $row = $result->fetch_assoc();
-                    }elseif(strpos($attr3, 'iembed.') === 0){
-                //镶物属性相关
-                $attr4 = substr($attr3, 7); // 提取 "embed." 后面的部分
-                if(preg_match('/^(\d+\.)?(.*)/', $attr4, $matches)){
-                $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
-                $mosaic_pos = rtrim($prefix, ".");
-                
-                $attr5 = $matches[2]; // 匹配到的剩余部分
                 }
-                $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$mid'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
                 
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $mosaic_list = $row['equip_mosaic'];
-                $mosaic_para = explode('|',$mosaic_list);
-                if(!$mosaic_para[$mosaic_pos]){
-                    //$op = "\"\"";
-                }else{
-                $mosaic_id = $mosaic_para[$mosaic_pos];
-                $xid = "i".$attr5;
-                $sql = "SELECT * FROM system_item_module WHERE iid = '$mosaic_id'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
+                return $isTrue
+                    ? $this->evaluate($node['true']) 
+                    : $this->evaluate($node['false']);
                 
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $attr3 = $xid;
+            case 'FUNCTION_CALL':
+                $name = $node['name'];
+                
+                // 处理自定义函数
+                if (!isset($this->functions[$name])) {
+                    throw new Exception("未定义的函数: $name");
                 }
-                //镶物属性相关
-                    }else{
-                        $sql = "SHOW COLUMNS FROM system_item_module LIKE '$attr3'";
-                        $result = $db->query($sql);
-                        if($result->num_rows >0){
-                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mid')";
-                        }else{
-                        $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr3'";
-                        $attr_type = 1;
+                
+                $function = $this->functions[$name];
+                $args = [];
+                
+                foreach ($node['arguments'] as $arg) {
+                    $args[] = $this->evaluate($arg);
+                }
+                
+                // 执行函数
+                switch ($function) {
+                    case 'bcsqrt':
+                        if (count($args) !== 1) {
+                            throw new Exception("sqrt函数需要1个参数");
                         }
-                        $stmt = $db->prepare($sql);
-                        $stmt->execute();
-                        $result_2 = $stmt->get_result();
-                        if (!$result_2) {
-                            die('查询失败: ' . $db->error);
+                        if (!is_numeric($args[0])) {
+                            return '0'; // 非数字返回0
                         }
-                        $row = $result_2->fetch_assoc();
-                    }
+                        if ($this->safeBccomp($args[0], '0') < 0) {
+                            throw new Exception("sqrt函数参数不能为负数");
+                        }
+                        return $this->bcsqrt($args[0]);
+                        
+                    case 'bcabs':
+                        if (count($args) !== 1) {
+                            throw new Exception("abs函数需要1个参数");
+                        }
+                        if (!is_numeric($args[0])) {
+                            return '0'; // 非数字返回0
+                        }
+                        return $this->safeBccomp($args[0], '0') < 0 ? $this->safeBcmul($args[0], '-1') : $args[0];
+                        
+                    case 'bcmax':
+                        if (count($args) < 2) {
+                            throw new Exception("max函数至少需要2个参数");
+                        }
+                        // 过滤非数字参数
+                        $numericArgs = [];
+                        foreach ($args as $arg) {
+                            if (is_numeric($arg)) {
+                                $numericArgs[] = $arg;
+                            }
+                        }
+                        if (empty($numericArgs)) {
+                            return '0'; // 如果没有数字参数，返回0
+                        }
+                        $max = $numericArgs[0];
+                        for ($i = 1; $i < count($numericArgs); $i++) {
+                            if ($this->safeBccomp($numericArgs[$i], $max) > 0) {
+                                $max = $numericArgs[$i];
+                            }
+                        }
+                        return $max;
+                        
+                    case 'bcmin':
+                        if (count($args) < 2) {
+                            throw new Exception("min函数至少需要2个参数");
+                        }
+                        // 过滤非数字参数
+                        $numericArgs = [];
+                        foreach ($args as $arg) {
+                            if (is_numeric($arg)) {
+                                $numericArgs[] = $arg;
+                            }
+                        }
+                        if (empty($numericArgs)) {
+                            return '0'; // 如果没有数字参数，返回0
+                        }
+                        $min = $numericArgs[0];
+                        for ($i = 1; $i < count($numericArgs); $i++) {
+                            if ($this->safeBccomp($numericArgs[$i], $min) < 0) {
+                                $min = $numericArgs[$i];
+                            }
+                        }
+                        return $min;
+                        
+                    case 'bcpow':
+                        if (count($args) !== 2) {
+                            throw new Exception("pow函数需要2个参数");
+                        }
+                        return $this->safeBcpow($args[0], $args[1]);
+                        
+                    case 'bcmod':
+                        if (count($args) !== 2) {
+                            throw new Exception("mod函数需要2个参数");
+                        }
+                        return $this->safeBcmod($args[0], $args[1]);
+                        
+                    case 'bcround':
+                        if (count($args) < 1 || count($args) > 2) {
+                            throw new Exception("round函数需要1或2个参数");
+                        }
+                        $precision = isset($args[1]) ? intval($args[1]) : 0;
+                        return $this->bcround($args[0], $precision);
+                        
+                    case 'bcfloor':
+                        if (count($args) !== 1) {
+                            throw new Exception("floor函数需要1个参数");
+                        }
+                        if (!is_numeric($args[0])) {
+                            return '0'; // 非数字返回0
+                        }
+                        $parts = explode('.', (string)$args[0]);
+                        return $parts[0];
+                        
+                    case 'bcceil':
+                        if (count($args) !== 1) {
+                            throw new Exception("ceil函数需要1个参数");
+                        }
+                        if (!is_numeric($args[0])) {
+                            return '0'; // 非数字返回0
+                        }
+                        $parts = explode('.', (string)$args[0]);
+                        if (isset($parts[1]) && $this->safeBccomp('0.' . $parts[1], '0') > 0) {
+                            return $this->safeBcadd($parts[0], '1');
+                        }
+                        return $parts[0];
+                        
+                    default:
+                        throw new Exception("未实现的函数: $function");
+                }
+                
+            case 'NULL_COALESCE':
+                $left = null;
+                
+                // 尝试计算左侧表达式
+                try {
+                    $left = $this->evaluate($node['left']);
                     
-                    if($attr_type ==1){
-                    $row_result = $row['value'];
-                    }else{
-                    $row_result = $row[$attr3];
+                    // 检查是否为null（对于我们的情况，我们将空字符串或'null'视为null）
+                    if ($left === null || $left === '' || (is_string($left) && strtolower($left) === 'null')) {
+                        return $this->evaluate($node['right']);
                     }
-                    if($attr3 =="iroot"){
-                        $item_para = explode("|",$row_result);
-                        $para_1 = $item_para[0];
-                        $para_2 = $item_para[1];
-                        if($para_1 ==1){
-                        $sql = "SELECT nname FROM system_npc WHERE nid = ?";
-                        $stmt = $db->prepare($sql);
-                        $stmt->bind_param("s", $para_2);
-                        $stmt->execute();
-                        $result_npc = $stmt->get_result();
-                        $row_npc = $result_npc->fetch_assoc();
-                        $row_npc_name = $row_npc['nname'];
-                        $row_result = "怪物掉落"."|".$row_npc_name;
-                        }else{
-                        $row_result = "未知来源";
-                        }
-                    }
-                    $op = nl2br($row_result);
-                    break;
-                case 'mosaic_equip':
-                    $attr3 = 'i'.$attr2;
-                    if($attr3 =="icount"||$attr3 =="iroot"){
-                        $sql = "SELECT * FROM system_item WHERE item_true_id = ?";
-                        $stmt = $db->prepare($sql);
-                        $stmt->bind_param("s", $mid);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        $row = $result->fetch_assoc();
-                    }elseif(strpos($attr3, 'iembed.') === 0){
-                //镶物属性相关
-                $attr4 = substr($attr3, 7); // 提取 "embed." 后面的部分
-                if(preg_match('/^(\d+\.)?(.*)/', $attr4, $matches)){
-                $prefix = $matches[1]; // 匹配到的前缀部分（数字加点号)
-                $mosaic_pos = rtrim($prefix, ".");
-                
-                $attr5 = $matches[2]; // 匹配到的剩余部分
+                    return $left;
+                } catch (Exception $e) {
+                    // 如果左侧表达式计算失败（例如未定义的变量），则计算右侧表达式
+                    return $this->evaluate($node['right']);
                 }
-                $sql = "SELECT equip_mosaic FROM player_equip_mosaic WHERE equip_id = '$mid'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
                 
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $mosaic_list = $row['equip_mosaic'];
-                $mosaic_para = explode('|',$mosaic_list);
-                $mosaic_id = $mosaic_para[$mosaic_pos];
-                $xid = "i".$attr5;
-                $sql = "SELECT * FROM system_item_module WHERE iid = '$mosaic_id'";
-                // 使用预处理语句
-                $stmt = $db->prepare($sql);
-                // 执行查询
-                $stmt->execute();
-                
-                // 获取查询结果
-                $result = $stmt->get_result();
-                $row = $result->fetch_assoc();
-                $attr3 = $xid;
-                //镶物属性相关
-                    }else{
-                        $sql = "SHOW COLUMNS FROM system_item_module LIKE '$attr3'";
-                        $result = $db->query($sql);
-                        if($result->num_rows >0){
-                        $sql = "SELECT * FROM system_item_module WHERE iid = (SELECT iid FROM system_item WHERE item_true_id = '$mid')";
-                        }else{
-                        $sql = "SELECT * FROM system_addition_attr WHERE oid = 'item' and mid = '$mid' and name = '$attr3'";
-                        $attr_type = 1;
-                        }
-                        $stmt = $db->prepare($sql);
-                        $stmt->execute();
-                        $result_2 = $stmt->get_result();
-                        if (!$result_2) {
-                            die('查询失败: ' . $db->error);
-                        }
-                        $row = $result_2->fetch_assoc();
-                    }
-                    
-                    if($attr_type ==1){
-                    $row_result = $row['value'];
-                    }else{
-                    $row_result = $row[$attr3];
-                    }
-                    if($attr3 =="iroot"){
-                        $item_para = explode("|",$row_result);
-                        $para_1 = $item_para[0];
-                        $para_2 = $item_para[1];
-                        if($para_1 ==1){
-                        $sql = "SELECT nname FROM system_npc WHERE nid = ?";
-                        $stmt = $db->prepare($sql);
-                        $stmt->bind_param("s", $para_2);
-                        $stmt->execute();
-                        $result_npc = $stmt->get_result();
-                        $row_npc = $result_npc->fetch_assoc();
-                        $row_npc_name = $row_npc['nname'];
-                        $row_result = "怪物掉落"."|".$row_npc_name;
-                        }else{
-                        $row_result = "未知来源";
-                        }
-                    }
-                    $op = nl2br($row_result);
-                    break;
-                case 'item_module':
-                    $attr3 = 'i'.$attr2;
-                    $sql = "SELECT * FROM system_item_module WHERE iid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    if($attr_type !=1){
-                    $row_result = $row[$attr3];
-                    }else{
-                    $row_result = $row['value'];
-                    }
-                    $op = nl2br($row_result);
-                    break;
-                case 'scene_oplayer':
-                    if (strpos($attr2, "env.") === 0) {
-                        $attr3 = substr($attr2, 4); // 提取 "env." 后面的部分
-                        switch($attr3){
-                            case 'user_count':
-                            // 构建 SQL 查询语句
-                            $sql = "SELECT COUNT(*) as count FROM game1 WHERE sfzx=1 and nowmid IN (SELECT nowmid FROM game1 WHERE sid = ?)";
-                            
-                            // 使用预处理语句
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            
-                            // 执行查询
-                            $stmt->execute();
-                            
-                            // 获取查询结果
-                            $result = $stmt->get_result();
-                            $row = $result->fetch_assoc();
-                            $op = $row["count"];
-                            break;
-                            case 'npc_count':
-                            $sql = "SELECT mnpc_now FROM system_map WHERE mid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-                            // 使用预处理语句
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            
-                            // 执行查询
-                            $stmt->execute();
-                            
-                            // 获取查询结果
-                            $result = $stmt->get_result();
-                            // 处理结果
-                            $totalNpcCount = 0;
-                            while ($row = $result->fetch_assoc()) {
-                                $mnpc = $row["mnpc_now"];
-                                $npcs = explode(",", $mnpc); // 拆分成每个npc项
-                                foreach ($npcs as $npc) {
-                                    list(, $npcCount) = explode("|", $npc);
-                                    $totalNpcCount += (int)$npcCount; // 将每个npc的数量累加
-                                }
-                            }
-                            $op = $totalNpcCount;
-                            break;
-                            case 'monster_count':
-                            $sql = "SELECT COUNT(*) as count FROM system_npc_midguaiwu WHERE nsid = '' and nmid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-                            // 使用预处理语句
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            
-                            // 执行查询
-                            $stmt->execute();
-                            
-                            // 获取查询结果
-                            $result = $stmt->get_result();
-                            $row = $result->fetch_assoc();
-                            // 处理结果
-                            $op = $row["count"];
-                            break;
-                            case 'item_count':
-                            $sql = "SELECT mitem_now FROM system_map WHERE mid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-                            // 使用预处理语句
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            
-                            // 执行查询
-                            $stmt->execute();
-                            
-                            // 获取查询结果
-                            $result = $stmt->get_result();
-                            // 处理结果
-                            $totalItemCount = 0;
-                            while ($row = $result->fetch_assoc()) {
-                                $mitem = $row["mitem_now"];
-                                $items = explode(",", $mitem); // 拆分成每个item项
-                                foreach ($items as $item) {
-                                    list(, $itemCount) = explode("|", $item);
-                                    $totalItemCount += (int)$itemCount; // 将每个item的数量累加
-                                }
-                            }
-                            $op = $totalItemCount;
-                            break;
-                            case 'justmid':
-                            // 构建 SQL 查询语句
-                            $sql = "SELECT justmid FROM game1 WHERE sid = ?";
-                            
-                            // 使用预处理语句
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            
-                            // 执行查询
-                            $stmt->execute();
-                            
-                            // 获取查询结果
-                            $result = $stmt->get_result();
-                            $row = $result->fetch_assoc();
-                            $op = $row["justmid"];
-                            break;
-                            case 'nowmid':
-                            // 构建 SQL 查询语句
-                            $sql = "SELECT nowmid FROM game1 WHERE sid = ?";
-                            
-                            // 使用预处理语句
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            
-                            // 执行查询
-                            $stmt->execute();
-                            
-                            // 获取查询结果
-                            $result = $stmt->get_result();
-                            $row = $result->fetch_assoc();
-                            $op = $row["nowmid"];
-                            break;
-                            case 'name':
-                            // 构建 SQL 查询语句
-                            $sql = "SELECT mname from system_map where mid = (SELECT nowmid FROM game1 WHERE sid = ?)";
-                            
-                            // 使用预处理语句
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            
-                            // 执行查询
-                            $stmt->execute();
-                            
-                            // 获取查询结果
-                            $result = $stmt->get_result();
-                            $row = $result->fetch_assoc();
-                            $op = $row["mname"];
-                            $sql = "SELECT uis_sailing from game1 where sid = ?";
-                            
-                            // 使用预处理语句
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $mid);
-                            
-                            // 执行查询
-                            $stmt->execute();
-                            
-                            // 获取查询结果
-                            $result = $stmt->get_result();
-                            $row = $result->fetch_assoc();
-                            $is_sailing = $row["uis_sailing"];
-                            if($is_sailing ==1){
-                            $op = "茫茫大海";
-                            }
-                            break;
-                        }
-            }
-                    else{
-                    $attr3 = 'u'.$attr2;
-                    $sql = "SHOW COLUMNS FROM game1 LIKE '$attr3'";
-                    $result = $db->query($sql);
-                    if($result->num_rows >0){
-                    $sql = "SELECT * FROM game1 WHERE sid = ?";
-                    }else{
-                    $sql = "SELECT * FROM system_addition_attr WHERE sid = ? and name = '$attr3'";
-                    $attr_type = 1;
-                    }
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $mid);
-                    $stmt->execute();
-                    $result_2 = $stmt->get_result();
-                    if (!$result_2) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result_2->fetch_assoc();
-                    if($attr_type !=1){
-                    $op = nl2br($row[$attr3]);
-                    }else{
-                    $op = nl2br($row['value']);
-                    }
-                    break;
-            }
-                    break;
-                default:
-                    $attr3 = 'n'.$attr2;
-                    $sql = "SELECT * FROM system_npc_scene WHERE ncid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    $op = nl2br($row[$attr3]);
-                    break;
-            }
-            break;
-        case 'r':
-            $op = rand(0, intval($attr2) - 1); // 随机数不缓存
-            break;
-        case 'g':
-            // 使用缓存处理全局数据
-            if ($redis) {
-                $cache_key = "global_data_{$attr2}";
-                $op = $redis->get($cache_key);
-                if ($op === false) {
-                    $sql = "SELECT * FROM global_data WHERE gid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $attr2);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    $op = nl2br($row['value']);
-                    // 缓存结果，设置过期时间为1小时
-                    $redis->setex($cache_key, 3600, $op);
-                }
-            }
-            break;
-        case 'e':
-            // 使用缓存处理表达式定义
-            if ($redis) {
-                $cache_key = "exp_def_{$attr2}";
-                $op = $redis->get($cache_key);
-                if ($op === false) {
-                    $sql = "SELECT value,type FROM system_exp_def WHERE id = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param("s", $attr2);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if (!$result) {
-                        die('查询失败: ' . $db->error);
-                    }
-                    $row = $result->fetch_assoc();
-                    $op = nl2br($row['value']);
-                    // 缓存结果，设置过期时间为5分钟
-                    $redis->setex($cache_key, 300, $op);
-                }
-            }
-            break;
-        case 'c':
-            switch($attr2) {
-                case 'time':
-                case 'day':
-                case 'year':
-                case 'month':
-                case 'date':
-                case 'hour':
-                case 'minute':
-                case 'second':
-                    // 时间相关的不缓存
-                    $op = handle_time_attribute($attr2);
-                    break;
-                case 'online_user_count':
-                    // 在线用户数缓存10秒
-                    if ($redis) {
-                        $cache_key = "online_user_count";
-                        $op = $redis->get($cache_key);
-                        if ($op === false) {
-                            $query = "SELECT COUNT(*) FROM game1 WHERE sfzx = 1";
-                            $result = $db->query($query);
-                            $op = $result->fetch_row()[0];
-                            $redis->setex($cache_key, 10, $op);
-                        }
-                    }
-                    break;
-                default:
-                    // 游戏基本信息缓存1小时
-                    if ($redis) {
-                        $cache_key = "game_basic_{$attr2}";
-                        $op = $redis->get($cache_key);
-                        if ($op === false) {
-                            $game_id = '19980925';
-                            $attr4 = 'game_';
-                            $attr3 = $attr4.$attr2;
-                            $sql = "SELECT * FROM gm_game_basic WHERE game_id = ?";
-                            $stmt = $db->prepare($sql);
-                            $stmt->bind_param("s", $game_id);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-                            if (!$result) {
-                                die('查询失败: ' . $db->error);
-                            }
-                            $row = $result->fetch_assoc();
-                            $op = nl2br($row[$attr3]);
-                            $redis->setex($cache_key, 3600, $op);
-                        }
-                    }
-            }
-            break;
-        default:
-            return 0;
+            default:
+                throw new Exception("未知节点类型: " . $node['type']);
+        }
     }
-
-    return $op;
-}
-
-// 辅助函数：处理时间相关的属性
-function handle_time_attribute($attr) {
-    switch($attr) {
-        case 'time': return date('U');
-        case 'day': return date('N');
-        case 'year': return date('Y');
-        case 'month': return date('n');
-        case 'date': return date('j');
-        case 'hour': return date('G');
-        case 'minute': return 1 * date('i');
-        case 'second': return 1 * date('s');
-        default: return 0;
+    
+    /**
+     * 计算大数平方根
+     */
+    private function bcsqrt($operand) {
+        // 确保操作数是有效数字
+        if (!is_numeric($operand)) {
+            $operand = '0';
+        } else {
+            $operand = (string)$operand;
+        }
+        
+        // 增加临时精度以提高准确性
+        $tempScale = bcscale();
+        bcscale($tempScale + 6);
+        
+        if ($this->safeBccomp($operand, '0') === 0) {
+            bcscale($tempScale);
+            return '0';
+        }
+        
+        // 使用牛顿迭代法求平方根
+        $x = '1';
+        $b = $operand;
+        $lastX = null;
+        
+        while ($this->safeBccomp($x, $lastX ?? '0') !== 0) {
+            $lastX = $x;
+            $x = $this->safeBcdiv($this->safeBcadd($x, $this->safeBcdiv($b, $x)), '2');
+        }
+        
+        // 恢复原始精度
+        bcscale($tempScale);
+        return $this->bcround($x, $tempScale);
+    }
+    
+    /**
+     * 四舍五入到指定精度
+     */
+    private function bcround($value, $precision) {
+        // 确保值是有效数字
+        if (!is_numeric($value)) {
+            return '0';
+        }
+        
+        $value = (string)$value;
+        $precision = (int)$precision;
+        
+        $multiplier = $this->safeBcpow('10', (string)$precision);
+        $value = $this->safeBcmul($value, $multiplier);
+        
+        // 计算小数部分
+        $parts = explode('.', $value);
+        $integerPart = $parts[0];
+        $decimalValue = isset($parts[1]) ? '0.' . $parts[1] : '0';
+        
+        // 四舍五入
+        if ($this->safeBccomp($decimalValue, '0.5') >= 0) {
+            $integerPart = $this->safeBcadd($integerPart, '1');
+        }
+        
+        return $this->safeBcdiv($integerPart, $multiplier);
+    }
+    
+    /**
+     * 解析并计算表达式
+     */
+    public function calculate() {
+        $ast = $this->parse();
+        return $this->evaluate($ast);
     }
 }
-//test();
-// $end_time = microtime(true);
-// $execution_time = ceil(($end_time - $start_time) * 1000);
-// echo "<br/>执行时间：" . $execution_time . "ms";
+
+// 示例使用
+function calculateBigNumberExpression($expression, $variables = [], $precision = 10) {
+    try {
+        $parser = new BigNumberExpressionParser($expression, $precision);
+        
+        // 设置变量
+        foreach ($variables as $name => $value) {
+            $parser->setVariable($name, $value);
+        }
+        
+        $result = $parser->calculate();
+        return $result;
+    } catch (Exception $e) {
+        return "错误: " . $e->getMessage();
+    }
+}
+
+// // 测试基本运算
+// $expression = "99999999999999999+999999999999999999";
+// echo "表达式: $expression<br/>";
+// echo "结果: " . calculateBigNumberExpression($expression) . "<br/>";
+
+// // 测试扩展功能
+// $tests = [
+//     // 基本算术运算
+//     "123456789012345678901234567890+987654321098765432109876543210",
+//     "9999999999999999-1",
+//     "12345678901234567890*98765432109876543210",
+//     "999999999999999999999999/3",
+//     "(9999999999+1)*(9999999999-1)",
+//     "9^18",
+    
+//     // 比较和逻辑运算
+//     "99999 > 1000 ? 'true' : 'false'",
+//     "99999 == 99999",
+//     "1000 < 100 || 1000 > 100",
+//     "!(1000 < 100) && 1000 > 100",
+    
+//     // 模运算
+//     "123456789 % 9",
+    
+//     // 函数调用
+//     "sqrt(9999999999)",
+//     "abs(-12345678901234567890)",
+//     "max(1000, 2000, 3000)",
+//     "min(1000, 2000, 3000)",
+//     "pow(10, 20)",
+//     "round(123.456, 2)",
+//     "floor(123.999)",
+//     "ceil(123.001)"
+// ];
+
+// foreach ($tests as $test) {
+//     echo "表达式: $test<br/>";
+//     echo "结果: " . calculateBigNumberExpression($test) . "<br/>";
+// }
+
+// // 测试变量
+// $variables = [
+//     'x' => '1234567890123456789',
+//     'y' => '9876543210987654321'
+// ];
+// $expression = "x + y * 2";
+// echo "表达式: $expression (x={$variables['x']}, y={$variables['y']})<br/>";
+// echo "结果: " . calculateBigNumberExpression($expression, $variables) . "<br/>";
+
+// // 测试复杂表达式
+// $complexTests = [
+//     "sqrt(pow(3, 12)) + 10 * (5 - 2)",
+//     "x^2 + 2*x + 1 > y ? max(x, y, 100) : min(x, y, 100)",
+//     "(1 + 2) * 3 - 4 / 2",
+//     "abs(-10) + sqrt(16) * pow(2, 3)"
+// ];
+
+// foreach ($complexTests as $test) {
+//     echo "复杂表达式: $test<br/>";
+//     echo "结果: " . calculateBigNumberExpression($test, $variables) . "<br/>";
+// }
+
+// // 测试新增的 ?: 和 ?? 运算符
+// $newOperatorTests = [
+//     // ?: 运算符测试
+//     "100 ?: 200",                 // 返回 100，因为左侧不为空
+//     "0 ?: 200",                   // 返回 200，因为左侧的0被视为假
+//     "x ?: 0",                     // 返回 x 的值
+    
+//     // ?? 运算符测试
+//     "undefined_var ?? 500",       // 返回 500，因为左侧变量未定义
+//     "x ?? 999",                   // 返回 x 的值，因为它已定义
+//     "null ?? 'fallback'",         // 返回 fallback
+    
+//     // 组合使用
+//     "undefined_var1 ?? undefined_var2 ?? 'default'", // 链式使用??
+//     "0 ?: (undefined_var ?? 300)",  // 组合使用 ?: 和 ??
+//     "(x > y) ?: 'y is greater'"    // 条件结果与 ?: 组合
+// ];
+
+// echo "<h3>测试新增运算符：</h3>";
+// foreach ($newOperatorTests as $test) {
+//     echo "表达式: $test<br/>";
+//     echo "结果: " . calculateBigNumberExpression($test, $variables) . "<br/>";
+// }
 ?>

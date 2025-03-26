@@ -206,14 +206,16 @@ case '7':
 
     if($gm_long_type=="0"){
         $gm_length_select = "selected";
-    }else{
+    }elseif($gm_long_type=="1"){
         $gm_length_select_2 = "selected";
+    }else{
+        $gm_length_select_3 = "selected";
     }
-
         $num_long =<<<HTML
 最大值类别:<select name="max_length_type" value="$gm_long_type">
 <option value="0" $gm_length_select>常规整数(11)</option>
 <option value="1" $gm_length_select_2>超大型整数(20)</option>
+<option value="2" $gm_length_select_3>极大型整数(65)</option>
 </select><br/>
 HTML;
     }
