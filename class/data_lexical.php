@@ -52,121 +52,66 @@ function checkTriggerCondition($condition,$dblj=null,$sid,$oid=null,$mid=null) {
     return $ret;
 }
 
+// Add BCMath helper functions at the top of the file
+// Set BCMath scale to ensure precision
 bcscale(0);
 
 function safebc_check($value) {
-    // Handle null values
+    // 更严格地检查值是否为有效的数字或数字字符串
+    // 去除空格并处理可能的null值
     if ($value === null) {
         return '0';
     }
     
-    // Handle arrays or objects
+    // 如果是数组或对象，返回0
     if (is_array($value) || is_object($value)) {
         return '0';
     }
     
-    // Handle string values
+    // 处理字符串值，清除任何可能导致BCMath出错的字符
     if (is_string($value)) {
-        // Trim whitespace
+        // 去除所有非数字、小数点和符号字符
         $value = trim($value);
-        
-        // Check for scientific notation and convert if needed
-        if (preg_match('/^[-+]?[0-9]*\.?[0-9]+[eE][-+]?[0-9]+$/', $value)) {
-            // Convert scientific notation to string
-            $value = sprintf("%.20f", (float)$value);
-            // Remove trailing zeros
-            $value = rtrim(rtrim($value, '0'), '.');
-            return $value;
-        }
-        
-        // Check if it's a valid number format
+        // 检查是否为数字格式字符串
         if (preg_match('/^[-+]?[0-9]*\.?[0-9]+$/', $value)) {
-            return $value;
+            return (string)$value;
         }
-        
-        // Not a valid number format
         return '0';
     }
     
-    // Handle numeric values (int/float)
+    // 如果是数字类型，直接转换成字符串返回
     if (is_numeric($value)) {
-        // Handle potential float precision issues
-        if (is_float($value)) {
-            // Convert to string with high precision
-            $value = sprintf("%.20f", $value);
-            // Remove trailing zeros
-            $value = rtrim(rtrim($value, '0'), '.');
-            return $value;
-        }
         return (string)$value;
     }
     
-    // Default fallback
+    // 默认返回0
     return '0';
 }
 
-function safebc_add($left, $right, $scale = null) {
+function safebc_add($left, $right) {
     $left = safebc_check($left);
     $right = safebc_check($right);
-    $scale = $scale === null ? bcscale() : $scale;
-    return bcadd($left, $right, $scale);
+    return bcadd($left, $right, 0);
 }
 
-function safebc_mul($left, $right, $scale = null) {
+function safebc_mul($left, $right) {
     $left = safebc_check($left);
     $right = safebc_check($right);
-    $scale = $scale === null ? bcscale() : $scale;
-    return bcmul($left, $right, $scale);
+    return bcmul($left, $right, 0);
 }
 
-function safebc_comp($left, $right, $scale = null) {
+// 新增一个安全的bccomp函数封装
+function safebc_comp($left, $right, $scale = 0) {
     $left = safebc_check($left);
     $right = safebc_check($right);
-    $scale = $scale === null ? bcscale() : $scale;
     return bccomp($left, $right, $scale);
 }
 
-function safebc_sub($left, $right, $scale = null) {
+// 新增一个安全的bcsub函数封装
+function safebc_sub($left, $right, $scale = 0) {
     $left = safebc_check($left);
     $right = safebc_check($right);
-    $scale = $scale === null ? bcscale() : $scale;
     return bcsub($left, $right, $scale);
-}
-
-function safebc_div($left, $right, $scale = null) {
-    $left = safebc_check($left);
-    $right = safebc_check($right);
-    
-    // Prevent division by zero
-    if ($right === '0') {
-        return '0';
-    }
-    
-    $scale = $scale === null ? bcscale() : $scale;
-    return bcdiv($left, $right, $scale);
-}
-
-function safebc_pow($left, $right, $scale = null) {
-    $left = safebc_check($left);
-    $right = safebc_check($right);
-    $scale = $scale === null ? bcscale() : $scale;
-    return bcpow($left, $right, $scale);
-}
-
-function safebc_is_zero($value) {
-    $value = safebc_check($value);
-    return bccomp($value, '0', bcscale()) === 0;
-}
-
-function safebc_abs($value, $scale = null) {
-    $value = safebc_check($value);
-    $scale = $scale === null ? bcscale() : $scale;
-    
-    if (bccomp($value, '0', $scale) < 0) {
-        return bcmul($value, '-1', $scale);
-    }
-    
-    return $value;
 }
 
 function attrsetting($input,$sid,$oid=null,$mid=null,$para=null){
@@ -196,8 +141,7 @@ foreach ($data as $ele_1 => $ele_2) {
             if($can_redis == 1){
             $redis->set($check_cache,$ele_2);
             }
-            // Ensure numeric values are properly handled with BCMath
-            $ele_2 = safebc_check($ele_2);
+            
         }
         if(preg_match('/pusharr.\(([\w.]+)\)/', $ele_1, $matches)){
             $new_recur_1 = $matches[1];
@@ -472,31 +416,12 @@ foreach ($data as $ele_1 => $ele_2) {
                 $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and oid = 'item' and mid = '$mid'");
                 // 如果字段存在，则更新字段值
                 if($result->num_rows > 0){
-                    $row = $result->fetch_assoc();
-                    $current_value = $row['value'];
-                    $new_value = safebc_add($current_value, $ele_2);
-                    $updateQuery = "UPDATE system_addition_attr SET value = ? WHERE name = ? and oid = 'item' and mid = ?";
-                    $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('sss', $new_value, $ele_1_2, $mid);
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
+                    $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
+                    $db->query($updateQuery);
                 } else{
-                    $result_2 = $db->query("SELECT $ele_1_2 from system_item_module where iid = (SELECT iid from system_item where item_true_id = '$mid' and sid = '$sid')");
-                    if($result_2->num_rows > 0){
-                        $row_2 = $result_2->fetch_assoc();
-                        $root_attr = $row_2[$ele_1_2];
-                        $ele_2 = safebc_add($ele_2, $root_attr);
-                    }
-                        // 字段不存在，添加新字段并更新值
-                        $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values(?,?,?,?)";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ssss', $ele_1_2, $ele_2, 'item', $mid);
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
+                    // 字段不存在，添加新字段并更新值
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
+                    $db->query($updateQuery);
                 }
                 
                 }elseif($oid =='mosaic_equip'){
@@ -509,25 +434,12 @@ foreach ($data as $ele_1 => $ele_2) {
                 $result = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and oid = 'item' and mid = '$mid'");
                 // 如果字段存在，则更新字段值
                 if($result->num_rows > 0){
-                    $row = $result->fetch_assoc();
-                    $current_value = $row['value'];
-                    $new_value = safebc_add($current_value, $ele_2);
-                    $updateQuery = "UPDATE system_addition_attr SET value = ? WHERE name = ? and oid = 'item' and mid = ?";
-                    $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('sss', $new_value, $ele_1_2, $mid);
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
+                    $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE name = '$ele_1_2' and oid = 'item' and mid = '$mid'";
+                    $db->query($updateQuery);
                 } else{
                     // 字段不存在，添加新字段并更新值
-                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values(?,?,?,?)";
-                    $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ssss', $ele_1_2, $ele_2, 'item', $mid);
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
+                    $alterQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values('$ele_1_2','$ele_2','item','$mid')";
+                    $db->query($alterQuery);
                 }
                 
                 }elseif($oid =='scene_oplayer'){
@@ -542,50 +454,15 @@ foreach ($data as $ele_1 => $ele_2) {
                 $result_2 = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$mid'");
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
-                    // Get current value first
-                    $sql = "SELECT $ele_1_2 FROM game1 WHERE sid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('s', $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $row = $result->fetch_assoc();
-                    $current_value = $row[$ele_1_2];
-                    $new_value = safebc_add($current_value, $ele_2);
-                    
-                    $updateQuery = "UPDATE game1 SET $ele_1_2 = ? WHERE sid = ?";
-                    $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ss', $new_value, $mid);
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
+                    $updateQuery = "UPDATE game1 SET $ele_1_2 = '$ele_2' WHERE sid = '$mid'";
+                    $db->query($updateQuery);
                 }elseif($result_2->num_rows > 0){
-                    $row_2 = $result_2->fetch_assoc();
-                    $current_value = $row_2['value'];
-                    $new_value = safebc_add($current_value, $ele_2);
-                    $updateQuery = "UPDATE system_addition_attr SET value = ? WHERE sid = ? and name = ?";
-                    $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('sss', $new_value, $mid, $ele_1_2);
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
+                $updateQuery = "UPDATE system_addition_attr SET value = '$ele_2' WHERE sid = '$mid' and name = '$ele_1_2'";
+                $db->query($updateQuery);
                 } else {
                     // 字段不存在，添加新字段并更新值,这边还要做判断
-                    $updateQuery = "INSERT INTO system_addition_attr(name,value,sid)values(?,?,?)";
-                    $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('sss', $ele_1_2, $ele_2, $mid);
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
-                }
-                if(safebc_comp($ele_2, '0') > 0 && $attr_name && $attr_show){
-                $echo_mess =  "{$attr_name}+{$ele_2}";
-                \player\update_message_sql($mid,$dblj,$echo_mess,0);
-                }elseif(safebc_comp($ele_2, '0') < 0 && $attr_name && $attr_show){
-                $echo_mess =  "{$attr_name}{$ele_2}";
-                \player\update_message_sql($mid,$dblj,$echo_mess,0);
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,sid)values('$ele_1_2','$ele_2','$mid')";
+                    $db->query($updateQuery);
                 }
                 }else{
                 $result = $db->query("SHOW COLUMNS FROM game1 LIKE '$ele_1_2'");
@@ -605,313 +482,133 @@ foreach ($data as $ele_1 => $ele_2) {
                 }
                 break;
                 case 'g':
-                    // 检查表中是否存在 gid=$ele_1_2 的数据
-                    $checkQuery = "SELECT * FROM global_data WHERE gid = ?";
-                    $stmt = $db->prepare($checkQuery);
+                    // 先检查是否存在
+                    $sql = "SELECT COUNT(*) as count FROM global_data WHERE gid = ?";
+                    $stmt = $db->prepare($sql);
                     $stmt->bind_param('s', $ele_1_2);
                     $stmt->execute();
                     $result = $stmt->get_result();
-                
-                    // 如果存在，执行更新操作
-                    if ($result->num_rows > 0) {
-                        if (is_numeric($ele_2)) {
-                            $row = $result->fetch_assoc();
-                            $current_value = $row['gvalue'];
-                            if (is_numeric($current_value)) {
-                                $new_value = safebc_add($current_value, $ele_2);
-                                $updateQuery = "UPDATE global_data SET gvalue = ? WHERE gid = ?";
-                                $stmt = $db->prepare($updateQuery);
-                                $stmt->bind_param('ss', $new_value, $ele_1_2);
-                            } else {
-                                $updateQuery = "UPDATE global_data SET gvalue = CONCAT(gvalue, ?) WHERE gid = ?";
-                                $stmt = $db->prepare($updateQuery);
-                                $stmt->bind_param('ss', $ele_2, $ele_1_2);
-                            }
-                        } else {
-                            $updateQuery = "UPDATE global_data SET gvalue = CONCAT(gvalue, ?) WHERE gid = ?";
-                            $stmt = $db->prepare($updateQuery);
-                            $stmt->bind_param('ss', $ele_2, $ele_1_2);
-                        }
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    } else {
-                         // 不存在，执行插入操作
-                        $insertQuery = "INSERT INTO global_data (gid,gvalue) VALUES (?,?)";
-                        $stmt = $db->prepare($insertQuery);
-                        $stmt->bind_param('ss', $ele_1_2, $ele_2);
-                        $updateAll[] = array(
-                            'query' => $insertQuery,
-                            'stmt' => $stmt
-                        );
-                    }
-                    break;
-                case 'c':
-                    if(strpos($ele_1_2, "c_msg") === 0){
-                        $send_time = date('Y-m-d H:i:s');
-                        $sql = "insert into system_chat_data (name,msg,send_time,uid,chat_type)values('系统通知','$ele_2','$send_time',0,6)";
-                        // 使用预处理语句
-                        $stmt = $db->prepare($sql);
-                        // 执行查询
-                        $stmt->execute();
-                        
-                        }
-                    break;
-                case 'ut':
-                    $sql = "select attr_value from player_temp_attr where obj_id = ? and obj_type = 1 and attr_name = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('ss', $sid, $ele_1_2);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    
-                    // 检查数据是否存在
-                    // 如果数据存在，更新该数据
-                    if ($result->num_rows > 0 ) {
-                        $row = $result->fetch_assoc();
-                        $attr_value = $row['attr_value'];
-                        $new_value = safebc_add($attr_value, $ele_2);
-                        $updateQuery = "UPDATE player_temp_attr SET attr_value = ? WHERE obj_id = ? and obj_type = 1 and attr_name = ?";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('sss', $new_value, $sid, $ele_1_2);
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    }else{
-                        // 数据不存在，插入数据并更新值
-                        $updateQuery = "INSERT INTO player_temp_attr(obj_id,obj_type,attr_name,attr_value)values(?,?,?,?)";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('siss', $sid, 1, $ele_1_2, $ele_2);
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    }
-                    break;
-                case 'uland':
-                    $checkQuery = "SELECT * FROM system_player_land WHERE sid = ?";
-                    $stmt = $db->prepare($checkQuery);
-                    $stmt->bind_param('s', $sid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $new_value = 'land_'.$ele_1_2;
-                    
-                    // 如果存在，执行更新操作
-                    if ($result->num_rows > 0) {
-                        // Get current value first
-                        $sql = "SELECT $new_value FROM system_player_land WHERE sid = ?";
-                        $stmt = $db->prepare($sql);
-                        $stmt->bind_param('s', $sid);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        
-                        if ($result->num_rows > 0) {
-                            $row = $result->fetch_assoc();
-                            $current_value = $row[$new_value];
-                            $ele_2_calculated = safebc_add($current_value, $ele_2);
-                            
-                            $updateQuery = "UPDATE system_player_land SET $new_value = ? WHERE sid = ?";
-                            $stmt = $db->prepare($updateQuery);
-                            $stmt->bind_param('ss', $ele_2_calculated, $sid);
-                        } else {
-                            $updateQuery = "UPDATE system_player_land SET $new_value = ? WHERE sid = ?";
-                            $stmt = $db->prepare($updateQuery);
-                            $stmt->bind_param('ss', $ele_2, $sid);
-                        }
-                        
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    } else {
-                        // 不存在，执行插入操作
-                        $updateQuery = "INSERT INTO system_player_land (sid,$new_value) VALUES (?,?)";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ss', $sid, $ele_2);
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    }
-                    break;
-                case 'uboat':
-                    $checkQuery = "SELECT * FROM system_player_boat WHERE sid = ?";
-                    $stmt = $db->prepare($checkQuery);
-                    $stmt->bind_param('s', $sid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $new_value = 'boat_'.$ele_1_2;
-                    
-                    // 如果存在，执行更新操作
-                    if ($result->num_rows > 0) {
-                        // Get current value first
-                        $sql = "SELECT $new_value FROM system_player_boat WHERE sid = ?";
-                        $stmt = $db->prepare($sql);
-                        $stmt->bind_param('s', $sid);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        
-                        if ($result->num_rows > 0) {
-                            $row = $result->fetch_assoc();
-                            $current_value = $row[$new_value];
-                            $ele_2_calculated = safebc_add($current_value, $ele_2);
-                            
-                            $updateQuery = "UPDATE system_player_boat SET $new_value = ? WHERE sid = ?";
-                            $stmt = $db->prepare($updateQuery);
-                            $stmt->bind_param('ss', $ele_2_calculated, $sid);
-                        } else {
-                            $updateQuery = "UPDATE system_player_boat SET $new_value = ? WHERE sid = ?";
-                            $stmt = $db->prepare($updateQuery);
-                            $stmt->bind_param('ss', $ele_2, $sid);
-                        }
-                        
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    } else {
-                        // 不存在，执行插入操作
-                        $updateQuery = "INSERT INTO system_player_boat (sid,$new_value) VALUES (?,?)";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ss', $sid, $ele_2);
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    }
-                    break;
-                case 'ucraft':
-                    $checkQuery = "SELECT * FROM system_player_aircraft WHERE sid = ?";
-                    $stmt = $db->prepare($checkQuery);
-                    $stmt->bind_param('s', $sid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $new_value = 'aircraft_'.$ele_1_2;
-                    
-                    // 如果存在，执行更新操作
-                    if ($result->num_rows > 0) {
-                        // Get current value first
-                        $sql = "SELECT $new_value FROM system_player_aircraft WHERE sid = ?";
-                        $stmt = $db->prepare($sql);
-                        $stmt->bind_param('s', $sid);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        
-                        if ($result->num_rows > 0) {
-                            $row = $result->fetch_assoc();
-                            $current_value = $row[$new_value];
-                            $ele_2_calculated = safebc_add($current_value, $ele_2);
-                            
-                            $updateQuery = "UPDATE system_player_aircraft SET $new_value = ? WHERE sid = ?";
-                            $stmt = $db->prepare($updateQuery);
-                            $stmt->bind_param('ss', $ele_2_calculated, $sid);
-                        } else {
-                            $updateQuery = "UPDATE system_player_aircraft SET $new_value = ? WHERE sid = ?";
-                            $stmt = $db->prepare($updateQuery);
-                            $stmt->bind_param('ss', $ele_2, $sid);
-                        }
-                        
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    } else {
-                        // 不存在，执行插入操作
-                        $updateQuery = "INSERT INTO system_player_aircraft (sid,$new_value) VALUES (?,?)";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ss', $sid, $ele_2);
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    }
-                    break;
-                case 'ot':
-                    $sql = "select attr_value from player_temp_attr where obj_id = ? and obj_type = 2 and attr_name = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('ss', $mid, $ele_1_2);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    
-                    // 检查数据是否存在
-                    // 如果数据存在，更新该数据
-                    if ($result->num_rows > 0 ) {
-                        $row = $result->fetch_assoc();
-                        $attr_value = $row['attr_value'];
-                        $new_value = safebc_add($attr_value, $ele_2);
-                        $updateQuery = "UPDATE player_temp_attr SET attr_value = ? WHERE obj_id = ? and obj_type = 2 and attr_name = ?";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('sss', $new_value, $mid, $ele_1_2);
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    }else{
-                        // 数据不存在，插入数据并更新值
-                        $updateQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values(?,?,?,?,?)";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ssiss', $sid, $mid, 2, $ele_1_2, $ele_2);
-                        $updateAll[] = array(
-                            'query' => $updateQuery,
-                            'stmt' => $stmt
-                        );
-                    }
-                    break;
-                default:
-                    break;
-            }
-            $updateAll [] = $updateQuery;
-            // echo "ele_1: " . $ele_1 . "<br/>";
-            // echo "ele_2: " . $ele_2 . "<br/>";
-            //这里要获取到属性字段表中玩家属性类别下id等于$ele_1的name名称
-}
-}
-
-// Prepare statements for execution in a transaction
-if(!empty($updateAll)){
-    try {
-        // Start transaction
-        $db->autocommit(false);
-        
-        foreach($updateAll as $onesql){
-            if(isset($onesql) && !empty($onesql)) {
-                // Check if stmt is already prepared or if we need to prepare it
-                if(is_string($onesql)) {
-                    $stmt = $db->prepare($onesql);
-                    if($stmt === false) {
-                        throw new Exception("Prepare failed: " . $db->error . " for query: " . $onesql);
-                    }
-                    
-                    if(!$stmt->execute()) {
-                        throw new Exception("Execute failed: " . $stmt->error . " for query: " . $onesql);
-                    }
-                    
+                    $row = $result->fetch_assoc();
                     $stmt->close();
-                } else if(isset($onesql['stmt']) && $onesql['stmt'] instanceof mysqli_stmt) {
-                    // For statements that were already prepared
-                    if(!$onesql['stmt']->execute()) {
-                        throw new Exception("Execute failed: " . $onesql['stmt']->error . " for query: " . ($onesql['query'] ?? 'unknown'));
+                    
+                    if ($row['count'] > 0) {
+                        // 存在则更新
+                        $sql = "UPDATE global_data SET gvalue = ? WHERE gid = ?";
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param('ss', $ele_2, $ele_1_2);
+                    } else {
+                        // 不存在则插入
+                        $sql = "INSERT INTO global_data (gid, gvalue) VALUES (?, ?)";
+                        $stmt = $db->prepare($sql);
+                        $stmt->bind_param('ss', $ele_1_2, $ele_2);
                     }
-                    $onesql['stmt']->close();
+                    $stmt->execute();
+                    $stmt->close();
+                    break;
+            case 'c':
+                if(strpos($ele_1_2, "c_msg") === 0){
+                    $send_time = date('Y-m-d H:i:s');
+                    $sql = "insert into system_chat_data (name,msg,send_time,uid,chat_type)values('系统通知','$ele_2','$send_time',0,6)";
+                    // 使用预处理语句
+                    $stmt = $db->prepare($sql);
+                    // 执行查询
+                    $stmt->execute();
+                    
+                    }
+                break;
+            case 'ut':
+                $sql = "select attr_value from player_temp_attr where obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
+                // 检查数据是否存在
+                // 如果数据存在，更新该数据
+                if ($result->num_rows > 0 ) {
+                    $updateQuery = "UPDATE player_temp_attr SET attr_value = '$ele_2' WHERE obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                    $db->query($updateQuery);
+                }else{
+                    // 数据不存在，插入数据并更新值
+                    $updateQuery = "INSERT INTO player_temp_attr(obj_id,obj_type,attr_name,attr_value)values('$sid',1,'$ele_1_2',$ele_2)";
+                    $db->query($updateQuery);
                 }
-            }
+                break;
+            case 'uland':
+                $checkQuery = "SELECT * FROM system_player_land WHERE sid = '$sid'";
+                $result = $db->query($checkQuery);
+                $new_value = 'land_'.$ele_1_2;
+                // 如果存在，执行更新操作
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_player_land SET $new_value = '$ele_2' WHERE sid = '$sid'";
+                    $db->query($updateQuery);
+                } else {
+                    // 不存在，执行插入操作
+                    $updateQuery = "INSERT INTO system_player_land (sid,$new_value) VALUES ('$sid','$ele_2')";
+                    $db->query($updateQuery);
+                }
+                break;
+            case 'uboat':
+                $checkQuery = "SELECT * FROM system_player_boat WHERE sid = '$sid'";
+                $result = $db->query($checkQuery);
+                $new_value = 'boat_'.$ele_1_2;
+                // 如果存在，执行更新操作
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_player_boat SET $new_value = '$ele_2' WHERE sid = '$sid'";
+                    $db->query($updateQuery);
+                } else {
+                    // 不存在，执行插入操作
+                    $updateQuery = "INSERT INTO system_player_boat (sid,$new_value) VALUES ('$sid','$ele_2')";
+                    $db->query($updateQuery);
+                }
+                break;
+            case 'ucraft':
+                $checkQuery = "SELECT * FROM system_player_aircraft WHERE sid = '$sid'";
+                $result = $db->query($checkQuery);
+                $new_value = 'aircraft_'.$ele_1_2;
+                // 如果存在，执行更新操作
+                if ($result->num_rows > 0) {
+                    $updateQuery = "UPDATE system_player_aircraft SET $new_value = '$ele_2' WHERE sid = '$sid'";
+                    $db->query($updateQuery);
+                } else {
+                    // 不存在，执行插入操作
+                    $updateQuery = "INSERT INTO system_player_aircraft (sid,$new_value) VALUES ('$sid','$ele_2')";
+                    $db->query($updateQuery);
+                }
+                break;
+            case 'ot':
+                $sql = "select attr_value from player_temp_attr where obj_oid = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
+                // 检查数据是否存在
+                // 如果数据存在，更新该数据
+                if ($result->num_rows > 0 ) {
+                    $updateQuery = "UPDATE player_temp_attr SET attr_value = '$ele_2' WHERE obj_oid = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                    $db->query($updateQuery);
+                }else{
+                    // 数据不存在，插入数据并更新值
+                    $updateQuery = "INSERT INTO player_temp_attr(obj_id,obj_oid,obj_type,attr_name,attr_value)values('$sid','$mid',2,'$ele_1_2',$ele_2)";
+                    $db->query($updateQuery);
+                }
+                break;
+            default:
+                break;
         }
-        
-        // Commit transaction
-        $db->commit();
-        // Restore autocommit mode
-        $db->autocommit(true);
-        
-    } catch(Exception $e) {
-        // Log the error and rollback on failure
-        error_log("Transaction error in attrsetting: " . $e->getMessage());
-        $db->rollback();
-        $db->autocommit(true);
-        return false;
-    }
+        $updateAll [] = $updateQuery;
+        // echo "ele_1: " . $ele_1 . "<br/>";
+        // echo "ele_2: " . $ele_2 . "<br/>";
+        //这里要获取到属性字段表中玩家属性类别下id等于$ele_1的name名称
 }
-
+}
+// if($updateAll){
+// 开启一个事务
+// $db->autocommit(false);
+// foreach($updateAll as $onesql){
+// if($onesql){
+// $db->query($onesql);
+// }
+// }
+// $db->commit();
+// // 重新开启自动提交
+// $db->autocommit(true);
+ 
+//var_dump($updateAll);
+// }
 return 1;
 }
 
@@ -938,18 +635,16 @@ foreach ($data as $ele_1 => $ele_2) {
         if(preg_match('/f\(([\w.]+)\)/', $ele_1, $matches)){
             $prefix = "{".$matches[1]."}"; // 匹配到的前缀部分（数字加点号)
             $prefix_value = lexical_analysis\process_string($prefix,$sid,$oid,$mid);
-                $sql = "SELECT sid FROM game1 where uid = ?";
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param('s', $prefix_value);
-                $stmt->execute();
-                $cxjg = $stmt->get_result();
+                $sql = "SELECT sid FROM game1 where uid = $prefix_value";
+                $cxjg = $db->query($sql);
                 if (!$cxjg) {
                 die('查询失败: ' . $db->error);
                 }
                 $row = $cxjg->fetch_assoc();
+                $ele_1 = str_replace("$matches[0]", "u", $ele_1);
                 $temp_sid = $row['sid'];
                 $sid = $temp_sid;
-                if($temp_sid == $sid){
+                if($temp_sid ==$sid){
                 $ele_1 = str_replace("$matches[0]", "u", $ele_1);
                 }else{
                 $ele_1 = str_replace("$matches[0]", "o", $ele_1);
@@ -957,7 +652,7 @@ foreach ($data as $ele_1 => $ele_2) {
                 $mid = $temp_sid;
                 }
             }
-            if($old_sid == $sid){
+            if($old_sid ==$sid){
                 $echo_type = "self";
             }else{
                 $echo_type = "other";
@@ -995,8 +690,6 @@ foreach ($data as $ele_1 => $ele_2) {
             if($can_redis == 1){
             $redis->del($check_cache);
             }
-            // Ensure numeric values are properly handled with BCMath
-            $ele_2 = safebc_check($ele_2);
         }
 
         switch ($ele_1_1) {
@@ -1016,19 +709,9 @@ foreach ($data as $ele_1 => $ele_2) {
                 $result_2 = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$sid'");
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
-                    // Use prepared statement to prevent SQL injection with large numbers
-                    $sql = "SELECT $ele_1_2 FROM game1 WHERE sid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('s', $sid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $row = $result->fetch_assoc();
-                    $current_value = $row[$ele_1_2];
-                    $new_value = safebc_add($current_value, $ele_2);
-                    
-                    $updateQuery = "UPDATE game1 SET $ele_1_2 = ? WHERE sid = ?";
+                    $updateQuery = "UPDATE game1 SET $ele_1_2 = CAST($ele_1_2 AS DECIMAL(65,30)) + ? WHERE sid = ?";
                     $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ss', $new_value, $sid);
+                    $stmt->bind_param('ss', $ele_2, $sid);
                 }elseif($result_2->num_rows > 0){
                     $row_2 = $result_2->fetch_assoc();
                     $current_value = $row_2['value'];
@@ -1047,19 +730,19 @@ foreach ($data as $ele_1 => $ele_2) {
                     'stmt' => $stmt
                 );
                 if($echo_type !="self"){
-                if(safebc_comp($ele_2, '0') > 0 && $attr_name && $attr_show){
+                if($ele_2 >0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
                 \player\update_message_sql($sid,$dblj,$echo_mess);
-                }elseif(safebc_comp($ele_2, '0') < 0 && $attr_name && $attr_show){
+                }elseif($ele_2 <0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}{$ele_2}";
                 \player\update_message_sql($sid,$dblj,$echo_mess);
                 }
                 }else{
-                if(safebc_comp($ele_2, '0') > 0 && $attr_name && $attr_show){
+                if($ele_2 >0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
                 echo $echo_mess."<br/>";
                 \player\update_message_sql($sid,$dblj,$echo_mess,1);
-                }elseif(safebc_comp($ele_2, '0') < 0 && $attr_name && $attr_show){
+                }elseif($ele_2 <0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}{$ele_2}";
                 echo $echo_mess."<br/>";
                 \player\update_message_sql($sid,$dblj,$echo_mess,1);
@@ -1074,19 +757,9 @@ foreach ($data as $ele_1 => $ele_2) {
 
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
-                    // Get current value first
-                    $sql = "SELECT $reg FROM system_pet_scene WHERE nsid = ? AND npid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('si', $sid, $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $row = $result->fetch_assoc();
-                    $current_value = $row[$reg];
-                    $new_value = safebc_add($current_value, $ele_2);
-                    
-                    $updateQuery = "UPDATE system_pet_scene SET $reg = ? WHERE nsid = ? and npid = ?";
+                    $updateQuery = "UPDATE system_pet_scene SET $reg = CAST($reg AS DECIMAL(65,30)) + ? WHERE nsid = ? and npid = ?";
                     $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ssi', $new_value, $sid, $mid);
+                    $stmt->bind_param('ssi', $ele_2, $sid, $mid);
                     $updateAll[] = array(
                         'query' => $updateQuery,
                         'stmt' => $stmt
@@ -1102,19 +775,9 @@ foreach ($data as $ele_1 => $ele_2) {
 
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
-                    // Get current value first
-                    $sql = "SELECT $reg FROM system_npc_midguaiwu WHERE ngid = ? AND nsid = ''";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('s', $guai_id);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $row = $result->fetch_assoc();
-                    $current_value = $row[$reg];
-                    $new_value = safebc_add($current_value, $ele_2);
-                    
-                    $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = ? WHERE ngid = ? and nsid = ''";
+                    $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = CAST($reg AS DECIMAL(65,30)) + ? WHERE ngid = ? and nsid = ''";
                     $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ss', $new_value, $guai_id);
+                    $stmt->bind_param('ss', $ele_2, $guai_id);
                     $updateAll[] = array(
                         'query' => $updateQuery,
                         'stmt' => $stmt
@@ -1127,19 +790,9 @@ foreach ($data as $ele_1 => $ele_2) {
 
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
-                    // Get current value first
-                    $sql = "SELECT $reg FROM system_npc_scene WHERE ncid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('s', $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $row = $result->fetch_assoc();
-                    $current_value = $row[$reg];
-                    $new_value = safebc_add($current_value, $ele_2);
-                    
-                    $updateQuery = "UPDATE system_npc_scene SET $reg = ? WHERE ncid = ?";
+                    $updateQuery = "UPDATE system_npc_scene SET $reg = CAST($reg AS DECIMAL(65,30)) + ? WHERE ncid = ?";
                     $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ss', $new_value, $mid);
+                    $stmt->bind_param('ss', $ele_2, $mid);
                     $updateAll[] = array(
                         'query' => $updateQuery,
                         'stmt' => $stmt
@@ -1152,19 +805,9 @@ foreach ($data as $ele_1 => $ele_2) {
 
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
-                    // Get current value first
-                    $sql = "SELECT $reg FROM system_npc_midguaiwu WHERE ngid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('s', $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $row = $result->fetch_assoc();
-                    $current_value = $row[$reg];
-                    $new_value = safebc_add($current_value, $ele_2);
-                    
-                    $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = ? WHERE ngid = ?";
+                    $updateQuery = "UPDATE system_npc_midguaiwu SET $reg = CAST($reg AS DECIMAL(65,30)) + ? WHERE ngid = ?";
                     $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ss', $new_value, $mid);
+                    $stmt->bind_param('ss', $ele_2, $mid);
                     $updateAll[] = array(
                         'query' => $updateQuery,
                         'stmt' => $stmt
@@ -1199,9 +842,9 @@ foreach ($data as $ele_1 => $ele_2) {
                     $ele_2 = safebc_add($ele_2, $root_attr);
                 }
                     // 字段不存在，添加新字段并更新值
-                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values(?,?,'item',?)";
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values(?,?,?,?)";
                     $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('sss', $ele_1_2, $ele_2, $mid);
+                    $stmt->bind_param('ssss', $ele_1_2, $ele_2, 'item', $mid);
                     $updateAll[] = array(
                         'query' => $updateQuery,
                         'stmt' => $stmt
@@ -1227,9 +870,9 @@ foreach ($data as $ele_1 => $ele_2) {
                     );
                 } else{
                     // 字段不存在，添加新字段并更新值
-                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values(?,?,'item',?)";
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values(?,?,?,?)";
                     $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('sss', $ele_1_2, $ele_2, $mid);
+                    $stmt->bind_param('ssss', $ele_1_2, $ele_2, 'item', $mid);
                     $updateAll[] = array(
                         'query' => $updateQuery,
                         'stmt' => $stmt
@@ -1250,19 +893,9 @@ foreach ($data as $ele_1 => $ele_2) {
                 $result_2 = $db->query("SELECT value from system_addition_attr where name = '$ele_1_2' and sid = '$mid'");
                 // 如果字段存在，则更新字段值
                 if ($result->num_rows > 0) {
-                    // Get current value first
-                    $sql = "SELECT $ele_1_2 FROM game1 WHERE sid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('s', $mid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $row = $result->fetch_assoc();
-                    $current_value = $row[$ele_1_2];
-                    $new_value = safebc_add($current_value, $ele_2);
-                    
-                    $updateQuery = "UPDATE game1 SET $ele_1_2 = ? WHERE sid = ?";
+                    $updateQuery = "UPDATE game1 SET $ele_1_2 = CAST($ele_1_2 AS DECIMAL(65,30)) + ? WHERE sid = ?";
                     $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ss', $new_value, $mid);
+                    $stmt->bind_param('ss', $ele_2, $mid);
                     $updateAll[] = array(
                         'query' => $updateQuery,
                         'stmt' => $stmt
@@ -1288,10 +921,10 @@ foreach ($data as $ele_1 => $ele_2) {
                         'stmt' => $stmt
                     );
                 }
-                if(safebc_comp($ele_2, '0') > 0 && $attr_name && $attr_show){
+                if($ele_2 >0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}+{$ele_2}";
                 \player\update_message_sql($mid,$dblj,$echo_mess,0);
-                }elseif(safebc_comp($ele_2, '0') < 0 && $attr_name && $attr_show){
+                }elseif($ele_2 <0 && $attr_name && $attr_show){
                 $echo_mess =  "{$attr_name}{$ele_2}";
                 \player\update_message_sql($mid,$dblj,$echo_mess,0);
                 }
@@ -1299,11 +932,8 @@ foreach ($data as $ele_1 => $ele_2) {
                 break;
             case 'g':
                 // 检查表中是否存在 gid=$ele_1_2 的数据
-                $checkQuery = "SELECT * FROM global_data WHERE gid = ?";
-                $stmt = $db->prepare($checkQuery);
-                $stmt->bind_param('s', $ele_1_2);
-                $stmt->execute();
-                $result = $stmt->get_result();
+                $checkQuery = "SELECT * FROM global_data WHERE gid = '$ele_1_2'";
+                $result = $db->query($checkQuery);
             
                 // 如果存在，执行更新操作
                 if ($result->num_rows > 0) {
@@ -1341,12 +971,8 @@ foreach ($data as $ele_1 => $ele_2) {
                 }
                 break;
             case 'ut':
-                $sql = "select attr_value from player_temp_attr where obj_id = ? and obj_type = 1 and attr_name = ?";
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param('ss', $sid, $ele_1_2);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                
+                $sql = "select attr_value from player_temp_attr where obj_id = '$sid' and obj_type = 1 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
                 // 检查数据是否存在
                 // 如果数据存在，更新该数据
                 if ($result->num_rows > 0 ) {
@@ -1372,12 +998,8 @@ foreach ($data as $ele_1 => $ele_2) {
                 }
                 break;
             case 'ot':
-                $sql = "select attr_value from player_temp_attr where obj_id = ? and obj_type = 2 and attr_name = ?";
-                $stmt = $db->prepare($sql);
-                $stmt->bind_param('ss', $mid, $ele_1_2);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                
+                $sql = "select attr_value from player_temp_attr where obj_id = '$mid' and obj_type = 2 and attr_name = '$ele_1_2'";
+                $result = $db->query($sql);
                 // 检查数据是否存在
                 // 如果数据存在，更新该数据
                 if ($result->num_rows > 0 ) {
@@ -1402,144 +1024,6 @@ foreach ($data as $ele_1 => $ele_2) {
                     );
                 }
                 break;
-            case 'uland':
-                $checkQuery = "SELECT * FROM system_player_land WHERE sid = ?";
-                $stmt = $db->prepare($checkQuery);
-                $stmt->bind_param('s', $sid);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $new_value = 'land_'.$ele_1_2;
-                
-                // 如果存在，执行更新操作
-                if ($result->num_rows > 0) {
-                    // Get current value first
-                    $sql = "SELECT $new_value FROM system_player_land WHERE sid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('s', $sid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    
-                    if ($result->num_rows > 0) {
-                        $row = $result->fetch_assoc();
-                        $current_value = $row[$new_value];
-                        $ele_2_calculated = safebc_add($current_value, $ele_2);
-                        
-                        $updateQuery = "UPDATE system_player_land SET $new_value = ? WHERE sid = ?";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ss', $ele_2_calculated, $sid);
-                    } else {
-                        $updateQuery = "UPDATE system_player_land SET $new_value = ? WHERE sid = ?";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ss', $ele_2, $sid);
-                    }
-                    
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
-                } else {
-                    // 不存在，执行插入操作
-                    $updateQuery = "INSERT INTO system_player_land (sid,$new_value) VALUES (?,?)";
-                    $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ss', $sid, $ele_2);
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
-                }
-                break;
-            case 'uboat':
-                $checkQuery = "SELECT * FROM system_player_boat WHERE sid = ?";
-                $stmt = $db->prepare($checkQuery);
-                $stmt->bind_param('s', $sid);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $new_value = 'boat_'.$ele_1_2;
-                
-                // 如果存在，执行更新操作
-                if ($result->num_rows > 0) {
-                    // Get current value first
-                    $sql = "SELECT $new_value FROM system_player_boat WHERE sid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('s', $sid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    
-                    if ($result->num_rows > 0) {
-                        $row = $result->fetch_assoc();
-                        $current_value = $row[$new_value];
-                        $ele_2_calculated = safebc_add($current_value, $ele_2);
-                        
-                        $updateQuery = "UPDATE system_player_boat SET $new_value = ? WHERE sid = ?";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ss', $ele_2_calculated, $sid);
-                    } else {
-                        $updateQuery = "UPDATE system_player_boat SET $new_value = ? WHERE sid = ?";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ss', $ele_2, $sid);
-                    }
-                    
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
-                } else {
-                    // 不存在，执行插入操作
-                    $updateQuery = "INSERT INTO system_player_boat (sid,$new_value) VALUES (?,?)";
-                    $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ss', $sid, $ele_2);
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
-                }
-                break;
-            case 'ucraft':
-                $checkQuery = "SELECT * FROM system_player_aircraft WHERE sid = ?";
-                $stmt = $db->prepare($checkQuery);
-                $stmt->bind_param('s', $sid);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $new_value = 'aircraft_'.$ele_1_2;
-                
-                // 如果存在，执行更新操作
-                if ($result->num_rows > 0) {
-                    // Get current value first
-                    $sql = "SELECT $new_value FROM system_player_aircraft WHERE sid = ?";
-                    $stmt = $db->prepare($sql);
-                    $stmt->bind_param('s', $sid);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    
-                    if ($result->num_rows > 0) {
-                        $row = $result->fetch_assoc();
-                        $current_value = $row[$new_value];
-                        $ele_2_calculated = safebc_add($current_value, $ele_2);
-                        
-                        $updateQuery = "UPDATE system_player_aircraft SET $new_value = ? WHERE sid = ?";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ss', $ele_2_calculated, $sid);
-                    } else {
-                        $updateQuery = "UPDATE system_player_aircraft SET $new_value = ? WHERE sid = ?";
-                        $stmt = $db->prepare($updateQuery);
-                        $stmt->bind_param('ss', $ele_2, $sid);
-                    }
-                    
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
-                } else {
-                    // 不存在，执行插入操作
-                    $updateQuery = "INSERT INTO system_player_aircraft (sid,$new_value) VALUES (?,?)";
-                    $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ss', $sid, $ele_2);
-                    $updateAll[] = array(
-                        'query' => $updateQuery,
-                        'stmt' => $stmt
-                    );
-                }
-                break;
             default:
                 break;
         }
@@ -1550,51 +1034,19 @@ foreach ($data as $ele_1 => $ele_2) {
 
 }
 }
-
-// Prepare statements for execution in a transaction
-if(!empty($updateAll)){
-    try {
-        // Start transaction
-        $db->autocommit(false);
-        
-        foreach($updateAll as $onesql){
-            if(isset($onesql) && !empty($onesql)) {
-                // Check if stmt is already prepared or if we need to prepare it
-                if(is_string($onesql)) {
-                    $stmt = $db->prepare($onesql);
-                    if($stmt === false) {
-                        throw new Exception("Prepare failed: " . $db->error . " for query: " . $onesql);
-                    }
-                    
-                    if(!$stmt->execute()) {
-                        throw new Exception("Execute failed: " . $stmt->error . " for query: " . $onesql);
-                    }
-                    
-                    $stmt->close();
-                } else if(isset($onesql['stmt']) && $onesql['stmt'] instanceof mysqli_stmt) {
-                    // For statements that were already prepared
-                    if(!$onesql['stmt']->execute()) {
-                        throw new Exception("Execute failed: " . $onesql['stmt']->error . " for query: " . ($onesql['query'] ?? 'unknown'));
-                    }
-                    $onesql['stmt']->close();
-                }
-            }
-        }
-        
-        // Commit transaction
-        $db->commit();
-        // Restore autocommit mode
-        $db->autocommit(true);
-        
-    } catch(Exception $e) {
-        // Log the error and rollback on failure
-        error_log("Transaction error in attrchanging: " . $e->getMessage());
-        $db->rollback();
-        $db->autocommit(true);
-        return false;
+if($updateAll){
+// 开启一个事务
+$db->autocommit(false);
+foreach($updateAll as $onesql){
+    if(isset($onesql['stmt'])){
+        $onesql['stmt']->execute();
+        $onesql['stmt']->close();
     }
 }
-
+$db->commit();
+// 重新开启自动提交
+$db->autocommit(true);
+}
 return 1;
 }
 
@@ -1637,30 +1089,27 @@ foreach ($data as $ele_1 => $ele_2) {
         $iid = $row['iid'];
         $iweight = safebc_check($row['iweight']); // 确保重量是BCMath兼容格式
         
+        // 获取物品true_id
+        $sql = "SELECT item_true_id FROM system_item WHERE sid = ? AND iid = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->bind_param('si', $sid, $iid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $ret = $result->fetch_assoc();
+        $item_true_id = $ret ? $ret['item_true_id'] : null;
+        
         // 确保ele_2是合法的BCMath参数
         $ele_2 = safebc_check($ele_2);
         
         // 物品增加操作
         if(safebc_comp($ele_2, '0') > 0){
-            // 获取当前物品数量
-            $sql = "SELECT item_true_id, icount FROM system_item WHERE sid = ? AND iid = ?";
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param('si', $sid, $iid);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $item_data = $result->fetch_assoc();
-            $item_true_id = $item_data ? $item_data['item_true_id'] : null;
-            
             if (!is_null($item_true_id)) {
                 // 已有物品记录
                 if ($item_type != "兵器" && $item_type != "防具") {
                     // 非装备类物品累加数量
-                    // 在PHP中使用BCMath进行计算
-                    $current_count = safebc_check($item_data['icount'] ?? '0');
-                    $new_count = safebc_add($current_count, $ele_2);
-                    $sql = "UPDATE system_item SET icount = ? WHERE sid = ? AND iid = ?";
+                    $sql = "UPDATE system_item SET icount = CAST(COALESCE(icount, '0') AS DECIMAL(65,0)) + ? WHERE sid = ? AND iid = ?";
                     $stmt = $db->prepare($sql);
-                    $stmt->bind_param('ssi', $new_count, $sid, $iid);
+                    $stmt->bind_param('ssi', $ele_2, $sid, $iid);
                     $stmt->execute();
                 } elseif ($item_type == "兵器" || $item_type == "防具") {
                     // 装备类物品每个独立添加
@@ -1700,37 +1149,35 @@ foreach ($data as $ele_1 => $ele_2) {
             
         // 物品减少操作
         } elseif(safebc_comp($ele_2, '0') < 0) {
-            // 获取物品记录
-            $sql = "SELECT item_true_id, icount FROM system_item WHERE sid = ? AND iid = ?";
-            $stmt = $db->prepare($sql);
-            $stmt->bind_param('si', $sid, $iid);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $item_data = $result->fetch_assoc();
-            
-            if (!$item_data) {
+            // 确保物品记录存在
+            if (is_null($item_true_id)) {
                 error_log("尝试移除不存在的物品: $ele_1");
                 continue;
             }
             
-            $item_true_id = $item_data['item_true_id'];
-            
-            // 在PHP中使用BCMath进行计算
-            $current_count = safebc_check($item_data['icount']);
-            $new_count = safebc_add($current_count, $ele_2); // ele_2已经是负数
-            
             // 更新物品数量
-            $sql = "UPDATE system_item SET icount = ? WHERE sid = ? AND item_true_id = ?";
+            $sql = "UPDATE system_item SET icount = CAST(COALESCE(icount, '0') AS DECIMAL(65,30)) + ? WHERE sid = ? AND item_true_id = ?";
             $stmt = $db->prepare($sql);
-            $stmt->bind_param('sss', $new_count, $sid, $item_true_id);
+            $stmt->bind_param('sss', $ele_2, $sid, $item_true_id);
             $stmt->execute();
 
             // 检查是否需要删除记录
-            if (safebc_comp($new_count, '0') <= 0) {
-                $sql_delete = "DELETE FROM system_item WHERE sid = ? AND item_true_id = ?";
-                $stmt_delete = $db->prepare($sql_delete);
-                $stmt_delete->bind_param('ss', $sid, $item_true_id);
-                $stmt_delete->execute();
+            $sql_check = "SELECT icount FROM system_item WHERE sid = ? AND item_true_id = ?";
+            $stmt_check = $db->prepare($sql_check);
+            $stmt_check->bind_param('ss', $sid, $item_true_id);
+            $stmt_check->execute();
+            $result_check = $stmt_check->get_result();
+            
+            if ($result_check && $result_check->num_rows > 0) {
+                $now_ret = $result_check->fetch_assoc();
+                $current_count = safebc_check($now_ret['icount']);
+                
+                if (safebc_comp($current_count, '0') <= 0) {
+                    $sql_delete = "DELETE FROM system_item WHERE sid = ? AND item_true_id = ?";
+                    $stmt_delete = $db->prepare($sql_delete);
+                    $stmt_delete->bind_param('ss', $sid, $item_true_id);
+                    $stmt_delete->execute();
+                }
             }
             
             // 更新物品重量并显示失去信息
