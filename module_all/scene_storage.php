@@ -1,7 +1,4 @@
 <?php
-// require_once 'class/lexical_analysis.php';
-
-// $player = new \player\player();
 
 $player = \player\getplayer($sid,$dblj);
 $player_nowmid = $player->nowmid;
@@ -10,28 +7,80 @@ $map_name = $clmid->mname;
 $game_config = \player\getgameconfig($dblj);
 
 if($_POST['password']&&!$_POST['kw']){
-$stmt = $dblj->prepare("SELECT userpass FROM userinfo WHERE token = (SELECT token from game1 where sid = :sid)");
-$stmt->bindParam(':sid', $sid);
-$stmt->execute();
-$rowCount = $stmt->rowCount();
-$user_pass = $stmt->fetch(PDO::FETCH_ASSOC);
-if ($rowCount > 0){
-    if($user_pass['userpass'] == $_POST['password']){
-        $lock_sure = 2;
+
+    $lock_sure = 0; // 初始值，表示未验证
+    $validation_failed = false; // 用于记录验证是否失败
+
+    $stmt = $dblj->prepare("SELECT userpass FROM userinfo WHERE token = (SELECT token from game1 where sid = :sid)");
+    $stmt->bindParam(':sid', $sid);
+    $stmt->execute();
+    $rowCount = $stmt->rowCount();
+    $user_pass = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($rowCount > 0){
+        if($user_pass['userpass'] == $_POST['password']){
+            $lock_sure = 2; // 第一种验证通过
+        }else{
+            $validation_failed = true; // 第一种验证失败
+        }
     }else{
+        echo "账号不存在！请联系GM！<br/>";
+        $validation_failed = true; // 账号不存在视为验证失败
+    }
+
+    // 如果第一种验证未通过，继续尝试第二种验证
+    if($lock_sure != 2){
+        $stmt = $dblj->prepare("SELECT password FROM system_storage_locked WHERE sid = :sid and ibelong_mid = :mid");
+        $stmt->bindParam(':sid', $sid);
+        $stmt->bindParam(':mid', $player_nowmid);
+        $stmt->execute();
+        $rowCount = $stmt->rowCount();
+        $user_pass = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($rowCount > 0){
+            if($user_pass['password'] == $_POST['password']){
+                $lock_sure = 2; // 第二种验证通过
+            }else{
+                $validation_failed = true; // 第二种验证失败
+            }
+        }
+    }
+    
+    // 如果两种验证都失败，则设置lock_sure为3
+    if($lock_sure != 2 && $validation_failed){
         $lock_sure = 3;
     }
-}else{
-    echo "账号不存在！请联系GM！<br/>";
-}
 
 }
+
+if($_POST['set_pwd']&&!$_POST['kw']){
+
+$set_pwd = $_POST['set_pwd'];
+if (preg_match('/^\d+$/', $set_pwd)) {
+    $unlock_sure = 2;
+} else {
+    $unlock_sure = 3;
+}
+
+
+}
+
 
 if($lock_canshu ==1&&!$_POST['kw']){
 
+if($unlock_sure == 1){
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$unlock_html = <<<HTML
+<form method="post">
+<input name="ucmd" type="hidden" value="{$cmid}">
+请设定仓库密码：<input name="set_pwd" type="num" title="仓库密码"><br/>
+<input name="submit" type="submit" title="仓库密码"><br/>
+</form>
+HTML;
+}elseif($unlock_sure ==2){
+
 // 查询是否存在相应的数据
 $stmt = $dblj->prepare("SELECT * FROM system_storage_locked WHERE ibelong_mid = :lock_mid AND sid = :sid");
-$stmt->bindParam(':lock_mid', $lock_mid);
+$stmt->bindParam(':lock_mid', $player_nowmid);
 $stmt->bindParam(':sid', $sid);
 $stmt->execute();
 
@@ -40,20 +89,26 @@ $rowCount = $stmt->rowCount();
 
 if ($rowCount > 0) {
     // 如果存在，更新 istate 为 1
-    $updateStmt = $dblj->prepare("UPDATE system_storage_locked SET istate = 1 WHERE ibelong_mid = :lock_mid AND sid = :sid");
+    $updateStmt = $dblj->prepare("UPDATE system_storage_locked SET istate = 1,password = :pwd WHERE ibelong_mid = :lock_mid AND sid = :sid");
+    $updateStmt->bindParam(':pwd', $set_pwd);
     $updateStmt->bindParam(':lock_mid', $lock_mid);
     $updateStmt->bindParam(':sid', $sid);
     $updateStmt->execute();
 } else {
     // 如果不存在，插入新数据
-    $insertStmt = $dblj->prepare("INSERT INTO system_storage_locked (ibelong_mid, sid, istate) VALUES (:lock_mid, :sid, 1)");
+    $insertStmt = $dblj->prepare("INSERT INTO system_storage_locked (ibelong_mid, sid, istate,password) VALUES (:lock_mid, :sid, 1,:pwd)");
     $insertStmt->bindParam(':lock_mid', $lock_mid);
     $insertStmt->bindParam(':sid', $sid);
+    $insertStmt->bindParam(':pwd', $set_pwd);
     $insertStmt->execute();
 }
-    
     echo "上锁成功！<br/>";
-    unset($lock_canshu);
+}
+elseif($unlock_sure ==3){
+    echo "密码格式有误，仅允许输入数字！<br/>";
+}
+unset($lock_canshu);
+
 }elseif($lock_canshu ==2&&!$_POST['kw']){
 if($lock_sure == 1){
 $cmid = $cmid + 1;
@@ -61,8 +116,8 @@ $cdid[] = $cmid;
 $unlock_html = <<<HTML
 <form method="post">
 <input name="ucmd" type="hidden" value="{$cmid}">
-请输入账号密码：<input name="password" type="text" title="账号密码"><br/>
-<input name="submit" type="submit" title="账号密码"><br/>
+请输入仓库密码或账号密码：<input name="password" type="text" title="密码"><br/>
+<input name="submit" type="submit" title="密码"><br/>
 </form>
 HTML;
 }elseif($lock_sure ==2){
@@ -141,7 +196,7 @@ if(!$canshu){
 
 
 if($getstorelock==0){
-    $lock_op = $encode->encode("cmd=gm_storage&lock_mid=$player_nowmid&lock_canshu=1&canshu=$canshu&ucmd=$cmid&sid=$sid");
+    $lock_op = $encode->encode("cmd=gm_storage&lock_mid=$player_nowmid&lock_canshu=1&unlock_sure=1&canshu=$canshu&ucmd=$cmid&sid=$sid");
     $lock_html = "<a href='?cmd=$lock_op'>仓库上锁</a><br/>";
 }else{
     $unlock_op = $encode->encode("cmd=gm_storage&lock_mid=$player_nowmid&lock_canshu=2&lock_sure=1&canshu=$canshu&ucmd=$cmid&sid=$sid");

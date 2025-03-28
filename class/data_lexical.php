@@ -1199,9 +1199,9 @@ foreach ($data as $ele_1 => $ele_2) {
                     $ele_2 = safebc_add($ele_2, $root_attr);
                 }
                     // 字段不存在，添加新字段并更新值
-                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values(?,?,?,?)";
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values(?,?,'item',?)";
                     $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ssss', $ele_1_2, $ele_2, 'item', $mid);
+                    $stmt->bind_param('sss', $ele_1_2, $ele_2, $mid);
                     $updateAll[] = array(
                         'query' => $updateQuery,
                         'stmt' => $stmt
@@ -1227,9 +1227,9 @@ foreach ($data as $ele_1 => $ele_2) {
                     );
                 } else{
                     // 字段不存在，添加新字段并更新值
-                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values(?,?,?,?)";
+                    $updateQuery = "INSERT INTO system_addition_attr(name,value,oid,mid)values(?,?,'item',?)";
                     $stmt = $db->prepare($updateQuery);
-                    $stmt->bind_param('ssss', $ele_1_2, $ele_2, 'item', $mid);
+                    $stmt->bind_param('sss', $ele_1_2, $ele_2, $mid);
                     $updateAll[] = array(
                         'query' => $updateQuery,
                         'stmt' => $stmt

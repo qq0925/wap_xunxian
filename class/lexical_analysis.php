@@ -1619,6 +1619,36 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                     }
+                    }elseif(strpos($attr2, "storage_lock.") === 0){
+                    $attr3 = substr($attr2, 13); // 提取 "storage_lock." 后面的部分
+                    if($attr3 =='self'){
+                    $sql = "SELECT nowmid FROM game1 WHERE sid = ?";
+                    
+                    // 使用预处理语句
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s", $sid);
+                    
+                    // 执行查询
+                    $stmt->execute();
+                    
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $real_mid = $row["nowmid"];
+                    }else{
+                    $real_mid = process_string($attr3,$sid,$oid,$mid,$jid,$type,$para);
+                    }
+                    $sql = "SELECT istate FROM system_storage_locked WHERE sid = '$sid' and ibelong_mid = '$real_mid'";
+                    // 使用预处理语句
+                    $stmt = $db->prepare($sql);
+                    // 执行查询
+                    $stmt->execute();
+                    
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $storage_lock = $row['istate'];
+                    $op = $storage_lock?:0;
                     }else{
                     $attr3 = $attr1.$attr2;
                     $attr3 = str_replace('\'', '', $attr3);
@@ -2260,7 +2290,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                             break;
                         case 'item':
                             $attr3 = 'i'.$attr2;
-                            if($attr3 =="icount"||$attr3 =="iroot"){
+                            if($attr3 =="icount"||$attr3 =="iroot"||$attr3 =="iequiped"){
                                 $sql = "SELECT * FROM system_item WHERE item_true_id = ? and sid = ?";
                                 $stmt = $db->prepare($sql);
                                 $stmt->bind_param("ss", $mid,$sid);
