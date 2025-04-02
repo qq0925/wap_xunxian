@@ -516,8 +516,13 @@ class BigNumberExpressionParser {
      * 其他bcmath函数的安全封装
      */
     private function safeBcadd($left, $right) {
+        // 如果任一操作数是字符串（非数字），则执行字符串连接
+        if ((!is_numeric($left) && !is_null($left)) || (!is_numeric($right) && !is_null($right))) {
+            return (string)$left . (string)$right;
+        }
+        
         if (!is_numeric($left) || !is_numeric($right)) {
-            // 如果不是数字，尝试转换为数字
+            // 如果不是数字但不是字符串，尝试转换为数字
             $left = is_numeric($left) ? $left : 0;
             $right = is_numeric($right) ? $right : 0;
         }

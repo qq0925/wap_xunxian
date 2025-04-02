@@ -123,4 +123,18 @@ function processFieldType(PDO $pdo, string $table, string $field, string $expect
         echo "已修改 {$table}.{$field} 类型为: {$fullType}<br/>";
     }
 }
+
+$result = $dblj->query("SHOW TABLES LIKE 'system_item_type'");
+if ($result->rowCount() == 0) {
+    // 表不存在，创建表
+    $sql = "CREATE TABLE `system_item_type`  (
+`itid` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
+`itpos` int(11) NOT NULL,
+`itname` varchar(255) NOT NULL,
+`itfather` tinyint(1) NOT NULL
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = COMPACT";
+$dblj->exec($sql);
+$sql = "insert into system_item_type (itpos,itname,itfather) values (1,'消耗品','消耗品'),(2,'兵器','兵器')";
+//$dblj->exec($sql);
+}
 ?>

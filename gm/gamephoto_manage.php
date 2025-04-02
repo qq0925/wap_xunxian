@@ -24,6 +24,50 @@ if($delete_name){
     $cxjg = $dblj->exec($sql);
 }
 
+if($flush_name){
+    // 过滤目录名防止路径遍历
+    $flush_name = basename($flush_name);
+    $targetDirectory = 'images/'.$flush_name;
+    
+    $fileCount = 0;  // 初始化计数器
+    $dbOperationMessage = ""; // 数据库操作结果
+
+    // 执行数据库删除操作（无论文件是否存在都会执行）
+    $sql = "DELETE FROM system_photo WHERE type = :name";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':name', $flush_name);
+    $dbSuccess = $stmt->execute();
+
+    if (is_dir($targetDirectory)) {
+        // 扫描目录并过滤特殊目录
+        $files = array_diff(scandir($targetDirectory), ['.', '..']);
+        
+        foreach ($files as $file) {
+            $filePath = $targetDirectory.'/'.$file;
+            // 只删除文件不处理目录
+            if (is_file($filePath) && unlink($filePath)) {
+                $fileCount++;
+            }
+        }
+
+        if ($fileCount > 0) {
+            echo "已移除{$fileCount}个图片文件，";
+        } else {
+            echo "文件夹内未存在文件，";
+        }
+    } else {
+        echo "文件夹内未存在文件，";
+    }
+
+    // 根据数据库操作结果输出
+    if ($dbSuccess) {
+        echo "已移除数据库记录。<br/>";
+    } else {
+        echo "数据库删除失败，请联系管理员！<br/>";
+    }
+}
+
+
 $_SERVER['PHP_SELF'];
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $gm =new \gm\gm();

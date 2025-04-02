@@ -56,6 +56,8 @@ HTML;
 }
 
 if($index !=0){
+$photo_delete = $encode->encode("cmd=gm_game_photomanage&flush_name=$photo_type&sid=$sid");
+$del_url = "game.php?cmd=$photo_delete";
 $photo_html = <<<HTML
 <!-- Start generating the HTML table -->
 <table border="1" cellspacing="0" cellpadding="0" border-color="#b6ff00" style="text-align:center;">
@@ -72,6 +74,7 @@ $photo_html = <<<HTML
 $photo_detail_list
 </table>
 <a href="?cmd=$photo_upload">上传图片</a><br/>
+<a href="#" onclick="return confirmAction('$del_url', '{$photo_type}')">清空图片</a><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>
 <a href="?cmd=$gm_main">返回设计大厅</a><br/>
 HTML;
@@ -85,3 +88,13 @@ HTML;
 }
 echo $photo_html;
 ?>
+<script>
+function confirmAction(del_url, step_order) {
+    // 在确认框中显示具体的操作名称
+    if (confirm("你确定要清空 “" + step_order + "” 这个类别的图片吗？")) {
+        // 使用传入的具体删除链接
+        window.location.href = del_url;
+    }
+    return false;
+}
+</script>
