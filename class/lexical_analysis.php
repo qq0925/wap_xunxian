@@ -140,15 +140,19 @@ function get_default_skill_hurt($db, $default_jid) {
 
 // 处理群体攻击
 function handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round) {
+    include_once 'class/lexical_analysis_test.php';
     // 提取技能数据
     $j_group_attack = $skill_data['j_group_attack'];
     $j_event_use_id = $skill_data['j_event_use_id'];
     $j_deplete_exp = $skill_data['j_deplete_exp'];
     $j_deplete_attr = $skill_data['j_deplete_attr'];
-    
+    $variables = [
+        'calc_type' => 'int'
+    ];
     // 计算消耗值
     $deplete_exp_processed = process_string($j_deplete_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null);
-    $hurt_m_cut = (int)floor(eval("return $deplete_exp_processed;"));
+    $hurt_m_cut = calculateBigNumberExpression($deplete_exp_processed,$variables,0);
+    //$hurt_m_cut = (int)floor(eval("return $deplete_exp_processed;"));
 
     // 检查属性消耗
     $u_skill_attr = "u" . $j_deplete_attr;
@@ -172,17 +176,20 @@ function handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round) {
 
     // 计算技能经验
     $add_point_exp_processed = process_string($j_add_point_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null);
-    $j_point_exp = (int)floor(eval("return $add_point_exp_processed;"));
+    $j_point_exp = calculateBigNumberExpression($add_point_exp_processed,$variables,0);
+    //$j_point_exp = (int)floor(eval("return $add_point_exp_processed;"));
 
     // 计算升级所需经验
     $promotion_processed = process_string($j_promotion, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null);
-    $j_promotion_add = (int)floor(eval("return $promotion_processed;"));
+    $j_promotion_add = calculateBigNumberExpression($promotion_processed,$variables,0);
+    //$j_promotion_add = (int)floor(eval("return $promotion_processed;"));
 
     // 计算升级条件
     $promotion_cond_processed = process_string($j_promotion_cond, $sid, 'npc_monster', $ngid[0], $jid, 'fight', 1);
-    $j_promotion_cond_add = (int)floor(eval("return $promotion_cond_processed;"));
+    $j_promotion_cond_add = calculateBigNumberExpression($promotion_cond_processed,$variables,0);
+    //$j_promotion_cond_add = (int)floor(eval("return $promotion_cond_processed;"));
 
-    // 处理技能升级
+    // 处理技能升级，这里还没引入极大数处理
     if ($j_promotion_cond_add) {
         $sql = "update system_skill_user set jpoint = jpoint + '$j_point_exp' where jsid = '$sid' and jid = '$jid'";
         $dblj->exec($sql);
@@ -464,13 +471,18 @@ function process_event($j_event_use_id, $sid, $dblj, $attack_gid) {
 
 // 处理伤害
 function process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, $context,$next_round) {
+    include_once 'class/lexical_analysis_test.php';
     $j_hurt_exp = $skill_data['j_hurt_exp'];
     $j_umsg = $skill_data['j_umsg'];
-
+    $variables = [
+        'calc_type' => 'int'
+    ];
     $hurt_cut = process_string($j_hurt_exp, $sid, $context, $attack_gid, $jid, 'fight',0);
-    $hurt_cut = eval("return $hurt_cut;");
-    $hurt_cut = (int)floor($hurt_cut);
-    $hurt_cut = $hurt_cut <= 0 ? 1 : $hurt_cut;
+    $hurt_cut = calculateBigNumberExpression($hurt_cut,$variables,0);
+    
+    //$hurt_cut = eval("return $hurt_cut;");
+    //$hurt_cut = (int)floor($hurt_cut);
+    //$hurt_cut = $hurt_cut <= 0 ? 1 : $hurt_cut;
 
     // 首先获取当前的nhp值
     $selectSql = "SELECT nhp FROM system_npc_midguaiwu WHERE ngid = ?";
@@ -487,7 +499,7 @@ function process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, $context,$n
     $stmt->execute([$newHp, $sid, $attack_gid]);
 
     $p_one = $p_one?:0;
-    $sql = "insert into game2(hurt_hp,sid,gid,pid,round,type)values('-$hurt_cut','$sid','$attack_gid','$p_one','$next_round','1')";
+    $sql = "insert into game2(hurt_hp,sid,gid,pid,round,type)values('$hurt_cut','$sid','$attack_gid','$p_one','$next_round','1')";
     $dblj->exec($sql);
     $j_umsg = \lexical_analysis\process_string($j_umsg, $sid, $context, $attack_gid,$jid);
     $j_umsg = str_replace(["'", "\""], '', $j_umsg);
@@ -1966,10 +1978,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         // 获取查询结果
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
-                        $op = abs($row["hurt_hp"]);
-                        if ($op === null||$op =='') {
-                            //$op = "\"\""; // 或其他默认值
-                            }
+                        $op = $row["hurt_hp"];
                         break;
                     }
                     break;
