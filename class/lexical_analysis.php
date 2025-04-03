@@ -655,6 +655,68 @@ $expr = preg_replace_callback('/\{inarr\((.*?)\)\}/', function($matches) use ($d
     return in_array($value, $array) ? 1 : 0;
 }, $expr);
 
+$expr = preg_replace_callback('/\{arrinarr\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
+    // 获取括号内的参数
+    $params = explode(',', $matches[1]);
+    
+    // 确保至少有两个参数
+    if (count($params) < 2) {
+        return 0;
+    }
+    
+    // 处理参数
+    $params = array_map(function($param) {
+        return trim($param);
+    }, $params);
+    
+    // 获取左边的数组
+    $array_str_1 = $params[0];
+    $array_str_1 = str_replace(array("'","\""), '', $array_str_1);
+    $array_1 = explode('|', $array_str_1);
+    
+    // 获取右边的数组
+    $array_str_2 = $params[1];
+    $array_str_2 = str_replace(array("'","\""), '', $array_str_2);
+    $array_2 = explode('|', $array_str_2);
+
+    // 检查值是否在数组中
+    return array_diff($array_1, $array_2) ? 0 : 1;
+}, $expr);
+
+$expr = preg_replace_callback('/\{arrinstr\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
+    // 获取括号内的参数
+    $params = explode(',', $matches[1]);
+    
+    // 确保至少有两个参数
+    if (count($params) < 2) {
+        return 0;
+    }
+    
+    // 处理参数
+    $params = array_map(function($param) {
+        return trim($param);
+    }, $params);
+    
+    // 获取左边的数组
+    $array_str_1 = $params[0];
+    $array_str_1 = str_replace(array("'","\""), '', $array_str_1);
+    $array_1 = explode('|', $array_str_1);
+    // 获取右边的字符串
+    $array_2 = $params[1];
+    $array_2 = str_replace(array("'","\""), '', $array_2);
+    
+    if(empty($array_1)){
+        return 0;
+    }else{
+    foreach ($array_1 as $array_1_one){
+        if($array_1_one!=='' && strpos($array_2,$array_1_one) !==false){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+    }
+}, $expr);
 
 $expr = preg_replace_callback('/\{getarr\((.*?)\)\}/', function($matches) use ($db,$sid,$oid,$mid,$jid,$type,$para) {
     // 获取括号内的参数
