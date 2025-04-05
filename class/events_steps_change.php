@@ -162,7 +162,7 @@ HTML;
                                 $ret_2 = attrchanging($step_m_attrs,$sid,$oid,$mid,$para);
                             }
                             if($step_items){
-                                $ret_3 = itemchanging($step_items,$sid);
+                                $ret_3 = itemchanging($step_items,$sid,$oid,$mid);
                             }
                             if($step_a_skills){
                                 $ret_4 = skillschanging($step_a_skills,$sid,1,$oid,$mid);
