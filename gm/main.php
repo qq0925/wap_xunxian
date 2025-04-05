@@ -3,8 +3,13 @@ $can_redis = $GLOBALS['can_redis'];
 if($remove_canshu!=1&&$remove_canshu!=3&&$remove_canshu!=5){
     
     if($remove_canshu==2){
+        if($remove_type == 'global'){
         echo "已清空公共聊天数据！<br/>";
         $dblj->exec("delete from system_chat_data where chat_type = '0'");
+        }elseif($remove_type == 'system'){
+        echo "已清空公共系统数据！<br/>";
+        $dblj->exec("delete from system_chat_data where chat_type = '6' and uid = '0'");
+        }
     }
 
     if($remove_canshu==4){
@@ -44,7 +49,8 @@ $gm_game_rpdesign = $encode->encode("cmd=gm_game_rpdesign&rp_canshu=0&sid=$sid")
 $gm_game_lpdesign = $encode->encode("cmd=gm_game_lpdesign&lp_canshu=0&sid=$sid");
 //$gm_game_mkdesign = $encode->encode("cmd=gm_game_mkdesign&mk_canshu=0&sid=$sid");
 $gm_online_list = $encode->encode("cmd=nowonline&design_canshu=1&sid=$sid");
-$remove_all_chat = $encode->encode("cmd=gm&remove_canshu=1&sid=$sid");
+$remove_all_chat = $encode->encode("cmd=gm&remove_canshu=1&remove_type=global&sid=$sid");
+$remove_system_chat = $encode->encode("cmd=gm&remove_canshu=1&remove_type=system&sid=$sid");
 $global_value_design = $encode->encode("cmd=global_value_design&sid=$sid");
 $gm_zip_update = $encode->encode("cmd=gm_game_zipfile&type=update&sid=$sid");
 $gm_zip_all = $encode->encode("cmd=gm_game_zipfile&type=all&sid=$sid");
@@ -69,6 +75,7 @@ $gm_html = <<<HTML
 <a href="?cmd=$gonewmid">前往场景</a>|<a href="?cmd=$gothefirstpage">前往首页</a><br/>
 (在线人数/注册人数)：(<a href="?cmd=$gm_online_list">{$game_data->online_count}</a>/{$game_data->player_count})<br/>
 公共聊天信息数量：($game_data->global_chat_count)<a href="?cmd=$remove_all_chat">清空</a><br/>
+公共系统信息数量：($game_data->global_system_chat_count)<a href="?cmd=$remove_system_chat">清空</a><br/>
 ---<br/>
 <a href="?cmd=$gm_game_basicinfo">基本信息</a><br/>
 <a href="?cmd=$gm_game_attrdefine">定义属性</a><br/>
@@ -107,12 +114,21 @@ $cache_page
 ---</br>
 HTML;
 }elseif($remove_canshu ==1){
-    $sure_main = $encode->encode("cmd=gm&remove_canshu=2&sid=$sid");
+    if($remove_type =='global'){
+    $sure_main = $encode->encode("cmd=gm&remove_canshu=2&remove_type=global&sid=$sid");
     $cancel_main = $encode->encode("cmd=gm&sid=$sid");
     $gm_html =<<<HTML
     是否清空公聊信息<br/>
 <a href="?cmd=$sure_main">确定</a> | <a href="?cmd=$cancel_main">取消</a><br/>
 HTML;
+}elseif($remove_type =='system'){
+    $sure_main = $encode->encode("cmd=gm&remove_canshu=2&remove_type=system&sid=$sid");
+    $cancel_main = $encode->encode("cmd=gm&sid=$sid");
+    $gm_html =<<<HTML
+    是否清空系统信息<br/>
+<a href="?cmd=$sure_main">确定</a> | <a href="?cmd=$cancel_main">取消</a><br/>
+HTML;
+}
 }
 elseif($remove_canshu ==3){
     $sure_main = $encode->encode("cmd=gm&remove_canshu=4&sid=$sid");

@@ -2447,7 +2447,7 @@ echo $refresh_html;
                         case '兵器':
                             $iequip_cond = $item->iequip_cond;
                             $equip_ret = $iequip_cond !== '' 
-                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid): 1;
+                                ? \lexical_analysis\process_string($iequip_cond, $sid, 'item', $item_true_id): 1;
                             try{
                                 @$ret = eval("return $equip_ret;");
                             }
@@ -2495,7 +2495,7 @@ echo $refresh_html;
                         case '防具':
                             $iequip_cond = $item->iequip_cond;
                             $equip_ret = $iequip_cond !== '' 
-                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid): 1;
+                                ? \lexical_analysis\process_string($iequip_cond, $sid, 'item', $item_true_id): 1;
                             try{
                                 @$ret = eval("return $equip_ret;");
                             }
@@ -2939,7 +2939,7 @@ echo $refresh_html;
                     switch($itype){
                         case '兵器':
                             $equip_ret = $iequip_cond !== '' 
-                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid, null, null, "check_cond"): 1;
+                                ? \lexical_analysis\process_string($iequip_cond, $sid, 'item', $equip_true_id): 1;
                             try{
                                 @$ret = eval("return $equip_ret;");
                             }
@@ -2978,7 +2978,7 @@ echo $refresh_html;
                             break;
                         case '防具':
                             $equip_ret = $iequip_cond !== '' 
-                                ? \lexical_analysis\process_string($iequip_cond, $sid, $oid, $mid, null, null, "check_cond"): 1;
+                                ? \lexical_analysis\process_string($iequip_cond, $sid, 'item', $equip_true_id): 1;
                             try{
                                 @$ret = eval("return $equip_ret;");
                             }

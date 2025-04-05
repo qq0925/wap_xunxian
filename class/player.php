@@ -2241,6 +2241,7 @@ class getbasicgmdata{
     var $buff_count;
     var $online_count;
     var $global_chat_count;
+    var $global_system_chat_count;
     var $player_count;
     var $fb_count;
     var $rp_count;
@@ -2270,6 +2271,7 @@ function getbasicgmdata($dblj){
                     (SELECT COUNT(*) FROM system_mk) AS mk_count,
                     (SELECT COUNT(*) FROM game1 where sfzx = 1) AS online_count,
                     (SELECT COUNT(*) FROM system_chat_data where chat_type = 0) AS global_chat_count,
+                    (SELECT COUNT(*) FROM system_chat_data where chat_type = 6 AND uid = 0) AS global_system_chat_count,
                     (SELECT COUNT(*) FROM game1) AS player_count,
                     (SELECT COUNT(*) FROM system_exp_def) AS exp_count";
         // 执行查询并获取结果
@@ -2287,6 +2289,7 @@ function getbasicgmdata($dblj){
         $gamebasic->buff_count = $row['buff_count'];
         $gamebasic->online_count = $row['online_count'];
         $gamebasic->global_chat_count = $row['global_chat_count'];
+        $gamebasic->global_system_chat_count = $row['global_system_chat_count'];
         $gamebasic->player_count = $row['player_count'];
         $gamebasic->fb_count = $row['fb_count'];
         $gamebasic->rp_count = $row['rp_count'];
