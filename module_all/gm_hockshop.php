@@ -62,7 +62,18 @@ foreach ($user_item_para as $item_detail){
     $item_name = $item_detail['iname'];
     $item_count = $item_detail['icount'];
     $item_name = \lexical_analysis\color_string($item_name);
+    $item_type = $item_detail['itype'];
+    if($item_type =='兵器'||$item_type == '防具'){
+    $result = $db->query("SELECT value from system_addition_attr where oid = 'item' and mid = '$item_true_id' and name = 'iprice'");
+    if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $item_value =  $row['value'];
+    }else{
     $item_value = $item_detail['iprice'];
+    }
+    }else{
+    $item_value = $item_detail['iprice'];
+    }
     $item_weight = $item_detail['iweight'];
     $item_desc = $item_detail['idesc'];
     $item_desc = \lexical_analysis\process_string($item_desc,$sid);
@@ -105,7 +116,20 @@ $item_now_count = \player\getitem_true_count($item_true_id,$sid,$dblj);
 $item_para = player\getitem($iid,$dblj);
 $item_name = $item_para ->iname;
 $item_name = \lexical_analysis\color_string($item_name);
+
+$item_type = $item_para ->itype;
+if($item_type =='兵器'||$item_type == '防具'){
+$result = $db->query("SELECT value from system_addition_attr where oid = 'item' and mid = '$item_true_id' and name = 'iprice'");
+if ($result->num_rows > 0) {
+$row = $result->fetch_assoc();
+$item_value =  $row['value'];
+}else{
 $item_value = $item_para ->iprice;
+}
+}else{
+$item_value = $item_para ->iprice;
+}
+
 $item_weight = $item_para ->iweight;
 $item_desc = $item_para ->idesc;
 $item_desc = \lexical_analysis\process_string($item_desc,$sid);

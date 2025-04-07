@@ -22,7 +22,15 @@ if($canshu =='into_choose'){
 $equip_id = \player\getitem_true($equip_true_id,$dblj)->iid;
 $equip_name = \lexical_analysis\color_string(\player\getitem_true($equip_true_id,$dblj)->iname);
 $equip_type = \player\getitem_true($equip_true_id,$dblj)->itype;
+
+$result = $db->query("SELECT value from system_addition_attr where oid = 'item' and mid = '$equip_true_id' and name = 'iembed_count'");
+if ($result->num_rows > 0) {
+$row = $result->fetch_assoc();
+$equip_iembed_count =  $row['value'];
+}else{
 $equip_iembed_count = \player\getitem_true($equip_true_id,$dblj)->iembed_count;
+}
+
 $equip_iembed_now_count = count(explode('|',\player\get_player_equip_mosaic_once($equip_true_id,$sid,$dblj)['equip_mosaic']));
 
 $mosaic_list = \player\get_player_all_mosaic($equip_type,$sid,$dblj);
@@ -277,7 +285,6 @@ for ($i=0;$i<count($get_main_page);$i++){
     }
     if($main_target_func !=0 ){
         $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,14,$cmid);
-        //var_dump($main_target_func);
     }
     switch ($main_type) {
         case '1':

@@ -2353,14 +2353,19 @@ function item_mosaic_url($cmd,$page_id,$sid,$dblj,$value,$mid,&$cmid){
     //刷新功能实现
     global $encode;
 
-    $sql = "select iembed_count from system_item_module where iid = (select iid from system_item where sid = '$sid' and item_true_id = '$mid')";
-    $cxjg = $dblj->query($sql);
-    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
-    $iembed_count = $ret['iembed_count']?:0;
-    $equip_html=<<<HTML
-可镶宝数:{$iembed_count}<br/>
-HTML;
+    $sql = "SELECT value FROM system_addition_attr WHERE oid = 'item' AND mid = '$mid' AND name = 'iembed_count'";
+    $stmt = $dblj->query($sql);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        $iembed_count = $row['value'];
+    }else{
+        $sql = "select iembed_count from system_item_module where iid = (select iid from system_item where sid = '$sid' and item_true_id = '$mid')";
+        $cxjg = $dblj->query($sql);
+        $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
+        $iembed_count = $ret['iembed_count'];
+    }
 
+    $iembed_count = $iembed_count?:0;
     $sql = "select equip_mosaic from player_equip_mosaic where equip_id ='$mid'";
     $cxjg = $dblj->query($sql);
     $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
@@ -2384,15 +2389,9 @@ HTML;
 if($iembed_count>0 &&$iembed_count > $equip_mosaic_count){
     $equip_mosaic_into = $encode->encode("cmd=equip_html&page=item&canshu=into_choose&equip_true_id=$mid&ucmd=$cmid&sid=$sid");
     $equip_html .=<<<HTML
-----------<br/>
 <a href="?cmd=$equip_mosaic_into">镶嵌物品</a><br/>
 HTML;
 }
-
-
-    $equip_html .=<<<HTML
-----------<br/>
-HTML;
     return $equip_html;
 }
 
