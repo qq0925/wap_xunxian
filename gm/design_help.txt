@@ -310,7 +310,7 @@ A??C，通过这种写法等同于isset(A)?A:C
 9、c.id,c.name,c.desc,c.status,c.status_string,c.creator,c.site等游戏常量，其中status与status_string的对应关系为：0-开发中，1-维护中，2-内测，3-公测
 10、获得敌人数量u|o.enemys.count和u|o.alive.enemy_count
 11、获得敌人对象u|o.enemys.n.***和u|o.alive_enemys.n.***
-12、获得队友数量c.team_member_count
+12、获得队友数量u.team_member_count
 13、获得队友对象u|o.team_members.n.***或u|o.team_members.nt.***
 14、事件步骤中更改属性时可以对字符串进行相加，使用.而不是+,后者会报错。
 15、ut|ot.fight_umsg和ut|ot.fight_omsg设置和获得当前一招产生的描述，umsg为攻击的信息，omsg为受攻击的信息，建议直接使用功能键输出。

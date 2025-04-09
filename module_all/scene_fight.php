@@ -1,13 +1,7 @@
 <?php
-// require_once 'class/player.php';
-// require_once 'class/encode.php';
-// require_once 'class/gm.php';
-// include_once 'pdo.php';
-
-// require_once 'class/lexical_analysis.php';
 require_once 'class/basic_function_todo.php';
 include_once 'class/events_steps_change.php';
-//include_once 'class/global_event_step_change.php';
+
 
 $parents_page = $currentFilePath;
 $parents_cmd = 'gm_scene_new';
@@ -15,6 +9,9 @@ $player = \player\getplayer($sid,$dblj);
 $pet = \player\getpet_fight($sid,$dblj,'alive');//活着的宠物
 $clmid = player\getmid($player->nowmid,$dblj);
 $fight_arr = player\getfightpara($sid,$dblj);
+$variables = [
+    'calc_type' => 'int'
+];
 $can_redis = $GLOBALS['can_redis'];
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
@@ -256,13 +253,17 @@ if($round ==0&&$cmd =='pve_fight'){
             $drop_item_type = $alive_monster->ndrop_item_type;
             $drop_map_id = $alive_monster->nmid;
             if($drop_exp){
-            $drop_exp = \lexical_analysis\process_string($drop_exp,$sid);
+            $drop_exp = \lexical_analysis\process_string($drop_exp,$sid,$oid,$mid);
             }
             if($drop_money){
-            $drop_money = \lexical_analysis\process_string($drop_money,$sid);
+            $drop_money = \lexical_analysis\process_string($drop_money,$sid,$oid,$mid);
             }
             if($drop_items){
+            $start= microtime(true);  
             $items_para = json_decode($drop_items, true);
+$end = microtime(true);
+$execution = ceil(($end  - $start) * 1000);// 单位是毫秒
+echo "页面执行时间为：{$execution} 毫秒<br/>";
             if($drop_item_type ==1){
             $drop_add_map_item = [];
             if($items_para){
@@ -333,15 +334,16 @@ if($round ==0&&$cmd =='pve_fight'){
             }
             }
             if($drop_exp!=""){
-                $drop_exp = @eval("return $drop_exp;");
+                $drop_exp = calculateBigNumberExpression($drop_exp,$variables,0);
                 \player\addplayersx('uexp',$drop_exp,$sid,$dblj);
                     // 更新经验和金钱
-                $total_exp += $drop_exp;
+                $total_exp =bcadd($total_exp,$drop_exp,0);
             }
             if($drop_money!=""){
+                $drop_money = calculateBigNumberExpression($drop_money,$variables,0);
                 $drop_money = @eval("return $drop_money;");
                 \player\addplayersx('umoney',$drop_money,$sid,$dblj);
-                $total_money += $drop_money;
+                $total_money =bcadd($total_money,$drop_money,0);
             }
 
             $rwts_kill = \player\update_task($sid,$dblj,null,$alive_monster->nid,$alive_monster->nname);
@@ -399,12 +401,12 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     }
     }
     if($total_exp){
-    $total_exp = $total_exp>0?"+".$total_exp:$total_exp;
+    $total_exp = bccomp($total_exp,'0')>0?"+".$total_exp:$total_exp;
     // 添加经验和金钱输出
     $huode .= "{$exp_name}{$total_exp} <br/>";
     }
     if($total_money){
-    $total_money = $total_money>0?"+".$total_money:$total_money;
+    $total_money = bccomp($total_money,'0')>0?"+".$total_money:$total_money;
     $huode .= "{$money_name}{$total_money}{$money_measure} <br/>";
     }
     $dblj->exec("DELETE from player_temp_attr where obj_id = '$sid' and attr_name = 'busy'");

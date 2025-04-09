@@ -63,11 +63,10 @@ function hurt_calc($sid, $gid, $type, $dblj, $next_round, $jid = null, $pid = nu
     ];
     
     foreach ($skill_fields as $field) {
-        if (!isset($skill_data[$field]) || $skill_data[$field] === '') {
+        if (!isset($skill_data[$field]) || $skill_data[$field] === '' ) {
             $skill_data[$field] = $default_skill[$field];
         }
     }
-
     // 使用 switch 来处理不同类型的攻击
     switch ($type) {
         case 1:
@@ -234,6 +233,7 @@ function handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round) {
 
 //处理怪物群体攻击
 function handle_members_attack($gid, $sid, $members, $dblj, $skill_id, $db, $next_round) {
+    include_once 'class/lexical_analysis_test.php';
     
     // 获取技能数据并设置默认值
     $skill = get_skill_data($skill_id, $db);
@@ -256,9 +256,14 @@ function handle_members_attack($gid, $sid, $members, $dblj, $skill_id, $db, $nex
     $deplete_exp = $skill['j_deplete_exp'];
     $deplete_attr = $skill['j_deplete_attr'];
     
+    $variables = [
+        'calc_type' => 'int'
+    ];
+    
     // 计算消耗值
     $deplete_exp_processed = process_string_2($deplete_exp, $gid, 'monstertouser', $sid, $skill_id);
-    $hurt_m_cut = (int)floor(eval("return $deplete_exp_processed;"));
+    $hurt_m_cut = calculateBigNumberExpression($deplete_exp_processed, $variables, 0);
+    //$hurt_m_cut = (int)floor(eval("return $deplete_exp_processed;"));
 
     // 检查属性消耗
     $n_skill_attr = "n" . $deplete_attr;
@@ -366,6 +371,7 @@ function handle_pet_attack($monster_id,$pid, $sid, $dblj, $db,$next_round) {
 
 //处理宠物技能攻击
 function handle_pet_members_attack($ngid, $p_one, $sid, $dblj,$skill_id, $db, $next_round) {
+    include_once 'class/lexical_analysis_test.php';
     
     // 获取技能数据并设置默认值
     $skill = get_skill_data($skill_id, $db);
@@ -389,9 +395,14 @@ function handle_pet_members_attack($ngid, $p_one, $sid, $dblj,$skill_id, $db, $n
     $deplete_exp = $skill['j_deplete_exp'];
     $deplete_attr = $skill['j_deplete_attr'];
     
+    $variables = [
+        'calc_type' => 'int'
+    ];
+    
     // 计算消耗值
     $deplete_exp_processed = process_string_3($deplete_exp, $p_one, 'pet_fight', $ngid[0], $skill_id);
-    $hurt_m_cut = (int)floor(eval("return $deplete_exp_processed;"));
+    $hurt_m_cut = calculateBigNumberExpression($deplete_exp_processed, $variables, 0);
+    //$hurt_m_cut = (int)floor(eval("return $deplete_exp_processed;"));
     
     // 检查属性消耗
     $n_skill_attr = "n" . $deplete_attr;
@@ -427,7 +438,8 @@ function handle_pet_members_attack($ngid, $p_one, $sid, $dblj,$skill_id, $db, $n
     foreach ($targets as $attack_gid) {
         // 计算伤害
         $hurt_exp_processed = process_string_3($hurt_exp, $p_one, 'pet_fight', $attack_gid, $skill_id, 'fight');
-        $hurt_cut = (int)floor(eval("return $hurt_exp_processed;"));
+        $hurt_cut = calculateBigNumberExpression($hurt_exp_processed, $variables, 0);
+        //$hurt_cut = (int)floor(eval("return $hurt_exp_processed;"));
         $hurt_cut = max(1, $hurt_cut);  // 确保最小伤害为1
         
         // 获取当前HP
@@ -510,13 +522,20 @@ function process_damage($skill_data, $sid, $dblj, $jid, $attack_gid, $context,$n
 
 //处理怪物伤害
 function process_monster_damage($hurt_exp, $effect_comment, $jid, $gid, $dblj, $member_id, $sid, $next_round) {
+    include_once 'class/lexical_analysis_test.php';
+    
     // 确定目标类型和处理参数
     $is_pet = is_numeric($member_id);
     $target_type = $is_pet ? 'monstertopet' : 'monstertouser';
     
+    $variables = [
+        'calc_type' => 'int'
+    ];
+    
     // 计算伤害值
-    $hurt_cut = process_string_2($hurt_exp, $gid, $target_type, $member_id, $jid);
-    $hurt_cut = (int)floor(eval("return $hurt_cut;"));
+    $hurt_exp_processed = process_string_2($hurt_exp, $gid, $target_type, $member_id, $jid);
+    $hurt_cut = calculateBigNumberExpression($hurt_exp_processed, $variables, 0);
+    //$hurt_cut = (int)floor(eval("return $hurt_exp_processed;"));
     $hurt_cut = max(1, $hurt_cut);  // 确保最小伤害为1
     
     // 更新目标生命值
@@ -3541,49 +3560,49 @@ function convertNumber($op) {
 }
 
 
-
 //上为主对被，下为被对主。
 
 function evaluate_expression_2($expr, $db, $gid,$oid,$mid,$jid,$type,$para=null){
+include_once 'class/lexical_analysis_test.php';
 $expr = preg_replace_callback('/\{eval\(([^)]+)\)\}/', function($matches) use ($db, $gid,$oid,$mid,$jid,$type,$para) {
     $eval_expr = $matches[1]; // 获取 eval 中的表达式
-    $eval_result = @eval("return $eval_expr;"); // 计算 eval 表达式的结果
+    $variables = [
+        'calc_type' => 'int'
+    ];
+    $eval_result = calculateBigNumberExpression($eval_expr,$variables,0);
     return $eval_result; // 返回计算结果
 }, $expr);
-//var_dump($expr);
-$expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db, $gid,$oid,$mid,$jid,$type,$para) {
+
+
+$expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$gid,$oid,$mid,$jid,$type,$para) {
     $attr = $matches[1]; // 获取匹配到的变量名
-            $firstDotPosition = strpos($attr, '.');
-            if (!empty($firstDotPosition)) {
-                $attr1 = substr($attr, 0, $firstDotPosition);
-                $attr2 = substr($attr, $firstDotPosition + 1);
-                // 使用 process_attribute 处理单个属性
-                $op = process_attribute_2($attr1,$attr2,$gid, $oid, $mid,$jid,$type,$db,$para);
-                // 替换字符串中的变量
-            }
-        
-    // 在这里根据变量名获取对应的值，例如从数据库中查询
-    // 假设你从数据库中获取了 $attr_value
-    
-    $temp = $op;
-    if (strpos($temp, '"') === false){
-    $op = "\"".$temp."\"";
+    if(is_numeric($attr)){
+    $op = $attr;
+    }else{
+    $firstDotPosition = strpos($attr, '.');
+    if ($firstDotPosition !== false) {
+        $attr1 = substr($attr, 0, $firstDotPosition);  // 第一个点前的部分
+        $attr2 = substr($attr, $firstDotPosition + 1); // 第一个点后的部分
+        $attr2 = str_replace("'", '', $attr2);
+        //$attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
+    $op = \lexical_analysis\process_attribute_2($attr1,$attr2,$gid, $oid, $mid,$jid,$type,$db,$para);
     }
-    $op = str_replace(array("''", "\"\""), '0', $op);
-    // 使用正则表达式，去掉内部的单引号
-    $op = preg_replace("/'(.*?)'/", '$1', $op);
-    $op = str_replace(array("\""), '\'', $op);
+    
+    }
+    if(!is_int((int)$op)){
+    $op = str_replace("'", '', $op);
+    $op = $op?"'".$op."'":"''";
+    }else{
+    $op = str_replace("''", '0', $op);
+    $op = str_replace("'", '', $op);
+    $op = "'".$op."'";
+    }
     return $op;
-}, $expr);
-//var_dump($expr);
-// 现在 $expr 中的 {eval(...)} 和 {...} 部分已经被替换成了对应的值
+},$expr);
 $result = $expr;
 try{
-
-//$result = eval("return $expr;");
 }catch (ParseError $e){
                 print("语法错误: ". $e->getMessage());
-                
             }
             catch (Error $e){
                 print("执行错误: ". $e->getMessage());
@@ -4198,18 +4217,38 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
                     }
                     $row = $result->fetch_assoc();
                     $op = nl2br($row['value']);
-                    // 替换字符串中的变量
+                    $e_type = $row['type'];
                     $op = process_string_2($op,$gid,$oid,$mid,$jid,$type,$para);
+                    if($e_type ==1){
+                    $op = str_replace(array("''"), '0', $op);
+                    $op = str_replace(array("'"), '', $op);
+
+                    $variables = [
+                        'calc_type' => 'int'
+                    ];
+                    $op = calculateBigNumberExpression($op,$variables,0);
+                    }elseif($e_type ==2){
+                    $op = str_replace(array("'"), '', $op);
+                    $op = $op?"'".$op."'":"''";
                     $op = @eval("return $op;");
+                    }elseif($e_type ==3){
+                    $op = str_replace(array("'"), '', $op);
+                    $op = $op?"'".$op."'":"''";
+                    $op = @eval("return $op;");
+                    }
                     break;
                 case 'r':
                     if(!is_numeric($attr2)){
                         $attr2 = "{".$attr2."}";
                     }
                     $attr2 = process_string_2($attr2,$gid,$oid,$mid,$jid,$type,$para);
-
-                    $op = rand(1,(int)$attr2)-1;
-                    return $op;
+                    $attr2 = str_replace(array("'"), '', $attr2);
+                    
+                    if(bccomp($attr2, '0') <= 0){
+                        $attr2 = '1';
+                    }
+                    // 使用BCMath生成超大数范围内的随机数
+                    $op = bc_rand('0', bcsub($attr2, '1'));
                     break;
                 default:
                     return 0;
@@ -4222,8 +4261,8 @@ function process_attribute_2($attr1, $attr2,$gid, $oid, $mid,$jid,$type,$db,$par
 function process_string_2($input, $gid, $oid = null, $mid = null, $jid = null, $type = null, $para = null) {
     $db = DB::conn();
     $matches = [];
-    preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
-
+    if($input){
+    while(preg_match_all('/v\(([\w.]+)\)/', $input, $matches)){
     if (!empty($matches[1])) {
         foreach ($matches[1] as $match) {
             $firstDotPosition = strpos($match, '.');
@@ -4232,64 +4271,68 @@ function process_string_2($input, $gid, $oid = null, $mid = null, $jid = null, $
                 $attr2 = substr($match, $firstDotPosition + 1);
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute_2($attr1,$attr2,$gid, $oid, $mid,$jid,$type,$db,$para);
-                if($op =='' || $op == "" || $op ==null){
-                    //$op = "\"\"";
-                }
-                //$op = str_replace(array("'", "\"\""), '0', $op);
                 // 替换字符串中的变量
-                $input = str_replace("v({$match})", $op, $input);
             }
+        
+            $op = $op?"'".$op."'":"'0'";
+            $input = str_replace("v({$match})", $op, $input);
         }
     }
-
+}
+}
     // 进行其他逻辑处理
     // ...
+if($input){
 $input = evaluate_expression_2($input,$db,$gid,$oid,$mid,$jid,$type,$para);
+}
     return $input;
 }
+
+
 
 //上为被对主，下为宠对被。
 
 function evaluate_expression_3($expr, $db, $pid,$oid,$mid,$jid,$type,$para=null){
+include_once 'class/lexical_analysis_test.php';
 $expr = preg_replace_callback('/\{eval\(([^)]+)\)\}/', function($matches) use ($db, $pid,$oid,$mid,$jid,$type,$para) {
     $eval_expr = $matches[1]; // 获取 eval 中的表达式
-    $eval_result = @eval("return $eval_expr;"); // 计算 eval 表达式的结果
+    $variables = [
+        'calc_type' => 'int'
+    ];
+    $eval_result = calculateBigNumberExpression($eval_expr,$variables,0);
     return $eval_result; // 返回计算结果
 }, $expr);
-//var_dump($expr);
-$expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db, $pid,$oid,$mid,$jid,$type,$para) {
+
+$expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$pid,$oid,$mid,$jid,$type,$para) {
     $attr = $matches[1]; // 获取匹配到的变量名
-            $firstDotPosition = strpos($attr, '.');
-            if (!empty($firstDotPosition)) {
-                $attr1 = substr($attr, 0, $firstDotPosition);
-                $attr2 = substr($attr, $firstDotPosition + 1);
-                // 使用 process_attribute 处理单个属性
-                $op = process_attribute_3($attr1,$attr2,$pid, $oid, $mid,$jid,$type,$db,$para);
-                // 替换字符串中的变量
-            }
-        
-    // 在这里根据变量名获取对应的值，例如从数据库中查询
-    // 假设你从数据库中获取了 $attr_value
-    
-    $temp = $op;
-    if (strpos($temp, '"') === false){
-    $op = "\"".$temp."\"";
+    if(is_numeric($attr)){
+    $op = $attr;
+    }else{
+    $firstDotPosition = strpos($attr, '.');
+    if ($firstDotPosition !== false) {
+        $attr1 = substr($attr, 0, $firstDotPosition);  // 第一个点前的部分
+        $attr2 = substr($attr, $firstDotPosition + 1); // 第一个点后的部分
+        $attr2 = str_replace("'", '', $attr2);
+        //$attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
+    $op = \lexical_analysis\process_attribute_3($attr1,$attr2,$pid, $oid, $mid,$jid,$type,$db,$para);
     }
-    $op = str_replace(array("''", "\"\""), '0', $op);
-    // 使用正则表达式，去掉内部的单引号
-    $op = preg_replace("/'(.*?)'/", '$1', $op);
-    $op = str_replace(array("\""), '\'', $op);
+    
+    }
+    if(!is_int((int)$op)){
+    $op = str_replace("'", '', $op);
+    $op = $op?"'".$op."'":"''";
+    }else{
+    $op = str_replace("''", '0', $op);
+    $op = str_replace("'", '', $op);
+    $op = "'".$op."'";
+    }
     return $op;
-}, $expr);
-//var_dump($expr);
-// 现在 $expr 中的 {eval(...)} 和 {...} 部分已经被替换成了对应的值
+},$expr);
+
 $result = $expr;
 try{
-
-//$result = eval("return $expr;");
 }catch (ParseError $e){
                 print("语法错误: ". $e->getMessage());
-                
             }
             catch (Error $e){
                 print("执行错误: ". $e->getMessage());
@@ -4812,19 +4855,38 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
                     }
                     $row = $result->fetch_assoc();
                     $op = nl2br($row['value']);
-                    // 替换字符串中的变量
+                    $e_type = $row['type'];
                     $op = process_string_3($op,$pid,$oid,$mid,$jid,$type,$para);
+                    if($e_type ==1){
+                    $op = str_replace(array("''"), '0', $op);
+                    $op = str_replace(array("'"), '', $op);
+
+                    $variables = [
+                        'calc_type' => 'int'
+                    ];
+                    $op = calculateBigNumberExpression($op,$variables,0);
+                    }elseif($e_type ==2){
+                    $op = str_replace(array("'"), '', $op);
+                    $op = $op?"'".$op."'":"''";
                     $op = @eval("return $op;");
-                    //$input = str_replace("{{$match}}", $op, $input);
+                    }elseif($e_type ==3){
+                    $op = str_replace(array("'"), '', $op);
+                    $op = $op?"'".$op."'":"''";
+                    $op = @eval("return $op;");
+                    }
                     break;
                 case 'r':
                     if(!is_numeric($attr2)){
                         $attr2 = "{".$attr2."}";
                     }
                     $attr2 = process_string_3($attr2,$pid,$oid,$mid,$jid,$type,$para);
-
-                    $op = rand(1,(int)$attr2)-1;
-                    return $op;
+                    $attr2 = str_replace(array("'"), '', $attr2);
+                    
+                    if(bccomp($attr2, '0') <= 0){
+                        $attr2 = '1';
+                    }
+                    // 使用BCMath生成超大数范围内的随机数
+                    $op = bc_rand('0', bcsub($attr2, '1'));
                     break;
                 default:
                     return 0;
@@ -4840,7 +4902,8 @@ function process_attribute_3($attr1, $attr2,$pid, $oid, $mid,$jid,$type,$db,$par
 function process_string_3($input, $pid, $oid = null, $mid = null, $jid = null, $type = null, $para = null) {
     $db = DB::conn();
     $matches = [];
-    preg_match_all('/v\(([\w.]+)\)/', $input, $matches);
+    if($input){
+    while(preg_match_all('/v\(([\w.]+)\)/', $input, $matches)){
     if (!empty($matches[1])) {
         foreach ($matches[1] as $match) {
             $firstDotPosition = strpos($match, '.');
@@ -4849,19 +4912,19 @@ function process_string_3($input, $pid, $oid = null, $mid = null, $jid = null, $
                 $attr2 = substr($match, $firstDotPosition + 1);
                 // 使用 process_attribute 处理单个属性
                 $op = process_attribute_3($attr1,$attr2,$pid, $oid, $mid,$jid,$type,$db,$para);
-                if($op =='' || $op == "" || $op ==null){
-                    //$op = "\"\"";
-                }
-                //$op = str_replace(array("'", "\"\""), '0', $op);
-                // 替换字符串中的变量
-                $input = str_replace("v({$match})", $op, $input);
             }
+        
+            $op = $op?"'".$op."'":"'0'";
+            $input = str_replace("v({$match})", $op, $input);
         }
     }
-
+}
+}
     // 进行其他逻辑处理
     // ...
+if($input){
 $input = evaluate_expression_3($input,$db,$pid,$oid,$mid,$jid,$type,$para);
+}
     return $input;
 }
 
