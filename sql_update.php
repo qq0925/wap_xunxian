@@ -1,140 +1,18 @@
 <?php
 
-// 字段配置数组（结构示例）
-$fieldConfigs = [
-    [
-        'table'      => 'system_item',         // 表名
-        'field'      => 'icount',           // 字段名
-        'expect_type' => 'int',          // 期望的原类型（小写）
-        'new_type'   => 'decimal(65,0)',  // 目标新类型（完整SQL类型定义）
-        'attributes' => 'NOT NULL DEFAULT 0' // 其他字段属性
-    ],
-    [
-        'table'      => 'game1',         // 表名
-        'field'      => 'uburthen',           // 字段名
-        'expect_type' => 'int',          // 期望的原类型（小写）
-        'new_type'   => 'decimal(65,0)',  // 目标新类型（完整SQL类型定义）
-        'attributes' => 'NOT NULL DEFAULT 0' // 其他字段属性
-    ],
-    [
-        'table'      => 'game3',         // 表名
-        'fields'     => ['hurt_hp', 'hurt_mp', 'cut_hp', 'cut_mp'],  // 字段名数组
-        'expect_type' => 'TEXT',          // 期望的原类型（小写）
-        'new_type'   => 'decimal(65,0)',  // 目标新类型（完整SQL类型定义）
-        'attributes' => '' // 其他字段属性
-    ],
-    [
-        'table'      => 'system_fight_state',         // 表名
-        'fields'     => ['now_hp', 'now_mp'],  // 字段名数组
-        'expect_type' => 'int',          // 期望的原类型（小写）
-        'new_type'   => 'decimal(65,0)',  // 目标新类型（完整SQL类型定义）
-        'attributes' => '' // 其他字段属性
-    ],
-    [
-        'table'     => 'game2',
-        'fields'     => ['hurt_hp', 'hurt_mp', 'cut_hp', 'cut_mp'],  // 字段名数组
-        'expect_type' => 'int',
-        'new_type'   => 'decimal(65,0)',
-        'attributes' => ''
-    ]
-];
-
-// 数据库连接对象 - 请确保这个变量已经在其他地方定义
-// $dblj = new PDO('mysql:host=localhost;dbname=your_database', 'username', 'password');
-if (!isset($dblj) || !($dblj instanceof PDO)) {
-    die('数据库连接对象 $dblj 未定义或不是 PDO 实例');
-}
-
-// 执行字段类型检测与修改
 try {
-    foreach ($fieldConfigs as $config) {
-        processFieldConfig($dblj, $config);
+    // 先检查iid字段是否已经是自动递增
+    $check_sql = "SHOW COLUMNS FROM system_item_module WHERE Field = 'iid'";
+    $stmt = $dblj->query($check_sql);
+    $column_info = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (strpos($column_info['Extra'], 'auto_increment') === false) {
+        // 如果不是自动递增，则修改为自动递增
+        $sql = "ALTER TABLE system_item_module MODIFY iid INT NOT NULL AUTO_INCREMENT";
+        $result = $dblj->exec($sql);
+        echo "成功修改system_item_module表的iid字段为自动递增字段。<br/>";
     }
 } catch (PDOException $e) {
-    die("数据库操作错误: " . $e->getMessage());
-}
-
-/**
- * 处理字段配置，支持多表和多字段
- * @param PDO $pdo PDO连接对象
- * @param array $config 字段配置数组
- */
-function processFieldConfig(PDO $pdo, array $config) {
-    // 处理表名（单个或多个）
-    $tables = isset($config['tables']) ? $config['tables'] : [$config['table']];
-    
-    // 处理字段名（单个或多个）
-    $fields = isset($config['fields']) ? $config['fields'] : [$config['field']];
-    
-    // 遍历所有表和字段组合
-    foreach ($tables as $table) {
-        foreach ($fields as $field) {
-            try {
-                processFieldType($pdo, $table, $field, $config['expect_type'], $config['new_type'], $config['attributes']);
-            } catch (PDOException $e) {
-                echo "处理 {$table}.{$field} 时出错: {$e->getMessage()}<br/>";
-            }
-        }
-    }
-}
-
-/**
- * 处理单个字段类型修改
- * @param PDO $pdo PDO连接对象
- * @param string $table 表名
- * @param string $field 字段名
- * @param string $expectType 期望的原类型
- * @param string $newType 目标新类型
- * @param string $attributes 其他字段属性
- */
-function processFieldType(PDO $pdo, string $table, string $field, string $expectType, string $newType, string $attributes) {
-    // 参数安全处理
-    $table = trim($table);
-    $field = trim($field);
-    
-    // 查询当前字段类型
-    $sql = "SELECT COLUMN_TYPE, DATA_TYPE 
-            FROM INFORMATION_SCHEMA.COLUMNS 
-            WHERE TABLE_SCHEMA = DATABASE() 
-            AND TABLE_NAME = :table 
-            AND COLUMN_NAME = :field";
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':table' => $table, ':field' => $field]);
-    
-    if (!$stmt->rowCount()) {
-        throw new PDOException("字段 {$table}.{$field} 不存在");
-    }
-    
-    $info = $stmt->fetch(PDO::FETCH_ASSOC);
-    $currentType = strtolower($info['DATA_TYPE']);
-    
-    // 类型检查与修改
-    if ($currentType === strtolower($expectType)) {
-        $fullType = $newType;
-        if (!empty($attributes)) {
-            $fullType .= " {$attributes}";
-        }
-        
-        // 使用引号包裹标识符以防止SQL注入
-        $alterSql = "ALTER TABLE `" . $table . "` MODIFY COLUMN `" . $field . "` " . $fullType;
-        
-        $pdo->exec($alterSql);
-        echo "已修改 {$table}.{$field} 类型为: {$fullType}<br/>";
-    }
-}
-
-$result = $dblj->query("SHOW TABLES LIKE 'system_item_type'");
-if ($result->rowCount() == 0) {
-    // 表不存在，创建表
-    $sql = "CREATE TABLE `system_item_type`  (
-`itid` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
-`itpos` int(11) NOT NULL,
-`itname` varchar(255) NOT NULL,
-`itfather` tinyint(1) NOT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = COMPACT";
-$dblj->exec($sql);
-$sql = "insert into system_item_type (itpos,itname,itfather) values (1,'消耗品','消耗品'),(2,'兵器','兵器')";
-//$dblj->exec($sql);
+    echo "操作失败: " . $e->getMessage();
 }
 ?>

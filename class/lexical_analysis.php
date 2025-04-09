@@ -3032,7 +3032,6 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     //var_dump("表达式类型：".$e_type."<br/>");
                     //var_dump("未处理前：".$op."<br/>");
                     $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
-                    
                     //var_dump("process_string处理后：".$op."<br/>");
                     if($e_type ==1){
                     $op = str_replace(array("''"), '0', $op);
@@ -3040,7 +3039,13 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     
                     //$op = $op?"'".$op."'":"''";
                     //var_dump($op);
-                    $op = @eval("return $op;");
+                    
+                    $variables = [
+                        'calc_type' => 'int'
+                    ];
+                    $op = calculateBigNumberExpression($op,$variables,0);
+
+                    //$op = @eval("return $op;");
                     //var_dump($op);
                     }elseif($e_type ==2){
                     $op = str_replace(array("'"), '', $op);
@@ -3058,10 +3063,13 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $attr2 = "{".$attr2."}";
                     }
                     $attr2 = process_string($attr2,$sid,$oid,$mid,$jid,$type,$para);
-                    if(intval($attr2) <=0){
-                    $attr2 = 1;
+                    $attr2 = str_replace(array("'"), '', $attr2);
+                    
+                    if(bccomp($attr2, '0') <= 0){
+                        $attr2 = '1';
                     }
-                    $op = rand(0, intval($attr2) - 1); // 生成随机整数
+                    // 使用BCMath生成超大数范围内的随机数
+                    $op = bc_rand('0', bcsub($attr2, '1'));
                     break;
                 case 'gph':
                     $attr_para = explode(".","$attr2");

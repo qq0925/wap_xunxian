@@ -1015,6 +1015,29 @@ function calculateBigNumberExpression($expression, $variables = [], $precision =
     }
 }
 
+function bc_rand($min, $max) {
+    // 确保输入是字符串格式
+    $min = (string)$min;
+    $max = (string)$max;
+    
+    // 计算范围大小
+    $range = bcadd(bcsub($max, $min), '1');
+    
+    // 确定需要多少位随机数
+    $digits = strlen($range);
+    
+    // 生成足够长的随机数字字符串
+    $random = '';
+    for ($i = 0; $i < $digits + 1; $i++) {
+        $random .= mt_rand(0, 9);
+    }
+    
+    // 使用模运算获取范围内的值
+    $result = bcadd($min, bcmod($random, $range));
+    
+    return $result;
+}
+
 // // 测试基本运算
 // $expression = "99999999999999999+999999999999999999";
 // echo "表达式: $expression<br/>";

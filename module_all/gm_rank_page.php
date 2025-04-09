@@ -44,6 +44,8 @@ for($i=1;$i<@count($ret)+1;$i++){
 $user_sid = $ret[$i-1]['sid'];
 $user_exp = \lexical_analysis\process_string($rank_exp,$user_sid);
 $user_exp = \lexical_analysis\process_photoshow($user_exp);
+// 确保 user_exp 为字符串以便 BCMath 处理超大数
+$user_exp = (string)$user_exp;
 $user_show_cond = checkTriggerCondition($show_cond,$dblj,$user_sid);
 if(is_null($user_show_cond)){
     $user_show_cond =1;//若触发条件为空则默认true
@@ -60,7 +62,8 @@ $userData[] = array(
 }
 // 根据 'user_exp' 键对数组进行降序排序
 usort($userData, function ($a, $b) {
-    return $b['user_exp'] - $a['user_exp'];
+    // 使用 BCMath 库比较超大数
+    return bccomp($b['user_exp'], $a['user_exp']);
 });
 
 for($j = 0; $j < min($show_count, count($userData)); $j++) {

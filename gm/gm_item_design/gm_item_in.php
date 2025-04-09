@@ -33,7 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excel_file'])) {
     $processedRows = 0;
 
     // SQL语句，插入操作
-    $insert_sql = "INSERT INTO system_item_module (iname, idesc,itype,isubtype,iweight,iprice) VALUES (:iname, :idesc, :itype, :isubtype, :iweight, :iprice)";
+    $insert_sql = "INSERT INTO system_item_module (iname, idesc, itype, isubtype, iweight, iprice) 
+                  VALUES (:iname, :idesc, :itype, :isubtype, :iweight, :iprice)";
     $stmt = $dblj->prepare($insert_sql);
 
     for ($row = 2; $row <= $highestRow; $row++) {
