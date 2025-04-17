@@ -41,6 +41,11 @@ if($flush_name){
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':name', $flush_name);
     $Success = $stmt->execute();
+    if($flush_name =='玩家形象照'){
+    $sql = "UPDATE game1 set uimage = ''";
+    $stmt = $dblj->prepare($sql);
+    $Success = $stmt->execute();
+    }
 
     if (is_dir($targetDirectory)) {
         // 扫描目录并过滤特殊目录

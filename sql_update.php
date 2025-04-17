@@ -15,4 +15,18 @@ try {
 } catch (PDOException $e) {
     echo "操作失败: " . $e->getMessage();
 }
+
+    $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'item_head'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE gm_game_basic ADD COLUMN item_head TEXT NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
+
 ?>

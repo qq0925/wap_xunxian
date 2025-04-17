@@ -1171,6 +1171,9 @@ echo $refresh_html;
                 case '12':
                     $ym = 'gm/gm_other_setting/gm_attr_data.php';
                     break;
+                case '13':
+                    $ym = 'gm/gm_other_setting/gm_item_head_def.php';
+                    break;
                 case 'other':
                     echo "更新成功！<br/>";
                     $ym = 'gm/gm_other_setting/gm_other_def.php';

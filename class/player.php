@@ -1743,23 +1743,37 @@ function addpetsx($sx,$gaibian,$sid,$pet_id,$dblj,$db=null){
 
 function changeplayeritem($item_true_id,$gaibian,$sid,$dblj){
     if($gaibian !="all"){
-    $sql = "update system_item set icount = icount + '$gaibian' WHERE sid='$sid' and item_true_id = '$item_true_id'";
-    $out_count = $gaibian;
+
+        $gaibian_str = strval($gaibian);
+        
+
+        $curr = $dblj->query("select CAST(icount AS CHAR) as icount from system_item WHERE sid='$sid' and item_true_id = '$item_true_id';");
+        $curr_ret = $curr->fetch(\PDO::FETCH_ASSOC);
+        $curr_count = isset($curr_ret['icount']) ? $curr_ret['icount'] : '0';
+        
+
+        $new_count = bcadd($curr_count, $gaibian_str, 0);
+        
+        $sql = "update system_item set icount = '$new_count' WHERE sid='$sid' and item_true_id = '$item_true_id'";
+        $out_count = $gaibian_str;
     }elseif($gaibian =="all"){
-    $out = $dblj->query("select icount from system_item WHERE sid='$sid' and item_true_id = '$item_true_id';");
-    $out_ret = $out->fetch(\PDO::FETCH_ASSOC);
-    $out_count = -$out_ret['icount'];
-    $sql = "delete from system_item WHERE sid='$sid' and item_true_id = '$item_true_id'";
+        $out = $dblj->query("select CAST(icount AS CHAR) as icount from system_item WHERE sid='$sid' and item_true_id = '$item_true_id';");
+        $out_ret = $out->fetch(\PDO::FETCH_ASSOC);
+
+        $out_count = isset($out_ret['icount']) ? bcmul($out_ret['icount'], '-1', 0) : '0';
+        $sql = "delete from system_item WHERE sid='$sid' and item_true_id = '$item_true_id'";
     }
     $ret = $dblj->exec($sql);
-    $nowcount = $dblj->query("select icount from system_item WHERE sid='$sid' and item_true_id = '$item_true_id';");
+    $nowcount = $dblj->query("select CAST(icount AS CHAR) as icount from system_item WHERE sid='$sid' and item_true_id = '$item_true_id';");
     $now_ret = $nowcount->fetch(\PDO::FETCH_ASSOC);
-    $now_count = $now_ret['icount'];
-    if($now_ret && $now_count <=0){
-    $sql = "delete from system_item WHERE sid='$sid' and item_true_id = '$item_true_id'";
-    $ret = $dblj->exec($sql);
-    $sql = "delete from system_addition_attr WHERE oid='item' and mid = '$item_true_id'";
-    $ret = $dblj->exec($sql);
+    $now_count = isset($now_ret['icount']) ? $now_ret['icount'] : '0';
+    
+
+    if($now_ret && bccomp($now_count, '0', 0) <= 0){
+        $sql = "delete from system_item WHERE sid='$sid' and item_true_id = '$item_true_id'";
+        $ret = $dblj->exec($sql);
+        $sql = "delete from system_addition_attr WHERE oid='item' and mid = '$item_true_id'";
+        $ret = $dblj->exec($sql);
     }
     if($ret){
         return $out_count;
@@ -2089,6 +2103,7 @@ class gameconfig{
     var $can_input;
     var $offline_time;
     var $can_verify;
+    var $item_head;
     var $int_long;
     var $flush_limit;
     var $fight_mod;
@@ -2121,6 +2136,7 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('can_input',$gameconfig->can_input);
     $cxjg->bindColumn('player_offline_time',$gameconfig->offline_time);
     $cxjg->bindColumn('can_verify',$gameconfig->can_verify);
+    $cxjg->bindColumn('item_head',$gameconfig->item_head);
     $cxjg->bindColumn('flush_limit',$gameconfig->flush_limit);
     $cxjg->bindColumn('int_long',$gameconfig->int_long);
     $cxjg->bindColumn('fight_mod',$gameconfig->fight_mod);

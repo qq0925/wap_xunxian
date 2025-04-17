@@ -1,45 +1,34 @@
 <?php
-// require_once 'class/lexical_analysis.php';
 
-// $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
-// $gm_post = new \gm\gm();
+
+if($player->uis_designer ==1){
+$goto_url = $encode->encode("cmd=gm_game_othersetting&canshu=13&sid=$sid");
+$goto_desi = "<a href='?cmd=$goto_url'>设计头部页面</a><br/>";
+}
+
 $gm_post = \gm\gm_post($dblj);
 $game_config = \player\getgameconfig($dblj);
+$item_head = $game_config->item_head;
 $list_row = $game_config->list_row;
 
 $itemhtml = '';
 $hangshu = 0;
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
-$item_choose_url_1 = $encode->encode("cmd=item_html&canshu=全部&ucmd=$cmid&sid=$sid");
 
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$item_choose_url_2 = $encode->encode("cmd=item_html&canshu=装备&ucmd=$cmid&sid=$sid");
-
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$item_choose_url_3 = $encode->encode("cmd=item_html&canshu=镶物&ucmd=$cmid&sid=$sid");
-
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$item_choose_url_4 = $encode->encode("cmd=item_html&canshu=药品&ucmd=$cmid&sid=$sid");
-
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$item_choose_url_5 = $encode->encode("cmd=item_html&canshu=书籍&ucmd=$cmid&sid=$sid");
-
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$item_choose_url_6 = $encode->encode("cmd=item_html&canshu=任务&ucmd=$cmid&sid=$sid");
-
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$item_choose_url_7 = $encode->encode("cmd=item_html&canshu=其它&ucmd=$cmid&sid=$sid");
 $sqlCount = '';
+
+
+
+
 if(!$canshu){
     $canshu = '全部';
+}
+
+
+if($item_head){
+$item_choose_url = create_head($item_head, $sid, $cmid, $dblj, $canshu);
 }
 
 // 当前页码
@@ -55,56 +44,21 @@ $offset = ($currentPage - 1) * $list_row;
 // 条件和 URL 映射
 $conditions = [
     '全部' => "(iname like :keyword)",
-    '装备' => "((itype = '兵器' OR itype = '防具') and iname like :keyword)",
-    '镶物' => "((itype = '兵器镶嵌物' OR itype = '防具镶嵌物') and iname like :keyword)",
     '药品' => "(itype = '消耗品' and iname like :keyword)",
+    '装备' => "((itype = '兵器' OR itype = '防具') and iname like :keyword)",
+    '兵器' => "(itype = '兵器' and iname like :keyword)",
+    '防具' => "(itype = '防具' and iname like :keyword)",
     '书籍' => "(itype = '书籍' and iname like :keyword)",
+    '镶物' => "((itype = '兵器镶嵌物' OR itype = '防具镶嵌物') and iname like :keyword)",
+    '兵镶' => "(itype = '兵器镶嵌物' and iname like :keyword)",
+    '防镶' => "(itype = '防具镶嵌物' and iname like :keyword)",
     '任务' => "(itype = '任务物品' and iname like :keyword)",
     '其它' => "(itype = '其它' and iname like :keyword)",
-    
 ];
-
-
-
-$urls = [
-    '全部' =>"<a href=\"?cmd=$item_choose_url_1\">全部</a>",
-    '装备' =>"<a href=\"?cmd=$item_choose_url_2\">装备</a>",
-    '镶物' => "<a href=\"?cmd=$item_choose_url_3\">镶物</a>",
-    '药品' => "<a href=\"?cmd=$item_choose_url_4\">药品</a>",
-    '书籍' => "<a href=\"?cmd=$item_choose_url_5\">书籍</a>",
-    '任务' => "<a href=\"?cmd=$item_choose_url_6\">任务</a>",
-    '其它' => "<a href=\"?cmd=$item_choose_url_7\">其它</a>"
-];
-
-// 处理链接和文本替换
-$links = [];
-foreach ($urls as $key => $url) {
-    if ($key === $canshu) {
-        // 替换被点击的分类链接为文本
-        $links[] = "{$key}";
-    } else {
-        $links[] = $url;
-    }
-}
-
-// 将链接用 '|' 隔开，并每三项后换行
-$formatted_links = '';
-$chunks = array_chunk($links, 3);
-foreach ($chunks as $chunk) {
-    $formatted_links .= implode(' | ', $chunk) . "<br/>";
-}
-
 
 
 // 默认是'全部'
-$condition = $conditions['全部'];
-$item_choose_url = implode(" ", $urls) . "<br/>";
-
-// 替换 switch case
-if (isset($conditions[$canshu])) {
-    $condition = $conditions[$canshu];
-    $item_choose_url = str_replace($urls[$canshu], $urls[$canshu] , $formatted_links);
-}
+$condition = $conditions[$canshu];
 
 if (isset($kw)) {
 
@@ -148,8 +102,6 @@ $totalPages = ceil($totalRows / $list_row);
 }
 
 
-
-
 $item_type_sum = 0;
 if($ret){
 for ($i=0;$i<@$totalRows;$i++){
@@ -161,9 +113,13 @@ for ($i=0;$i<@$totalRows;$i++){
     $item_type_sum +=$itemsum;
     $conditions = [
     '全部' => "iid = '$itemid'",
-    '装备' => "iid = '$itemid' and (itype = '兵器' || itype = '防具')",  
-    '镶物' => "iid = '$itemid' and (itype = '兵器镶嵌物' || itype = '防具镶嵌物')",
     '药品' => "iid = '$itemid' and itype = '消耗品'",
+    '装备' => "iid = '$itemid' and (itype = '兵器' || itype = '防具')",
+    '兵器' => "iid = '$itemid' and itype = '兵器'",
+    '防具' => "iid = '$itemid' and itype = '防具'",
+    '镶物' => "iid = '$itemid' and (itype = '兵器镶嵌物' || itype = '防具镶嵌物')",
+    '兵镶' => "iid = '$itemid' and itype = '兵器镶嵌物'",
+    '防镶' => "iid = '$itemid' and itype = '防具镶嵌物'",
     '书籍' => "iid = '$itemid' and itype = '书籍'",
     '任务' => "iid = '$itemid' and itype = '任务物品'",
     '其它' => "iid = '$itemid' and itype = '其它'",
@@ -285,8 +241,7 @@ if($keyword =="%"){
 
 //里面要加入自定义币种
 $bagitemhtml =<<<HTML
-{$gm_post->money_name}：{$player->umoney}{$gm_post->money_measure}<br/>
-总负重：{$player->uburthen}|{$player->umax_burthen}<br/>
+$goto_desi
 $item_choose_url<br/>
 <form method="post">
 <input name="ucmd" type="hidden" value="{$cmid}">
@@ -334,5 +289,71 @@ if($kw){
     return $totalRows;
 }
 
+function create_head($head_value, $sid, $cmid, $dblj, $canshu) {
+    global $encode;
+    $ret_url = $head_value;
+    
+    // 处理物品类型模式
+    $ret_url = preg_replace_callback('/\{\{item_type_([^}]+)\}\}/', function($matches) use ($encode, $sid, &$cmid, $canshu) {
+        $type = $matches[1];
+        
+        $cmid++;
+        
+        // 创建此类型的编码URL
+        $item_choose_url = $encode->encode("cmd=item_html&canshu=$type&ucmd=$cmid&sid=$sid");
+        
+        // 如果这是当前选择的类型，只返回文本
+        if ($type === $canshu) {
+            return $type;
+        } else {
+            return "<a href=\"?cmd=$item_choose_url\">$type</a>";
+        }
+    }, $ret_url);
+    
+    // 处理物品子类型模式
+    $ret_url = preg_replace_callback('/\{\{item_subtype_([^}]+)\}\}/', function($matches) use ($encode, $sid, &$cmid, $canshu, $dblj) {
+        $subtype = $matches[1];
+        
+        $cmid++;
+        
+        // 检查子类型是数字（装备子类型）还是字符串（一般子类型）
+        if (is_numeric($subtype)) {
+            // 处理装备子类型（数字）
+            $item_subtype_url = $encode->encode("cmd=item_html&canshu=装备&subtype=$subtype&ucmd=$cmid&sid=$sid");
+            
+            // 如果这是当前选择的子类型，只返回文本
+            if (isset($_REQUEST['subtype']) && $_REQUEST['subtype'] == $subtype) {
+                return "$subtype";
+            } else {
+                return "<a href=\"?cmd=$item_subtype_url\">$subtype</a>";
+            }
+        } else {
+            // 处理一般子类型（字符串）
+            // 查询以查找具有此子类型的所有物品
+            $sql = "SELECT DISTINCT itype,isubtype FROM system_item_module WHERE isubtype = :subtype";
+            $stmt = $dblj->prepare($sql);
+            $stmt->bindParam(':subtype', $subtype, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            // 如果子类型存在
+            if ($stmt->rowCount() > 0) {
+                $item_subtype_url = $encode->encode("cmd=item_html&canshu=全部&subtype=$subtype&ucmd=$cmid&sid=$sid");
+                
+                // 如果这是当前选择的子类型，只返回文本
+                if (isset($_REQUEST['subtype']) && $_REQUEST['subtype'] == $subtype) {
+                    return $subtype;
+                } else {
+                    return "<a href=\"?cmd=$item_subtype_url\">$subtype</a>";
+                }
+            } else {
+                return $matches[0]; // 如果找不到子类型，则返回原始内容
+            }
+        }
+    }, $ret_url);
+    $ret_url = \lexical_analysis\process_string($ret_url,$sid,$oid,$mid);
+    $ret_url = \lexical_analysis\process_photoshow($ret_url);
+    $ret_url =\lexical_analysis\color_string($ret_url);
+    return $ret_url;
+} 
 
 ?>

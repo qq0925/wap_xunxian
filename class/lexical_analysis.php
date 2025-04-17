@@ -4308,6 +4308,11 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$pid,
     if(is_numeric($attr)){
     $op = $attr;
     }else{
+    $can_redis = $GLOBALS['can_redis'];
+    if($can_redis ==1){
+    global $redis;
+    $op = \gm\update_redis($db,$attr,$pid,$oid,$mid,$jid,$type,$para);
+    }else{
     $firstDotPosition = strpos($attr, '.');
     if ($firstDotPosition !== false) {
         $attr1 = substr($attr, 0, $firstDotPosition);  // 第一个点前的部分
@@ -4316,7 +4321,7 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$pid,
         //$attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
     $op = \lexical_analysis\process_attribute_3($attr1,$attr2,$pid, $oid, $mid,$jid,$type,$db,$para);
     }
-    
+    }
     }
     if(!is_int((int)$op)){
     $op = str_replace("'", '', $op);

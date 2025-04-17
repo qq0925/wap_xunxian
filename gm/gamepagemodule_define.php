@@ -410,6 +410,7 @@ for ($i=0;$i<count($get_main_page);$i++){
     <a href="?cmd=$attr_url" >$hangshu.$main_value</a>
 HTML;
 }
+
 $all = <<<HTML
 <p>定义查看物品页面模板<br/>
 ============<br/>

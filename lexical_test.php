@@ -16,7 +16,12 @@ if($canshu =="lexical"){
 
 if($canshu =="eval"){
     echo("原语句：".$eval_test."<br/>");
-    $ret = eval("return $eval_test;");
+    include_once 'class/lexical_analysis_test.php';
+    $variables = [
+        'calc_type' => 'int'
+    ];
+    $ret = calculateBigNumberExpression($eval_test,$variables,0);
+    //$ret = eval("return $eval_test;");
     if(!$ret){
         $ret = $ret ? '真' : '假';
         echo "<br/>运算结果：返回了一个布尔值：".$ret."<br/><br/>";
