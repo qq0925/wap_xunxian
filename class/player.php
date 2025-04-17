@@ -2104,6 +2104,7 @@ class gameconfig{
     var $offline_time;
     var $can_verify;
     var $item_head;
+    var $chat_head;
     var $int_long;
     var $flush_limit;
     var $fight_mod;
@@ -2137,6 +2138,7 @@ function getgameconfig($dblj){
     $cxjg->bindColumn('player_offline_time',$gameconfig->offline_time);
     $cxjg->bindColumn('can_verify',$gameconfig->can_verify);
     $cxjg->bindColumn('item_head',$gameconfig->item_head);
+    $cxjg->bindColumn('chat_head',$gameconfig->chat_head);
     $cxjg->bindColumn('flush_limit',$gameconfig->flush_limit);
     $cxjg->bindColumn('int_long',$gameconfig->int_long);
     $cxjg->bindColumn('fight_mod',$gameconfig->fight_mod);

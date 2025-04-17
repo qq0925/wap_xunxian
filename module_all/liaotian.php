@@ -1,10 +1,54 @@
 <?php
 $player = \player\getplayer($sid,$dblj);
 $_SERVER['PHP_SELF'];
+if($player->uis_designer ==1){
+$goto_url = $encode->encode("cmd=gm_game_othersetting&canshu=14&sid=$sid");
+$goto_desi = "<a href='?cmd=$goto_url'>设计头部页面</a><br/>";
+echo $goto_desi;
+}
 
 $game_config = \player\getgameconfig($dblj);
 $list_row = $game_config->list_row;
+$chat_head = $game_config->chat_head;
 
+function create_head($head_value, $sid, $cmid, $dblj, $canshu,$channel_name) {
+    global $encode;
+    $ret_url = $head_value;
+    $channels = [
+        'all' => '公共',
+        'im' => '私聊',
+        'city' => '城聊',
+        'area' => '区聊',
+        'team' => '队聊',
+        'system' => '系聊'
+    ];
+    $ret_url = str_replace('{{chat_now_nav}}', $channel_name, $ret_url);
+    $cmid++;
+    $flush_to = $encode->encode("cmd=liaotian&ltlx=$canshu&ucmd=$cmid&sid=$sid");
+    $chat_flush_url ="<a href='?cmd=$flush_to'>刷新</a>";
+    $ret_url = str_replace('{{chat_flush_url}}', $chat_flush_url, $ret_url);
+    // 处理物品类型模式
+    $ret_url = preg_replace_callback('/\{\{chat_type_([^}]+)\}\}/', function($matches) use ($encode,$channels, $sid, &$cmid, $canshu) {
+    $type = $matches[1];
+    $lx_name = $channels[$type];
+        $cmid++;
+        
+        // 创建此类型的编码URL
+        $nav_choose_url = $encode->encode("cmd=liaotian&ltlx=$type&ucmd=$cmid&sid=$sid");
+        
+        // 如果这是当前选择的类型，只返回文本
+        if ($type === $canshu) {
+            return $lx_name;
+        } else {
+            return "<a href=\"?cmd=$nav_choose_url\">{$lx_name}</a>";
+        }
+    }, $ret_url);
+
+    $ret_url = \lexical_analysis\process_string($ret_url,$sid,$oid,$mid);
+    $ret_url = \lexical_analysis\process_photoshow($ret_url);
+    $ret_url =\lexical_analysis\color_string($ret_url);
+    return nl2br($ret_url);
+} 
 // 通用函数：处理消息删除
 function handleMessageDelete($dblj, $delete_msid) {
     if ($delete_msid) {
@@ -43,32 +87,6 @@ function getPagination($dblj, $chat_type, $filter_condition, $list_row, $current
         'totalPages' => $totalPages,
         'offset' => $offset
     ];
-}
-
-// 通用函数：获取频道导航
-function getChannelNavigation($encode, $cmid, $sid, $current_channel) {
-    $channels = [
-        'all' => '公共',
-        'im' => '私聊',
-        'city' => '城聊',
-        'area' => '区聊',
-        'team' => '队聊',
-        'system' => '系聊'
-    ];
-    
-    $nav = '';
-    foreach ($channels as $channel => $name) {
-        $cmid++;
-        $link = $encode->encode("cmd=liaotian&ucmd=$cmid&ltlx=$channel&sid=$sid");
-        
-        if ($channel == $current_channel) {
-            $nav .= $name . "|";
-        } else {
-            $nav .= "<a href='?cmd=$link'>$name</a>|";
-        }
-    }
-    
-    return rtrim($nav, "|");
 }
 
 // 通用函数：构建分页链接
@@ -280,11 +298,13 @@ $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // 刷新按钮和导航链接(始终显示)
 $cmid++;
 $refresh_url = $encode->encode("cmd=liaotian&ucmd=$cmid" . ($list_page ? "&list_page=$list_page" : "") . "&ltlx=$ltlx&sid=$sid");
-$navigation = getChannelNavigation($encode, $cmid, $sid, $ltlx);
 
 // 构建基本页面结构(始终显示)
-$lthtml = "【聊天频道：「{$channel_name}」】<a href='?cmd=$refresh_url'>刷新</a><br/>【{$navigation}】<br/>";
-$lthtml .= "<span style='font-weight: bold; color: red'>请勿发表有关辱骂、政治、色情、赌博等相关言论！请确保您的言论符合游戏规则和道德准则。违反规则将导致相应的惩罚措施，包括禁言、封号等。</span><br/>";
+
+if($chat_head){
+$lthtml = create_head($chat_head, $sid, $cmid, $dblj, $ltlx,$channel_name);
+}
+$lthtml .="<br/>";
 
 // 显示消息或"暂无消息"提示
 if (!empty($messages)) {
