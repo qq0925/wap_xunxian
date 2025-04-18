@@ -774,7 +774,6 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
         $attr1 = substr($attr, 0, $firstDotPosition);  // 第一个点前的部分
         $attr2 = substr($attr, $firstDotPosition + 1); // 第一个点后的部分
         $attr2 = str_replace("'", '', $attr2);
-        //$attr3 = \lexical_analysis\getSubstringBetweenDots($attr, 1, 2);
     $op = \lexical_analysis\process_attribute($attr1,$attr2,$sid, $oid, $mid,$jid,$type,$db,$para);
     }
     }
@@ -3014,8 +3013,6 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $op = date($matches[1]);
                     }
                     $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
-                    // 替换字符串中的变量
-                    //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'g':
                     $sql = "SELECT gvalue FROM global_data where gid = '$attr2'";
@@ -3032,8 +3029,6 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $op = nl2br($row['gvalue']);
                         }
                     $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
-                    // 替换字符串中的变量
-                    //$input = str_replace("{{$match}}", $op, $input);
                     break;
                 case 'e':
                     $sql = "SELECT value,type FROM system_exp_def WHERE id = ?";
@@ -3047,18 +3042,13 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     $row = $result->fetch_assoc();
                     $op = nl2br($row['value']);
                     $e_type = $row['type'];
-                    // 替换字符串中的变量
-                    //var_dump("表达式类型：".$e_type."<br/>");
-                    //var_dump("未处理前：".$op."<br/>");
+
                     $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
-                    //var_dump("process_string处理后：".$op."<br/>");
+
                     if($e_type ==1){
                     $op = str_replace(array("''"), '0', $op);
                     $op = str_replace(array("'"), '', $op);
-                    
-                    //$op = $op?"'".$op."'":"''";
-                    //var_dump($op);
-                    
+
                     $variables = [
                         'calc_type' => 'int'
                     ];
@@ -3089,6 +3079,82 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                     }
                     // 使用BCMath生成超大数范围内的随机数
                     $op = bc_rand('0', bcsub($attr2, '1'));
+                    break;
+                case 'tb':
+                    if (strpos($attr2, 't') === 0) {
+                    $attr2 = substr($attr2, 1); // 去掉开头的 "t"
+                    $sql = "SELECT tbelong from system_task where tid = ?";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s", $attr2);
+                    // 执行查询
+                    $stmt->execute();
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $op = $row['tbelong'];
+                    }else{
+                    $op = 0;
+                    }
+                    break;
+                case 'tbn':
+                    if (strpos($attr2, 't') === 0) {
+                    $attr2 = substr($attr2, 1); // 去掉开头的 "t"
+                    $sql = "SELECT tbelong from system_task where tid = ?";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s", $attr2);
+                    // 执行查询
+                    $stmt->execute();
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $tbelong = $row['tbelong'];
+                    if($tbelong){
+                    $sql = "SELECT f_name from system_task_father where f_id = ?";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s", $tbelong);
+                    // 执行查询
+                    $stmt->execute();
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $f_name = $row['f_name'];
+                    $op = process_string($f_name,$sid,$oid,$mid,$jid,$type,$para);
+                    }else{
+                    $op = '';
+                    }
+                    }else{
+                    $op = '';
+                    }
+                    break;
+                case 'tbd':
+                    if (strpos($attr2, 't') === 0) {
+                    $attr2 = substr($attr2, 1); // 去掉开头的 "t"
+                    $sql = "SELECT tbelong from system_task where tid = ?";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s", $attr2);
+                    // 执行查询
+                    $stmt->execute();
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $tbelong = $row['tbelong'];
+                    if($tbelong){
+                    $sql = "SELECT f_desc from system_task_father where f_id = ?";
+                    $stmt = $db->prepare($sql);
+                    $stmt->bind_param("s", $tbelong);
+                    // 执行查询
+                    $stmt->execute();
+                    // 获取查询结果
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    $f_desc = $row['f_desc'];
+                    $op = process_string($f_desc,$sid,$oid,$mid,$jid,$type,$para);
+                    }else{
+                    $op = '';
+                    }
+                    }else{
+                    $op = '';
+                    }
                     break;
                 case 'gph':
                     $attr_para = explode(".","$attr2");

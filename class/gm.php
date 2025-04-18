@@ -34,6 +34,9 @@ if ($firstDotPosition !== false) {
         case 'm':
             $cacheKey = 'player::'.$sid.'::'.'m_j::'.$jid.'::'.$attr;
             break;
+        default:
+            $cacheKey = 'constant::'.$attr;
+            break;
     }
     if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'||$attr1 =='ut'||$attr1=='ot'){
     
@@ -81,6 +84,9 @@ if ($firstDotPosition !== false) {
         case 'm':
             $cacheKey = 'player::'.$sid.'::'.'m_j::'.$jid.'::'.$attr;
             break;
+        default:
+            $cacheKey = 'constant::'.$attr;
+            break;
     }
     if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'||$attr1 =='ut'||$attr1=='ot'){
     return 0;
@@ -120,6 +126,9 @@ if ($firstDotPosition !== false) {
             break;
         case 'm':
             $cacheKey = 'player::'.$sid.'::'.'m_j::'.$jid.'::'.$attr;
+            break;
+        default:
+            $cacheKey = 'constant::'.$attr;
             break;
     }
     if (!$redis->exists($cacheKey)||$attr1 == 'r'||$attr3 =='env'||$attr1 == 'e'||$attr3 =='equips'||$attr3=='skills'||$attr1 =='ut'||$attr1=='ot'){
