@@ -14,6 +14,7 @@ $reboot_all = $encode->encode("cmd=gm_game_othersetting&canshu=10&sid=$sid");
 $shop_def = $encode->encode("cmd=gm_game_othersetting&canshu=11&sid=$sid");
 $addition_def = $encode->encode("cmd=gm_game_othersetting&canshu=12&sid=$sid");
 $chat_head_def = $encode->encode("cmd=gm_game_othersetting&canshu=14&sid=$sid");
+$fight_head_def = $encode->encode("cmd=gm_game_othersetting&canshu=15&sid=$sid");
 $setting_html = <<<HTML
 [功能列表]<br/><br/>
 <a href="?cmd=$area_def">分区管理</a>(✔)<br/>
@@ -31,6 +32,7 @@ $setting_html = <<<HTML
 ---<br/>
 <a href="?cmd=$item_head_def">物品栏头部设计</a>(✔)<br/>
 <a href="?cmd=$chat_head_def">聊天栏头部设计</a>(✔)<br/>
+<a href="?cmd=$fight_head_def">战斗结算页面设计</a>(✔)<br/>
 ---<br/>
 <a href="?cmd=$reboot_all">清空游戏数据</a><br/>
 <br/><a href="?cmd=$gm_main">设计大厅</a><br/>

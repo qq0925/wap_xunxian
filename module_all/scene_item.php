@@ -289,7 +289,7 @@ if($kw){
     return $totalRows;
 }
 
-function create_head($head_value, $sid, $cmid, $dblj, $canshu) {
+function create_head($head_value, $sid, &$cmid, $dblj, $canshu) {
     global $encode;
     $ret_url = $head_value;
     

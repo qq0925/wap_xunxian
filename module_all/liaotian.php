@@ -11,7 +11,7 @@ $game_config = \player\getgameconfig($dblj);
 $list_row = $game_config->list_row;
 $chat_head = $game_config->chat_head;
 
-function create_head($head_value, $sid, $cmid, $dblj, $canshu,$channel_name) {
+function create_head($head_value, $sid, &$cmid, $dblj, $canshu,$channel_name) {
     global $encode;
     $ret_url = $head_value;
     $channels = [
@@ -32,7 +32,6 @@ function create_head($head_value, $sid, $cmid, $dblj, $canshu,$channel_name) {
     $type = $matches[1];
     $lx_name = $channels[$type];
         $cmid++;
-        
         // 创建此类型的编码URL
         $nav_choose_url = $encode->encode("cmd=liaotian&ltlx=$type&ucmd=$cmid&sid=$sid");
         
@@ -295,9 +294,6 @@ $stmt->execute();
 $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // ======= 构建UI开始 =======
-// 刷新按钮和导航链接(始终显示)
-$cmid++;
-$refresh_url = $encode->encode("cmd=liaotian&ucmd=$cmid" . ($list_page ? "&list_page=$list_page" : "") . "&ltlx=$ltlx&sid=$sid");
 
 // 构建基本页面结构(始终显示)
 

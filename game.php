@@ -1177,6 +1177,9 @@ echo $refresh_html;
                 case '14':
                     $ym = 'gm/gm_other_setting/gm_chat_head_def.php';
                     break;
+                case '15':
+                    $ym = 'gm/gm_other_setting/gm_fight_head_def.php';
+                    break;
                 case 'other':
                     echo "更新成功！<br/>";
                     $ym = 'gm/gm_other_setting/gm_other_def.php';
