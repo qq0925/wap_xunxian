@@ -2,6 +2,7 @@
 $gm = $encode->encode("cmd=gm&sid=$sid");
 
 if($gm_post_canshu ==""){
+$gm_game_taskdefine_0 = $encode->encode("cmd=gm_game_taskdesign&gm_post_canshu=-1&sid=$sid");
 $gm_game_taskdefine_1 = $encode->encode("cmd=gm_game_taskdesign&gm_post_canshu=1&sid=$sid");
 $kill_task_count = @count(\gm\get_task_list($dblj,1));
 $gm_game_taskdefine_2 = $encode->encode("cmd=gm_game_taskdesign&gm_post_canshu=2&sid=$sid");
@@ -10,6 +11,7 @@ $gm_game_taskdefine_3 = $encode->encode("cmd=gm_game_taskdesign&gm_post_canshu=3
 $do_task_count = @count(\gm\get_task_list($dblj,3));
 $gm_html = <<<HTML
 <p>[任务设计]<br/>
+<a href="?cmd=$gm_game_taskdefine_0">任务系列定义</a><br/>
 请选择任务类别：<br/>
 <a href="?cmd=$gm_game_taskdefine_1">杀怪任务</a>($kill_task_count)<br/>
 <a href="?cmd=$gm_game_taskdefine_2">寻物任务</a>($find_task_count)<br/>

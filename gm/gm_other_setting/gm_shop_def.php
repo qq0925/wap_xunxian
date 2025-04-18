@@ -16,7 +16,7 @@ if(isset($_POST['add_name'])){
         echo "名称重复！<br/>";
     }
 }
-if($delete_canshu){
+if($delete_canshu&&!$_POST){
     $dblj->exec("delete from system_shop where shop_id = '$delete_canshu'");
     $dblj->exec("delete from system_shop_item where belong = '$delete_canshu'");
     echo "已删除！<br/>";
@@ -39,8 +39,8 @@ HTML;
 
 $add_html = <<<HTML
 <form method = "post">
-商城名称：<input type="text" name="add_name" size="17" placeholder="请输入商城名称：">
-<input name="submit" type="submit" title="添加属性" value="添加"/><br/>
+商城名称：<input type="text" name="add_name" size="17" placeholder="请输入商城名称">
+<input name="submit" type="submit" title="添加商城" value="添加"/><br/>
 </form>
 HTML;
 

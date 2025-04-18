@@ -44,6 +44,20 @@ if ($gm_cxjg){
     $gm_ret = $gm_cxjg->fetch(PDO::FETCH_ASSOC);
     $task_id = $gm_ret['tid'];
     $task_belong = $gm_ret['tbelong'];
+    
+    $stmt = $dblj->prepare('SELECT * FROM system_task_father');
+    $stmt->execute();
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // 构建 select 元素的 HTML 代码
+    $select = '任务所属:<select name="belong">';
+    foreach ($data as $area_row) {
+        $selected = ($area_row['f_id'] == $task_belong) ? ' selected' : '';
+        $select .= '<option value="' . htmlspecialchars($area_row['f_id']) . '"' . $selected . '>' . htmlspecialchars($area_row['f_name']) . '</option>';
+        
+    }
+    $select .= '</select>';
+    
+    
     $task_name = $gm_ret['tname'];
     $task_cond = $gm_ret['tcond'];
     $task_accept_cond = $gm_ret['taccept_cond'];
@@ -55,13 +69,13 @@ $task_html = <<<HTML
 <form method="post">
 任务标识:t{$task_id}<br/>
 <input name="id" type="hidden" value="{$task_id}">
-任务所属:<input name="belong" type="text" value="{$task_belong}" maxlength="50"/><br/>
+{$select}<br/>
 任务名称:<input name="name" type="text" value="{$task_name}" maxlength="50"/><br/>
 触发条件:<textarea name="cond" maxlength="1024" rows="4" cols="40">{$task_cond}</textarea><br/>
 接受条件:<textarea name="accept_cond" maxlength="1024" rows="4" cols="40">{$task_accept_cond}</textarea><br/>
 不能接受提示语:<textarea name="cmmt1" maxlength="1024" rows="4" cols="40">{$task_cmmt1}</textarea><br/>
 未完成提示语:<textarea name="cmmt2" maxlength="1024" rows="4" cols="40">{$task_cmmt2}</textarea><br/>
-<input type="submit" title="确定" value="确定"/><br/><br/>
+<input type="submit" title="确定" value="确定"/></form><br/>
 <a href="?cmd=$last_page">返回上级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
 HTML;

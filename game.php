@@ -1945,7 +1945,11 @@ echo $refresh_html;
             $ym = 'gm/gamenpc_design.php';
             break;
         case 'gm_game_taskdesign':
+            if($gm_post_canshu == '-1'){
+            $ym = 'gm/gm_task_design/gm_father_def.php';
+            }else{
             $ym = 'gm/gametask_design.php';
+            }
             break;
         case 'gm_scene_new'://游戏场景
             $ym = 'module_all/main_page.php';

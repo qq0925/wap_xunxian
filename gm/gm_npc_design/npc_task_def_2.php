@@ -10,7 +10,7 @@ if($old_tname !=$task_name){
     $dblj->exec("UPDATE system_event_self SET `desc` = REPLACE(`desc`, '$old_tname', '$task_name') WHERE `desc` LIKE '%$old_tname%' and belong = '$task_id' and module_id LIKE 'npc_task\_%'");
 }
 
-$sql = "UPDATE system_task SET ttype = :ttype,ttype2 = :ttype2, tname = :task_name, tgiveup = :tgiveup,tcond = :tcond ,taccept_cond = :taccept_cond ,tcmmt1 = :tcmmt1 ,tcmmt2 = :tcmmt2 WHERE `tid` = :task_id";
+$sql = "UPDATE system_task SET ttype = :ttype,ttype2 = :ttype2, tname = :task_name, tgiveup = :tgiveup,tcond = :tcond ,taccept_cond = :taccept_cond ,tcmmt1 = :tcmmt1 ,tcmmt2 = :tcmmt2,tbelong = :tbelong WHERE `tid` = :task_id";
 $stmt = $dblj->prepare($sql);
 $stmt->bindParam(':ttype', $ttype);
 $stmt->bindParam(':ttype2', $ttype2);
@@ -20,6 +20,7 @@ $stmt->bindParam(':tcond', $tcond);
 $stmt->bindParam(':taccept_cond', $taccept_cond);
 $stmt->bindParam(':tcmmt1', $tcmmt1);
 $stmt->bindParam(':tcmmt2', $tcmmt2);
+$stmt->bindParam(':tbelong', $tbelong);
 $stmt->bindParam(':task_id', $task_id);
 $stmt->execute();
 echo "修改成功！<br/>";
@@ -52,7 +53,7 @@ switch($del_event_type){
 }
 
 if($add ==1){
-$sql = "insert into system_task(`tnpc_id`,`tid`,`tname`,`ttype`)values('$task_tnpc_id','$max_id','未命名','1')";
+$sql = "insert into system_task(`tnpc_id`,`tid`,`tbelong`,`tname`,`ttype`)values('$task_tnpc_id','$max_id','1',未命名','1')";
 $cxjg = $dblj->exec($sql);
 $task_id = $max_id;
 
@@ -83,6 +84,18 @@ $cxjg = $dblj->query($sql);
 $ret = $cxjg->fetch(PDO::FETCH_ASSOC);
 $task_name = $ret['tname'];
 $task_id = $ret['tid'];
+$task_belong = $ret['tbelong'];
+$stmt = $dblj->prepare('SELECT * FROM system_task_father');
+$stmt->execute();
+$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// 构建 select 元素的 HTML 代码
+$select = '任务所属:<select name="tbelong">';
+foreach ($data as $area_row) {
+    $selected = ($area_row['f_id'] == $task_belong) ? ' selected' : '';
+    $select .= '<option value="' . htmlspecialchars($area_row['f_id']) . '"' . $selected . '>' . htmlspecialchars($area_row['f_name']) . '</option>';
+    
+}
+$select .= '</select>';
 $task_tnpc_id = $ret['tnpc_id'];
 $task_cond = $ret['tcond'];
 $task_accept_cond = $ret['taccept_cond'];
@@ -91,6 +104,7 @@ $task_cmmt2 = $ret['tcmmt2'];
 $task_type = $ret['ttype'];
 $task_type2 = $ret['ttype2'];
 $task_obj = $ret['ttarget_obj'];
+
 
 $task_event_accept = $ret['ttarget_event_accept'];
 $task_event_giveup = $ret['ttarget_event_giveup'];
@@ -203,6 +217,7 @@ $task_html =<<<HTML
 <input name="old_tname" type="hidden" value="{$task_name}">
 <input name="task_id" type="hidden" value="{$task_id}">
 任务标识:t{$task_id}<br/>
+{$select}<br/>
 任务名称:<input name="task_name" type="text" value="{$task_name}" maxlength="50"/><br/>
 $task_type_text
 任务类别:<select name="ttype2" value="{$task_type2}">

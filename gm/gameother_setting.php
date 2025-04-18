@@ -32,7 +32,7 @@ $setting_html = <<<HTML
 ---<br/>
 <a href="?cmd=$item_head_def">物品栏头部设计</a>(✔)<br/>
 <a href="?cmd=$chat_head_def">聊天栏头部设计</a>(✔)<br/>
-<a href="?cmd=$fight_head_def">战斗结算页面设计</a>(✔)<br/>
+<a href="?cmd=$fight_head_def">战斗结算页面设计</a><br/>
 ---<br/>
 <a href="?cmd=$reboot_all">清空游戏数据</a><br/>
 <br/><a href="?cmd=$gm_main">设计大厅</a><br/>
