@@ -13,6 +13,7 @@ $auc_def = $encode->encode("cmd=gm_game_othersetting&auc_canshu=0&canshu=9&sid=$
 $reboot_all = $encode->encode("cmd=gm_game_othersetting&canshu=10&sid=$sid");
 $shop_def = $encode->encode("cmd=gm_game_othersetting&canshu=11&sid=$sid");
 $addition_def = $encode->encode("cmd=gm_game_othersetting&canshu=12&sid=$sid");
+$item_head_def = $encode->encode("cmd=gm_game_othersetting&canshu=13&sid=$sid");
 $chat_head_def = $encode->encode("cmd=gm_game_othersetting&canshu=14&sid=$sid");
 $fight_head_def = $encode->encode("cmd=gm_game_othersetting&canshu=15&sid=$sid");
 $setting_html = <<<HTML
