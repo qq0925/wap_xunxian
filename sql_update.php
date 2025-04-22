@@ -36,7 +36,6 @@ try {
     echo "操作失败: " . $e->getMessage();
 }
 
-
     $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'item_head'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();
@@ -48,6 +47,23 @@ try {
         $stmt = $dblj->prepare($sql);
         $stmt->execute();
     }
+
+    $sql = "SHOW COLUMNS FROM system_region LIKE 'change_cond'";
+    $stmt = $dblj->prepare($sql);
+    $stmt->execute();
+    $column = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$column) {
+        // 如果字段不存在，执行添加字段操作
+        $sql = "ALTER TABLE system_region ADD COLUMN change_cond TEXT NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+        $sql = "ALTER TABLE system_region ADD COLUMN cmmt2 TEXT NOT NULL";
+        $stmt = $dblj->prepare($sql);
+        $stmt->execute();
+    }
+
+
     $sql = "SHOW COLUMNS FROM gm_game_basic LIKE 'chat_head'";
     $stmt = $dblj->prepare($sql);
     $stmt->execute();

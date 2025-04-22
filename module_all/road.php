@@ -2,12 +2,14 @@
 
 function generateAreaLinks($dblj, $currentBelong, $encode, $cmid, $mid, $sid) {
     // 获取所有区域
-    $sql = "SELECT `id`,`name` FROM `system_region` WHERE `road_hide` = 0 ORDER BY `pos` ASC";
+    $sql = "SELECT `id`,`name`,`change_cond`,`cmmt2` FROM `system_region` WHERE `road_hide` = 0 ORDER BY `pos` ASC";
     $regions = $dblj->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     $links = '';
     foreach ($regions as $region) {
         $id = $region['id'];
         $name = $region['name'];
+        $change_cond = $region['change_cond'];
+        $cmmt2 = $region['cmmt2'];
         if ($id == $currentBelong) {
             // 当前区域显示为普通文本
             $links .= "{$name}";
@@ -16,8 +18,20 @@ function generateAreaLinks($dblj, $currentBelong, $encode, $cmid, $mid, $sid) {
             $cmid = $cmid + 1;
             $cdid[] = $cmid;
             $clj[] = $cmd;
+            $change_ret = $change_cond !== '' 
+                ? \lexical_analysis\process_string($change_cond, $sid, $oid, $mid, null, null, "check_cond") 
+                : 1;
+            @$ret = eval("return $change_ret;");
+            $ret_bool = ($ret !== false && $ret !== null) ? 0 : 1;
+            if($ret_bool ==0){
             $encodedCmd = $encode->encode("cmd=road_html&choose_area_belong=$id&ucmd=$cmid&mid=$mid&sid=$sid");
             $links .= "<a href=\"?cmd=$encodedCmd\">{$name}</a> ";
+            }else{
+            $cmmt2 = \lexical_analysis\process_string($cmmt2,$sid,$oid,$mid);
+            $links .=<<<HTML
+<a href="#" onclick="return alert_tips('{$cmmt2}')">{$name}</a>
+HTML;
+            }
         }
     }
     return $links . '<br/>';
@@ -102,3 +116,8 @@ $road_html = "你没有陆行交通工具！<br/>
 }
 echo $road_html;
 ?>
+<script>
+function alert_tips(tips) {
+    alert(tips);
+}
+</script>
