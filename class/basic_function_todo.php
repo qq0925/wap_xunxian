@@ -331,7 +331,7 @@ function chat_list($cmd,$page_id,$sid,$dblj,$value,&$cmid){
 
 function self_photo($cmd,$page_id,$sid,$dblj,$value,&$cmid){
     $cmid = $cmid + 1;
-    $cdid[] = $cmid;    
+    $cdid[] = $cmid;
     $clj[] = $cmd;
     global $encode;
     $photo_url = $encode->encode("cmd=photo_html&ucmd=$cmid&sid=$sid");

@@ -3498,8 +3498,10 @@ function process_string($input, $sid, $oid = null, $mid = null, $jid = null, $ty
                 if($op =='' || $op == "" || $op ==null){
                     $op = '0';
                 }
-                //$op = str_replace(array("''", "\"\""), '0', $op);
-
+                $input = str_replace("{stru({$match})}", $op, $input);
+            }
+            else{
+                $op = convertNumber($match);
                 $input = str_replace("{stru({$match})}", $op, $input);
             }
         }
