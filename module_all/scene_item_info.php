@@ -26,6 +26,24 @@ if(isset($_POST['change_count'])){
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_item_page($dblj);
+$cj_para = \gm\get_global_page_cj($dblj,4);
+$css_text = $cj_para['css'];
+$js_text = $cj_para['js'];
+if($css_text){
+    $css_add = <<<HTML
+<style>
+$css_text
+</style>
+HTML;
+}
+
+if($js_text){
+    $js_add = <<<HTML
+<script>
+$js_text
+</script>
+HTML;
+}
 $br = 0;
 if($mid){
     $item_true_id = $mid;
@@ -178,10 +196,12 @@ $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="css/gamecss.css">
+$css_add
 </head>
 $gm_count_html
 $game_main
 $gm_item_design
+$js_add
 <a href="?cmd=$item_html">返回列表</a><br/>
 <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
@@ -191,8 +211,10 @@ $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="css/gamecss.css">
+$css_add
 </head>
 没有该物品<br/>
+$js_add
 <a href="?cmd=$item_html">返回列表</a><br/>
 <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;

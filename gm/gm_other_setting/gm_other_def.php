@@ -244,12 +244,12 @@ $other_html = <<<HTML
 查看物品操作列表是否换行：<select name="item_op_br"><option value =0>否</option><option value =1 {$selectedOption_3}>是</option></select> <input name="submit" type="submit" title="保存" value="保存" />
 </form>
 ---<br/>
-css样式编写:<br/>
+全局css样式编写:<br/>
 <form action="?cmd=$other_set" method="POST">
 <textarea name="gm_css_text" maxlength="-1" rows="8" cols="40" >{$gm_css_text}</textarea>
 <input name="submit" type="submit" title="保存" value="保存" >
 </form>
-js样式编写:<br/>
+全局js样式编写:<br/>
 <form action="?cmd=$other_set" method="POST">
 <textarea name="gm_js_text" maxlength="-1" rows="8" cols="40" >{$gm_js_text}</textarea>
 <input name="submit" type="submit" title="保存" value="保存" >

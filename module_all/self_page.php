@@ -20,8 +20,27 @@ $cmd = $parents_cmd;
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_self_page($dblj,$page_id);
-$page_para = \gm\get_self_page_list($dblj,$self_id);
-$not_return = $page_para[0]['not_return'];
+$page_para = \gm\get_self_page_list($dblj,$self_id)[0];
+$not_return = $page_para['not_return'];
+$css_text = $page_para['css'];
+$js_text = $page_para['js'];
+
+if($css_text){
+    $css_add = <<<HTML
+<style>
+$css_text
+</style>
+HTML;
+}
+
+if($js_text){
+    $js_add = <<<HTML
+<script>
+$js_text
+</script>
+HTML;
+}
+
 if($not_return ==0){
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
@@ -132,10 +151,12 @@ $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="css/gamecss.css">
+{$css_add}
 </head>
 $game_main
 $ret_game
 $gm_html
+{$js_add}
 HTML;
 echo $all;
 ?>

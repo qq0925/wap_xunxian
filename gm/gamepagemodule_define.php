@@ -2,7 +2,7 @@
 header('Content-Type:text/html;charset=utf-8');
 $last_page = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=0&sid=$sid");
 $sql = '';
-if(!empty($_POST) && $gm_post_canshu !=13){
+if(!empty($_POST) && $gm_post_canshu !=13&&!$change_type){
 $text = $_POST['text'];
 $cond = $_POST['cond'];
 $position = $_POST['position'];
@@ -145,6 +145,26 @@ if (!empty($text)){
     }
     }
 }
+}
+
+if($_POST['post_type'] == 'cj'){
+
+if($change_type == 'css'){
+    $sql = "UPDATE `system_module_cj` set css = :update_css where module_id = :update_id";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':update_css', $change_css_text);
+    $stmt->bindParam(':update_id', $gm_post_canshu);
+    $stmt->execute();
+    echo "更新了css文件！<br/>";
+}elseif($change_type == 'js'){
+    $sql = "UPDATE `system_module_cj` set js = :update_js where module_id = :update_id";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':update_js', $change_js_text);
+    $stmt->bindParam(':update_id', $gm_post_canshu);
+    $stmt->execute();
+    echo "更新了js文件！<br/>";
+}
+
 }
 
 $gm = $encode->encode("cmd=gm&sid=$sid");
@@ -915,8 +935,32 @@ HTML;
 
 }
 if($gm_post_canshu !=0){
+
+if($gm_post_canshu != 13){
+$css_update = $encode->encode("cmd=gm_game_pagemoduledefine&change_type=css&gm_post_canshu=$gm_post_canshu&sid=$sid");
+$js_update = $encode->encode("cmd=gm_game_pagemoduledefine&change_type=js&gm_post_canshu=$gm_post_canshu&sid=$sid");
+$cj_para = \gm\get_global_page_cj($dblj,$gm_post_canshu);
+$module_css_text = htmlspecialchars($cj_para['css']);
+$module_js_text = htmlspecialchars($cj_para['js']);
+$cj_html =<<<HTML
+css样式:<br/>
+<form action="?cmd=$css_update" method="POST">
+<textarea name="change_css_text" maxlength="-1" rows="6" cols="30" >{$module_css_text}</textarea>
+<input name="post_type" hidden value="cj">
+<input name="submit" type="submit" title="保存" value="保存">
+</form>
+js代码:<br/>
+<form action="?cmd=$js_update" method="POST">
+<textarea name="change_js_text" maxlength="-1" rows="6" cols="30" >{$module_js_text}</textarea>
+<input name="post_type" hidden value="cj">
+<input name="submit" type="submit" title="保存" value="保存">
+</form><br/>
+HTML;
+}
+    
 $gm_html_2 =<<<HTML
 $all
+$cj_html
 <a href="?cmd=$last_page">返回上一级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
 HTML;

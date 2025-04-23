@@ -46,7 +46,27 @@ $cxjg = $dblj->query($sql);
 echo "更改成功！<br/>";
 }
 
-if(!empty($_POST) &&!$_POST['change_module_name']){
+if($_POST['post_type'] == 'cj'){
+
+if($change_type == 'css'){
+    $sql = "UPDATE `system_self_define_module` set css = :update_css where id = :update_id";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':update_css', $change_css_text);
+    $stmt->bindParam(':update_id', $module_id);
+    $stmt->execute();
+    echo "更新了css文件！<br/>";
+}elseif($change_type == 'js'){
+    $sql = "UPDATE `system_self_define_module` set js = :update_js where id = :update_id";
+    $stmt = $dblj->prepare($sql);
+    $stmt->bindParam(':update_js', $change_js_text);
+    $stmt->bindParam(':update_id', $module_id);
+    $stmt->execute();
+    echo "更新了js文件！<br/>";
+}
+
+}
+
+if(!empty($_POST) &&!$_POST['change_module_name']&&$_POST['post_type']!='cj'){
 $text = $_POST['text'];
 $cond = $_POST['cond'];
 $position = $_POST['position'];
@@ -127,6 +147,8 @@ $self_name = $get_main_page['name'];
 $self_call_sum = $get_main_page['call_sum'];
 $self_id = $get_main_page['id'];
 $not_return = $get_main_page['not_return'];
+$module_css_text = htmlspecialchars($get_main_page['css']);
+$module_js_text = htmlspecialchars($get_main_page['js']);
 
 if($not_return ==0){
     $choose_html = <<<HTML
@@ -188,6 +210,8 @@ HTML;
 }
 $self_test = $encode->encode("cmd=self_module_api&page_name=$sql_id&sid=$sid");
 $reboot = $encode->encode("cmd=game_self_page&reboot_id=$self_id&self_id=$self_id&sid=$sid");
+$css_update = $encode->encode("cmd=game_self_page&change_type=css&module_id=$self_id&sid=$sid");
+$js_update = $encode->encode("cmd=game_self_page&change_type=js&module_id=$self_id&sid=$sid");
 $all = <<<HTML
 定义[{$self_name}]<form method="post">
 <input type="hidden" name="change_self_id" value="{$self_id}">
@@ -213,7 +237,19 @@ $game_main<br/>
 <a href="?cmd=$game_page_13_3">添加功能元素</a><br/>
 <a href="?cmd=$game_page_13_4">添加链接元素</a><br/>
 <a href="?cmd=$game_page_13_5">添加输入框元素</a><br/>
-<a href="?cmd=$game_page_13_6">清空所有元素</a><br/><br/>
+<a href="?cmd=$game_page_13_6">清空所有元素</a><br/>
+css样式:<br/>
+<form action="?cmd=$css_update" method="POST">
+<textarea name="change_css_text" maxlength="-1" rows="6" cols="30" >{$module_css_text}</textarea>
+<input name="post_type" hidden value="cj">
+<input name="submit" type="submit" title="保存" value="保存">
+</form>
+js代码:<br/>
+<form action="?cmd=$js_update" method="POST">
+<textarea name="change_js_text" maxlength="-1" rows="6" cols="30" >{$module_js_text}</textarea>
+<input name="post_type" hidden value="cj">
+<input name="submit" type="submit" title="保存" value="保存">
+</form><br/>
 <a href="?cmd=$last_page">返回上一级</a><br/>
 <a href="?cmd=$gm">返回设计大厅</a><br/>
 HTML;

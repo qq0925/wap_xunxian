@@ -33,6 +33,24 @@ $player = \player\getplayer($sid,$dblj);
 $uis_designer = $player->uis_designer;
 $game_main = '';
 $get_main_page = \gm\get_equip_page($dblj);
+$cj_para = \gm\get_global_page_cj($dblj,6);
+$css_text = $cj_para['css'];
+$js_text = $cj_para['js'];
+if($css_text){
+    $css_add = <<<HTML
+<style>
+$css_text
+</style>
+HTML;
+}
+
+if($js_text){
+    $js_add = <<<HTML
+<script>
+$js_text
+</script>
+HTML;
+}
 $br = 0;
 for ($i=0;$i<count($get_main_page);$i++){
     $main_id = $get_main_page[$i]['id'];
@@ -129,9 +147,11 @@ $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="css/gamecss.css">
+$css_add
 </head>
 $game_main<br/>
 $designer_html
+$js_add
 <a href="?cmd=$ret_game">返回游戏</a><br/>
 HTML;
 echo $all;

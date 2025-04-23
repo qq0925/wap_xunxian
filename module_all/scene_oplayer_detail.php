@@ -12,6 +12,24 @@ $parents_page = $currentFilePath;
 $player = \player\getplayer($sid,$dblj);
 $uid = $player->uid;
 $oplayer = player\getplayer($mid,$dblj);
+$cj_para = \gm\get_global_page_cj($dblj,5);
+$css_text = $cj_para['css'];
+$js_text = $cj_para['js'];
+if($css_text){
+    $css_add = <<<HTML
+<style>
+$css_text
+</style>
+HTML;
+}
+
+if($js_text){
+    $js_add = <<<HTML
+<script>
+$js_text
+</script>
+HTML;
+}
 if(!$oplayer->sid){
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
@@ -134,10 +152,12 @@ $all = <<<HTML
 <head>
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="css/gamecss.css">
+$css_add
 </head>
 $send_msg
 $game_main
 $friend_list
+$js_add
 <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
 }
