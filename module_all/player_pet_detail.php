@@ -124,7 +124,7 @@ $all = <<<HTML
     <meta charset="utf-8" content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="css/gamecss.css">
 </head>
-$game_main
+{$game_main}<br/>
 HTML;
 if($player->uis_designer ==1){
 $all .=<<<HTML

@@ -5,6 +5,11 @@ if($_POST['iid']){
     if($item_now_count >=($_POST['count'])){
         $total = ($_POST['count'])*($_POST['item_value']);
         $item_name = \player\getitem($_POST['iid'],$dblj)->iname;
+        $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+        $stmt = $dblj->query($sql_2);
+        if($stmt->rowCount() >0){
+        $item_name = $stmt->fetchColumn();
+        }
         $item_name = \lexical_analysis\color_string($item_name);
         $item_total_weight =  \player\getitem_true($item_true_id,$dblj)->iweight *$count ;
         \player\changeplayeritem($item_true_id,-$_POST['count'],$sid,$dblj);
@@ -28,6 +33,11 @@ if($canshu == 'hockshop'){
     if($item_now_count){
         $total = ($item_now_count)*($item_value);
         $item_name = \player\getitem($iid,$dblj)->iname;
+        $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+        $stmt = $dblj->query($sql_2);
+        if($stmt->rowCount() >0){
+        $item_name = $stmt->fetchColumn();
+        }
         $item_type = \player\getitem($iid,$dblj)->itype;
         $item_weight_total = \player\getitem($iid,$dblj)->iweight * $item_now_count;
         $item_name = \lexical_analysis\color_string($item_name);
@@ -52,14 +62,45 @@ if($canshu == 'hockshop'){
 }
 if(!$gm_post_canshu){
 $pos = 0;
-$user_item_para = player\getitem_user($sid,$dblj);
+$list_row = \player\getgameconfig($dblj)->list_row;
+
+// 当前页码
+if ($list_page) {
+    $currentPage = intval($list_page);
+} else {
+    $currentPage = 1;
+}
+
+// 计算偏移量
+$offset = ($currentPage - 1) * $list_row;
+
+$user_item_para = player\getitem_user($sid,$dblj,$offset,$list_row);
+$totalRows = player\getitem_user_count($sid,$dblj,$offset,$list_row);
+
+// 计算总页数
+$totalPages = ceil($totalRows / $list_row);
+if($currentPage > $totalPages&&$totalPages>0){
+    $currentPage = $totalPages;
+// 重新计算偏移量
+$offset = ($currentPage - 1) * $list_row;
+
+$user_item_para = player\getitem_user($sid,$dblj,$offset,$list_row);
+$totalRows =player\getitem_user_count($sid,$dblj,$offset,$list_row);
+// 计算总页数
+$totalPages = ceil($totalRows / $list_row);
+}
 if (!empty($user_item_para)){
-foreach ($user_item_para as $item_detail){
-    $pos +=1;
+for ($i = 0;$i < count($user_item_para);$i++) {
+    $item_detail = $user_item_para[$i];
+    $hangshu = $offset + $i + 1;
     $item_id = $item_detail['iid'];
     $item_true_id = $item_detail['item_true_id'];
-    //$item_para = player\getitem($item_id,$dblj);
     $item_name = $item_detail['iname'];
+    $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+    $stmt = $dblj->query($sql_2);
+    if($stmt->rowCount() >0){
+    $item_name = $stmt->fetchColumn();
+    }
     $item_count = $item_detail['icount'];
     $item_name = \lexical_analysis\color_string($item_name);
     $item_type = $item_detail['itype'];
@@ -80,18 +121,72 @@ foreach ($user_item_para as $item_detail){
     $item_equiped = $item_detail['iequiped'];
     $item_sale_state = $item_detail['isale_state'];
     $item_no_out = $item_detail['ino_out'];
-if($item_no_out==0&&$item_equiped==0&&$item_sale_state==0){
+    if($item_no_out==0&&$item_equiped==0&&$item_sale_state==0){
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $clj[] = $cmd;
-    $item_hockshop = $encode->encode("cmd=gm_hockshop&gm_post_canshu=1&ucmd=$cmid&item_true_id=$item_true_id&iid=$item_id&mid=$mid&sid=$sid");
+    $item_hockshop = $encode->encode("cmd=gm_hockshop&gm_post_canshu=1&list_page=$list_page&ucmd=$cmid&item_true_id=$item_true_id&iid=$item_id&mid=$mid&sid=$sid");
     $hockshop_item_list .= <<<HTML
-    <a href="?cmd=$item_hockshop">{$pos}.{$item_name}({$item_value}{$gm_post->money_measure})</a>你拥有({$item_count})<br/>
+    <a href="?cmd=$item_hockshop">{$hangshu}.{$item_name}({$item_value}{$gm_post->money_measure})</a>你拥有({$item_count})<br/>
 HTML;
-}else{
-    $pos -=1;
 }
     }
+
+if ($currentPage > 2 && $currentPage <= $totalPages) {
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=1&sid=$sid");
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">首页</a>
+HTML;
+}
+if ($currentPage > 1) {
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $list_page = $currentPage -  1;
+    
+    if($kw){
+    $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
+    }else{
+    $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
+    }
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">上页</a>
+HTML;
+}
+
+if ($currentPage < $totalPages) {
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $list_page = $currentPage +  1;
+    if($kw){
+    $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
+    }else{
+    $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
+    }
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">下页</a>
+HTML;
+}
+
+if ($totalPages > 2 && $currentPage < $totalPages-1) {
+    $cmid = $cmid + 1;
+    $cdid[] = $cmid;
+    $list_page = $totalPages;
+    if($kw){
+    $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
+    }else{
+    $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
+    }
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">末页</a>
+HTML;
+}
+
+if($totalPages >1){
+    $page_html .="<br/>";
+}
+
 }
 else{
 $hockshop_item_list ="暂时没有可以出售的物品！<br/>";
@@ -99,7 +194,7 @@ $hockshop_item_list ="暂时没有可以出售的物品！<br/>";
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&newmid=$mid&sid=$sid");
+$gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $shop_html = <<<HTML
 <p>出售装备将会清空镶嵌物！<br/>
 <p>此处所有物品回收折扣率为100.0%<br/>
@@ -107,6 +202,7 @@ $shop_html = <<<HTML
 负重:{$player->uburthen}/{$player->umax_burthen}<br/>
 请选择你要出售的物品：<br/>
 $hockshop_item_list
+$page_html
 <a href="?cmd=$gobackgame">返回游戏</a><br/>
 </p>
 HTML;
@@ -115,6 +211,11 @@ if($gm_post_canshu ==1){
 $item_now_count = \player\getitem_true_count($item_true_id,$sid,$dblj);
 $item_para = player\getitem($iid,$dblj);
 $item_name = $item_para ->iname;
+$sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+$stmt = $dblj->query($sql_2);
+if($stmt->rowCount() >0){
+$item_name = $stmt->fetchColumn();
+}
 $item_name = \lexical_analysis\color_string($item_name);
 
 $item_type = $item_para ->itype;
@@ -136,21 +237,21 @@ $item_desc = \lexical_analysis\process_string($item_desc,$sid);
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$hockshop_all = $encode->encode("cmd=gm_hockshop&canshu=hockshop&ucmd=$cmid&item_true_id=$item_true_id&iid=$iid&item_value=$item_value&count=$item_now_count&mid=$mid&sid=$sid");
+$hockshop_all = $encode->encode("cmd=gm_hockshop&canshu=hockshop&ucmd=$cmid&list_page=$list_page&item_true_id=$item_true_id&iid=$iid&item_value=$item_value&count=$item_now_count&mid=$mid&sid=$sid");
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$hockshop_form = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&mid=$mid&sid=$sid");
+$hockshop_form = $encode->encode("cmd=gm_hockshop&list_page=$list_page&ucmd=$cmid&mid=$mid&sid=$sid");
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$gobacklist = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&mid=$mid&sid=$sid");
+$gobacklist = $encode->encode("cmd=gm_hockshop&list_page=$list_page&ucmd=$cmid&mid=$mid&sid=$sid");
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&newmid=$mid&sid=$sid");
+$gobackgame = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $shop_html = <<<HTML
 {$item_name}x1<br/>
 重量:{$item_weight}<br/>

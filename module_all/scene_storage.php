@@ -5,6 +5,9 @@ $player_nowmid = $player->nowmid;
 $clmid = player\getmid($player_nowmid,$dblj);
 $map_name = $clmid->mname;
 $game_config = \player\getgameconfig($dblj);
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 
 if($_POST['password']&&!$_POST['kw']){
 
@@ -217,6 +220,11 @@ if(!$op_canshu){
     
 if($target_event =="get"){
     $store_now_count = \player\getstore_item_true_count($player_nowmid,$item_true_id,$sid,$dblj);
+    $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+    $stmt = $dblj->query($sql_2);
+    if($stmt->rowCount() >0){
+    $item_name = $stmt->fetchColumn();
+    }
     $item_name = \lexical_analysis\color_string($item_name);
     if($player->uburthen + $get_count <=$player->umax_burthen &&$get_count >0){
     if($get_count>=$store_now_count){
@@ -359,6 +367,11 @@ $cxjg = $dblj->query($sql);
 $retitem = $cxjg->fetch(PDO::FETCH_ASSOC);
 $itemid = $retitem['iid'];
 $itemname = $retitem['iname'];
+$sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+$stmt = $dblj->query($sql_2);
+if($stmt->rowCount() >0){
+$itemname = $stmt->fetchColumn();
+}
 $item_bak_name = $itemname;
 $itemtype = $retitem['itype'];
 $itemname = \lexical_analysis\process_photoshow($itemname);
@@ -380,9 +393,6 @@ $itemname = \lexical_analysis\color_string($itemname);
     }
 }
 }
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 
 if ($currentPage > 2 && $currentPage == $totalPages) {
     $cmid = $cmid + 1;
@@ -459,6 +469,11 @@ HTML;
     
 if($target_event =="store"){
     $item_now_count = \player\getitem_true_count($item_true_id,$sid,$dblj);
+    $sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+    $stmt = $dblj->query($sql_2);
+    if($stmt->rowCount() >0){
+    $item_name = $stmt->fetchColumn();
+    }
     $item_name = \lexical_analysis\color_string($item_name);
     if($now_city_storage + $store_count <=$city_storage &&$store_count >0){
     if($store_count>=$item_now_count){
@@ -597,6 +612,11 @@ $cxjg = $dblj->query($sql);
 $retitem = $cxjg->fetch(PDO::FETCH_ASSOC);
 $itemid = $retitem['iid'];
 $itemname = $retitem['iname'];
+$sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+$stmt = $dblj->query($sql_2);
+if($stmt->rowCount() >0){
+$itemname = $stmt->fetchColumn();
+}
 $itemtype = $retitem['itype'];
 $item_bak_name = $itemname;
 $itemname = \lexical_analysis\color_string($itemname);
@@ -614,9 +634,6 @@ $itemname = \lexical_analysis\process_photoshow($itemname);
     }
 }
 }
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 
 if ($currentPage > 2 && $currentPage == $totalPages) {
     $cmid = $cmid + 1;
@@ -666,9 +683,6 @@ $itemhtml .="该分类下没有物品！<br/>";
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $gomystorage = $encode->encode("cmd=gm_storage&canshu=$canshu&ucmd=$cmid&sid=$sid");
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 if($keyword =="%"){
     $keyword = "";
 }
@@ -694,6 +708,11 @@ HTML;
 }elseif($op_canshu ==3){
 $item_para = \player\getitem($iid,$dblj);
 $item_name = $item_para->iname;
+$sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+$stmt = $dblj->query($sql_2);
+if($stmt->rowCount() >0){
+$item_name = $stmt->fetchColumn();
+}
 $item_bak_name = $item_name;
 $item_name = \lexical_analysis\color_string($item_name);
 $item_desc = $item_para->idesc;
@@ -739,11 +758,13 @@ $get_out_html
 <a href="?cmd=$gonowmid">返回游戏</a><br/>
 HTML;
 }elseif($op_canshu ==4){
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&sid=$sid");
 $item_para = \player\getitem_true($item_true_id,$dblj);
 $item_name = $item_para->iname;
+$sql_2 = "SELECT value FROM system_addition_attr WHERE oid = 'item' and mid = '$item_true_id' and name = 'iname'";
+$stmt = $dblj->query($sql_2);
+if($stmt->rowCount() >0){
+$item_name = $stmt->fetchColumn();
+}
 $item_bak_name = $item_name;
 $item_name = \lexical_analysis\color_string($item_name);
 $item_desc = $item_para->idesc;

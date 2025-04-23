@@ -411,6 +411,8 @@ for ($i = 1; $i <= $map_x; $i++) {
     }else{
     $area_delete = $encode->encode("cmd=gm_map_2&delete_id=no&qy_id=$qy_id&post_canshu=1&sid=$sid");
     }
+    $area_map_update = $encode->encode("cmd=gm_post_4&update=2&post_canshu=1&qy_id=$qy_id&sid=$sid");
+    $update_url = "game.php?cmd=$area_map_update";
     $area_map_delete = $encode->encode("cmd=gm_map_2&qy_id=$qy_id&delete_map=1&post_canshu=1&sid=$sid");
     $del_url = "game.php?cmd=$area_map_delete";
     $game_config = \player\getgameconfig($dblj);
@@ -459,7 +461,6 @@ $map_in = $encode->encode("cmd=gm_post_4&in_canshu=1&marea_name=$marea_name&qy_i
 $map_add = $encode->encode("cmd=gm_post_4&map_add_canshu=1&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
 $map_add_batch = $encode->encode("cmd=gm_post_4&add_batch=1&post_canshu=2&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
 $npc_add_batch = $encode->encode("cmd=gm_post_4&add_batch=1&canshu=1&post_canshu=4&qy_id=$qy_id&sid=$sid");
-$update_all_data = $encode->encode("cmd=gm_post_4&update=2&post_canshu=1&qy_id=$qy_id&sid=$sid");
 if($qy_id !=0){
 $area_modify = $encode->encode("cmd=gm_post_4&area_modify=1&post_canshu=3&marea_name=$marea_name&qy_id=$qy_id&sid=$sid");
 $area_belong = \gm\getqy($dblj,$qy_id)['belong'];
@@ -528,7 +529,7 @@ $page_html
 <a href="?cmd=$map_add" >增加场景</a><br/>
 <a href="?cmd=$map_add_batch" >批量生成场景</a><br/>
 <a href="?cmd=$npc_add_batch" >批量添加npc</a><br/>
-<a href="?cmd=$update_all_data" >更新该区域内所有对象</a><br/><br/>
+<a href="#" onclick="return confirm_update('$update_url', '{$marea_name}')">更新该区域内所有对象</a><br/><br/>
 $area_change_html
 <a href="?cmd=$area_delete" >删除该区域</a><br/>
 <a href="#" onclick="return confirmAction('$del_url', '{$marea_name}')">删除该区域所有场景</a><br/><br/>
@@ -540,6 +541,14 @@ function confirmAction(del_url, step_order) {
     if (confirm("你确定要删除 “" + step_order + "” 这个区域内的所有场景，包括场景相关的元素吗？")) {
         // 使用传入的具体删除链接
         window.location.href = del_url;
+    }
+    return false;
+}
+function confirm_update(update_url, step_order) {
+    // 在确认框中显示具体的操作名称
+    if (confirm("你确定要更新 “" + step_order + "” 这个区域内的所有场景，包括场景相关的元素吗？")) {
+        // 使用传入的具体删除链接
+        window.location.href = update_url;
     }
     return false;
 }

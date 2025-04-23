@@ -172,26 +172,66 @@ try {
 }
 }
 
-$sql = "select * from game1";
+$list_row = \player\getgameconfig($dblj)->list_row;
+// 当前页码
+if ($list_page) {
+    $currentPage = intval($list_page);
+} else {
+    $currentPage = 1;
+}
+// 计算偏移量
+$offset = ($currentPage - 1) * $list_row;
+
+$sql = "SELECT count(*) as total FROM game1";
+$cxjg = $dblj->query($sql);
+$countRow = $cxjg->fetch(\PDO::FETCH_ASSOC);
+$totalRows = $countRow['total'];
+
+$sql = "select * from game1 limit $offset,$list_row";
 $cxjg = $dblj ->query($sql);
 $playerData = $cxjg ->fetchAll(PDO::FETCH_ASSOC);
+
+// 计算总页数
+$totalPages = ceil($totalRows / $list_row);
+if($currentPage > $totalPages&&$totalPages>0){
+$currentPage = $totalPages;
+// 重新计算偏移量
+$offset = ($currentPage - 1) * $list_row;
+
+$sql = "SELECT count(*) as total FROM game1";
+$cxjg = $dblj->query($sql);
+$countRow = $cxjg->fetch(\PDO::FETCH_ASSOC);
+$totalRows = $countRow['total'];
+
+$sql = "select * from game1 limit $offset,$list_row";
+$cxjg = $dblj ->query($sql);
+$playerData = $cxjg ->fetchAll(PDO::FETCH_ASSOC);
+
+
+// 计算总页数
+$totalPages = ceil($totalRows / $list_row);
+}
+
+
+
 $index = 0;
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $last_page = $encode->encode("cmd=gm_game_othersetting&sid=$sid");
 $delete_all_url = $encode->encode("cmd=gm_game_othersetting&canshu=4&delete_all=1&sid=$sid");
 if($playerData){
-foreach ($playerData as $player) {
-$index = $index + 1;
-$uid = $player['uid'];
-$uname = $player['uname'];
-$usid = $player['sid'];
-$u_token = $player['token'];
-$ulvl = $player['ulvl'];
-$refresh_url = $encode->encode("cmd=gm_game_othersetting&canshu=4&u_sid=$usid&refresh_id=$uid&sid=$sid");
-$delete_url = $encode->encode("cmd=gm_game_othersetting&canshu=4&u_token=$u_token&u_sid=$usid&delete_id=$uid&sid=$sid");
-$player_data_detail .= <<<HTML
+for ($i = 0; $i < count($playerData); $i++) {
+    $hangshu = $offset + $i + 1;
+    $player = $playerData[$i];
+    $uid = $player['uid'];
+    $uname = $player['uname'];
+    $usid = $player['sid'];
+    $u_token = $player['token'];
+    $ulvl = $player['ulvl'];
+    $refresh_url = $encode->encode("cmd=gm_game_othersetting&canshu=4&u_sid=$usid&refresh_id=$uid&sid=$sid");
+    $delete_url = $encode->encode("cmd=gm_game_othersetting&canshu=4&u_token=$u_token&u_sid=$usid&delete_id=$uid&sid=$sid");
+    $player_data_detail .= <<<HTML
 <tr>
-<td>{$index}</td>
+<td>{$hangshu}</td>
 <td>{$uid}</td>
 <td>{$u_token}</td>
 <td>{$uname}</td>
@@ -203,8 +243,40 @@ $player_data_detail .= <<<HTML
 </td>
 </tr>
 HTML;
-        }
+}
+if ($currentPage > 2 && $currentPage <= $totalPages) {
+    $main_page = $encode->encode("cmd=gm_game_othersetting&canshu=4&look_canshu=$look_canshu&list_page=1&sid=$sid");
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">首页</a>
+HTML;
+}
+if ($currentPage > 1) {
+    $list_page = $currentPage - 1;
+    $main_page = $encode->encode("cmd=gm_game_othersetting&canshu=4&look_canshu=$look_canshu&list_page=$list_page&sid=$sid");
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">上页</a>
+HTML;
+}
 
+if ($currentPage < $totalPages) {
+    $list_page = $currentPage +  1;
+    $main_page = $encode->encode("cmd=gm_game_othersetting&canshu=4&look_canshu=$look_canshu&list_page=$list_page&sid=$sid");
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">下页</a>
+HTML;
+}
+
+if ($totalPages > 2 && $currentPage < $totalPages-1) {
+    $list_page = $totalPages;
+    $main_page = $encode->encode("cmd=gm_game_othersetting&canshu=4&look_canshu=$look_canshu&list_page=$list_page&sid=$sid");
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">末页</a>
+HTML;
+}
+
+if($totalPages >1){
+    $page_html .="<br/>";
+}
 $table_frame = <<<HTML
 <div id="playerData">
 <table border="1px solid black" style="width:100%;padding:10px 10px 10px;text-align:center;">
@@ -223,6 +295,7 @@ $table_frame
 $player_data_detail
 </table><br/>
 <button onclick="myFunction2(this)" drump_url="{$delete_all_url}">清空所有玩家数据</button><br/><br/>
+$page_html
 <a href="?cmd=$last_page">返回上级</a><br/><br/>
 <a href="?cmd=$gm_main">设计大厅</a><br/>
 </div>

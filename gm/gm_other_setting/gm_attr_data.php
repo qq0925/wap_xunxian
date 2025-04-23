@@ -82,9 +82,69 @@ if($modify_name){
     }
 }
 
-$sql = "select * from system_addition_attr";
+$conditions = [
+    'all' => "1",
+    'player' => "oid = '' and sid !=''",
+    'item' => "oid = 'item'",
+];
+$condition_text = [
+    'all' => "全部",
+    'player' => "玩家",
+    'item' => "物品",
+];
+
+$look_canshu = $look_canshu?:'all';
+
+$now_page = $condition_text[$look_canshu];
+$change_all = $encode->encode("cmd=gm_game_othersetting&canshu=12&sid=$sid");
+$change_player = $encode->encode("cmd=gm_game_othersetting&look_canshu=player&canshu=12&sid=$sid");
+$change_item = $encode->encode("cmd=gm_game_othersetting&look_canshu=item&canshu=12&sid=$sid");
+$choose_html =<<<HTML
+当前：{$now_page}<br/>
+<a href="?cmd=$change_all">全部</a>|<a href="?cmd=$change_player">玩家</a>|<a href="?cmd=$change_item">物品</a><br/>
+HTML;
+
+$condition = $conditions[$look_canshu];
+
+$list_row = \player\getgameconfig($dblj)->list_row;
+// 当前页码
+if ($list_page) {
+    $currentPage = intval($list_page);
+} else {
+    $currentPage = 1;
+}
+// 计算偏移量
+$offset = ($currentPage - 1) * $list_row;
+
+$sql = "SELECT count(*) as total FROM system_addition_attr where $condition";
+$cxjg = $dblj->query($sql);
+$countRow = $cxjg->fetch(\PDO::FETCH_ASSOC);
+$totalRows = $countRow['total'];
+
+$sql = "select * from system_addition_attr where $condition limit $offset,$list_row";
 $cxjg = $dblj ->query($sql);
 $attrData = $cxjg ->fetchAll(PDO::FETCH_ASSOC);
+
+// 计算总页数
+$totalPages = ceil($totalRows / $list_row);
+if($currentPage > $totalPages&&$totalPages>0){
+$currentPage = $totalPages;
+// 重新计算偏移量
+$offset = ($currentPage - 1) * $list_row;
+
+$sql = "SELECT count(*) as total FROM system_addition_attr where $condition";
+$cxjg = $dblj->query($sql);
+$countRow = $cxjg->fetch(\PDO::FETCH_ASSOC);
+$totalRows = $countRow['total'];
+
+$sql = "select * from system_addition_attr where $condition limit $offset,$list_row";
+$cxjg = $dblj ->query($sql);
+$attrData = $cxjg ->fetchAll(PDO::FETCH_ASSOC);
+
+
+// 计算总页数
+$totalPages = ceil($totalRows / $list_row);
+}
 $index = 0;
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $last_page = $encode->encode("cmd=gm_game_othersetting&sid=$sid");
@@ -124,6 +184,40 @@ $attr_data_detail .= <<<HTML
 </tr>
 HTML;
         }
+if ($currentPage > 2 && $currentPage <= $totalPages) {
+    $main_page = $encode->encode("cmd=gm_game_othersetting&canshu=12&look_canshu=$look_canshu&list_page=1&sid=$sid");
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">首页</a>
+HTML;
+}
+if ($currentPage > 1) {
+    $list_page = $currentPage - 1;
+    $main_page = $encode->encode("cmd=gm_game_othersetting&canshu=12&look_canshu=$look_canshu&list_page=$list_page&sid=$sid");
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">上页</a>
+HTML;
+}
+
+if ($currentPage < $totalPages) {
+    $list_page = $currentPage +  1;
+    $main_page = $encode->encode("cmd=gm_game_othersetting&canshu=12&look_canshu=$look_canshu&list_page=$list_page&sid=$sid");
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">下页</a>
+HTML;
+}
+
+if ($totalPages > 2 && $currentPage < $totalPages-1) {
+    $list_page = $totalPages;
+    $main_page = $encode->encode("cmd=gm_game_othersetting&canshu=12&look_canshu=$look_canshu&list_page=$list_page&sid=$sid");
+    $page_html .=<<<HTML
+<a href="?cmd=$main_page">末页</a>
+HTML;
+}
+
+if($totalPages >1){
+    $page_html .="<br/>";
+}
+
 
 $table_frame = <<<HTML
 <div id="attrData">
@@ -138,9 +232,11 @@ $table_frame = <<<HTML
 </tr>
 HTML;
 $attr_data_html = <<<HTML
+$choose_html
 $table_frame
 $attr_data_detail
 </table><br/>
+$page_html
 <a href="?cmd=$last_page">返回上级</a><br/><br/>
 <a href="?cmd=$gm_main">设计大厅</a><br/>
 </div>
@@ -194,5 +290,3 @@ function cancelEdit(sid, oid, mid, name, value) {
     document.getElementById('input_' + sid + '_' + oid + '_' + mid + '_' + name).value = value;
 }
 </script>
-
-

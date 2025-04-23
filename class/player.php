@@ -717,20 +717,19 @@ function getitem_root($item_true_id,$sid,$dblj){
 }
 
 
-function getitem_user($sid,$dblj){
-    $item = new item();
-    $sql = "SELECT m.*,i.item_true_id,i.icount,i.iequiped,i.isale_state FROM system_item_module m JOIN system_item i ON m.iid = i.iid WHERE i.sid = '$sid'
-    ";;
+function getitem_user($sid,$dblj,$offset,$list_row){
+    $sql = "SELECT m.*,i.item_true_id,i.icount,i.iequiped,i.isale_state FROM system_item_module m JOIN system_item i ON m.iid = i.iid WHERE i.sid = '$sid' LIMIT $offset,$list_row";;
     $cxjg = $dblj->query($sql);
     $data = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
-    // 循环遍历数组，动态生成类的属性并赋值
-    if(is_bool($data)){
-        return;
-    }
-    foreach ($data as $propertyName => $propertyValue) {
-        $item->{$propertyName} = $propertyValue;
-    }
-    return $item;
+    return $data;
+}
+
+function getitem_user_count($sid,$dblj,$offset,$list_row){
+    $sql = "SELECT count(*) as total FROM system_item_module m JOIN system_item i ON m.iid = i.iid WHERE i.sid = '$sid'";;
+    $cxjg = $dblj->query($sql);
+    $countRow = $cxjg->fetch(\PDO::FETCH_ASSOC);
+    $totalRows = $countRow['total'];
+    return $totalRows;
 }
 
 function getitem_true($item_true_id,$dblj){
