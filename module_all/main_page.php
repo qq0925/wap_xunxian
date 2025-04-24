@@ -122,7 +122,7 @@ if (isset($newmid) && $player->nowmid != $newmid) {
                 $clmid->mid,
                 $para
             );
-            
+            $event_triger = 1;
             // 重新获取可能被事件改变的玩家数据
             $player = player\getplayer($sid, $dblj);
             $tpsmid = $player->tpsmid;
@@ -162,7 +162,6 @@ if (isset($newmid) && $player->nowmid != $newmid) {
                     $oldclmid->mid,
                     $para
                 );
-                
                 // 检查事件是否改变了玩家位置
                 $player = player\getplayer($sid, $dblj);
                 if ($player->tpsmid != 0) {
@@ -196,6 +195,7 @@ if (isset($newmid) && $player->nowmid != $newmid) {
 $clmid = player\getmid($player->nowmid,$dblj);
 if($clmid->mlook_event_id !=0){
 events_steps_change($clmid->mlook_event_id,$sid,$dblj,$just_page,$steps_page,$cmid,'module_all/main_page.php','scene',$clmid->mid,$para);
+
 }
 $sql = "select uname,sid,endtime,uis_designer from game1 where nowmid='$player->nowmid' AND sfzx = 1 AND sid !='$sid' and uis_sailing = 0 and uis_skying = 0 and uis_roading = 0";//获取当前地图玩家
 $cxjg = $dblj->query($sql);
@@ -374,6 +374,7 @@ $change_nowmid = $encode->encode("cmd=gm_map_2&sid=$sid");
 
 if($player->ucmd != "pve_fight"){
 //30-70ms
+if($event_triger!=1){
 $page_count = count($get_main_page);
 $oid = 'scene';
 $mid = $player->nowmid;
@@ -464,6 +465,7 @@ HTML;
 
     }
 
+}
 }
 }
 
