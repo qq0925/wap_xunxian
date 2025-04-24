@@ -52,14 +52,14 @@ if($change_type == 'css'){
     $sql = "UPDATE `system_self_define_module` set css = :update_css where id = :update_id";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':update_css', $change_css_text);
-    $stmt->bindParam(':update_id', $module_id);
+    $stmt->bindParam(':update_id', $self_id);
     $stmt->execute();
     echo "更新了css文件！<br/>";
 }elseif($change_type == 'js'){
     $sql = "UPDATE `system_self_define_module` set js = :update_js where id = :update_id";
     $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':update_js', $change_js_text);
-    $stmt->bindParam(':update_id', $module_id);
+    $stmt->bindParam(':update_id', $self_id);
     $stmt->execute();
     echo "更新了js文件！<br/>";
 }
@@ -210,8 +210,8 @@ HTML;
 }
 $self_test = $encode->encode("cmd=self_module_api&page_name=$sql_id&sid=$sid");
 $reboot = $encode->encode("cmd=game_self_page&reboot_id=$self_id&self_id=$self_id&sid=$sid");
-$css_update = $encode->encode("cmd=game_self_page&change_type=css&module_id=$self_id&sid=$sid");
-$js_update = $encode->encode("cmd=game_self_page&change_type=js&module_id=$self_id&sid=$sid");
+$css_update = $encode->encode("cmd=game_self_page&change_type=css&self_id=$self_id&sid=$sid");
+$js_update = $encode->encode("cmd=game_self_page&change_type=js&self_id=$self_id&sid=$sid");
 $all = <<<HTML
 定义[{$self_name}]<form method="post">
 <input type="hidden" name="change_self_id" value="{$self_id}">
