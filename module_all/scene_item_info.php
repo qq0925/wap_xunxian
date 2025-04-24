@@ -84,23 +84,6 @@ for ($i=0;$i<count($get_main_page);$i++){
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
-//     try{
-//         $matches = array();
-//                 $pattern = '/\[([^\[\]]*)\]/';
-//                 $main_value = preg_replace_callback($pattern, function($matches) {
-//                     $content = $matches[1]; // 获取方括号中的内容
-//                     // 进行处理，例如将内容转换为大写
-//                     $processedContent = @eval("return $content;");
-//                     return '[' . $processedContent . ']'; // 将处理后的内容放回原字符串中
-//                     }, $main_value);
-//             }
-//             catch (ParseError $e){
-//                 print("语法错误: ". $e->getMessage());
-                
-//             }
-//             catch (Error $e){
-//                 print("执行错误: ". $e->getMessage());
-// }
     if($main_target_event !=0){
         
     $cmid = $cmid + 1;
@@ -112,7 +95,6 @@ for ($i=0;$i<count($get_main_page);$i++){
     }
     if($main_target_func !=0){
         $main_target_func = basic_func_choose($cmd,$main_target_func,$sid,$dblj,$main_value,$mid,3,$cmid);
-        //var_dump($main_target_func);
     }
     switch ($main_type) {
         case '1':

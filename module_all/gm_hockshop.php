@@ -130,6 +130,12 @@ for ($i = 0;$i < count($user_item_para);$i++) {
     <a href="?cmd=$item_hockshop">{$hangshu}.{$item_name}({$item_value}{$gm_post->money_measure})</a>你拥有({$item_count})<br/>
 HTML;
 }
+    else{
+        $hockshop_item_list .=<<<HTML
+{$hangshu}.{$item_name}({$item_value}{$gm_post->money_measure})你拥有({$item_count})[不可出售]<br/>
+HTML;
+}
+}
     }
 
 if ($currentPage > 2 && $currentPage <= $totalPages) {
@@ -145,11 +151,7 @@ if ($currentPage > 1) {
     $cdid[] = $cmid;
     $list_page = $currentPage -  1;
     
-    if($kw){
     $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
-    }else{
-    $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
-    }
     $page_html .=<<<HTML
 <a href="?cmd=$main_page">上页</a>
 HTML;
@@ -159,11 +161,7 @@ if ($currentPage < $totalPages) {
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $list_page = $currentPage +  1;
-    if($kw){
     $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
-    }else{
-    $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
-    }
     $page_html .=<<<HTML
 <a href="?cmd=$main_page">下页</a>
 HTML;
@@ -173,11 +171,7 @@ if ($totalPages > 2 && $currentPage < $totalPages-1) {
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
     $list_page = $totalPages;
-    if($kw){
     $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
-    }else{
-    $main_page = $encode->encode("cmd=gm_hockshop&ucmd=$cmid&list_page=$list_page&sid=$sid");
-    }
     $page_html .=<<<HTML
 <a href="?cmd=$main_page">末页</a>
 HTML;
@@ -187,7 +181,7 @@ if($totalPages >1){
     $page_html .="<br/>";
 }
 
-}
+
 else{
 $hockshop_item_list ="暂时没有可以出售的物品！<br/>";
 }

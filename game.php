@@ -2584,6 +2584,7 @@ echo $refresh_html;
                     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
                     \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
                     $dblj->exec("DELETE from player_equip_mosaic where equip_id = '$item_true_id'");
+                    $dblj->exec("DELETE from system_addition_attr where oid = 'item' and mid = '$item_true_id'");
                     echo "你丢掉了{$iname}<br/>";
                     }
                     }else{
@@ -2606,6 +2607,7 @@ echo $refresh_html;
                     \player\changeplayeritem($item_true_id,-1,$sid,$dblj);
                     \player\addplayersx('uburthen',-$iweight,$sid,$dblj);
                     $dblj->exec("DELETE from player_equip_mosaic where equip_id = '$item_true_id'");
+                    $dblj->exec("DELETE from system_addition_attr where oid = 'item' and mid = '$item_true_id'");
                     echo "你丢掉了所有的{$iname}<br/>";
                     }
                     }else{
