@@ -268,11 +268,13 @@ function get_global_page_cj($dblj,$module_id){
 function get_self_page_list($dblj,$module_id=null){
     if($module_id !=null){
     $sql = "SELECT * FROM system_self_define_module where id = '$module_id' ORDER BY pos ASC;";
+    $cxjg = $dblj->query($sql);
+    $ret = $cxjg->fetch(\PDO::FETCH_ASSOC);
     }else{
     $sql = "SELECT * FROM system_self_define_module ORDER BY pos ASC;";
-    }
     $cxjg = $dblj->query($sql);
     $ret = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
+    }
     return $ret;
 }
 

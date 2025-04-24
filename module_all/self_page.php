@@ -20,7 +20,8 @@ $cmd = $parents_cmd;
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
 $get_main_page = \gm\get_self_page($dblj,$page_id);
-$page_para = \gm\get_self_page_list($dblj,$self_id)[0];
+$page_para = \gm\get_self_page_list($dblj,$page_id);
+
 $not_return = $page_para['not_return'];
 $css_text = $page_para['css'];
 $js_text = $page_para['js'];

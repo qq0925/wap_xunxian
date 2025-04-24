@@ -142,7 +142,7 @@ $game_page_13_5 = $encode->encode("cmd=game_self_page_2&self_id=$self_id&main_ty
 $gm = $encode->encode("cmd=gm&sid=$sid");
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
-$get_main_page = \gm\get_self_page_list($dblj,$self_id)[0];
+$get_main_page = \gm\get_self_page_list($dblj,$self_id);
 $self_name = $get_main_page['name'];
 $self_call_sum = $get_main_page['call_sum'];
 $self_id = $get_main_page['id'];
