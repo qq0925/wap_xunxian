@@ -72,7 +72,7 @@ function events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,&$c
                     //这里写默认不生成返回链接的动作
                     //考虑module_id取值。物品和战斗页面触发条件不满足不生成返回游戏链接
                     //$event_data['system_event']['module_id']
-                    if($parents_cmd !=$pve_fighting){;
+                    if($parents_cmd !='pve_fighting'){
                     $just_page = $encode->encode("cmd=$parents_cmd&mid=$mid&ucmd=$cmid&sid=$sid");
                     $page_url =<<<HTML
 <a href="?cmd=$just_page">返回游戏</a><br/>

@@ -323,7 +323,6 @@ $refresh_html =<<<HTML
 <meta http-equiv="refresh" content="1;URL=index.php">
 HTML;
 echo $refresh_html;
-            //header("refresh:1;url=index.php");
             }elseif($register_triggle){
             if(!empty($event_data['system_event']['link_evs'])){
                 $system_event_evs = $event_data["system_event_evs"];

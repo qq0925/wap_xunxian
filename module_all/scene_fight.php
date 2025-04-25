@@ -428,7 +428,9 @@ if (isset($zdjg) &&empty($fight_arr) ||$player->uhp<=0){
     $huode .= "{$money_name}{$total_money}{$money_measure} <br/>";
     }
     $dblj->exec("DELETE from player_temp_attr where obj_id = '$sid' and attr_name = 'busy'");
-    $monster_name = \lexical_analysis\color_string($alive_monster->nname);
+    $monster_name = \lexical_analysis\process_string($alive_monster->nname,$sid,'npc_monster',$alive_monster->ngid);
+    $monster_name = \lexical_analysis\process_photoshow($monster_name);
+    $monster_name =\lexical_analysis\color_string($monster_name);
     switch ($zdjg){
         case 1:
             \player\changeplayersx('uis_pve',0,$sid,$dblj);
@@ -617,7 +619,11 @@ $goback_fight = $encode->encode("cmd=pve_fight&ucmd=$cmid&sid=$sid");
 $fight_arr = player\getfightpara($sid,$dblj);
 $all = "";
 for($i=1;$i<@count($fight_arr) +1;$i++){
+    $guai_ngid = $fight_arr[$i-1]['ngid'];
     $guai_name = $fight_arr[$i-1]['nname'];
+    $guai_name = \lexical_analysis\process_string($guai_name,$sid,'npc_monster',$guai_ngid);
+    $guai_name = \lexical_analysis\process_photoshow($guai_name);
+    $guai_name =\lexical_analysis\color_string($guai_name);
     $guai_lvl = $fight_arr[$i-1]['nlvl'];
     $guai_hp = $fight_arr[$i-1]['nhp'];
     $guai_mp = $fight_arr[$i-1]['nmp'];

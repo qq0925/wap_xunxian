@@ -1157,9 +1157,12 @@ if ($clmid->mnpc_now !=""){
     $cxjg = $dblj->query($sql);
     $cxnpcall = $cxjg->fetchAll(PDO::FETCH_ASSOC);
     for ($i=0;$i < count($cxnpcall);$i++){
-        $nname = $cxnpcall[$i]['nname'];
         $nid = $cxnpcall[$i]['nid'];
         $ncid = $cxnpcall[$i]['ncid'];
+        $nname = $cxnpcall[$i]['nname'];
+        $nname = \lexical_analysis\process_string($nname,$sid,'npc_scene',$ncid);
+        $nname = \lexical_analysis\process_photoshow($nname);
+        $nname =\lexical_analysis\color_string($nname);
         $nkill = $cxnpcall[$i]['nkill'];
         $nnot_dead = $cxnpcall[$i]['nnot_dead'];
         $ntaskid = $cxnpcall[$i]['ntask_target'];
@@ -1852,6 +1855,9 @@ function enemy_text($cmd,$page_id,$sid,$dblj,$value,$mid,$cmid){
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $monster_name = $row['nname'];
+    $monster_name = \lexical_analysis\process_string($monster_name,$sid,'npc_monster',$monster_id);
+    $monster_name = \lexical_analysis\process_photoshow($monster_name);
+    $monster_name =\lexical_analysis\color_string($monster_name);
     $monster_hp = $row['nhp'];
     $monster_maxhp = $row['nmaxhp'];
     $monster_mp = $row['nmp'];
