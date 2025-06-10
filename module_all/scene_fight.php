@@ -376,7 +376,7 @@ $zdjg = 1;
 }
 while (\player\upplayerlvl($sid, $dblj) == 1) {
     if($can_redis == 1){
-    $redis->flushAll($cacheKey);
+    $redis->flushDB($cacheKey);
     }
     $ret = $ret ?? global_event_data_get(22, $dblj);
     if ($ret) {

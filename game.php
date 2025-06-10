@@ -110,7 +110,7 @@ if (isset($cmd)&&!isset($sid)){
 
 while (\player\upplayerlvl($sid, $dblj) == 1) {
     if($can_redis ==1){
-    $redis->flushAll($cacheKey);
+    $redis->flushDB($cacheKey);
     }
     $parents_cmd = 'gm_scene_new';
     $ret = $ret ?? global_event_data_get(22, $dblj);
@@ -4261,7 +4261,7 @@ $iniFile->addItem('超链接值', [$q3 => $q4]);
 
 //global $redis;
 if($can_redis ==1){
-$redis->flushAll($cacheKey);
+$redis->flushDB($cacheKey);
 }
 //$static_page = ob_get_contents();
 //file_put_contents("static_page.html", $static_page);

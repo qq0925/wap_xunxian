@@ -12,6 +12,7 @@ $GLOBALS['can_redis'] = -1; // 默认不可用
 if (class_exists('Redis')){
 $redis = new \Redis();
 $redis->connect('127.0.0.1', 6379);
+$redis->select(1);
 $GLOBALS['can_redis'] = 1; // 可用
 }
 

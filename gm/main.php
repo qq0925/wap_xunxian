@@ -14,7 +14,7 @@ if($remove_canshu!=1&&$remove_canshu!=3&&$remove_canshu!=5){
 
     if($remove_canshu==4){
         echo "已清空缓存数据！<br/>";
-        $redis->flushAll(true); // 异步清空所有数据库
+        $redis->flushDB(true); // 异步清空所有数据库
     }
 
 

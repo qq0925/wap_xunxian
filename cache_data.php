@@ -5,7 +5,7 @@ $pdo = DB::pdo();
 // 2. 连接 Redis
 $redis = new Redis();
 $redis->connect('127.0.0.1', 6379);
-
+$redis->select(1);
 // 3. 查询数据库
 $sql = "SELECT * FROM game1"; // 替换成你的表名
 $stmt = $pdo->prepare($sql);
