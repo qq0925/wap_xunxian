@@ -1846,6 +1846,7 @@ function getplayertask($sid,$dblj,$taskid=null){
     $cxjg = $dblj->query($sql);
     $task = $cxjg->fetchAll(\PDO::FETCH_ASSOC);
     $task_count = count($task);
+    $allTasks = [];
     for($i=0;$i<$task_count;$i++){
         $tid = $task[$i]['tid'];
         $tstate = $task[$i]['tstate'];
