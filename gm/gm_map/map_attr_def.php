@@ -250,6 +250,4 @@ window.addEventListener("load", function() {
     input.value = result;
   }
   });
-  
-
 </script>

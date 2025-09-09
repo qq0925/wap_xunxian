@@ -354,6 +354,6 @@ function create_head($head_value, $sid, &$cmid, $dblj, $canshu) {
     $ret_url = \lexical_analysis\process_photoshow($ret_url);
     $ret_url =\lexical_analysis\color_string($ret_url);
     return nl2br($ret_url);
-} 
+}
 
 ?>

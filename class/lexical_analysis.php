@@ -169,7 +169,7 @@ function handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round) {
     $sql = "insert into game3(cut_mp,sid,gid,round,type)values('-$hurt_m_cut','$sid','$ngid','$next_round','1')";
     $dblj->exec($sql);
     // 获取技能升级相关数据
-    $j_add_point_exp = $skill_data['j_add_point_exp'];
+    $j_add_point_exp = $skill_data['j_add_point_exp']??0;
     $j_promotion = $skill_data['j_promotion'];
     $j_promotion_cond = $skill_data['j_promotion_cond'];
     $jname = $skill_data['j_name'];

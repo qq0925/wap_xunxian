@@ -122,7 +122,6 @@ if (isset($newmid) && $player->nowmid != $newmid) {
                 $clmid->mid,
                 $para
             );
-            $event_triger = 1;
             // 重新获取可能被事件改变的玩家数据
             $player = player\getplayer($sid, $dblj);
             $tpsmid = $player->tpsmid;
@@ -374,7 +373,6 @@ $change_nowmid = $encode->encode("cmd=gm_map_2&sid=$sid");
 
 if($player->ucmd != "pve_fight"){
 //30-70ms
-if($event_triger!=1){
 $page_count = count($get_main_page);
 $oid = 'scene';
 $mid = $player->nowmid;
@@ -466,7 +464,7 @@ HTML;
     }
 
 }
-}
+
 }
 
 //100+ms

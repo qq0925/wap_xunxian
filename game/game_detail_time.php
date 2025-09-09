@@ -443,7 +443,6 @@ $gonowmid = $encode->encode("cmd=gm_scene_new&ucmd=$cmid&newmid=$player->nowmid&
 $gm_html =<<<HTML
 $today
 <br/>
-<br/>
 <a href="?cmd=$gonowmid">返回游戏场景</a>
 HTML;
 echo $gm_html

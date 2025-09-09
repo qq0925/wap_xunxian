@@ -42,6 +42,106 @@ try {
     echo $e->getMessage();
 }
 
+$modifications = [
+    'game2' => [
+        'set_default' => ['hurt_hp', 'cut_hp', 'hurt_mp', 'cut_mp'],
+        'drop_notnull' => ['fight_umsg', 'fight_omsg']
+    ],
+    'game3' => [
+        'set_default' => ['hurt_hp', 'cut_hp', 'hurt_mp', 'cut_mp'],
+        'drop_notnull' => []
+    ],
+    'system_item'=>[
+        'set_default' =>['iequiped','icreate_sale_time','iexpire_sale_time','isale_time','iroot']
+        ],
+    'system_chat_data'=>[
+        'set_default' =>['send_type','send_time','uid','imuid']
+        ]
+];
+
+
+    foreach ($modifications as $table => $changes) {
+        // 修改默认值为0
+        if (!empty($changes['set_default'])) {
+            foreach ($changes['set_default'] as $column) {
+                modify_column_default($dblj, $table, $column);
+            }
+        }
+        
+        // 取消NOT NULL约束
+        if (!empty($changes['drop_notnull'])) {
+            foreach ($changes['drop_notnull'] as $column) {
+                drop_column_notnull($dblj, $table, $column);
+            }
+        }
+    }
+
+
+
+function modify_column_default($dblj, $table, $column) {
+    // 检查当前默认值
+    $stmt = $dblj->prepare("
+        SELECT COLUMN_DEFAULT 
+        FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_SCHEMA = DATABASE() 
+        AND TABLE_NAME = :table 
+        AND COLUMN_NAME = :column
+    ");
+    
+    $stmt->execute([':table' => $table, ':column' => $column]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($result) {
+        $current_default = $result['COLUMN_DEFAULT'];
+        
+        // 判断是否需要修改
+        if ($current_default !== '0') {
+            // 执行修改
+            try {
+                $alter_sql = "ALTER TABLE $table ALTER COLUMN $column SET DEFAULT 0";
+                $dblj->exec($alter_sql);
+            } catch (PDOException $e) {
+                echo "<p style='color: red;'>修改 $table.$column 默认值失败: " . $e->getMessage() . "</p>";
+            }
+        }
+    } else {
+        echo "<p style='color: red;'>错误: 字段 $table.$column 不存在</p>";
+    }
+}
+
+/**
+ * 取消字段的NOT NULL约束（如果需要）
+ */
+function drop_column_notnull($dblj, $table, $column) {
+    // 检查当前是否为NOT NULL
+    $stmt = $dblj->prepare("
+        SELECT IS_NULLABLE 
+        FROM INFORMATION_SCHEMA.COLUMNS 
+        WHERE TABLE_SCHEMA = DATABASE() 
+        AND TABLE_NAME = :table 
+        AND COLUMN_NAME = :column
+    ");
+    
+    $stmt->execute([':table' => $table, ':column' => $column]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($result) {
+        $is_nullable = $result['IS_NULLABLE'];
+        
+        // 判断是否需要修改
+        if ($is_nullable === 'NO') {
+            // 执行修改
+            try {
+                $alter_sql = "ALTER TABLE $table MODIFY COLUMN $column TEXT NULL";
+                $dblj->exec($alter_sql);
+            } catch (PDOException $e) {
+                echo "<p style='color: red;'>取消 $table.$column 的NOT NULL约束失败: " . $e->getMessage() . "</p>";
+            }
+        }
+    } else {
+        echo "<p style='color: red;'>错误: 字段 $table.$column 不存在</p>";
+    }
+}
 
     $sql = "SHOW COLUMNS FROM system_self_define_module LIKE 'css'";
     $stmt = $dblj->prepare($sql);
