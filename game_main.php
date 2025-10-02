@@ -1,14 +1,7 @@
 <?php
-require_once 'class/player.php';
-require_once 'class/encode.php';
-require_once 'class/gm.php';
-include_once 'pdo.php';
-// require_once 'class/lexical_analysis.php';
-require_once 'class/basic_function_todo.php';
+include 'pdo.php';
+require 'class/basic_function_todo.php';
 
-$parents_page = $currentFilePath;
-// $encode = new \encode\encode();
-// $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
 $uis_designer = $player->uis_designer;
 $game_main = '';
@@ -32,7 +25,6 @@ $js_text
 HTML;
 }
 $br = 0;
-$logout = $encode->encode("cmd=logout&sid=$sid");
 for ($i=0;$i<count($get_main_page);$i++){
     $main_id = $get_main_page[$i]['id'];
     $main_type = $get_main_page[$i]['type'];
@@ -129,6 +121,7 @@ $all .=<<<HTML
 <a href="?cmd=$gm_main_module">设计首页模板</a><br/>
 HTML;
 }
+$logout = $encode->encode("cmd=logout&sid=$sid");
 $all .=<<<HTML
 <a href="?cmd=$logout">退出游戏</a><br/>
 HTML;

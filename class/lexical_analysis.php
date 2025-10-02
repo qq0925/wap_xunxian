@@ -169,7 +169,7 @@ function handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round) {
     $sql = "insert into game3(cut_mp,sid,gid,round,type)values('-$hurt_m_cut','$sid','$ngid','$next_round','1')";
     $dblj->exec($sql);
     // 获取技能升级相关数据
-    $j_add_point_exp = $skill_data['j_add_point_exp']??0;
+    $j_add_point_exp = $skill_data['j_add_point_exp']?:0;
     $j_promotion = $skill_data['j_promotion'];
     $j_promotion_cond = $skill_data['j_promotion_cond'];
     $jname = $skill_data['j_name'];
@@ -177,7 +177,6 @@ function handle_attack($ngid, $sid, $dblj, $skill_data, $jid, $next_round) {
     // 计算技能经验
     $add_point_exp_processed = process_string($j_add_point_exp, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null);
     $j_point_exp = calculateBigNumberExpression($add_point_exp_processed,$variables,0);
-    //$j_point_exp = (int)floor(eval("return $add_point_exp_processed;"));
 
     // 计算升级所需经验
     $promotion_processed = process_string($j_promotion, $sid, 'npc_monster', $ngid[0], $jid, 'fight', null);
@@ -790,33 +789,7 @@ $expr = preg_replace_callback('/\{([^}]+)\}/', function($matches) use ($db,$sid,
     }
     return $op;
 },$expr);
-
-    // 在这里根据变量名获取对应的值，例如从数据库中查询
-    // 假设你从数据库中获取了 $attr_value]
-    
-    
-    // $temp = $op;
-    // if (strpos($temp, '"') === false){
-    // $op = "\"".$temp."\"";
-    // }
-    // $op = str_replace(array("''", "\"\""), '0', $op);
-    // // 使用正则表达式，去掉内部的单引号
-    // $op = preg_replace("/'(.*?)'/", '$1', $op);
-    // $op = str_replace(array("\""), '\'', $op);
-    
-// 现在 $expr 中的 {eval(...)} 和 {...} 部分已经被替换成了对应的值
 $result = $expr;
-//var_dump($result);
-// try{
-
-// $result = eval("return $expr;");
-// }catch (ParseError $e){
-//                 print("语法错误: ". $e->getMessage());
-                
-//             }
-//             catch (Error $e){
-//                 print("执行错误: ". $e->getMessage());
-// }
 return $result;
 }
 
@@ -1813,8 +1786,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         case 'hurt_hp':
                         $round = \player\getnowround($sid,$dblj,$db);
                         // 构建 SQL 查询语句
-                        $sql = "SELECT SUM(cut_hp) AS total_cut_hp FROM game2 WHERE sid = ? and pid = 0 and round = '$round' and type = 2";
-                        
+                        $sql = "SELECT SUM(hurt_hp) AS total_cut_hp FROM game2 WHERE sid = ? and pid = 0 and round = '$round' and type = 1";
                         // 使用预处理语句
                         $stmt = $db->prepare($sql);
                         $stmt->bind_param("s", $sid);
@@ -1830,6 +1802,7 @@ function process_attribute($attr1, $attr2,$sid, $oid, $mid,$jid,$type,$db,$para=
                         $stmt->close();
                         
                         // 获取总和并处理结果
+                        
                         $op = $row["total_cut_hp"];
                         $op = process_string($op,$sid,$oid,$mid,$jid,$type,$para);
                         break;

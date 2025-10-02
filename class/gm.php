@@ -7,6 +7,7 @@ function update_redis($db,$attr,$sid,$oid,$mid,$jid,$type,$para){
 //redis数据格式：数据归属::数据标识::原始体，比如：player::959c9277a3e15eacff9e5f117e51f5bb::u.lvl,scene::255::o.name
 //oid取值：scene,item,npc_scene,npc_monster,skill,scene_oplayer,pet
 global $redis;
+$redis->select(1);
         // 检查缓存中是否已有值
             // 如果缓存中没有，则查询数据库并缓存
 $firstDotPosition = strpos($attr, '.');
@@ -58,6 +59,7 @@ function check_redis($db,$attr,$sid,$oid,$mid,$jid,$type,$para){
 //redis数据格式：数据归属::数据标识::原始体，比如：player::959c9277a3e15eacff9e5f117e51f5bb::u.lvl,scene::255::o.name
 //oid取值：scene,item,npc_scene,npc_monster,skill,scene_oplayer,pet
 global $redis;
+$redis->select(1);
         // 检查缓存中是否已有值
             // 如果缓存中没有，则查询数据库并缓存
 $firstDotPosition = strpos($attr, '.');
@@ -101,6 +103,7 @@ function del_redis($db,$attr,$sid,$oid,$mid,$jid,$type,$para){
 //redis数据格式：数据归属::数据标识::原始体，比如：player::959c9277a3e15eacff9e5f117e51f5bb::u.lvl,scene::255::o.name
 //oid取值：scene,item,npc_scene,npc_monster,skill,scene_oplayer,pet
 global $redis;
+$redis->select(1);
         // 检查缓存中是否已有值
             // 如果缓存中没有，则查询数据库并缓存
 $firstDotPosition = strpos($attr, '.');

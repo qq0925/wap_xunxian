@@ -1,19 +1,9 @@
 <?php
-//20-23ms
-//require_once 'class/lexical_analysis_test.php';
-require_once 'class/basic_function_todo.php';
-// require_once 'class/player.php';
-// require_once 'class/encode.php';
-// require_once 'class/gm.php';
-// include_once 'pdo.php';
-// // require_once 'class/lexical_analysis.php';
-// include_once 'class/global_event_step_change.php';
+require 'class/basic_function_todo.php';
 include_once 'class/events_steps_change.php';
 
 $parents_page = $currentFilePath;
 $parents_cmd = 'gm_scene_new';
-// $encode = new \encode\encode();
-// $player = new \player\player();
 
 $player = \player\getplayer($sid,$dblj);
 $gm_html = '';
@@ -44,7 +34,6 @@ $br = 0;
 $gm_main = $encode->encode("cmd=gm&sid=$sid");
 $change_scenemodule = $encode->encode("cmd=gm_game_pagemoduledefine&gm_post_canshu=1&sid=$sid");
 $old_scene = $encode->encode("cmd=gm_scene_new&newmid=$player->nowmid&sid=$sid");
-//$midguai = \player\getmidguai($player->nowmid,$dblj);
 
 $cmid = $cmid + 1;
 $cdid[] = $cmid;

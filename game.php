@@ -4258,18 +4258,4 @@ $q4 = $clj[$x];
 # 添加一个子项(如果子项存在，则覆盖;)
 $iniFile->addItem('超链接值', [$q3 => $q4]);
 }
-
-//global $redis;
-if($can_redis ==1){
-$redis->flushDB($cacheKey);
-}
-//$static_page = ob_get_contents();
-//file_put_contents("static_page.html", $static_page);
-//ob_end_clean();
-// 输出获取到的内容
-//echo $static_page;
-
-// echo '<pre>';
-// print_r(get_defined_vars());
-// echo '</pre>';
 ?>

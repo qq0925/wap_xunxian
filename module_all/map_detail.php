@@ -1,6 +1,4 @@
 <?php
-// require_once 'class/lexical_analysis.php';
-// include_once 'pdo.php';
 $map_id = $mid;
 $nowmid_arr = array('name'=>'','desc'=>'','photo'=>'','tianqi'=>'','map_upper'=>'','map_left'=>'','map_right'=>'','map_lower'=>'');
 $nowmid_desc = '';

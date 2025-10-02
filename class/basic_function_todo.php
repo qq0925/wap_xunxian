@@ -1,7 +1,4 @@
 <?php
-require_once 'class/encode.php';
-$encode = new \encode\encode();
-
 function trimTrailingNewlinesAndCount($input) {
     // 使用正则表达式去除所有换行符（包括 \r 和 \n）
     // rtrim 会去除末尾的所有空白字符、换行符或回车符（Windows 和 Unix 风格的换行符）

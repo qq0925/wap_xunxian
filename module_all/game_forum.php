@@ -112,12 +112,11 @@ $forum_detail .="<br/>";
 $send_new = $encode->encode("cmd=game_forum&canshu=2&ucmd=$cmid&sid=$sid");
 $mypost = $encode->encode("cmd=game_forum&canshu=5&ucmd=$cmid&sid=$sid");
 $forum_html = <<<HTML
-<p>{$gm_post->game_name}论坛<br/>
+{$gm_post->game_name}论坛<br/>
 版主：{$forum_gm_name}<br/>
 <a href="?cmd=$send_new">发新帖</a><br/>
-$forum_detail
+{$forum_detail}
 <a href="?cmd=$mypost">我的帖子</a><br/>
-<br/>
 HTML;
 }elseif ($canshu ==2) {
 $forum_html = <<<HTML
@@ -126,7 +125,6 @@ $forum_html = <<<HTML
 内容：<textarea name="content" maxlength="3000" rows="4" cols="20" required></textarea><br/>
 <input name="submit" type="submit" title="发送" value="发送"/><input name="submit" type="hidden" title="发送" value="发送"/></form><br/>
 <a href="?cmd=$ret_forum">返回论坛</a><br/>
-<br/>
 HTML;
 }elseif($canshu ==3){
     
@@ -187,15 +185,13 @@ $forum_detail .=<<<HTML
 【发布时间】：{$created_time}<br/>
 【作者】：<a href="?cmd=$view_author_user">{$author_name}($author_uid)</a><br/>
 【正文】：<br/>
-$content<br/>
-$response_text<br/>
-<a href="?cmd=$ret_forum">返回论坛</a>
+{$content}<br/>
+{$response_text}<br/>
+<a href="?cmd=$ret_forum">返回论坛</a><br/>
 HTML;
-$forum_detail .="<br/>";
 $send_new = $encode->encode("cmd=game_forum&canshu=2&ucmd=$cmid&sid=$sid");
 $forum_html = <<<HTML
 $forum_detail
-<br/>
 HTML;
 }elseif($canshu ==4){
 $ret_post = $encode->encode("cmd=game_forum&canshu=3&post_id=$post_id&ucmd=$cmid&sid=$sid");
@@ -246,8 +242,7 @@ $forum_detail .="<br/>";
 $forum_html =<<<HTML
 我发的帖子<br/>
 <a href="?cmd=$send_new">发新帖</a><br/>
-$forum_detail
-<br/>
+{$forum_detail}
 <a href="?cmd=$ret_forum">返回论坛</a><br/>
 HTML;
 }

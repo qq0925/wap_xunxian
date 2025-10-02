@@ -1,7 +1,6 @@
 <?php
-require_once 'class/basic_function_todo.php';
+require 'class/basic_function_todo.php';
 include_once 'class/events_steps_change.php';
-
 
 $parents_page = $currentFilePath;
 $parents_cmd = 'gm_scene_new';
