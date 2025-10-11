@@ -53,7 +53,8 @@ switch($del_event_type){
 }
 
 if($add ==1){
-$sql = "insert into system_task(`tnpc_id`,`tid`,`tbelong`,`tname`,`ttype`)values('$task_tnpc_id','$max_id','1',未命名','1')";
+$sql = "INSERT INTO system_task (`tnpc_id`, `tid`, `tbelong`, `tname`, `ttype`, `ttype2`, `tgiveup`, `treaccept`, `taccept_lvl`, `tcond`, `taccept_cond`, `tcmmt1`, `tcmmt2`, `ttarget_event_accept`, `ttarget_event_giveup`, `ttarget_event_finish`, `ttarget_obj`) VALUES ('$task_tnpc_id', '$max_id', '1', '未命名', '1', '0', '0', '0', '0', '', '', '', '', '0', '0', '0', '')";
+// 执行SQL
 $cxjg = $dblj->exec($sql);
 $task_id = $max_id;
 
