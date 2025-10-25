@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： localhost
--- 生成日期： 2025-10-25 14:50:06
+-- 生成日期： 2025-10-25 15:33:03
 -- 服务器版本： 8.0.24
 -- PHP 版本： 7.4.33
 
@@ -31,7 +31,7 @@ CREATE TABLE `forum_res` (
   `belong` varchar(255) NOT NULL,
   `sid` text NOT NULL,
   `created_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `content` text NOT NULL
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -57,59 +57,59 @@ CREATE TABLE `forum_text` (
 --
 
 CREATE TABLE `game1` (
-  `uis_designer` int NOT NULL DEFAULT '0' COMMENT '是否有后台权限。',
-  `uis_forum_gm` int NOT NULL DEFAULT '0' COMMENT '是否论坛版主',
+  `uis_designer` int DEFAULT '0' COMMENT '是否有后台权限。',
+  `uis_forum_gm` int DEFAULT '0' COMMENT '是否论坛版主',
   `uid` int NOT NULL,
   `ucmd` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci COMMENT '//当前页面cmd',
   `ulast_cmd` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci COMMENT '//最后页面cmd',
   `uphone` varchar(11) CHARACTER SET gb2312 COLLATE gb2312_chinese_ci DEFAULT NULL,
-  `sid` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `token` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `sid` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `token` text CHARACTER SET utf8 COLLATE utf8_general_ci,
   `utran_state` int DEFAULT '0' COMMENT '交易状态，0未交易，1正在进行交易请求确认，2正在交易',
-  `uname` varchar(255) NOT NULL DEFAULT '0',
+  `uname` varchar(255) CHARACTER SET gb2312 COLLATE gb2312_chinese_ci DEFAULT '0',
   `uimage` varchar(255) CHARACTER SET gb2312 COLLATE gb2312_chinese_ci DEFAULT NULL,
   `unick_name` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci,
-  `ulvl` decimal(65,0) NOT NULL DEFAULT '1',
-  `uburthen` decimal(65,0) NOT NULL DEFAULT '0',
-  `umax_burthen` decimal(65,0) NOT NULL DEFAULT '0',
-  `ustorage` decimal(65,0) NOT NULL DEFAULT '0',
-  `uis_pve` int NOT NULL DEFAULT '0' COMMENT '0为关闭1为开启',
-  `ukill` tinyint(1) NOT NULL DEFAULT '1',
-  `uauto_fight` int NOT NULL DEFAULT '0' COMMENT '0为关闭状态，1为开启状态',
-  `uis_sailing` int NOT NULL DEFAULT '0' COMMENT '0为关闭状态，1为开启状态',
-  `uauto_sailing` int NOT NULL DEFAULT '0' COMMENT '0为关闭状态，1为开启状态',
-  `umoney` int NOT NULL DEFAULT '0',
-  `uteam_invited_id` int NOT NULL DEFAULT '0',
-  `uteam_id` int NOT NULL DEFAULT '0',
-  `uteam_putin_id` int NOT NULL DEFAULT '0',
-  `uclan_id` int NOT NULL DEFAULT '0',
-  `uexp` decimal(65,0) NOT NULL DEFAULT '0',
-  `uhp` decimal(65,0) NOT NULL DEFAULT '100',
-  `umaxhp` decimal(65,0) NOT NULL DEFAULT '100',
-  `ump` decimal(65,0) NOT NULL DEFAULT '50',
-  `umaxmp` decimal(65,0) NOT NULL DEFAULT '50',
-  `ugj` decimal(65,0) NOT NULL DEFAULT '12',
-  `ufy` decimal(65,0) NOT NULL DEFAULT '5',
-  `usex` text NOT NULL,
-  `endtime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `minutetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `nowmid` int NOT NULL DEFAULT '225',
-  `justmid` int NOT NULL DEFAULT '0',
-  `tpsmid` int NOT NULL DEFAULT '0',
-  `nowguaiwu` int NOT NULL DEFAULT '0',
-  `sfzx` int NOT NULL DEFAULT '0',
-  `allchattime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `citychattime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `areachattime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `cw` int NOT NULL DEFAULT '0',
-  `ispvp` int NOT NULL DEFAULT '0',
-  `uwg_fj` int NOT NULL DEFAULT '0',
-  `uis_roading` int NOT NULL DEFAULT '0',
-  `uauto_roading` int NOT NULL DEFAULT '0',
-  `uis_skying` int NOT NULL DEFAULT '0',
-  `uauto_skying` int NOT NULL DEFAULT '0',
-  `ubj` int NOT NULL DEFAULT '0',
-  `uspeed` int NOT NULL DEFAULT '1'
+  `ulvl` decimal(65,0) DEFAULT '1',
+  `uburthen` decimal(65,0) DEFAULT '0',
+  `umax_burthen` decimal(65,0) DEFAULT '0',
+  `ustorage` decimal(65,0) DEFAULT '0',
+  `uis_pve` int DEFAULT '0' COMMENT '0为关闭1为开启',
+  `ukill` tinyint(1) DEFAULT '1',
+  `uauto_fight` int DEFAULT '0' COMMENT '0为关闭状态，1为开启状态',
+  `uis_sailing` int DEFAULT '0' COMMENT '0为关闭状态，1为开启状态',
+  `uauto_sailing` int DEFAULT '0' COMMENT '0为关闭状态，1为开启状态',
+  `umoney` int DEFAULT '0',
+  `uteam_invited_id` int DEFAULT '0',
+  `uteam_id` int DEFAULT '0',
+  `uteam_putin_id` int DEFAULT '0',
+  `uclan_id` int DEFAULT '0',
+  `uexp` decimal(65,0) DEFAULT '0',
+  `uhp` decimal(65,0) DEFAULT '100',
+  `umaxhp` decimal(65,0) DEFAULT '100',
+  `ump` decimal(65,0) DEFAULT '50',
+  `umaxmp` decimal(65,0) DEFAULT '50',
+  `ugj` decimal(65,0) DEFAULT '12',
+  `ufy` decimal(65,0) DEFAULT '5',
+  `usex` text CHARACTER SET gb2312 COLLATE gb2312_chinese_ci,
+  `endtime` datetime DEFAULT '0000-00-00 00:00:00',
+  `minutetime` datetime DEFAULT '0000-00-00 00:00:00',
+  `nowmid` int DEFAULT '225',
+  `justmid` int DEFAULT '0',
+  `tpsmid` int DEFAULT '0',
+  `nowguaiwu` int DEFAULT '0',
+  `sfzx` int DEFAULT '0',
+  `allchattime` datetime DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  `citychattime` datetime DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  `areachattime` datetime DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  `cw` int DEFAULT '0',
+  `ispvp` int DEFAULT '0',
+  `uwg_fj` int DEFAULT '0',
+  `uis_roading` int DEFAULT '0',
+  `uauto_roading` int DEFAULT '0',
+  `uis_skying` int DEFAULT '0',
+  `uauto_skying` int DEFAULT '0',
+  `ubj` int DEFAULT '0',
+  `uspeed` int DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=gb2312;
 
 --
@@ -117,7 +117,7 @@ CREATE TABLE `game1` (
 --
 
 INSERT INTO `game1` (`uis_designer`, `uis_forum_gm`, `uid`, `ucmd`, `ulast_cmd`, `uphone`, `sid`, `token`, `utran_state`, `uname`, `uimage`, `unick_name`, `ulvl`, `uburthen`, `umax_burthen`, `ustorage`, `uis_pve`, `ukill`, `uauto_fight`, `uis_sailing`, `uauto_sailing`, `umoney`, `uteam_invited_id`, `uteam_id`, `uteam_putin_id`, `uclan_id`, `uexp`, `uhp`, `umaxhp`, `ump`, `umaxmp`, `ugj`, `ufy`, `usex`, `endtime`, `minutetime`, `nowmid`, `justmid`, `tpsmid`, `nowguaiwu`, `sfzx`, `allchattime`, `citychattime`, `areachattime`, `cw`, `ispvp`, `uwg_fj`, `uis_roading`, `uauto_roading`, `uis_skying`, `uauto_skying`, `ubj`, `uspeed`) VALUES
-(1, 1, 1, 'gm_game_zipfile', 'self_module_api', '18150040719', '959c9277a3e15eacff9e5f117e51f5bb', '6153c573c2237ed0422c426d6786dc4f', 1, '轩辕', '玩家形象照|player_1', 'GM小小', '10950', '1292', '999999', '0', 0, 0, 0, 0, 1, 20181, 0, 0, 1, 1, '68211', '88', '100', '0', '25', '1198', '30', '男', '2025-10-25 14:49:33', '2025-10-25 14:50:22', 274, 274, 0, 0, 1, '2025-03-07 13:16:01', '2023-12-14 14:59:02', '2023-12-14 15:00:25', 0, 0, -407, 0, 0, 0, 1, 0, 6),
+(1, 1, 1, 'gm', 'self_module_api', '18150040719', '959c9277a3e15eacff9e5f117e51f5bb', '6153c573c2237ed0422c426d6786dc4f', 1, '轩辕', '玩家形象照|player_1', 'GM小小', '10950', '1292', '999999', '0', 0, 0, 0, 0, 1, 20181, 0, 0, 1, 1, '68211', '88', '100', '0', '25', '1198', '30', '男', '2025-10-25 15:26:24', '2025-10-25 15:10:42', 274, 274, 0, 0, 1, '2025-03-07 13:16:01', '2023-12-14 14:59:02', '2023-12-14 15:00:25', 0, 0, -407, 0, 0, 0, 1, 0, 6),
 (0, 0, 4, '', 'gm_scene_new', '', '214658c4375c343e280ae38e880ac4ba', '8fcae6b1a6f201d1b25d3186f1887f6a', 1, '心醉迷神', '', '', '2', '28', '50', '0', 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, '292', '47', '168', '0', '0', '12', '5', '女', '2024-06-06 13:01:18', '2024-06-06 08:03:11', 671, 671, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 5, 'gm_game_firstpage', 'gm_scene_new', '', 'a8c7b0c51c60be7441214c0b0c671d88', '11de1b2d74bff722bf47c1fe0d7a1586', 1, 'xunxian', '', '', '1', '10', '50', '0', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '0', '100', '100', '0', '0', '12', '5', '男', '2025-04-04 09:32:36', '2025-04-04 09:33:34', 226, 226, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (0, 0, 6, '', 'gm_scene_new', '', '01a0d4f5e64a677721a1089d4914bc6a', 'bd6ad1a2bd957d1af8f9029bd86054b2', 0, '规划', '', '', '1', '15', '50', '0', 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, '1', '1', '100', '0', '0', '12', '5', '男', '2024-06-05 06:09:08', '2024-06-05 06:09:49', 671, 671, 0, 0, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 0, 0, 0, 0, 0, 0, 1),
@@ -1132,8 +1132,8 @@ CREATE TABLE `gm_game_basic` (
   `game_id` int NOT NULL DEFAULT '0',
   `game_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `game_desc` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `game_creat_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `game_open_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `game_creat_time` datetime DEFAULT '0000-00-00 00:00:00',
+  `game_open_time` datetime DEFAULT '0000-00-00 00:00:00',
   `money_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `money_measure` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `promotion_exp` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
@@ -1253,7 +1253,7 @@ CREATE TABLE `system_addition_attr` (
 --
 
 INSERT INTO `system_addition_attr` (`sid`, `oid`, `mid`, `name`, `value`) VALUES
-('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'uzxsj', '3024'),
+('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'uzxsj', '3025'),
 ('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'uqd_daily', '25'),
 ('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'usubmit_bounty_01_item_01', '26'),
 ('959c9277a3e15eacff9e5f117e51f5bb', '', 0, 'upick_lj', '1749515410'),
