@@ -110,7 +110,7 @@ if (isset($cmd)&&!isset($sid)){
 
 while (\player\upplayerlvl($sid, $dblj) == 1) {
     if($can_redis ==1){
-    $redis->flushDB($cacheKey);
+    $redis->flushDB(1);
     }
     $parents_cmd = 'gm_scene_new';
     $ret = $ret ?? global_event_data_get(22, $dblj);
@@ -2358,7 +2358,7 @@ echo $refresh_html;
             
             if($choose_canshu !=0){
                 $set_value = $choose_canshu."|".$choose_id;
-                $sql = "UPDATE system_fight_quick set quick_value = '$set_value' where quick_pos = '$pos'";
+                $sql = "UPDATE system_fight_quick set quick_value = '$set_value' where quick_pos = '$pos' and sid = '$sid' ";
                 $dblj->exec($sql);
                 
             }
@@ -4257,5 +4257,8 @@ if (empty($q3)) {
 $q4 = $clj[$x];
 # 添加一个子项(如果子项存在，则覆盖;)
 $iniFile->addItem('超链接值', [$q3 => $q4]);
+}
+if($can_redis ==1){
+$redis->flushDB(1);
 }
 ?>

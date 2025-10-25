@@ -29,10 +29,8 @@ $stmt->execute([$event_id,$step_id]);
 $currentJson = $stmt->fetchColumn();
 // 3. 解析JSON并更新键值
 $data = json_decode($currentJson, true)??[];
-
 $data[$key] = $value; // 自动覆盖重复键
 echo "新增完成！<br/>";
-
 }
 elseif($canshu == 'remove'){
 $sql = "SELECT items FROM system_event_evs_self WHERE belong = ? and id = ?"; 
@@ -45,7 +43,7 @@ unset($data[$item_id]); // 移除该项数组
 echo "删除完成！<br/>";
 }
 if($data){
-$newJson = json_encode($data,true);
+$newJson = json_encode($data);
 }else{
 $newJson = '';
 }
