@@ -701,56 +701,44 @@ $op_link_task = $result[$i]['link_task'];
 $cmid = $cmid + 1;
 $cdid[] = $cmid;
 $clj[] = $cmd;
-$register_triggle = checkTriggerCondition($op_show_cond,$dblj,$sid,$oid,$mid);//显示条件
+$register_triggle = checkTriggerCondition($op_show_cond,$dblj,$sid,$oid);//显示条件
 if(is_null($register_triggle)){
     $register_triggle =1;//若触发条件为空则默认true
 }
 if($register_triggle){
 $oid = 'item';
-$parents_page = 'module_all/scene_item_info.php';
-$op_next = $encode->encode("cmd=main_target_event&oid=$oid&mid=$mid&parents_cmd=$cmd&ucmd=$cmid&itemid=$op_belong&target_event=$op_link_event&sid=$sid");
+$op_next = $encode->encode("cmd=main_target_event&oid=$oid&mid=$mid&parents_cmd=$cmd&ucmd=$cmid&iid=$op_belong&target_event=$op_link_event&sid=$sid");
 $op_html .=<<<HTML
 <a href="?cmd=$op_next">{$op_name}</a>
 HTML;
 if($op_br ==1){
     $op_html .="<br/>";
 }
+}if($op_br !=1){
+$op_html .="<br/>";
 }
 }
-            
-        // $sql = "SELECT sim.itype,si.item_true_id, sim.iid
-        // FROM system_item si
-        // JOIN system_item_module sim ON si.iid = sim.iid
-        // WHERE si.iid =(SELECT iid from si where item_true_id = :item_true_id);
-        // ";
-        // $stmt = $dblj->prepare($sql);
-        // $stmt->bindParam(':item_true_id', $mid,PDO::PARAM_STR);
-        // $stmt->execute();
-        // $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        // $itype = $result['itype'];
-        // $iid = $result['iid'];
-        // $item_true_id = $result['item_true_id'];
-        $item_true_id = $mid;
-        $sale_state = \player\getitem_sale_state($item_true_id,$sid,$dblj);
-        $equip_state = \player\getitem_equip_state($item_true_id,$sid,$dblj);
-        $stmt = $dblj->query("SELECT sim.iid, sim.itype
-                      FROM system_item si
-                      JOIN system_item_module sim ON si.iid = sim.iid
-                      WHERE si.item_true_id = '$item_true_id'");
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $iid = $result['iid'];
-        $itype = $result['itype'];
-        if($sale_state ==0 &&$equip_state==0){
-        $cmid = $cmid + 1;
-        $cdid[] = $cmid;
-        $clj[] = $cmd;
-        $use_next = $encode->encode("cmd=item_op_basic&parents_cmd=$cmd&ucmd=$cmid&item_true_id=$item_true_id&iid=$iid&target_event=use&sid=$sid");
+$item_true_id = $mid;
+$sale_state = \player\getitem_sale_state($item_true_id,$sid,$dblj);
+$equip_state = \player\getitem_equip_state($item_true_id,$sid,$dblj);
+$stmt = $dblj->query("SELECT sim.iid, sim.itype
+              FROM system_item si
+              JOIN system_item_module sim ON si.iid = sim.iid
+              WHERE si.item_true_id = '$item_true_id'");
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+$iid = $result['iid'];
+$itype = $result['itype'];
+if($sale_state ==0 &&$equip_state==0){
+$cmid = $cmid + 1;
+$cdid[] = $cmid;
+$clj[] = $cmd;
+$use_next = $encode->encode("cmd=item_op_basic&parents_cmd=$cmd&ucmd=$cmid&item_true_id=$item_true_id&iid=$iid&target_event=use&sid=$sid");
 $op_html .=<<<HTML
 <a href="?cmd=$use_next">使用</a>
 HTML;
 
 if($itype =="书籍"){
-        $read_next = $encode->encode("cmd=item_op_basic&parents_cmd=$cmd&ucmd=$cmid&item_true_id=$item_true_id&iid=$iid&target_event=look_book&sid=$sid");
+$read_next = $encode->encode("cmd=item_op_basic&parents_cmd=$cmd&ucmd=$cmid&item_true_id=$item_true_id&iid=$iid&target_event=look_book&sid=$sid");
 $op_html .=<<<HTML
 <a href="?cmd=$read_next">阅读</a><br/>
 HTML;
@@ -786,44 +774,6 @@ $shop_next = $encode->encode("cmd=item_op_basic&sale_cancel=1&parents_cmd=$cmd&u
 $op_html .=<<<HTML
 <a href="?cmd=$shop_next">撤销销售</a><br/>
 HTML;
-}
-$sql = "SELECT * FROM system_item_op WHERE belong = :iid order by id asc";
-$stmt = $dblj->prepare($sql);
-$stmt->bindParam(':iid', $mid,PDO::PARAM_STR);
-$stmt->execute();
-$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$sql = "SELECT item_op_br FROM gm_game_basic";
-$stmt = $dblj->prepare($sql);
-$stmt->execute();
-$result_2 = $stmt->fetch(PDO::FETCH_ASSOC);
-$op_br = $result_2['item_op_br'];
-for ($i=0;$i<count($result);$i++){
-$op_id = $result[$i]['id'];
-$op_name = $result[$i]['name'];
-$op_belong = $result[$i]['belong'];
-$op_show_cond = $result[$i]['show_cond'];
-$op_link_event = $result[$i]['link_event'];
-$op_link_task = $result[$i]['link_task'];
-$cmid = $cmid + 1;
-$cdid[] = $cmid;
-$clj[] = $cmd;
-
-$register_triggle = checkTriggerCondition($op_show_cond,$dblj,$sid,$oid);//显示条件
-if(is_null($register_triggle)){
-    $register_triggle =1;//若触发条件为空则默认true
-}
-if($register_triggle){
-$oid = 'item';
-$op_next = $encode->encode("cmd=main_target_event&oid=$oid&mid=$mid&parents_cmd=$cmd&ucmd=$cmid&iid=$op_belong&target_event=$op_link_event&sid=$sid");
-$op_html .=<<<HTML
-<a href="?cmd=$op_next">{$op_name}</a>
-HTML;
-if($op_br ==1){
-    $op_html .="<br/>";
-}
-}if($op_br !=1){
-$op_html .="<br/>";
-}
 }
         break;
 case '4':
