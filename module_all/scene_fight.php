@@ -1,5 +1,5 @@
 <?php
-require 'class/basic_function_todo.php';
+require_once 'class/basic_function_todo.php';
 include_once 'class/events_steps_change.php';
 
 $parents_page = $currentFilePath;
@@ -276,16 +276,31 @@ HTML;
             $drop_money = \lexical_analysis\process_string($drop_money,$sid,$oid,$mid);
             }
             if($drop_items){
-            $start= microtime(true);  
             $items_para = json_decode($drop_items, true);
-$end = microtime(true);
-$execution = ceil(($end  - $start) * 1000);// 单位是毫秒
-echo "页面执行时间为：{$execution} 毫秒<br/>";
+            
+            // 【优化】批量预查询所有物品信息，避免循环内多次查询
+            $item_cache = [];
+            if($items_para){
+                $item_ids = array_keys($items_para);
+                $item_ids_safe = array_map('intval', $item_ids); // 安全处理ID
+                $item_ids_str = implode(',', $item_ids_safe);
+                if($item_ids_str){
+                    $sql = "SELECT iid, iname, iweight FROM system_item_module WHERE iid IN ($item_ids_str)";
+                    $stmt = $dblj->query($sql);
+                    if($stmt){
+                        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                            $item_cache[$row['iid']] = $row;
+                        }
+                    }
+                }
+            }
+            
             if($drop_item_type ==1){
             $drop_add_map_item = [];
             if($items_para){
             foreach($items_para as $drop_id=>$drop_count){
-                $drop_item_name = \player\getitem($drop_id,$dblj)->iname;
+                // 【优化】使用缓存替代getitem()查询
+                $drop_item_name = $item_cache[$drop_id]['iname'] ?? '';
                 $drop_item_name = \lexical_analysis\color_string($drop_item_name);
                 $drop_count = \lexical_analysis\process_string($drop_count,$sid);
                 $drop_count = @eval("return $drop_count;");
@@ -308,19 +323,26 @@ echo "页面执行时间为：{$execution} 毫秒<br/>";
             }
             }else{
             if($items_para){
+            // 【优化】将玩家信息查询移到循环外，避免重复查询
+            $player = \player\getplayer($sid,$dblj);
+            $current_burthen = $player->uburthen;
+            $max_burthen = $player->umax_burthen;
+            
             foreach ($items_para as $drop_id=>$drop_count){
                 $drop_count = \lexical_analysis\process_string($drop_count,$sid);
                 $drop_count = @eval("return $drop_count;");
-                $drop_weight = \player\getitem($drop_id,$dblj)->iweight;
+                // 【优化】使用缓存替代getitem()查询
+                $drop_weight = $item_cache[$drop_id]['iweight'] ?? 0;
                 $drop_total_weight = $drop_count * $drop_weight;
-                $player = \player\getplayer($sid,$dblj);
-                $player_last_burthen = $player->umax_burthen - $player->uburthen;
+                $player_last_burthen = $max_burthen - $current_burthen;
                 if($drop_count >0 && $player_last_burthen >=$drop_total_weight && $player_last_burthen>0){
                     $get_ret = \player\additem($sid,$drop_id,$drop_count,$dblj);
                     if($get_ret>0){
                     \player\changeitem_belong($get_ret,1, $alive_monster->nid,$dblj);//更新物品掉落
                     $drop_item_name = \player\getownitem($get_ret,$drop_id,'iname',$dblj);
                     $drop_item_name = \lexical_analysis\color_string($drop_item_name);
+                    // 【优化】更新当前负重追踪
+                    $current_burthen += $drop_total_weight;
                     }
                     else{
                     $drop_item_name = \player\getownitem($get_ret,$drop_id,'iname',$dblj);
@@ -338,6 +360,8 @@ echo "页面执行时间为：{$execution} 毫秒<br/>";
                     $item_true_id = \player\getplayeritem_attr('item_true_id',$sid,$drop_id,$dblj)['item_true_id'];
                     \player\changeplayeritem($item_true_id,$drop_count,$sid,$dblj);
                     \player\addplayersx('uburthen',-$drop_total_weight,$sid,$dblj);
+                    // 【优化】更新当前负重追踪
+                    $current_burthen -= $drop_total_weight;
                         // 更新物品数量
                     if (isset($item_counts[$drop_item_name])) {
                         $item_counts[$drop_item_name] -= $drop_count;
