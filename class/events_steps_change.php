@@ -9,11 +9,13 @@ $parents_cmd = \player\getplayer($sid,$dblj)->ulast_cmd;
 if(!$para&&!$_POST){
 events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$parents_page,$oid,$mid,$para);
 }else {
+    // 【优化】将预处理语句移到循环外，避免重复准备 SQL
+    $sql = "INSERT INTO system_player_inputs (sid, event_id, id, value) VALUES (:sid, :target_event, :input_para, :input_value)";
+    $stmt = $dblj->prepare($sql);
+    
     if(!$para){
     foreach ($_POST as $input_para =>$input_value){
     if(!is_null($input_value)){
-    $sql = "INSERT INTO system_player_inputs (sid, event_id, id, value) VALUES (:sid, :target_event, :input_para, :input_value)";
-    $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid);
     $stmt->bindParam(':target_event', $target_event);
     $stmt->bindParam(':input_para', $input_para);
@@ -27,8 +29,6 @@ events_steps_change($target_event,$sid,$dblj,$just_page,$steps_page,$cmid,$paren
     foreach ($para_para as $input_para){
     $input_value = $_POST[$input_para];
     if(!is_null($input_value)){
-    $sql = "INSERT INTO system_player_inputs (sid, event_id, id, value) VALUES (:sid, :target_event, :input_para, :input_value)";
-    $stmt = $dblj->prepare($sql);
     $stmt->bindParam(':sid', $sid);
     $stmt->bindParam(':target_event', $target_event);
     $stmt->bindParam(':input_para', $input_para);
@@ -125,8 +125,9 @@ HTML;
                     }
                         if(!$step_triggle){
                             
-                            $sql = "delete from system_player_inputs where sid = '$sid'";//input寿命终结
-                            $dblj->exec($sql);
+                            // 【优化】使用预处理语句
+                            $stmt = $dblj->prepare("DELETE FROM system_player_inputs WHERE sid = :sid");
+                            $stmt->execute([':sid' => $sid]);
                             if($step_cmmt2){
                             $step_cmmt2 = html_entity_decode($step_cmmt2);
                             $step_cmmt2 = \lexical_analysis\process_string($step_cmmt2,$sid,$oid,$mid);
@@ -190,6 +191,15 @@ HTML;
                             if($step_fight_npcs !=''){
                                 //$not_ret_canshu = 1;
                                 $retgw = explode(",",$step_fight_npcs);
+                                // 【优化】将 SHOW COLUMNS 查询移到循环外，只执行一次
+                                static $npc_columns_cache = null;
+                                if ($npc_columns_cache === null) {
+                                    $stmt = $dblj->prepare("SHOW COLUMNS FROM system_npc");
+                                    $stmt->execute();
+                                    $npc_columns_cache = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                                }
+                                $cols = implode(", ", $npc_columns_cache);
+                                
                                 for ($i = 0; $i < @count($retgw); $i++){
                                 $itemgw = $retgw[$i]; // 引用数组元素
                                 $gwinfo = explode("|",$itemgw);
@@ -200,12 +210,6 @@ HTML;
                                 for ($n=0;$n<$gw_count;$n++){
                                     // 要复制的数据行id
                                     $nid = $guaiwu->nid;
-                                    // 获取旧表字段列表
-                                    $stmt = $dblj->prepare("SHOW COLUMNS FROM system_npc");
-                                    $stmt->execute();
-                                    $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
-                                    // 构建动态插入语句
-                                    $cols = implode(", ",$columns);
                                     $nowdate = date('Y-m-d H:i:s');
                                     $sql = "INSERT INTO system_npc_midguaiwu ($cols, nsid, nmid, ncreate_time) 
                                             SELECT $cols, :sid, :nmid, :nowdate 
@@ -263,8 +267,9 @@ HTML;
                             if($step_page_name){
                             $return_canshu = 1;
                             if($steps_page >=$count){
-                            $sql = "delete from system_player_inputs where sid = '$sid'";
-                            $dblj->exec($sql);
+                            // 【优化】使用预处理语句
+                            $stmt = $dblj->prepare("DELETE FROM system_player_inputs WHERE sid = :sid");
+                            $stmt->execute([':sid' => $sid]);
                             }
                             switch($step_page_name){
                                 case 'state':
@@ -290,7 +295,9 @@ HTML;
                                     $page_id = str_replace('ct_', '', $step_page_name);
                                     //这里写事件核心
                                     if($page_id !=''){
-                                    $dblj->exec("update system_self_define_module set call_sum = call_sum + 1 where id = '$page_id'");
+                                    // 【优化】使用预处理语句
+                                    $stmt = $dblj->prepare("UPDATE system_self_define_module SET call_sum = call_sum + 1 WHERE id = :page_id");
+                                    $stmt->execute([':page_id' => $page_id]);
                                     $ym = 'module_all/self_page.php';
                                     }
                                     break;
@@ -303,7 +310,9 @@ HTML;
                                 if(strpos($module_id, 'game_self_page_') === 0){
                                 $page_id = substr($module_id, 15);
                                 if($page_id !=''){
-                                $dblj->exec("update system_self_define_module set call_sum = call_sum + 1 where id = '$page_id'");
+                                // 【优化】使用预处理语句
+                                $stmt = $dblj->prepare("UPDATE system_self_define_module SET call_sum = call_sum + 1 WHERE id = :page_id");
+                                $stmt->execute([':page_id' => $page_id]);
                                 $ym = 'module_all/self_page.php';
                                 }
                                 }else{
@@ -371,8 +380,9 @@ HTML;
 <a href="?cmd=$page_continue">{$step_next_text}</a><br/>
 HTML;
                             if($step_not_return_link ==0 && $not_ret_canshu!=1){
-                            $sql = "delete from system_player_inputs where sid = '$sid'";
-                            $dblj->exec($sql);
+                            // 【优化】使用预处理语句
+                            $stmt = $dblj->prepare("DELETE FROM system_player_inputs WHERE sid = :sid");
+                            $stmt->execute([':sid' => $sid]);
                             $cmid = $cmid + 1;
                             $cdid[] = $cmid;
                             
@@ -418,8 +428,9 @@ HTML;
                                     echo $form_html;
                                 }else{
                             if($step_not_return_link ==0 && $page_id =='' && $not_ret_canshu!=1){
-                            $sql = "delete from system_player_inputs where sid = '$sid'";
-                            $dblj->exec($sql);
+                            // 【优化】使用预处理语句
+                            $stmt = $dblj->prepare("DELETE FROM system_player_inputs WHERE sid = :sid");
+                            $stmt->execute([':sid' => $sid]);
                             $cmid = $cmid + 1;
                             $cdid[] = $cmid;
                             

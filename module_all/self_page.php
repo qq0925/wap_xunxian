@@ -19,6 +19,10 @@ $cmd = $parents_cmd;
 // $player = new \player\player();
 $player = \player\getplayer($sid,$dblj);
 $game_main = '';
+// 【优化】提前初始化 $mid，避免循环内重复判断
+if(!$mid){
+    $mid = $player->nowmid;
+}
 $get_main_page = \gm\get_self_page($dblj,$page_id);
 $page_para = \gm\get_self_page_list($dblj,$page_id);
 
@@ -51,18 +55,19 @@ $ret_game = <<<HTML
 HTML;
 }
 
-$br = 0;
-
-$player = player\getplayer($sid,$dblj);
-
-for ($i=0;$i<count($get_main_page);$i++){
-    if(!$mid){
-    $mid = $player->nowmid;
-    }
-    $main_id = $get_main_page[$i]['id'];
-    $main_type = $get_main_page[$i]['type'];
-    $main_value = $get_main_page[$i]['value'];
-    $main_show_cond = $get_main_page[$i]['show_cond'];
+// 【优化】将 count() 移到循环外，避免每次迭代都计算数组长度
+$main_page_count = count($get_main_page);
+for ($i=0;$i<$main_page_count;$i++){
+    // 【优化】一次性提取当前元素所有字段，减少数组访问
+    $current_item = $get_main_page[$i];
+    $main_id = $current_item['id'];
+    $main_type = $current_item['type'];
+    $main_value = $current_item['value'];
+    $main_show_cond = $current_item['show_cond'];
+    $main_target_event = $current_item['target_event'];
+    $main_target_func = $current_item['target_func'];
+    $main_link_value = $current_item['link_value'];
+    
     $show_ret = $main_show_cond !== '' 
         ? \lexical_analysis\process_string($main_show_cond, $sid, null, $mid, null, null, "check_cond") 
         : 1;
@@ -86,9 +91,6 @@ for ($i=0;$i<count($get_main_page);$i++){
     }else{
     $main_value = nl2br($main_value);
     }
-    $main_target_event = $get_main_page[$i]['target_event'];
-    $main_target_func = $get_main_page[$i]['target_func'];
-    $main_link_value = $get_main_page[$i]['link_value'];
     $main_value = \lexical_analysis\process_string($main_value,$sid,$oid,$mid);
     $main_value = \lexical_analysis\process_photoshow($main_value);
     $main_value =\lexical_analysis\color_string($main_value);
