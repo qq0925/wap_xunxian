@@ -1508,7 +1508,7 @@ $stmt->execute();
 
 $stmt->bind_result($count);
 $stmt->fetch();
-
+$stmt->close();
 if ($count == 0) {
     $cmid = $cmid + 1;
     $cdid[] = $cmid;
